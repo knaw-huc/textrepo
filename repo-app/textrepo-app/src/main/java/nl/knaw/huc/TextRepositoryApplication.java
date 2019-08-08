@@ -1,12 +1,11 @@
 package nl.knaw.huc;
 
 import io.dropwizard.Application;
+import io.dropwizard.forms.MultiPartBundle;
 import io.dropwizard.jdbi3.JdbiFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import nl.knaw.huc.health.TemplateHealthCheck;
-import nl.knaw.huc.resources.HelloWorldResource;
-import org.jdbi.v3.core.Jdbi;
+import nl.knaw.huc.resources.FilesResource;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,8 +16,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
 
   public static void main(final String[] args) throws Exception {
     new TextRepositoryApplication().run(args);
-    var testJava11 = "Hello world";
-    logger.info(testJava11);
+    logger.info("App started");
   }
 
   @Override
@@ -27,18 +25,15 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
   }
 
   @Override
-  public void initialize(final Bootstrap<TextRepositoryConfiguration> bootstrap) {}
+  public void initialize(final Bootstrap<TextRepositoryConfiguration> bootstrap) {
+    bootstrap.addBundle(new MultiPartBundle());
+  }
 
   @Override
   public void run(
     TextRepositoryConfiguration configuration,
     Environment environment
   ) {
-
-    var healthCheck = new TemplateHealthCheck(
-      configuration.getTemplate()
-    );
-    environment.healthChecks().register("template", healthCheck);
 
     var factory = new JdbiFactory();
     var jdbi = factory.build(
@@ -48,11 +43,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     );
     jdbi.installPlugin(new SqlObjectPlugin());
 
-    var resource = new HelloWorldResource(
-      configuration.getTemplate(),
-      configuration.getDefaultName(),
-      jdbi
-    );
+    var resource = new FilesResource(jdbi);
 
     environment.jersey().register(resource);
   }
