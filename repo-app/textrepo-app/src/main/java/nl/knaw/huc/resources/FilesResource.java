@@ -2,8 +2,6 @@ package nl.knaw.huc.resources;
 
 import com.codahale.metrics.annotation.Timed;
 import nl.knaw.huc.db.FileDAO;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.jdbi.v3.core.Jdbi;
