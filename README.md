@@ -11,4 +11,7 @@ Run:
 docker-compose build textrepo-app
 docker-compose -p tr up
 ```
-
+Test:
+```
+curl -X POST 'localhost:8080/files' -F file=@{file}
+```
