@@ -7,7 +7,8 @@ Build with:
 ## Development
 Run:
 ```
-docker build -t textrepobuilder:latest -f Docker.builderfile .
+(cd textrepo-app && docker build -t textrepo-builder:latest -f Dockerfile.builder .)
 docker-compose build textrepo-app
 docker-compose -p tr up
 ```
+
