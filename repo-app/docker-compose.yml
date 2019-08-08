@@ -3,7 +3,11 @@ version: '3.4'
 services:
   textrepo-app:
     build: ./textrepo-app
-  pg:
+    ports:
+      - 8080:8080
+    networks:
+    - textrepo_network
+  postgres:
     image: postgres:11-alpine
     networks:
     - textrepo_network
@@ -15,7 +19,7 @@ services:
       POSTGRES_PASSWORD: textrepo
       POSTGRES_DB: textrepo
       POSTGRES_USER: textrepo
-      POSTGRES_HOST: pg.textrepo
+      POSTGRES_HOST: postgres.textrepo
       POSTGRES_PORT: 5432
 
 networks:

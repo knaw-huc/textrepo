@@ -1,10 +1,13 @@
 package nl.knaw.huc;
 
 import io.dropwizard.Application;
+import io.dropwizard.jdbi3.JdbiFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import nl.knaw.huc.health.TemplateHealthCheck;
 import nl.knaw.huc.resources.HelloWorldResource;
+import org.jdbi.v3.core.Jdbi;
+import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,22 +27,32 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
   }
 
   @Override
-  public void initialize(final Bootstrap<TextRepositoryConfiguration> bootstrap) {
-    // TODO: application initialization
-  }
+  public void initialize(final Bootstrap<TextRepositoryConfiguration> bootstrap) {}
 
   @Override
-  public void run(final TextRepositoryConfiguration configuration,
-                  final Environment environment) {
-    var resource = new HelloWorldResource(
-      configuration.getTemplate(),
-      configuration.getDefaultName()
-    );
+  public void run(
+    TextRepositoryConfiguration configuration,
+    Environment environment
+  ) {
 
     var healthCheck = new TemplateHealthCheck(
       configuration.getTemplate()
     );
     environment.healthChecks().register("template", healthCheck);
+
+    var factory = new JdbiFactory();
+    var jdbi = factory.build(
+      environment,
+      configuration.getDataSourceFactory(),
+      "postgresql"
+    );
+    jdbi.installPlugin(new SqlObjectPlugin());
+
+    var resource = new HelloWorldResource(
+      configuration.getTemplate(),
+      configuration.getDefaultName(),
+      jdbi
+    );
 
     environment.jersey().register(resource);
   }
