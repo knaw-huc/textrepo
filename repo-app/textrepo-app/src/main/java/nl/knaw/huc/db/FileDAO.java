@@ -5,9 +5,9 @@ import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
 public interface FileDAO {
-  @SqlUpdate("insert into files (id, name, content) values (:id, :name, :content)")
-  void insert(@Bind("id") int id, @Bind("name") String name, @Bind("content") byte[] content);
+  @SqlUpdate("insert into files (sha1, name, content) values (:sha1, :name, :content)")
+  void insert(@Bind("sha1") String sha1, @Bind("name") String name, @Bind("content") byte[] content);
 
-  @SqlQuery("select name from files where id = :id")
-  String findNameById(@Bind("id") int id);
+  @SqlQuery("select name from files where sha1 = :sha1")
+  String findNameBySha1(@Bind("sha1") String sha1);
 }
