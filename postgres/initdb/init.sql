@@ -1,6 +1,8 @@
-CREATE TABLE IF NOT EXISTS files (
-  hash character varying(40) NOT NULL,
-  testfield character varying(200) NOT NULL,
-  time_created timestamp with time zone,
-  time_changed timestamp with time zone
+create table if not exists files (
+  sha1 varchar(40) not null constraint files_pkey primary key,
+  name text,
+  content bytea
 );
+
+alter table files owner to textrepo;
+
