@@ -9,7 +9,7 @@ import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 public interface FileDAO {
 
   @SqlUpdate("insert into files (sha224, name, content) values (:sha224, :name, :content)")
-  void insert(@Bind("sha224") byte[] sha224, @Bind("name") String name, @Bind("content") byte[] content);
+  void insert(@Bind("sha224") String sha224, @Bind("name") String name, @Bind("content") byte[] content);
 
   @SqlQuery("select sha224, name, content from files where sha224 = :sha224")
   @RegisterConstructorMapper(value = TextRepoFile.class)
