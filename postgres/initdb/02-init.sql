@@ -11,10 +11,9 @@ create table files (
 -- VERSIONS
 create table versions (
   document_uuid uuid not null,
-  version_number int not null,
   date timestamp with time zone not null,
   file_sha char(56),
-  primary key (document_uuid, version_number),
+  primary key (document_uuid, date),
   foreign key (file_sha) references files (sha224)
 );
 
