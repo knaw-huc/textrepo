@@ -6,29 +6,29 @@ import java.beans.ConstructorProperties;
 
 public class TextRepoFile {
 
-    private String sha1;
+    private String sha224;
     private String name;
     private byte[] content;
 
-    @ConstructorProperties({"sha1", "name", "content"})
+    @ConstructorProperties({"sha224", "name", "content"})
     public TextRepoFile(
-      String sha1,
+      String sha224,
       String name,
       byte[] content
     ) {
-        this.sha1 = sha1;
+        this.sha224 = sha224;
         this.name = name;
         this.content = content;
     }
 
     @JsonProperty
-    public String getSha1() {
-        return sha1;
+    public String getSha224() {
+        return sha224;
     }
 
     @JsonProperty
-    public void setSha1(String sha1) {
-        this.sha1 = sha1;
+    public void setSha224(String sha224) {
+        this.sha224 = sha224;
     }
 
     @JsonProperty
