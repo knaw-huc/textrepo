@@ -15,5 +15,5 @@ docker-compose -p tr up
 Test:
 ```
 curl -X POST 'localhost:8080/files' -F file=@{file}
-curl -X GET 'localhost:8080/files/{sha1}'
+curl -X GET 'localhost:8080/files/{sha224}'
 ```
