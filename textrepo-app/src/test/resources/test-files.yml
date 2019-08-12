@@ -1,0 +1,14 @@
+database:
+  driverClass: org.postgresql.Driver
+  user: textrepo
+  password: textrepo
+  url: jdbc:postgresql://localhost:59490/textrepo
+  properties:
+    charSet: UTF-8
+  maxWaitForConnection: 1s
+  validationQueryTimeout: 3s
+  minSize: 8
+  maxSize: 32
+  checkConnectionWhileIdle: false
+  evictionInterval: 10s
+  minIdleTime: 1 minute

@@ -26,11 +26,13 @@
     <mainClass>nl.knaw.huc.TextRepositoryApplication</mainClass>
     <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
 
-    <jaxb.api.version>2.4.0-b180725.0427</jaxb.api.version>
+    <jaxb.api.version>${json-path.version}-b180725.0427</jaxb.api.version>
     <jaxb.runtime.version>2.4.0-b180725.0644</jaxb.runtime.version>
 
     <postgresql.version>42.2.6</postgresql.version>
     <jdbi3-sqlobject.version>3.9.1</jdbi3-sqlobject.version>
+    <mockito-core.version>3.0.0</mockito-core.version>
+    <json-path.version>2.4.0</json-path.version>
   </properties>
 
   <dependencyManagement>
@@ -51,28 +53,53 @@
       <artifactId>dropwizard-core</artifactId>
     </dependency>
 
+    <!-- Database: -->
     <dependency>
       <groupId>io.dropwizard</groupId>
       <artifactId>dropwizard-jdbi3</artifactId>
       <version>${dropwizard.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>${postgresql.version}</version>
+    </dependency>
 
+    <!-- Client: -->
     <dependency>
       <groupId>io.dropwizard</groupId>
       <artifactId>dropwizard-client</artifactId>
       <version>${dropwizard.version}</version>
     </dependency>
-
     <dependency>
       <groupId>io.dropwizard</groupId>
       <artifactId>dropwizard-forms</artifactId>
       <version>${dropwizard.version}</version>
     </dependency>
 
+    <!-- Testing: -->
     <dependency>
-      <groupId>org.postgresql</groupId>
-      <artifactId>postgresql</artifactId>
-      <version>${postgresql.version}</version>
+      <groupId>io.dropwizard</groupId>
+      <artifactId>dropwizard-testing</artifactId>
+      <version>${dropwizard.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>${mockito-core.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.jayway.jsonpath</groupId>
+      <artifactId>json-path</artifactId>
+      <version>${json-path.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>2.6</version>
+      <scope>test</scope>
     </dependency>
 
     <!-- Add missing Java 11 modules: -->
@@ -167,7 +194,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.0.0-M1</version>
+        <version>${mockito-core.version}-M1</version>
         <executions>
           <execution>
             <id>attach-javadocs</id>
