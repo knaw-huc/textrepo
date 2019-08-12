@@ -5,8 +5,8 @@ import io.dropwizard.forms.MultiPartBundle;
 import io.dropwizard.jdbi3.JdbiFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import nl.knaw.huc.db.FileDAO;
 import nl.knaw.huc.resources.FilesResource;
+import nl.knaw.huc.resources.TestResource;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,9 +44,11 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     );
     jdbi.installPlugin(new SqlObjectPlugin());
 
-    var resource = new FilesResource(jdbi);
+    var filesResource = new FilesResource(jdbi);
+    var testResource = new TestResource(jdbi);
 
-    environment.jersey().register(resource);
+    environment.jersey().register(filesResource);
+    environment.jersey().register(testResource);
   }
 
 }

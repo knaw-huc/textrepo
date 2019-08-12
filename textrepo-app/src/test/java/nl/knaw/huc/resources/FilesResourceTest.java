@@ -10,14 +10,10 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.jdbi.v3.core.Jdbi;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.Mock;
 
 import javax.ws.rs.client.Entity;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 

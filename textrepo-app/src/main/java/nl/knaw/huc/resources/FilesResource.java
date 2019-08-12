@@ -27,8 +27,8 @@ import static org.apache.commons.codec.digest.MessageDigestAlgorithms.SHA_224;
 public class FilesResource {
 
   private Jdbi jdbi;
+  private FileDAO fileDAO;
 
-  @Inject
   public FilesResource(Jdbi jdbi) {
     this.jdbi = jdbi;
   }
@@ -70,7 +70,14 @@ public class FilesResource {
   }
 
   private FileDAO getFileDAO() {
-    return jdbi.onDemand(FileDAO.class);
+    if (fileDAO == null) {
+      var found = jdbi.onDemand(FileDAO.class);
+      if(found == null) {
+        throw new RuntimeException("No FileDAO handle could be opened by jdbi");
+      }
+      fileDAO = found;
+    }
+    return fileDAO;
   }
 
 }

@@ -1,7 +1,6 @@
 -- FILES
 create table files (
   sha224 char(56) not null constraint files_pkey primary key,
-  name text,
   content bytea
 );
 
