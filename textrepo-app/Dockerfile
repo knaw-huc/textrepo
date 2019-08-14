@@ -7,5 +7,6 @@ FROM openjdk:11-jre-slim-stretch
 WORKDIR /textrepo-app
 COPY --from=builder /build/target/textrepo-1.0-SNAPSHOT.jar /textrepo-app/textrepo.jar
 COPY ./files.yml /textrepo-app/
-# TODO: check postgres has started, remove sleep
-CMD sleep 10 && java -jar /textrepo-app/textrepo.jar server files.yml
+COPY ./scripts/wait-for-it.sh /utils/
+
+CMD java -jar /textrepo-app/textrepo.jar server files.yml
