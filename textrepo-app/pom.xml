@@ -135,17 +135,12 @@
               <encoding>${project.build.sourceEncoding}</encoding>
               <consoleOutput>true</consoleOutput>
               <failsOnError>true</failsOnError>
-              <!-- Excludes when package name contains 'generated': -->
-              <excludes>**/generated/**/*</excludes>
             </configuration>
             <goals>
               <goal>check</goal>
             </goals>
           </execution>
         </executions>
-        <configuration>
-          <excludes>**/generated-sources/**/*</excludes>
-        </configuration>
       </plugin>
 
       <plugin>
