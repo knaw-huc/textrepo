@@ -9,7 +9,7 @@ public class TextRepoFile {
     private String sha224;
     private byte[] content;
 
-    @ConstructorProperties({"sha224", "name", "content"})
+    @ConstructorProperties({"sha224", "content"})
     public TextRepoFile(
       String sha224,
       byte[] content
