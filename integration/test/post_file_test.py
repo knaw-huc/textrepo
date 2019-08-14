@@ -17,8 +17,8 @@ class PostFileTest(unittest.TestCase):
             files=multipart_form_data
         )
 
-        expectedStatus = 200
+        expectedStatus = 201
         self.assertEqual(response.status_code, expectedStatus)
 
-        expectedText = '{"sha":"55d4c44f5bc05762d8807f75f3f24b4095afa583ef70ac97eaf7afc6"}'
+        expectedText = '{"sha224":"55d4c44f5bc05762d8807f75f3f24b4095afa583ef70ac97eaf7afc6"}'
         self.assertEqual(response.text, expectedText)

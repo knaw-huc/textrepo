@@ -1,4 +1,4 @@
--- FILES
+-- A file is the contents of a document, identified by its SHA-224.
 create table files (
   sha224 char(56) not null constraint files_pkey primary key,
   content bytea
@@ -7,7 +7,7 @@ create table files (
 -- DOCUMENTS
 -- implicit; create view to support, e.g., 'select * from documents'
 
--- VERSIONS
+-- A version is the contents of a document at a specific time.
 create table versions (
   document_uuid uuid not null,
   date timestamp with time zone not null,
@@ -16,7 +16,8 @@ create table versions (
   foreign key (file_sha) references files (sha224)
 );
 
--- METADATA
+-- Document metadata items. Each item is a key-value pair linked to a
+-- document.
 create table metadata (
   document_uuid uuid not null,
   key varchar not null,
