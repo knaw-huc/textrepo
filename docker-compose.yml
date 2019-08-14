@@ -29,5 +29,16 @@ services:
       "--",
       "java", "-jar", "/textrepo-app/textrepo.jar", "server", "files.yml"]
 
+  integration:
+    command: ["/utils/wait-for-it.sh", "textrepo-app:8080",
+      "--timeout=0",
+      "--",
+      "./run-tests.sh"]
+    build: ./integration
+    networks:
+    - textrepo_network
+    volumes:
+    - ./integration/test:/integration
+
 networks:
   textrepo_network:
