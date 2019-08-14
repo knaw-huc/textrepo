@@ -33,7 +33,7 @@ services:
     command: ["/utils/wait-for-it.sh", "textrepo-app:8080",
       "--timeout=0",
       "--",
-      "./run-tests.sh"]
+      "/utils/run-tests.sh"]
     build: ./integration
     networks:
     - textrepo_network

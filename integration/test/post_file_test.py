@@ -21,11 +21,11 @@ class FileResourceTest(unittest.TestCase):
             files=multipart_form_data
         )
 
-        expectedStatus = 201
-        self.assertEqual(response.status_code, expectedStatus)
+        expected_status = 201
+        self.assertEqual(response.status_code, expected_status)
 
-        expectedText = '{"sha224":"55d4c44f5bc05762d8807f75f3f24b4095afa583ef70ac97eaf7afc6"}'
-        self.assertEqual(response.text, expectedText)
+        expected_text = '{"sha224":"55d4c44f5bc05762d8807f75f3f24b4095afa583ef70ac97eaf7afc6"}'
+        self.assertEqual(response.text, expected_text)
 
     def __test_get_file(self):
         sha = '55d4c44f5bc05762d8807f75f3f24b4095afa583ef70ac97eaf7afc6'
