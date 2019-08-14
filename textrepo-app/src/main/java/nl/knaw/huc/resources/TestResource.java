@@ -13,7 +13,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static java.time.LocalDateTime.now;
@@ -24,9 +23,6 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 public class TestResource {
 
   private Jdbi jdbi;
-  private MetadataDAO metadataDAO;
-  private VersionDAO versionDAO;
-  private FileDAO fileDAO;
 
   public TestResource(Jdbi jdbi) {
     this.jdbi = jdbi;
@@ -45,73 +41,40 @@ public class TestResource {
       sha,
       "hello test".getBytes()
     );
-    getFileDAO().insert(
-      file.getSha224(),
-      file.getContent()
-    );
+    getFileDAO().insert(file);
 
     var metadata = new MetadataEntry(
       documentUuid,
       metadataKey,
       "testvalue"
     );
-    getMetadataDAO().insert(
-      metadata.getDocumentUuid(),
-      metadata.getKey(),
-      metadata.getValue()
-    );
+    getMetadataDAO().insert(metadata);
 
     var version = new Version(
       documentUuid,
       versionDate,
       sha
     );
-    getVersionDAO().insert(
-      version.getDocumentUuid(),
-      version.getDate(),
-      version.getFileSha()
-    );
+    getVersionDAO().insert(version);
 
     return Response
       .ok(new Object() {
-        public MetadataEntry newMetadata = metadataDAO.findByDocumentUuidAndKey(documentUuid, metadataKey);
-        public Version newVersion = versionDAO.findByDocumentUuidAndDate(documentUuid, versionDate);
+        public MetadataEntry newMetadata = getMetadataDAO().findByDocumentUuidAndKey(documentUuid, metadataKey);
+        public Version newVersion = getVersionDAO().findByDocumentUuidAndDate(documentUuid, versionDate);
       })
-      .header("Content-Disposition", "attachment;")
       .build();
   }
 
   private FileDAO getFileDAO() {
-    if (fileDAO == null) {
-      var found = jdbi.onDemand(FileDAO.class);
-      if (found == null) {
-        throw new RuntimeException("No FileDAO handle could be opened by jdbi");
-      }
-      fileDAO = found;
-    }
-    return fileDAO;
+    return jdbi.onDemand(FileDAO.class);
   }
 
   private MetadataDAO getMetadataDAO() {
-    if (metadataDAO == null) {
-      var found = jdbi.onDemand(MetadataDAO.class);
-      if (found == null) {
-        throw new RuntimeException("No MetadataDAO handle could be opened by jdbi");
-      }
-      metadataDAO = found;
-    }
-    return metadataDAO;
+    return jdbi.onDemand(MetadataDAO.class);
   }
 
   private VersionDAO getVersionDAO() {
-    if (versionDAO == null) {
-      var found = jdbi.onDemand(VersionDAO.class);
-      if (found == null) {
-        throw new RuntimeException("No VersionDAO handle could be opened by jdbi");
-      }
-      versionDAO = found;
-    }
-    return versionDAO;
+    return jdbi.onDemand(VersionDAO.class);
   }
 
 }

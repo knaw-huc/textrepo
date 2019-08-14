@@ -2,6 +2,7 @@ package nl.knaw.huc.resources;
 
 import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import nl.knaw.huc.api.TextRepoFile;
 import nl.knaw.huc.db.FileDAO;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
@@ -9,7 +10,6 @@ import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.JdbiException;
-import org.jdbi.v3.core.statement.UnableToExecuteStatementException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +59,7 @@ public class FilesResource {
             }
 
             try {
-                getFileDAO().insert(key, content);
+                getFileDAO().insert(new TextRepoFile(key, content));
             } catch (JdbiException e) {
                 throw new WebApplicationException(e);
             } catch (Exception e) {
@@ -96,16 +96,8 @@ public class FilesResource {
                 .build();
     }
 
-    // TODO: This should not be the responsibility of a Resource -> migrate to Service layer
     private FileDAO getFileDAO() {
-        if (fileDAO == null) {
-            var found = jdbi.onDemand(FileDAO.class);
-            if (found == null) {
-                throw new RuntimeException("No FileDAO handle could be opened by jdbi");
-            }
-            fileDAO = found;
-        }
-        return fileDAO;
+        return jdbi.onDemand(FileDAO.class);
     }
 
 }
