@@ -49,7 +49,6 @@ public class FilesResource {
 
       return Response
         .ok(new Object(){public String sha = key;})
-        .header("Content-Disposition", "attachment;")
         .build();
     } catch (IOException e) {
       throw new RuntimeException("Could not read input stream of posted file", e);
@@ -71,14 +70,7 @@ public class FilesResource {
   }
 
   private FileDAO getFileDAO() {
-    if (fileDAO == null) {
-      var found = jdbi.onDemand(FileDAO.class);
-      if(found == null) {
-        throw new RuntimeException("No FileDAO handle could be opened by jdbi");
-      }
-      fileDAO = found;
-    }
-    return fileDAO;
+    return jdbi.onDemand(FileDAO.class);
   }
 
 }
