@@ -9,7 +9,7 @@ import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
 import java.util.Optional;
 
-public interface FileDAO {
+public interface FileDao {
 
   @SqlUpdate("insert into files (sha224, content) values (:sha224, :content) on conflict do nothing")
   void insert(@BindBean TextRepoFile file);

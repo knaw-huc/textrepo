@@ -10,7 +10,7 @@ import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
 import java.util.UUID;
 
-public interface MetadataDAO {
+public interface MetadataDao {
 
   @SqlUpdate("insert into metadata (document_uuid, key, value) values (:documentUuid, :key, :value)")
   void insert(@BindBean MetadataEntry metadataEntry);

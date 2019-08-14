@@ -1,6 +1,5 @@
 package nl.knaw.huc.db;
 
-import nl.knaw.huc.api.TextRepoFile;
 import nl.knaw.huc.api.Version;
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
@@ -11,7 +10,7 @@ import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public interface VersionDAO {
+public interface VersionDao {
 
   @SqlUpdate("insert into versions (document_uuid, date, file_sha) values (:documentUuid, :date, :fileSha)")
   void insert(@BindBean Version version);

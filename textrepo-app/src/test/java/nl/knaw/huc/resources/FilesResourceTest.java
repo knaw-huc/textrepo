@@ -3,7 +3,7 @@ package nl.knaw.huc.resources;
 import com.jayway.jsonpath.JsonPath;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import nl.knaw.huc.api.TextRepoFile;
-import nl.knaw.huc.db.FileDAO;
+import nl.knaw.huc.db.FileDao;
 import org.apache.commons.io.IOUtils;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -31,7 +31,7 @@ import static org.mockito.Mockito.when;
 public class FilesResourceTest {
 
     private static final Jdbi jdbi = mock(Jdbi.class);
-    private static final FileDAO fileDao = mock(FileDAO.class);
+    private static final FileDao fileDao = mock(FileDao.class);
 
     private final static String sha224 = "55d4c44f5bc05762d8807f75f3f24b4095afa583ef70ac97eaf7afc6";
     private final static String content = "hello test";

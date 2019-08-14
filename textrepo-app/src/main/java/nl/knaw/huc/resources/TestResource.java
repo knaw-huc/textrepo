@@ -4,9 +4,9 @@ import com.codahale.metrics.annotation.Timed;
 import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.api.TextRepoFile;
 import nl.knaw.huc.api.Version;
-import nl.knaw.huc.db.FileDAO;
-import nl.knaw.huc.db.MetadataDAO;
-import nl.knaw.huc.db.VersionDAO;
+import nl.knaw.huc.db.FileDao;
+import nl.knaw.huc.db.MetadataDao;
+import nl.knaw.huc.db.VersionDao;
 import org.jdbi.v3.core.Jdbi;
 
 import javax.ws.rs.GET;
@@ -41,40 +41,40 @@ public class TestResource {
       sha,
       "hello test".getBytes()
     );
-    getFileDAO().insert(file);
+    getFileDao().insert(file);
 
     var metadata = new MetadataEntry(
       documentUuid,
       metadataKey,
       "testvalue"
     );
-    getMetadataDAO().insert(metadata);
+    getMetadataDao().insert(metadata);
 
     var version = new Version(
       documentUuid,
       versionDate,
       sha
     );
-    getVersionDAO().insert(version);
+    getVersionDao().insert(version);
 
     return Response
       .ok(new Object() {
-        public MetadataEntry newMetadata = getMetadataDAO().findByDocumentUuidAndKey(documentUuid, metadataKey);
-        public Version newVersion = getVersionDAO().findByDocumentUuidAndDate(documentUuid, versionDate);
+        public MetadataEntry newMetadata = getMetadataDao().findByDocumentUuidAndKey(documentUuid, metadataKey);
+        public Version newVersion = getVersionDao().findByDocumentUuidAndDate(documentUuid, versionDate);
       })
       .build();
   }
 
-  private FileDAO getFileDAO() {
-    return jdbi.onDemand(FileDAO.class);
+  private FileDao getFileDao() {
+    return jdbi.onDemand(FileDao.class);
   }
 
-  private MetadataDAO getMetadataDAO() {
-    return jdbi.onDemand(MetadataDAO.class);
+  private MetadataDao getMetadataDao() {
+    return jdbi.onDemand(MetadataDao.class);
   }
 
-  private VersionDAO getVersionDAO() {
-    return jdbi.onDemand(VersionDAO.class);
+  private VersionDao getVersionDao() {
+    return jdbi.onDemand(VersionDao.class);
   }
 
 }

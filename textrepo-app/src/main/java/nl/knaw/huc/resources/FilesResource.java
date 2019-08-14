@@ -3,7 +3,7 @@ package nl.knaw.huc.resources;
 import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import nl.knaw.huc.api.TextRepoFile;
-import nl.knaw.huc.db.FileDAO;
+import nl.knaw.huc.db.FileDao;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.jdbi.v3.core.Jdbi;
@@ -30,74 +30,74 @@ import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
 
 @Path("/files")
 public class FilesResource {
-    private static final UriBuilder URI_BUILDER = UriBuilder.fromResource(FilesResource.class);
+  private static final UriBuilder URI_BUILDER = UriBuilder.fromResource(FilesResource.class);
 
-    private final Logger LOGGER = LoggerFactory.getLogger(FilesResource.class);
+  private final Logger logger = LoggerFactory.getLogger(FilesResource.class);
 
-    private Jdbi jdbi;
+  private Jdbi jdbi;
 
-    public FilesResource(Jdbi jdbi) {
-        this.jdbi = jdbi;
+  public FilesResource(Jdbi jdbi) {
+    this.jdbi = jdbi;
+  }
+
+  @POST
+  @Timed
+  @Consumes(MULTIPART_FORM_DATA)
+  @Produces(APPLICATION_JSON)
+  public Response postFile(@FormDataParam("file") InputStream uploadedInputStream,
+                           @FormDataParam("file") FormDataContentDisposition fileDetail) {
+
+    final TextRepoFile file;
+    try {
+      file = TextRepoFile.fromContent(uploadedInputStream.readAllBytes());
+    } catch (IOException e) {
+      logger.warn("Could not read posted file, size={}", fileDetail.getSize());
+      throw new BadRequestException("Could not read input stream of posted file", e);
     }
 
-    @POST
-    @Timed
-    @Consumes(MULTIPART_FORM_DATA)
-    @Produces(APPLICATION_JSON)
-    public Response postFile(@FormDataParam("file") InputStream uploadedInputStream,
-                             @FormDataParam("file") FormDataContentDisposition fileDetail) {
-
-        final TextRepoFile file;
-        try {
-            file = TextRepoFile.fromContent(uploadedInputStream.readAllBytes());
-        } catch (IOException e) {
-            LOGGER.warn("Could not read posted file, size={}", fileDetail.getSize());
-            throw new BadRequestException("Could not read input stream of posted file", e);
-        }
-
-        try {
-            getFileDAO().insert(file);
-        } catch (Exception e) {
-            LOGGER.warn("Failed to insert file: {}", e.getMessage());
-            throw new WebApplicationException(e);
-        }
-
-        var hash = file.getSha224();
-        return Response
-                .created(URI_BUILDER.path("{sha224}").build(hash))
-                .entity(new AddFileResult(hash))
-                .build();
+    try {
+      getFileDao().insert(file);
+    } catch (Exception e) {
+      logger.warn("Failed to insert file: {}", e.getMessage());
+      throw new WebApplicationException(e);
     }
 
-    private static class AddFileResult {
-        @JsonProperty
-        private final String sha224;
+    var hash = file.getSha224();
+    return Response
+      .created(URI_BUILDER.path("{sha224}").build(hash))
+      .entity(new AddFileResult(hash))
+      .build();
+  }
 
-        private AddFileResult(String sha224) {
-            this.sha224 = sha224;
-        }
+  private static class AddFileResult {
+    @JsonProperty
+    private final String sha224;
+
+    private AddFileResult(String sha224) {
+      this.sha224 = sha224;
+    }
+  }
+
+  @GET
+  @Path("/{sha224}")
+  @Timed
+  @Produces(APPLICATION_OCTET_STREAM)
+  public Response getFileBySha224(@PathParam("sha224") String sha224) {
+    if (sha224.length() != 56) {
+      logger.warn("bad length in sha224 ({}): {}", sha224.length(), sha224);
+      throw new BadRequestException("not a sha224: " + sha224);
     }
 
-    @GET
-    @Path("/{sha224}")
-    @Timed
-    @Produces(APPLICATION_OCTET_STREAM)
-    public Response getFileBySha224(@PathParam("sha224") String sha224) {
-        if (sha224.length() != 56) {
-            LOGGER.warn("bad length in sha224 ({}): {}", sha224.length(), sha224);
-            throw new BadRequestException("not a sha224: " + sha224);
-        }
+    var file = getFileDao().findBySha224(sha224).orElseThrow(() -> new NotFoundException("File not found"));
 
-        var file = getFileDAO().findBySha224(sha224).orElseThrow(() -> new NotFoundException("File not found"));
+    return Response
+      .ok(file.getContent(), APPLICATION_OCTET_STREAM)
+      .header("Content-Disposition", "attachment;")
+      .build();
+  }
 
-        return Response
-                .ok(file.getContent(), APPLICATION_OCTET_STREAM)
-                .header("Content-Disposition", "attachment;")
-                .build();
-    }
-
-    private FileDAO getFileDAO() {
-        return jdbi.onDemand(FileDAO.class);
-    }
+  private FileDao getFileDao() {
+    return jdbi.onDemand(FileDao.class);
+  }
 
 }
