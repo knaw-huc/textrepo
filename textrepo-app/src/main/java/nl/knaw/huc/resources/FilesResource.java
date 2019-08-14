@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -82,9 +83,15 @@ public class FilesResource {
     @Timed
     @Produces(APPLICATION_OCTET_STREAM)
     public Response getFileBySha224(@PathParam("sha224") String sha224) {
-        var textRepoFile = getFileDAO().findBySha224(sha224);
+        if (sha224.length() != 56) {
+            LOGGER.warn("bad length in sha224 ({}): {}", sha224.length(), sha224);
+            throw new BadRequestException("not a sha224: " + sha224);
+        }
+
+        var file = getFileDAO().findBySha224(sha224).orElseThrow(() -> new NotFoundException("File not found"));
+
         return Response
-                .ok(textRepoFile.getContent(), APPLICATION_OCTET_STREAM)
+                .ok(file.getContent(), APPLICATION_OCTET_STREAM)
                 .header("Content-Disposition", "attachment;")
                 .build();
     }

@@ -7,6 +7,8 @@ import org.jdbi.v3.sqlobject.customizer.BindBean;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
+import java.util.Optional;
+
 public interface FileDAO {
 
   @SqlUpdate("insert into files (sha224, content) values (:sha224, :content) on conflict do nothing")
@@ -14,6 +16,6 @@ public interface FileDAO {
 
   @SqlQuery("select sha224, content from files where sha224 = ?")
   @RegisterConstructorMapper(value = TextRepoFile.class)
-  TextRepoFile findBySha224(@Bind String sha224);
+  Optional<TextRepoFile> findBySha224(@Bind String sha224);
 
 }

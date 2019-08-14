@@ -14,10 +14,10 @@ import org.junit.ClassRule;
 import org.junit.Test;
 
 import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Optional;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -50,7 +50,6 @@ public class FilesResourceTest {
     @Before
     public void setup() {
         when(jdbi.onDemand(any())).thenReturn(fileDao);
-        when(fileDao.findBySha224(eq(sha224))).thenReturn(textRepoFile);
     }
 
     @After
@@ -75,25 +74,40 @@ public class FilesResourceTest {
 
         assertThat(response.getStatus()).isEqualTo(201);
         assertThat(response.getHeaderString("Location")).endsWith(sha224);
-        String actualSha = JsonPath.parse(response.readEntity(String.class)).read("$.sha224");
+        String actualSha = responsePart(response, "$.sha224");
         assertThat(actualSha).isEqualTo(sha224);
     }
 
     @Test
     public void testGetFile() throws IOException {
-        when(jdbi.onDemand(any())).thenReturn(fileDao);
-        when(fileDao.findBySha224(eq(sha224))).thenReturn(textRepoFile);
+        when(fileDao.findBySha224(eq(sha224))).thenReturn(Optional.of(textRepoFile));
 
-        var response = resource
-                .client()
-                .target("/files/" + sha224)
-                .request()
-                .get();
-
+        var response = resource.client().target("/files/" + sha224).request().get();
         var inputStream = response.readEntity(InputStream.class);
         var actualContent = IOUtils.toString(inputStream, UTF_8);
-
         assertThat(actualContent).isEqualTo(content);
+    }
+
+    @Test
+    public void testGetIllegalSha224() {
+        var response = resource.client().target("/files/55d4c44f5bc05762d8807f75f3").request().get();
+        assertThat(response.getStatus()).isEqualTo(400);
+        String actualErrorMessage = responsePart(response, "$.message");
+        assertThat(actualErrorMessage).contains("not a sha224");
+        assertThat(actualErrorMessage).contains("55d4c44f5bc05762d8807f75f3");
+    }
+
+    @Test
+    public void testGetNotFound() {
+        var notFound = sha224.replace('5', '6');
+        var response = resource.client().target("/files/" + notFound).request().get();
+        assertThat(response.getStatus()).isEqualTo(404);
+        String actualErrorMessage = responsePart(response, "$.message");
+        assertThat(actualErrorMessage).contains("not found");
+    }
+
+    private static String responsePart(Response response, String s) {
+        return JsonPath.parse(response.readEntity(String.class)).read(s);
     }
 
 }
