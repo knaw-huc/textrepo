@@ -99,8 +99,7 @@ public class FilesResourceTest {
 
     @Test
     public void testGetNotFound() {
-        var notFound = sha224.replace('5', '6');
-        var response = resource.client().target("/files/" + notFound).request().get();
+        var response = resource.client().target("/files/" + sha224).request().get();
         assertThat(response.getStatus()).isEqualTo(404);
         String actualErrorMessage = responsePart(response, "$.message");
         assertThat(actualErrorMessage).contains("not found");
