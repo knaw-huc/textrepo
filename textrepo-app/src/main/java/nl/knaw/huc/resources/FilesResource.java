@@ -30,8 +30,6 @@ import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
 
 @Path("/files")
 public class FilesResource {
-    private static final UriBuilder URI_BUILDER = UriBuilder.fromResource(FilesResource.class);
-
     private final Logger LOGGER = LoggerFactory.getLogger(FilesResource.class);
 
     private Jdbi jdbi;
@@ -63,8 +61,9 @@ public class FilesResource {
         }
 
         var hash = file.getSha224();
+        var location = UriBuilder.fromResource(FilesResource.class).path("{sha224}").build(hash);
         return Response
-                .created(URI_BUILDER.path("{sha224}").build(hash))
+                .created(location)
                 .entity(new AddFileResult(hash))
                 .build();
     }
