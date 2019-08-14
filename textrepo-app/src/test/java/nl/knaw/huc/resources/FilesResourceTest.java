@@ -75,11 +75,8 @@ public class FilesResourceTest {
 
         assertThat(response.getStatus()).isEqualTo(201);
         assertThat(response.getHeaderString("Location")).endsWith(sha224);
-
-        // TODO: try again with same object, verify 200. Needs updated mock, or move to proper integration test
-//        assertThat(response.getStatus()).isEqualTo(200);
-//        String actualSha = JsonPath.parse(response.readEntity(String.class)).read("$.sha");
-//        assertThat(actualSha).isEqualTo(sha224);
+        String actualSha = JsonPath.parse(response.readEntity(String.class)).read("$.sha224");
+        assertThat(actualSha).isEqualTo(sha224);
     }
 
     @Test

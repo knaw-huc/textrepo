@@ -9,11 +9,8 @@ import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
 public interface FileDAO {
 
-  @SqlUpdate("insert into files (sha224, content) values (:sha224, :content)")
+  @SqlUpdate("insert into files (sha224, content) values (:sha224, :content) on conflict do nothing")
   void insert(@BindBean TextRepoFile file);
-
-  @SqlQuery("select sha224 from files where sha224 = ?")
-  String existsSha224(@Bind String sha224);
 
   @SqlQuery("select sha224, content from files where sha224 = ?")
   @RegisterConstructorMapper(value = TextRepoFile.class)

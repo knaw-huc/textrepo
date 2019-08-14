@@ -4,15 +4,13 @@ import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import nl.knaw.huc.api.TextRepoFile;
 import nl.knaw.huc.db.FileDAO;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.jdbi.v3.core.Jdbi;
-import org.jdbi.v3.core.JdbiException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -31,12 +29,11 @@ import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
 
 @Path("/files")
 public class FilesResource {
-    private static final DigestUtils SHA_224 = new DigestUtils(MessageDigestAlgorithms.SHA_224);
+    private static final UriBuilder URI_BUILDER = UriBuilder.fromResource(FilesResource.class);
 
     private final Logger LOGGER = LoggerFactory.getLogger(FilesResource.class);
 
     private Jdbi jdbi;
-    private FileDAO fileDAO;
 
     public FilesResource(Jdbi jdbi) {
         this.jdbi = jdbi;
@@ -48,39 +45,35 @@ public class FilesResource {
     @Produces(APPLICATION_JSON)
     public Response postFile(@FormDataParam("file") InputStream uploadedInputStream,
                              @FormDataParam("file") FormDataContentDisposition fileDetail) {
+
+        final TextRepoFile file;
         try {
-            var content = uploadedInputStream.readAllBytes();
-            var key = SHA_224.digestAsHex(content);
-
-            final var exists = getFileDAO().existsSha224(key);
-            LOGGER.debug("exists: " + exists);
-            if (exists != null) {
-                return Response.ok(new AddFileResult(key)).build();
-            }
-
-            try {
-                getFileDAO().insert(new TextRepoFile(key, content));
-            } catch (JdbiException e) {
-                throw new WebApplicationException(e);
-            } catch (Exception e) {
-                LOGGER.warn("andere ellende: " + e.getMessage());
-            }
-
-            return Response
-                    .created(UriBuilder.fromResource(FilesResource.class).path("{sha224}").build(key))
-//                    .entity(new AddFileResult(key))
-                    .build();
+            file = TextRepoFile.fromContent(uploadedInputStream.readAllBytes());
         } catch (IOException e) {
-            throw new RuntimeException("Could not read input stream of posted file", e);
+            LOGGER.warn("Could not read posted file, size={}", fileDetail.getSize());
+            throw new BadRequestException("Could not read input stream of posted file", e);
         }
+
+        try {
+            getFileDAO().insert(file);
+        } catch (Exception e) {
+            LOGGER.warn("Failed to insert file: {}", e.getMessage());
+            throw new WebApplicationException(e);
+        }
+
+        var hash = file.getSha224();
+        return Response
+                .created(URI_BUILDER.path("{sha224}").build(hash))
+                .entity(new AddFileResult(hash))
+                .build();
     }
 
     private static class AddFileResult {
         @JsonProperty
-        private final String sha;
+        private final String sha224;
 
-        private AddFileResult(String sha) {
-            this.sha = sha;
+        private AddFileResult(String sha224) {
+            this.sha224 = sha224;
         }
     }
 
