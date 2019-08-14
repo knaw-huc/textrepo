@@ -45,32 +45,21 @@ public class TestResource {
       sha,
       "hello test".getBytes()
     );
-    getFileDAO().insert(
-      file.getSha224(),
-      file.getContent()
-    );
+    getFileDAO().insert(file);
 
     var metadata = new MetadataEntry(
       documentUuid,
       metadataKey,
       "testvalue"
     );
-    getMetadataDAO().insert(
-      metadata.getDocumentUuid(),
-      metadata.getKey(),
-      metadata.getValue()
-    );
+    getMetadataDAO().insert(metadata);
 
     var version = new Version(
       documentUuid,
       versionDate,
       sha
     );
-    getVersionDAO().insert(
-      version.getDocumentUuid(),
-      version.getDate(),
-      version.getFileSha()
-    );
+    getVersionDAO().insert(version);
 
     return Response
       .ok(new Object() {

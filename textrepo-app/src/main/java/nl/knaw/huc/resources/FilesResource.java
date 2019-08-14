@@ -1,13 +1,13 @@
 package nl.knaw.huc.resources;
 
 import com.codahale.metrics.annotation.Timed;
+import nl.knaw.huc.api.TextRepoFile;
 import nl.knaw.huc.db.FileDAO;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.jdbi.v3.core.Jdbi;
 
-import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -45,7 +45,8 @@ public class FilesResource {
       var content = uploadedInputStream.readAllBytes();
       var key = new DigestUtils(SHA_224).digestAsHex(content);
 
-      getFileDAO().insert(key, content);
+      getFileDAO().insert(new TextRepoFile(key, content));
+
       return Response
         .ok(new Object(){public String sha = key;})
         .header("Content-Disposition", "attachment;")
