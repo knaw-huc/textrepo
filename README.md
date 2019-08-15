@@ -1,6 +1,6 @@
 # Text Repository
 
-Repository to store texts, including their metadata and versions
+Repository to store texts, including their metadata and versions.
 
 Build with:
 - java 11
@@ -9,14 +9,14 @@ Build with:
 
 ## Development
 
-First run:
+On first run:
 ```
 cd textrepo-app && docker build -t textrepo-builder -f Dockerfile.builder .
 ```
 
 Build all and start:
 ```
-docker-compose -p tr up --build -d
+docker-compose up --build
 ```
 
 Test:

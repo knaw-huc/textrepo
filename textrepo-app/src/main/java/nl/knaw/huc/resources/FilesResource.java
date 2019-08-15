@@ -42,8 +42,14 @@ public class FilesResource {
   @Timed
   @Consumes(MULTIPART_FORM_DATA)
   @Produces(APPLICATION_JSON)
-  public Response postFile(@FormDataParam("file") InputStream uploadedInputStream,
-                           @FormDataParam("file") FormDataContentDisposition fileDetail) {
+  public Response postFile(
+    @FormDataParam("file") InputStream uploadedInputStream,
+    @FormDataParam("file") FormDataContentDisposition fileDetail
+  ) {
+
+    if (uploadedInputStream == null) {
+      throw new BadRequestException("File is missing");
+    }
 
     final TextRepoFile file;
     try {

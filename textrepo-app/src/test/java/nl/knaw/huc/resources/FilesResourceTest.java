@@ -74,8 +74,30 @@ public class FilesResourceTest {
 
         assertThat(response.getStatus()).isEqualTo(201);
         assertThat(response.getHeaderString("Location")).endsWith(sha224);
-        String actualSha = responsePart(response, "$.sha224");
+        var actualSha = responsePart(response, "$.sha224");
         assertThat(actualSha).isEqualTo(sha224);
+    }
+
+    @Test
+    public void testPostFile_returnsStatus400BadRequest_whenFileIsMissing () {
+        // No .field("file", content):
+        var multiPart = new FormDataMultiPart()
+          .field("filename", "just-a-filename.txt");
+
+        final var request = resource
+          .client()
+          .register(MultiPartFeature.class)
+          .target("/files")
+          .request();
+
+        var entity = Entity.entity(multiPart, multiPart.getMediaType());
+
+        var response = request.post(entity);
+        assertThat(response.getStatus()).isEqualTo(400);
+        var message = JsonPath
+          .parse(response.readEntity(String.class))
+          .read("$.message");
+        assertThat(message).isEqualTo("File is missing");
     }
 
     @Test
