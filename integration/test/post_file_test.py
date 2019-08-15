@@ -29,7 +29,6 @@ class FileResourceTest(unittest.TestCase):
 
     def __test_get_file(self):
         sha = '55d4c44f5bc05762d8807f75f3f24b4095afa583ef70ac97eaf7afc6'
-
         response = requests.get('http://textrepo-app:8080/files/%s' % sha)
 
         expected_status = 200

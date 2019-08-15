@@ -1,15 +1,22 @@
 # Text Repository
+
+Repository to store texts, including their metadata and versions
+
 Build with:
 - java 11
 - dropwizard
 - docker
 
 ## Development
-Run:
+
+First run:
 ```
-(cd textrepo-app && docker build -t textrepo-builder:latest -f Dockerfile.builder .)
-docker-compose build textrepo-app
-docker-compose -p tr up
+cd textrepo-app && docker build -t textrepo-builder -f Dockerfile.builder .
+```
+
+Build all and start:
+```
+docker-compose -p tr up --build -d
 ```
 
 Test:
