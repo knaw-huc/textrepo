@@ -5,7 +5,7 @@ import unittest
 import requests
 
 
-class FileResourceTest(unittest.TestCase):
+class FilesResourceTest(unittest.TestCase):
 
     def test_post_and_get_file(self):
         self.__test_post_file()
