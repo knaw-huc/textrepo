@@ -60,9 +60,7 @@ public class DocumentsResource {
     LocalDateTime now = LocalDateTime.now();
     var version = documentService.replaceDocument(documentId, readContent(uploadedInputStream));
 
-    logger.debug("version: {}, now: {}", version.getDate(), now);
     if (version.getDate().isBefore(now)) {
-      logger.debug("not modified");
       return Response.notModified().build();
     }
 
