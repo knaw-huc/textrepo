@@ -31,105 +31,105 @@ import static org.mockito.Mockito.when;
 
 public class FilesResourceTest {
 
-    private static final Jdbi jdbi = mock(Jdbi.class);
-    private static final FileDao fileDao = mock(FileDao.class);
+  private static final Jdbi jdbi = mock(Jdbi.class);
+  private static final FileDao fileDao = mock(FileDao.class);
 
-    private final static String sha224 = "55d4c44f5bc05762d8807f75f3f24b4095afa583ef70ac97eaf7afc6";
-    private final static String content = "hello test";
-    private final static TextRepoFile textRepoFile = new TextRepoFile(
-            sha224,
-            content.getBytes()
-    );
+  private final static String sha224 = "55d4c44f5bc05762d8807f75f3f24b4095afa583ef70ac97eaf7afc6";
+  private final static String content = "hello test";
+  private final static TextRepoFile textRepoFile = new TextRepoFile(
+          sha224,
+          content.getBytes()
+  );
 
-    @ClassRule
-    public static final ResourceTestRule resource = ResourceTestRule
-            .builder()
-            .addProvider(MultiPartFeature.class)
-            .addResource(new FilesResource(new JdbiFileService(jdbi)))
-            .build();
+  @ClassRule
+  public static final ResourceTestRule resource = ResourceTestRule
+          .builder()
+          .addProvider(MultiPartFeature.class)
+          .addResource(new FilesResource(new JdbiFileService(jdbi)))
+          .build();
 
-    @Before
-    public void setup() {
-        when(jdbi.onDemand(any())).thenReturn(fileDao);
-    }
+  @Before
+  public void setup() {
+    when(jdbi.onDemand(any())).thenReturn(fileDao);
+  }
 
-    @After
-    public void teardown() {
-        reset(jdbi);
-        reset(fileDao);
-    }
+  @After
+  public void teardown() {
+    reset(jdbi);
+    reset(fileDao);
+  }
 
-    @Test
-    public void testPostFile() {
-        var multiPart = new FormDataMultiPart()
-                .field("file", content);
+  @Test
+  public void testPostFile() {
+    var multiPart = new FormDataMultiPart()
+            .field("file", content);
 
-        final var request = resource
-                .client()
-                .register(MultiPartFeature.class)
-                .target("/files")
-                .request();
+    final var request = resource
+            .client()
+            .register(MultiPartFeature.class)
+            .target("/files")
+            .request();
 
-        final var entity = Entity.entity(multiPart, multiPart.getMediaType());
-        var response = request.post(entity);
+    final var entity = Entity.entity(multiPart, multiPart.getMediaType());
+    var response = request.post(entity);
 
-        assertThat(response.getStatus()).isEqualTo(201);
-        assertThat(response.getHeaderString("Location")).endsWith(sha224);
-        var actualSha = responsePart(response, "$.sha224");
-        assertThat(actualSha).isEqualTo(sha224);
-    }
+    assertThat(response.getStatus()).isEqualTo(201);
+    assertThat(response.getHeaderString("Location")).endsWith(sha224);
+    var actualSha = responsePart(response, "$.sha224");
+    assertThat(actualSha).isEqualTo(sha224);
+  }
 
-    @Test
-    public void testPostFile_returnsStatus400BadRequest_whenFileIsMissing() {
-        // No .field("file", content):
-        var multiPart = new FormDataMultiPart()
-                .field("filename", "just-a-filename.txt");
+  @Test
+  public void testPostFile_returnsStatus400BadRequest_whenFileIsMissing() {
+    // No .field("file", content):
+    var multiPart = new FormDataMultiPart()
+            .field("filename", "just-a-filename.txt");
 
-        final var request = resource
-                .client()
-                .register(MultiPartFeature.class)
-                .target("/files")
-                .request();
+    final var request = resource
+            .client()
+            .register(MultiPartFeature.class)
+            .target("/files")
+            .request();
 
-        var entity = Entity.entity(multiPart, multiPart.getMediaType());
+    var entity = Entity.entity(multiPart, multiPart.getMediaType());
 
-        var response = request.post(entity);
-        assertThat(response.getStatus()).isEqualTo(400);
-        var message = JsonPath
-                .parse(response.readEntity(String.class))
-                .read("$.message");
-        assertThat(message).isEqualTo("File is missing");
-    }
+    var response = request.post(entity);
+    assertThat(response.getStatus()).isEqualTo(400);
+    var message = JsonPath
+            .parse(response.readEntity(String.class))
+            .read("$.message");
+    assertThat(message).isEqualTo("File is missing");
+  }
 
-    @Test
-    public void testGetFile() throws IOException {
-        when(fileDao.findBySha224(eq(sha224))).thenReturn(Optional.of(textRepoFile));
+  @Test
+  public void testGetFile() throws IOException {
+    when(fileDao.findBySha224(eq(sha224))).thenReturn(Optional.of(textRepoFile));
 
-        var response = resource.client().target("/files/" + sha224).request().get();
-        var inputStream = response.readEntity(InputStream.class);
-        var actualContent = IOUtils.toString(inputStream, UTF_8);
-        assertThat(actualContent).isEqualTo(content);
-    }
+    var response = resource.client().target("/files/" + sha224).request().get();
+    var inputStream = response.readEntity(InputStream.class);
+    var actualContent = IOUtils.toString(inputStream, UTF_8);
+    assertThat(actualContent).isEqualTo(content);
+  }
 
-    @Test
-    public void testGetIllegalSha224() {
-        var response = resource.client().target("/files/55d4c44f5bc05762d8807f75f3").request().get();
-        assertThat(response.getStatus()).isEqualTo(400);
-        String actualErrorMessage = responsePart(response, "$.message");
-        assertThat(actualErrorMessage).contains("not a sha224");
-        assertThat(actualErrorMessage).contains("55d4c44f5bc05762d8807f75f3");
-    }
+  @Test
+  public void testGetIllegalSha224() {
+    var response = resource.client().target("/files/55d4c44f5bc05762d8807f75f3").request().get();
+    assertThat(response.getStatus()).isEqualTo(400);
+    String actualErrorMessage = responsePart(response, "$.message");
+    assertThat(actualErrorMessage).contains("not a sha224");
+    assertThat(actualErrorMessage).contains("55d4c44f5bc05762d8807f75f3");
+  }
 
-    @Test
-    public void testGetNotFound() {
-        var response = resource.client().target("/files/" + sha224).request().get();
-        assertThat(response.getStatus()).isEqualTo(404);
-        String actualErrorMessage = responsePart(response, "$.message");
-        assertThat(actualErrorMessage).contains("not found");
-    }
+  @Test
+  public void testGetNotFound() {
+    var response = resource.client().target("/files/" + sha224).request().get();
+    assertThat(response.getStatus()).isEqualTo(404);
+    String actualErrorMessage = responsePart(response, "$.message");
+    assertThat(actualErrorMessage).contains("not found");
+  }
 
-    private static String responsePart(Response response, String s) {
-        return JsonPath.parse(response.readEntity(String.class)).read(s);
-    }
+  private static String responsePart(Response response, String s) {
+    return JsonPath.parse(response.readEntity(String.class)).read(s);
+  }
 
 }

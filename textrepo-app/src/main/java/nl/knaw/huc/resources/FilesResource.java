@@ -18,86 +18,75 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
+import static nl.knaw.huc.resources.ResourceUtils.readContent;
 
 @Path("/files")
 public class FilesResource {
-    private final Logger logger = LoggerFactory.getLogger(FilesResource.class);
+  private final Logger logger = LoggerFactory.getLogger(FilesResource.class);
 
-    private final FileService fileService;
+  private final FileService fileService;
 
-    public FilesResource(FileService fileService) {
-        this.fileService = fileService;
+  public FilesResource(FileService fileService) {
+    this.fileService = fileService;
+  }
+
+  @POST
+  @Timed
+  @Consumes(MULTIPART_FORM_DATA)
+  @Produces(APPLICATION_JSON)
+  public Response postFile(@FormDataParam("file") InputStream uploadedInputStream,
+                           @FormDataParam("file") FormDataContentDisposition fileDetail) {
+
+    final var file = TextRepoFile.fromContent(readContent(uploadedInputStream));
+
+    fileService.addFile(file);
+
+    return Response.created(locationOf(file))
+            .entity(new AddFileResult(file))
+            .build();
+  }
+
+  @GET
+  @Path("/{sha224}")
+  @Timed
+  @Produces(APPLICATION_OCTET_STREAM)
+  public Response getFileBySha224(@PathParam("sha224") String sha224) {
+    if (sha224.length() != 56) {
+      logger.warn("bad length in sha224 ({}): {}", sha224.length(), sha224);
+      throw new BadRequestException("not a sha224: " + sha224);
     }
 
-    @POST
-    @Timed
-    @Consumes(MULTIPART_FORM_DATA)
-    @Produces(APPLICATION_JSON)
-    public Response postFile(@FormDataParam("file") InputStream uploadedInputStream,
-                             @FormDataParam("file") FormDataContentDisposition fileDetail) {
+    final var file = fileService.getBySha224(sha224);
 
-        if (uploadedInputStream == null) {
-            throw new BadRequestException("File is missing");
-        }
+    return Response
+            .ok(file.getContent(), APPLICATION_OCTET_STREAM)
+            .header("Content-Disposition", "attachment;")
+            .build();
+  }
 
-        final TextRepoFile file = TextRepoFile.fromContent(readContent(uploadedInputStream));
+  private static URI locationOf(TextRepoFile file) {
+    return UriBuilder.fromResource(FilesResource.class)
+            .path("{sha224}")
+            .build(file.getSha224());
+  }
 
-        fileService.addFile(file);
+  private static class AddFileResult {
+    private final TextRepoFile file;
 
-        return Response.created(locationOf(file))
-                .entity(new AddFileResult(file))
-                .build();
+    private AddFileResult(TextRepoFile file) {
+      this.file = file;
     }
 
-    @GET
-    @Path("/{sha224}")
-    @Timed
-    @Produces(APPLICATION_OCTET_STREAM)
-    public Response getFileBySha224(@PathParam("sha224") String sha224) {
-        if (sha224.length() != 56) {
-            logger.warn("bad length in sha224 ({}): {}", sha224.length(), sha224);
-            throw new BadRequestException("not a sha224: " + sha224);
-        }
-
-        final var file = fileService.getBySha224(sha224);
-
-        return Response
-                .ok(file.getContent(), APPLICATION_OCTET_STREAM)
-                .header("Content-Disposition", "attachment;")
-                .build();
+    @JsonProperty
+    public String getSha224() {
+      return file.getSha224();
     }
-
-    private byte[] readContent(InputStream uploadedInputStream) {
-        try {
-            return uploadedInputStream.readAllBytes();
-        } catch (IOException e) {
-            logger.warn("Could not read posted file");
-            throw new BadRequestException("Could not read input stream of posted file", e);
-        }
-    }
-
-    private URI locationOf(TextRepoFile file) {
-        return UriBuilder.fromResource(FilesResource.class).path("{sha224}").build(file.getSha224());
-    }
-
-    private static class AddFileResult {
-        private final TextRepoFile file;
-
-        private AddFileResult(TextRepoFile file) {
-            this.file = file;
-        }
-
-        @JsonProperty
-        public String getSha224() {
-            return file.getSha224();
-        }
-    }
+  }
 
 }
