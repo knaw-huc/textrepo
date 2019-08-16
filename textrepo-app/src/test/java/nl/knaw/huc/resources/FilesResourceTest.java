@@ -15,12 +15,12 @@ import org.junit.ClassRule;
 import org.junit.Test;
 
 import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static nl.knaw.huc.resources.ResourceTestUtils.responsePart;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -74,7 +74,7 @@ public class FilesResourceTest {
     var response = request.post(entity);
 
     assertThat(response.getStatus()).isEqualTo(201);
-    assertThat(response.getHeaderString("Location")).endsWith(sha224);
+    assertThat(response.getHeaderString("Location")).endsWith("files/" + sha224);
     var actualSha = responsePart(response, "$.sha224");
     assertThat(actualSha).isEqualTo(sha224);
   }
@@ -126,10 +126,6 @@ public class FilesResourceTest {
     assertThat(response.getStatus()).isEqualTo(404);
     String actualErrorMessage = responsePart(response, "$.message");
     assertThat(actualErrorMessage).contains("not found");
-  }
-
-  private static String responsePart(Response response, String s) {
-    return JsonPath.parse(response.readEntity(String.class)).read(s);
   }
 
 }
