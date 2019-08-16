@@ -13,11 +13,7 @@ public class Version {
   private String fileSha;
 
   @ConstructorProperties({"document_uuid", "date", "file_sha"})
-  public Version(
-          UUID documentUuid,
-          LocalDateTime date,
-          String fileSha
-  ) {
+  public Version(UUID documentUuid, LocalDateTime date, String fileSha) {
     this.documentUuid = documentUuid;
     this.date = date;
     this.fileSha = fileSha;
@@ -51,14 +47,5 @@ public class Version {
   @JsonProperty
   public void setFileSha(String fileSha) {
     this.fileSha = fileSha;
-  }
-
-  @Override
-  public String toString() {
-    return "Version{" +
-            "documentUuid=" + documentUuid +
-            ", date=" + date +
-            ", fileSha='" + fileSha + '\'' +
-            '}';
   }
 }
