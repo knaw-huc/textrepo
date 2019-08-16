@@ -12,3 +12,8 @@ database:
   checkConnectionWhileIdle: false
   evictionInterval: 10s
   minIdleTime: 1 minute
+
+logging:
+  level: INFO
+  loggers:
+    nl.knaw.huc: DEBUG

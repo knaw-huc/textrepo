@@ -14,6 +14,8 @@ import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.UUID;
+
 public class TextRepositoryApplication extends Application<TextRepositoryConfiguration> {
 
   private static final Logger logger = LoggerFactory.getLogger(TextRepositoryApplication.class);
@@ -43,7 +45,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     );
     jdbi.installPlugin(new SqlObjectPlugin());
 
-    var documentsResource = new DocumentsResource(new JdbiDocumentService(jdbi));
+    var documentsResource = new DocumentsResource(new JdbiDocumentService(jdbi, () -> UUID.randomUUID()));
     var filesResource = new FilesResource(new JdbiFileService(jdbi));
     var testResource = new TestResource(jdbi);
 
