@@ -60,7 +60,7 @@ public class FilesResourceTest {
   }
 
   @Test
-  public void testPostFile() {
+  public void testPostFile_returns201CreatedWithLocationHeader_whenFileUploaded() {
     var multiPart = new FormDataMultiPart()
             .field("file", content);
 
@@ -102,7 +102,7 @@ public class FilesResourceTest {
   }
 
   @Test
-  public void testGetFile() throws IOException {
+  public void testGetFileBySha224_returnsFileContents_whenFileExists() throws IOException {
     when(fileDao.findBySha224(eq(sha224))).thenReturn(Optional.of(textRepoFile));
 
     var response = resource.client().target("/files/" + sha224).request().get();
@@ -112,7 +112,7 @@ public class FilesResourceTest {
   }
 
   @Test
-  public void testGetIllegalSha224() {
+  public void testGetFileBySha224_returns400BadRequest_whenIllegalSha224() {
     var response = resource.client().target("/files/55d4c44f5bc05762d8807f75f3").request().get();
     assertThat(response.getStatus()).isEqualTo(400);
     String actualErrorMessage = responsePart(response, "$.message");
@@ -121,7 +121,7 @@ public class FilesResourceTest {
   }
 
   @Test
-  public void testGetNotFound() {
+  public void testGetFileBySha224_returns404NotFound_whenNoSuchSha224Exists() {
     var response = resource.client().target("/files/" + sha224).request().get();
     assertThat(response.getStatus()).isEqualTo(404);
     String actualErrorMessage = responsePart(response, "$.message");
