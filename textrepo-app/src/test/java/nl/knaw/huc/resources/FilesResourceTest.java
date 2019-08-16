@@ -14,6 +14,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
@@ -27,6 +28,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
@@ -107,6 +109,27 @@ public class FilesResourceTest {
   }
 
   @Test
+  public void testPostFile_addsFileToIndex() {
+    var multiPart = new FormDataMultiPart()
+      .field("file", content);
+
+    final var request = resource
+      .client()
+      .register(MultiPartFeature.class)
+      .target("/files")
+      .request();
+
+    var entity = Entity.entity(multiPart, multiPart.getMediaType());
+
+    var response = request.post(entity);
+    assertThat(response.getStatus()).isEqualTo(201);
+
+    var argument = ArgumentCaptor.forClass(TextRepoFile.class);
+    verify(fileIndexService).addFile(argument.capture());
+    assertThat(argument.getValue().getContent()).isEqualTo("hello test".getBytes());
+  }
+
+  @Test
   public void testGetFileBySha224_returnsFileContents_whenFileExists() throws IOException {
     when(fileDao.findBySha224(eq(sha224))).thenReturn(Optional.of(textRepoFile));
 
@@ -120,7 +143,7 @@ public class FilesResourceTest {
   public void testGetFileBySha224_returns400BadRequest_whenIllegalSha224() {
     var response = resource.client().target("/files/55d4c44f5bc05762d8807f75f3").request().get();
     assertThat(response.getStatus()).isEqualTo(400);
-    String actualErrorMessage = responsePart(response, "$.message");
+    var actualErrorMessage = responsePart(response, "$.message");
     assertThat(actualErrorMessage).contains("not a sha224");
     assertThat(actualErrorMessage).contains("55d4c44f5bc05762d8807f75f3");
   }
