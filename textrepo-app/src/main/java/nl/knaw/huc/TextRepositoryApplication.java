@@ -57,7 +57,11 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
       new JdbiFileService(jdbi),
       new FileIndexService(elasticsearchClient)
     );
-    var documentsResource = new DocumentsResource(new JdbiDocumentService(jdbi));
+    var documentsResource = new DocumentsResource(
+      new JdbiDocumentService(jdbi),
+      new FileIndexService(elasticsearchClient)
+    );
+
     var testResource = new TestResource(jdbi);
 
     environment.jersey().register(documentsResource);

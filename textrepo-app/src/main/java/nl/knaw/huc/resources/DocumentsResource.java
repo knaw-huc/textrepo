@@ -1,8 +1,10 @@
 package nl.knaw.huc.resources;
 
 import com.codahale.metrics.annotation.Timed;
+import nl.knaw.huc.api.TextRepoFile;
 import nl.knaw.huc.api.Version;
 import nl.knaw.huc.service.DocumentService;
+import nl.knaw.huc.service.FileIndexService;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
@@ -24,15 +26,22 @@ import java.util.UUID;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
+import static nl.knaw.huc.api.TextRepoFile.fromContent;
+import static nl.knaw.huc.resources.ResourceUtils.readContent;
 
 @Path("/documents")
 public class DocumentsResource {
   private final Logger logger = LoggerFactory.getLogger(DocumentsResource.class);
 
   private final DocumentService documentService;
+  private FileIndexService fileIndexService;
 
-  public DocumentsResource(DocumentService documentService) {
+  public DocumentsResource(
+    DocumentService documentService,
+    FileIndexService fileIndexService
+  ) {
     this.documentService = documentService;
+    this.fileIndexService = fileIndexService;
   }
 
   @POST
@@ -41,7 +50,10 @@ public class DocumentsResource {
   @Produces(APPLICATION_JSON)
   public Response addDocument(@FormDataParam("file") InputStream uploadedInputStream,
                               @FormDataParam("file") FormDataContentDisposition fileDetail) {
-    var version = documentService.addDocument(ResourceUtils.readContent(uploadedInputStream));
+
+    var content = readContent(uploadedInputStream);
+    var version = documentService.addDocument(content);
+    fileIndexService.addFile(fromContent(content));
     return Response.created(locationOf(version)).build();
   }
 
