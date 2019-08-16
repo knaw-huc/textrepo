@@ -8,11 +8,16 @@ import io.dropwizard.setup.Environment;
 import nl.knaw.huc.resources.DocumentsResource;
 import nl.knaw.huc.resources.FilesResource;
 import nl.knaw.huc.resources.TestResource;
+import nl.knaw.huc.service.FileIndexService;
 import nl.knaw.huc.service.JdbiDocumentService;
 import nl.knaw.huc.service.JdbiFileService;
+import org.apache.http.HttpHost;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.elasticsearch.client.RestClient.builder;
 
 public class TextRepositoryApplication extends Application<TextRepositoryConfiguration> {
 
@@ -43,8 +48,16 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     );
     jdbi.installPlugin(new SqlObjectPlugin());
 
+    // TODO: use dropwizard-elasticsearch
+    var elasticsearchClient = new RestHighLevelClient(
+      builder(new HttpHost("elasticsearch", 9200, "http"))
+    );
+
+    var filesResource = new FilesResource(
+      new JdbiFileService(jdbi),
+      new FileIndexService(elasticsearchClient)
+    );
     var documentsResource = new DocumentsResource(new JdbiDocumentService(jdbi));
-    var filesResource = new FilesResource(new JdbiFileService(jdbi));
     var testResource = new TestResource(jdbi);
 
     environment.jersey().register(documentsResource);

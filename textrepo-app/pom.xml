@@ -67,6 +67,13 @@
       <version>${postgresql.version}</version>
     </dependency>
 
+    <!-- Index: -->
+    <dependency>
+      <groupId>org.elasticsearch.client</groupId>
+      <artifactId>elasticsearch-rest-high-level-client</artifactId>
+      <version>7.3.0</version>
+    </dependency>
+
     <!-- Client: -->
     <dependency>
       <groupId>io.dropwizard</groupId>

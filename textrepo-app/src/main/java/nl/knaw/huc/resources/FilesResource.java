@@ -3,6 +3,7 @@ package nl.knaw.huc.resources;
 import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import nl.knaw.huc.api.TextRepoFile;
+import nl.knaw.huc.service.FileIndexService;
 import nl.knaw.huc.service.FileService;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -31,9 +32,11 @@ public class FilesResource {
   private final Logger logger = LoggerFactory.getLogger(FilesResource.class);
 
   private final FileService fileService;
+  private FileIndexService fileIndexService;
 
-  public FilesResource(FileService fileService) {
+  public FilesResource(FileService fileService, FileIndexService fileIndexService) {
     this.fileService = fileService;
+    this.fileIndexService = fileIndexService;
   }
 
   @POST
@@ -46,6 +49,7 @@ public class FilesResource {
     final var file = TextRepoFile.fromContent(readContent(uploadedInputStream));
 
     fileService.addFile(file);
+    fileIndexService.addFile(file);
 
     return Response.created(locationOf(file))
             .entity(new AddFileResult(file))
