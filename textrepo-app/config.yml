@@ -1,4 +1,0 @@
-logging:
-  level: INFO
-  loggers:
-    nl.knaw.huc: DEBUG

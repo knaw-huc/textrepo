@@ -6,33 +6,50 @@ import nl.knaw.huc.db.FileDao;
 import nl.knaw.huc.db.VersionDao;
 import org.jdbi.v3.core.Jdbi;
 
+import javax.annotation.Nonnull;
 import javax.ws.rs.NotFoundException;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 public class JdbiDocumentService implements DocumentService {
   private final Jdbi jdbi;
+  private final IdGenerator<UUID> documentIdGenerator;
 
-  public JdbiDocumentService(Jdbi jdbi) {
+  public JdbiDocumentService(Jdbi jdbi, IdGenerator<UUID> documentIdGenerator) {
     this.jdbi = jdbi;
+    this.documentIdGenerator = documentIdGenerator;
   }
 
   @Override
-  public Version addDocument(byte[] content) {
-    var file = TextRepoFile.fromContent(content);
+  public Version addDocument(@Nonnull byte[] content) {
+    final var file = TextRepoFile.fromContent(content);
+    return insertNewVersion(documentIdGenerator.nextUniqueId(), file);
+  }
+
+  @Override
+  public Version replaceDocument(@Nonnull UUID documentId, @Nonnull byte[] content) {
+    final var replacementFile = TextRepoFile.fromContent(content);
+
+    return findLatest(documentId)
+            .filter(v -> v.getFileSha().equals(replacementFile.getSha224())) // already the current version
+            .orElseGet(() -> insertNewVersion(documentId, replacementFile));
+  }
+
+  @Override
+  public Version getLatestVersion(@Nonnull UUID documentId) {
+    return findLatest(documentId).orElseThrow(() -> new NotFoundException("No document for uuid: " + documentId));
+  }
+
+  private Version insertNewVersion(@Nonnull UUID documentId, @Nonnull TextRepoFile file) {
     getFileDao().insert(file);
-
-    var version = new Version(UUID.randomUUID(), LocalDateTime.now(), file.getSha224());
-    getVersionDao().insert(version);
-
-    return version;
+    var newVersion = new Version(documentId, LocalDateTime.now(), file.getSha224());
+    getVersionDao().insert(newVersion);
+    return newVersion;
   }
 
-  @Override
-  public Version getLatestVersion(UUID documentId) {
-    return getVersionDao()
-            .findLatestByDocumentUuid(documentId)
-            .orElseThrow(() -> new NotFoundException("No document for uuid: " + documentId));
+  private Optional<Version> findLatest(@Nonnull UUID documentId) {
+    return getVersionDao().findLatestByDocumentUuid(documentId);
   }
 
   private VersionDao getVersionDao() {

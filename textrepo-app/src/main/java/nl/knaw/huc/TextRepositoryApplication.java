@@ -19,6 +19,8 @@ import org.slf4j.LoggerFactory;
 
 import static org.elasticsearch.client.RestClient.builder;
 
+import java.util.UUID;
+
 public class TextRepositoryApplication extends Application<TextRepositoryConfiguration> {
 
   private static final Logger logger = LoggerFactory.getLogger(TextRepositoryApplication.class);
@@ -58,7 +60,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
       new FileIndexService(elasticsearchClient)
     );
     var documentsResource = new DocumentsResource(
-      new JdbiDocumentService(jdbi),
+      new JdbiDocumentService(jdbi, () -> UUID.randomUUID()),
       new FileIndexService(elasticsearchClient)
     );
 

@@ -22,11 +22,13 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import java.io.InputStream;
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
 import static nl.knaw.huc.api.TextRepoFile.fromContent;
+import static nl.knaw.huc.resources.ResourceUtils.readContent;
 import static nl.knaw.huc.resources.ResourceUtils.readContent;
 
 @Path("/documents")
@@ -50,7 +52,6 @@ public class DocumentsResource {
   @Produces(APPLICATION_JSON)
   public Response addDocument(@FormDataParam("file") InputStream uploadedInputStream,
                               @FormDataParam("file") FormDataContentDisposition fileDetail) {
-
     var content = readContent(uploadedInputStream);
     var version = documentService.addDocument(content);
     // TODO: test file is added to index
@@ -62,12 +63,21 @@ public class DocumentsResource {
   @Timed
   @Consumes(MULTIPART_FORM_DATA)
   @Produces(APPLICATION_JSON)
-  @Path("/{uuid}")
+  @Path("/{uuid}/_file")
   public Response replaceDocument(@PathParam("uuid") @Valid UUID documentId,
                                   @FormDataParam("file") InputStream uploadedInputStream,
                                   @FormDataParam("file") FormDataContentDisposition fileDetail) {
-    logger.warn("storing new file for document {}", documentId);
-    return Response.status(501).entity("not yet implemented").build();
+    logger.warn("replacing file of document {}", documentId);
+    LocalDateTime now = LocalDateTime.now();
+    var version = documentService.replaceDocument(documentId, readContent(uploadedInputStream));
+
+    if (version.getDate().isBefore(now)) {
+      return Response.notModified().build();
+    }
+
+    return Response.ok()
+            .entity(version)
+            .build();
   }
 
   @GET
