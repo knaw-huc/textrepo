@@ -4,6 +4,7 @@ import com.jayway.jsonpath.JsonPath;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import nl.knaw.huc.api.TextRepoFile;
 import nl.knaw.huc.db.FileDao;
+import nl.knaw.huc.service.JdbiFileService;
 import org.apache.commons.io.IOUtils;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -44,7 +45,7 @@ public class FilesResourceTest {
     public static final ResourceTestRule resource = ResourceTestRule
             .builder()
             .addProvider(MultiPartFeature.class)
-            .addResource(new FilesResource(jdbi))
+            .addResource(new FilesResource(new JdbiFileService(jdbi)))
             .build();
 
     @Before
@@ -79,24 +80,24 @@ public class FilesResourceTest {
     }
 
     @Test
-    public void testPostFile_returnsStatus400BadRequest_whenFileIsMissing () {
+    public void testPostFile_returnsStatus400BadRequest_whenFileIsMissing() {
         // No .field("file", content):
         var multiPart = new FormDataMultiPart()
-          .field("filename", "just-a-filename.txt");
+                .field("filename", "just-a-filename.txt");
 
         final var request = resource
-          .client()
-          .register(MultiPartFeature.class)
-          .target("/files")
-          .request();
+                .client()
+                .register(MultiPartFeature.class)
+                .target("/files")
+                .request();
 
         var entity = Entity.entity(multiPart, multiPart.getMediaType());
 
         var response = request.post(entity);
         assertThat(response.getStatus()).isEqualTo(400);
         var message = JsonPath
-          .parse(response.readEntity(String.class))
-          .read("$.message");
+                .parse(response.readEntity(String.class))
+                .read("$.message");
         assertThat(message).isEqualTo("File is missing");
     }
 
