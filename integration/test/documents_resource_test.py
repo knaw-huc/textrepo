@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 
-import unittest
-import requests
 import json
+import unittest
+
+import requests
 
 
 class FilesResourceTest(unittest.TestCase):
 
     def test_add_get_replace_document(self):
-
         file_content='hello test'
         file_sha='55d4c44f5bc05762d8807f75f3f24b4095afa583ef70ac97eaf7afc6'
         document_location = self.__test_add_document(file_content)

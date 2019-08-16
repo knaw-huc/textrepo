@@ -53,6 +53,7 @@ public class DocumentsResource {
 
     var content = readContent(uploadedInputStream);
     var version = documentService.addDocument(content);
+    // TODO: test file is added to index
     fileIndexService.addFile(fromContent(content));
     return Response.created(locationOf(version)).build();
   }
