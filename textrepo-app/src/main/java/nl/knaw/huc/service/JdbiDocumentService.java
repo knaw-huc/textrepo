@@ -11,7 +11,6 @@ import javax.ws.rs.NotFoundException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Predicate;
 
 public class JdbiDocumentService implements DocumentService {
   private final Jdbi jdbi;
@@ -33,7 +32,7 @@ public class JdbiDocumentService implements DocumentService {
     final var replacementFile = TextRepoFile.fromContent(content);
 
     return findLatest(documentId)
-            .filter(withSha224EqualTo(replacementFile)) // already the current version, nothing to do
+            .filter(v -> v.getFileSha().equals(replacementFile.getSha224())) // already the current version
             .orElseGet(() -> insertNewVersion(documentId, replacementFile));
   }
 
@@ -51,10 +50,6 @@ public class JdbiDocumentService implements DocumentService {
 
   private Optional<Version> findLatest(@Nonnull UUID documentId) {
     return getVersionDao().findLatestByDocumentUuid(documentId);
-  }
-
-  private Predicate<Version> withSha224EqualTo(@Nonnull TextRepoFile replacementFile) {
-    return v -> v.getFileSha().equals(replacementFile.getSha224());
   }
 
   private VersionDao getVersionDao() {
