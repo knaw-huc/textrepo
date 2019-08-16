@@ -34,75 +34,75 @@ import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
 
 @Path("/documents")
 public class DocumentsResource {
-  private final Logger logger = LoggerFactory.getLogger(DocumentsResource.class);
+    private final Logger logger = LoggerFactory.getLogger(DocumentsResource.class);
 
-  private final Jdbi jdbi;
+    private final Jdbi jdbi;
 
-  public DocumentsResource(Jdbi jdbi) {
-    this.jdbi = jdbi;
-  }
-
-  @POST
-  @Timed
-  @Consumes(MULTIPART_FORM_DATA)
-  @Produces(APPLICATION_JSON)
-  public Response addDocument(@FormDataParam("file") InputStream uploadedInputStream,
-                              @FormDataParam("file") FormDataContentDisposition fileDetail) {
-    final TextRepoFile file;
-    try {
-      file = TextRepoFile.fromContent(uploadedInputStream.readAllBytes());
-    } catch (IOException e) {
-      logger.warn("Could not read posted file, size={}", fileDetail.getSize());
-      throw new BadRequestException("Could not read input stream of posted file", e);
+    public DocumentsResource(Jdbi jdbi) {
+        this.jdbi = jdbi;
     }
 
-    getFileDao().insert(file);
+    @POST
+    @Timed
+    @Consumes(MULTIPART_FORM_DATA)
+    @Produces(APPLICATION_JSON)
+    public Response addDocument(@FormDataParam("file") InputStream uploadedInputStream,
+                                @FormDataParam("file") FormDataContentDisposition fileDetail) {
+        final TextRepoFile file;
+        try {
+            file = TextRepoFile.fromContent(uploadedInputStream.readAllBytes());
+        } catch (IOException e) {
+            logger.warn("Could not read posted file, size={}", fileDetail.getSize());
+            throw new BadRequestException("Could not read input stream of posted file", e);
+        }
 
-    var version = new Version(UUID.randomUUID(), LocalDateTime.now(), file.getSha224());
-    getVersionDao().insert(version);
+        getFileDao().insert(file);
 
-    return Response.created(locationOf(version)).build();
-  }
+        var version = new Version(UUID.randomUUID(), LocalDateTime.now(), file.getSha224());
+        getVersionDao().insert(version);
 
-  @PUT
-  @Timed
-  @Consumes(MULTIPART_FORM_DATA)
-  @Produces(APPLICATION_JSON)
-  @Path("/{uuid}")
-  public Response replaceDocument(@PathParam("uuid") @Valid UUID documentId,
-                                  @FormDataParam("file") InputStream uploadedInputStream,
-                                  @FormDataParam("file") FormDataContentDisposition fileDetail) {
-    logger.warn("storing new file for document {}", documentId);
-    return Response.status(501).entity("not yet implemented").build();
-  }
+        return Response.created(locationOf(version)).build();
+    }
 
-  @GET
-  @Path("/{uuid}")
-  @Timed
-  @Produces(APPLICATION_JSON)
-  public Response getLatestVersionOfDocument(@PathParam("uuid") @Valid UUID documentId) {
-    logger.warn("getting latest version of: " + documentId.toString());
-    var version = getLatestVersion(documentId);
-    return Response.ok(version).build(); // TODO: yield file contents instead of Version object
-  }
+    @PUT
+    @Timed
+    @Consumes(MULTIPART_FORM_DATA)
+    @Produces(APPLICATION_JSON)
+    @Path("/{uuid}")
+    public Response replaceDocument(@PathParam("uuid") @Valid UUID documentId,
+                                    @FormDataParam("file") InputStream uploadedInputStream,
+                                    @FormDataParam("file") FormDataContentDisposition fileDetail) {
+        logger.warn("storing new file for document {}", documentId);
+        return Response.status(501).entity("not yet implemented").build();
+    }
 
-  private Version getLatestVersion(UUID uuid) {
-    return getVersionDao()
-      .findLatestByDocumentUuid(uuid)
-      .orElseThrow(() -> new NotFoundException("No document for uuid: " + uuid));
-  }
+    @GET
+    @Path("/{uuid}")
+    @Timed
+    @Produces(APPLICATION_JSON)
+    public Response getLatestVersionOfDocument(@PathParam("uuid") @Valid UUID documentId) {
+        logger.warn("getting latest version of: " + documentId.toString());
+        var version = getLatestVersion(documentId);
+        return Response.ok(version).build(); // TODO: yield file contents instead of Version object
+    }
 
-  private URI locationOf(Version version) {
-    return UriBuilder.fromResource(DocumentsResource.class)
-      .path("{uuid}")
-      .build(version.getDocumentUuid());
-  }
+    private Version getLatestVersion(UUID uuid) {
+        return getVersionDao()
+                .findLatestByDocumentUuid(uuid)
+                .orElseThrow(() -> new NotFoundException("No document for uuid: " + uuid));
+    }
 
-  private VersionDao getVersionDao() {
-    return jdbi.onDemand(VersionDao.class);
-  }
+    private URI locationOf(Version version) {
+        return UriBuilder.fromResource(DocumentsResource.class)
+                .path("{uuid}")
+                .build(version.getDocumentUuid());
+    }
 
-  private FileDao getFileDao() {
-    return jdbi.onDemand(FileDao.class);
-  }
+    private VersionDao getVersionDao() {
+        return jdbi.onDemand(VersionDao.class);
+    }
+
+    private FileDao getFileDao() {
+        return jdbi.onDemand(FileDao.class);
+    }
 }
