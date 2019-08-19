@@ -11,29 +11,27 @@ import javax.ws.rs.NotFoundException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 public class JdbiDocumentService implements DocumentService {
   private final Jdbi jdbi;
-  private final IdGenerator<UUID> documentIdGenerator;
+  private final Supplier<UUID> documentIdGenerator;
 
-  public JdbiDocumentService(Jdbi jdbi, IdGenerator<UUID> documentIdGenerator) {
+  public JdbiDocumentService(Jdbi jdbi, Supplier<UUID> documentIdGenerator) {
     this.jdbi = jdbi;
     this.documentIdGenerator = documentIdGenerator;
   }
 
   @Override
-  public Version addDocument(@Nonnull byte[] content) {
-    final var file = TextRepoFile.fromContent(content);
-    return insertNewVersion(documentIdGenerator.nextUniqueId(), file);
+  public Version addDocument(@Nonnull TextRepoFile file) {
+    return insertNewVersion(documentIdGenerator.get(), file);
   }
 
   @Override
-  public Version replaceDocument(@Nonnull UUID documentId, @Nonnull byte[] content) {
-    final var replacementFile = TextRepoFile.fromContent(content);
-
+  public Version replaceDocument(@Nonnull UUID documentId, @Nonnull TextRepoFile file) {
     return findLatest(documentId)
-            .filter(v -> v.getFileSha().equals(replacementFile.getSha224())) // already the current version
-            .orElseGet(() -> insertNewVersion(documentId, replacementFile));
+            .filter(v -> v.getFileSha().equals(file.getSha224())) // already the current version
+            .orElseGet(() -> insertNewVersion(documentId, file));
   }
 
   @Override

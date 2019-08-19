@@ -52,10 +52,10 @@ public class DocumentsResource {
   @Produces(APPLICATION_JSON)
   public Response addDocument(@FormDataParam("file") InputStream uploadedInputStream,
                               @FormDataParam("file") FormDataContentDisposition fileDetail) {
-    var content = readContent(uploadedInputStream);
-    var version = documentService.addDocument(content);
+    final var file = fromContent(readContent(uploadedInputStream));
+    final var version = documentService.addDocument(file);
     // TODO: test file is added to index
-    fileIndexService.addFile(fromContent(content));
+    fileIndexService.addFile(file);
     return Response.created(locationOf(version)).build();
   }
 
@@ -68,8 +68,9 @@ public class DocumentsResource {
                                   @FormDataParam("file") InputStream uploadedInputStream,
                                   @FormDataParam("file") FormDataContentDisposition fileDetail) {
     logger.warn("replacing file of document {}", documentId);
-    LocalDateTime now = LocalDateTime.now();
-    var version = documentService.replaceDocument(documentId, readContent(uploadedInputStream));
+    final var file = fromContent(readContent(uploadedInputStream));
+    final var now = LocalDateTime.now();
+    final var version = documentService.replaceDocument(documentId, file);
 
     if (version.getDate().isBefore(now)) {
       return Response.notModified().build();
