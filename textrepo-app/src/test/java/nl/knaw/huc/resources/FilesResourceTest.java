@@ -55,6 +55,7 @@ public class FilesResourceTest {
 
   @After
   public void teardown() {
+    reset(fileService);
     reset(fileIndexService);
   }
 
@@ -118,7 +119,7 @@ public class FilesResourceTest {
 
     var argument = ArgumentCaptor.forClass(TextRepoFile.class);
     verify(fileIndexService).addFile(argument.capture());
-    assertThat(argument.getValue().getContent()).isEqualTo(content);
+    assertThat(argument.getValue().getContent()).isEqualTo(content.getBytes());
   }
 
   @Test
