@@ -70,8 +70,7 @@ public class DocumentsResourceTest {
 
   @Test
   public void testAddDocument_addsFileToIndex() {
-    final var response = postTestFile();
-    assertThat(response.getStatus()).isEqualTo(201);
+    postTestFile();
     var argument = ArgumentCaptor.forClass(TextRepoFile.class);
     verify(fileIndexService).indexFile(argument.capture());
     assertThat(argument.getValue().getContent()).isEqualTo(content.getBytes());
