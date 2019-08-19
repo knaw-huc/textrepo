@@ -2,7 +2,6 @@ package nl.knaw.huc.resources;
 
 import io.dropwizard.testing.junit.ResourceTestRule;
 import nl.knaw.huc.api.TextRepoFile;
-import nl.knaw.huc.api.Version;
 import nl.knaw.huc.db.VersionDao;
 import nl.knaw.huc.service.DocumentService;
 import nl.knaw.huc.service.FileIndexService;
@@ -20,6 +19,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Response;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -41,6 +41,7 @@ public class DocumentsResourceTest {
   @SuppressWarnings("unchecked")
   private static final Supplier<UUID> idGenerator = mock(Supplier.class);
   private static final DocumentService documentService = new DocumentService(versions, idGenerator);
+  private static final VersionDao versionDao = mock(VersionDao.class);
 
   @ClassRule
   public static final ResourceTestRule resource = ResourceTestRule
@@ -49,56 +50,45 @@ public class DocumentsResourceTest {
     .addResource(new DocumentsResource(documentService))
     .build();
 
+  @Before
+  public void setupMocks() {
+    when(jdbi.onDemand(any())).thenReturn(versionDao);
+    when(idGenerator.get()).thenReturn(UUID.fromString(uuid));
+  }
+
   @After
-  public void teardown() {
-    reset(fileIndexService);
+  public void resetMocks() {
+    reset(jdbi, versionDao, fileIndexService);
   }
 
   @Test
   public void testPostDocument_returns201CreatedWithLocationHeader_whenFileUploaded() {
-    var versionDao = mock(VersionDao.class);
-    when(jdbi.onDemand(any())).thenReturn(versionDao);
-    when(idGenerator.get()).thenReturn(UUID.fromString(uuid));
-
-    var multiPart = new FormDataMultiPart()
-      .field("file", content);
-
-    final var request = resource
-      .client()
-      .register(MultiPartFeature.class)
-      .target("/documents")
-      .request();
-
-    final var entity = Entity.entity(multiPart, multiPart.getMediaType());
-    var response = request.post(entity);
-
+    final var response = postTestFile();
     assertThat(response.getStatus()).isEqualTo(201);
     assertThat(response.getHeaderString("Location")).endsWith("documents/" + uuid);
   }
 
   @Test
   public void testAddDocument_addsFileToIndex() {
-    var versionDao = mock(VersionDao.class);
-    when(jdbi.onDemand(any())).thenReturn(versionDao);
-    when(idGenerator.get()).thenReturn(UUID.fromString(uuid));
-
-    var multiPart = new FormDataMultiPart()
-      .field("file", content);
-
-    final var request = resource
-      .client()
-      .register(MultiPartFeature.class)
-      .target("/documents")
-      .request();
-
-    var entity = Entity.entity(multiPart, multiPart.getMediaType());
-
-    var response = request.post(entity);
+    final var response = postTestFile();
     assertThat(response.getStatus()).isEqualTo(201);
-
     var argument = ArgumentCaptor.forClass(TextRepoFile.class);
     verify(fileIndexService).indexFile(argument.capture());
     assertThat(argument.getValue().getContent()).isEqualTo(content.getBytes());
+  }
+
+  private Response postTestFile() {
+    final var multiPart = new FormDataMultiPart().field("file", content);
+
+    final var request = resource
+        .client()
+        .register(MultiPartFeature.class)
+        .target("/documents")
+        .request();
+
+    final var entity = Entity.entity(multiPart, multiPart.getMediaType());
+
+    return request.post(entity);
   }
 
 
