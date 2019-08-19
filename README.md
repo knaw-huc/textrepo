@@ -14,18 +14,14 @@ On first run:
 cd textrepo-app && docker build -t textrepo-builder -f Dockerfile.builder .
 ```
 
-Build all and start:
+Build and start:
 ```
 docker-compose up --build
 ```
 
 Test:
 ```
-curl -X POST 'localhost:8080/files' -F file=@{file}
-curl -X GET 'localhost:8080/files/{sha224}'
-```
-
-Clean ES volume:
-```
-docker-compose down --volumes
+curl -X POST 'localhost:8080/textrepo/files' -F file=@{file}
+curl -X GET 'localhost:8080/textrepo/files/{sha224}'
+curl -X GET 'localhost:8080/index/files/_search?q=content:{term}'
 ```
