@@ -1,10 +1,9 @@
 package nl.knaw.huc.resources;
 
 import io.dropwizard.testing.junit.ResourceTestRule;
-import nl.knaw.huc.api.TextRepoFile;
 import nl.knaw.huc.api.Version;
 import nl.knaw.huc.service.DocumentService;
-import nl.knaw.huc.service.FileIndexService;
+import nl.knaw.huc.service.ElasticFileIndexService;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.junit.ClassRule;
@@ -24,13 +23,13 @@ public class DocumentsResourceTest {
   private static final String uuid = "b59c2b24-cafe-babe-9bb3-deadbeefc2c6";
   private static final String content = "hello test";
   private final static String sha224 = "55d4c44f5bc05762d8807f75f3f24b4095afa583ef70ac97eaf7afc6";
-  private static final FileIndexService fileIndexService = mock(FileIndexService.class);
+  private static final ElasticFileIndexService fileIndexService = mock(ElasticFileIndexService.class);
 
   @ClassRule
   public static final ResourceTestRule resource = ResourceTestRule
           .builder()
           .addProvider(MultiPartFeature.class)
-          .addResource(new DocumentsResource(documentService, fileIndexService))
+          .addResource(new DocumentsResource(documentService))
           .build();
 
   @Test

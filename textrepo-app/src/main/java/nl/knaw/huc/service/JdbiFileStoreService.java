@@ -9,17 +9,17 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 
-public class JdbiFileService implements FileService {
-  private final Logger logger = LoggerFactory.getLogger(JdbiFileService.class);
+public class JdbiFileStoreService implements FileStoreService {
+  private final Logger logger = LoggerFactory.getLogger(JdbiFileStoreService.class);
 
   private final Jdbi jdbi;
 
-  public JdbiFileService(Jdbi jdbi) {
+  public JdbiFileStoreService(Jdbi jdbi) {
     this.jdbi = jdbi;
   }
 
   @Override
-  public void addFile(TextRepoFile file) {
+  public void storeFile(TextRepoFile file) {
     try {
       getFileDao().insert(file);
     } catch (Exception e) {

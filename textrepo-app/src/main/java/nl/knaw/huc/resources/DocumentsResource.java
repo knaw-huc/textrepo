@@ -1,10 +1,8 @@
 package nl.knaw.huc.resources;
 
 import com.codahale.metrics.annotation.Timed;
-import nl.knaw.huc.api.TextRepoFile;
 import nl.knaw.huc.api.Version;
 import nl.knaw.huc.service.DocumentService;
-import nl.knaw.huc.service.FileIndexService;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
@@ -29,21 +27,15 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
 import static nl.knaw.huc.api.TextRepoFile.fromContent;
 import static nl.knaw.huc.resources.ResourceUtils.readContent;
-import static nl.knaw.huc.resources.ResourceUtils.readContent;
 
 @Path("/documents")
 public class DocumentsResource {
   private final Logger logger = LoggerFactory.getLogger(DocumentsResource.class);
 
   private final DocumentService documentService;
-  private FileIndexService fileIndexService;
 
-  public DocumentsResource(
-    DocumentService documentService,
-    FileIndexService fileIndexService
-  ) {
+  public DocumentsResource(DocumentService documentService) {
     this.documentService = documentService;
-    this.fileIndexService = fileIndexService;
   }
 
   @POST
@@ -54,8 +46,6 @@ public class DocumentsResource {
                               @FormDataParam("file") FormDataContentDisposition fileDetail) {
     final var file = fromContent(readContent(uploadedInputStream));
     final var version = documentService.addDocument(file);
-    // TODO: test file is added to index
-    fileIndexService.addFile(file);
     return Response.created(locationOf(version)).build();
   }
 

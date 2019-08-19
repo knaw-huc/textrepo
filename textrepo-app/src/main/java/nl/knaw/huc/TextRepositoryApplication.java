@@ -8,9 +8,11 @@ import io.dropwizard.setup.Environment;
 import nl.knaw.huc.resources.DocumentsResource;
 import nl.knaw.huc.resources.FilesResource;
 import nl.knaw.huc.resources.TestResource;
-import nl.knaw.huc.service.FileIndexService;
-import nl.knaw.huc.service.JdbiDocumentService;
-import nl.knaw.huc.service.JdbiFileService;
+import nl.knaw.huc.service.ElasticFileIndexService;
+import nl.knaw.huc.service.FileService;
+import nl.knaw.huc.service.DocumentService;
+import nl.knaw.huc.service.JdbiFileStoreService;
+import nl.knaw.huc.service.JdbiVersionService;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,10 +51,14 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     jdbi.installPlugin(new SqlObjectPlugin());
 
     var managedEsClient = new ManagedElasticsearchClient(config.getElasticsearch());
-    var indexService = new FileIndexService(managedEsClient.client());
+    var fileIndexService = new ElasticFileIndexService(managedEsClient.client());
+    var fileStoreService = new JdbiFileStoreService(jdbi);
+    var fileService = new FileService(fileStoreService, fileIndexService);
+    var filesResource = new FilesResource(fileService);
 
-    var filesResource = new FilesResource(new JdbiFileService(jdbi), indexService);
-    var documentsResource = new DocumentsResource(new JdbiDocumentService(jdbi, UUID::randomUUID), indexService);
+    var versionService = new JdbiVersionService(jdbi, fileService);
+    var documentService = new DocumentService(versionService, UUID::randomUUID);
+    var documentsResource = new DocumentsResource(documentService);
 
     var testResource = new TestResource(jdbi);
 

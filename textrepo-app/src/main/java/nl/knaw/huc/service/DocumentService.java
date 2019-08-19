@@ -5,11 +5,27 @@ import nl.knaw.huc.api.Version;
 
 import javax.annotation.Nonnull;
 import java.util.UUID;
+import java.util.function.Supplier;
 
-public interface DocumentService {
-  Version addDocument(@Nonnull TextRepoFile file);
+public class DocumentService {
+  private final Supplier<UUID> documentIdGenerator;
+  private final VersionService versionService;
 
-  Version replaceDocument(@Nonnull UUID documentId, @Nonnull TextRepoFile file);
+  public DocumentService(VersionService versionService, Supplier<UUID> documentIdGenerator) {
+    this.versionService = versionService;
+    this.documentIdGenerator = documentIdGenerator;
+  }
 
-  Version getLatestVersion(@Nonnull UUID documentId);
+  public Version addDocument(@Nonnull TextRepoFile file) {
+    return versionService.insertNewVersion(documentIdGenerator.get(), file);
+  }
+
+  public Version replaceDocument(@Nonnull UUID documentId, @Nonnull TextRepoFile file) {
+    return versionService.replace(documentId, file);
+  }
+
+  public Version getLatestVersion(@Nonnull UUID documentId) {
+    return versionService.getLatestVersion(documentId);
+  }
+
 }
