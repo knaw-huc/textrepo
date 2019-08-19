@@ -11,10 +11,10 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class FileIndexService {
 
-  private RestHighLevelClient client;
+  private RestHighLevelClient elasticsearchClient;
 
-  public FileIndexService(RestHighLevelClient client) {
-    this.client = client;
+  public FileIndexService(RestHighLevelClient elasticsearchClient) {
+    this.elasticsearchClient = elasticsearchClient;
   }
 
   public void addFile(TextRepoFile file) {
@@ -23,7 +23,7 @@ public class FileIndexService {
       .id(file.getSha224())
       .source("content", new String(content, UTF_8));
     try {
-      client.index(indexRequest, RequestOptions.DEFAULT);
+      elasticsearchClient.index(indexRequest, RequestOptions.DEFAULT);
     } catch (IOException ex) {
       throw new RuntimeException("Could not add file to files index", ex);
     }
