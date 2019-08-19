@@ -1,6 +1,8 @@
 package nl.knaw.huc.service;
 
 import nl.knaw.huc.api.TextRepoFile;
+import nl.knaw.huc.service.index.FileIndexer;
+import nl.knaw.huc.service.store.FileStorage;
 import org.junit.After;
 import org.junit.Test;
 
@@ -11,8 +13,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class FileServiceTest {
-  private static final FileStoreService STORE = mock(FileStoreService.class);
-  private static final FileIndexService INDEX = mock(FileIndexService.class);
+  private static final FileStorage STORE = mock(FileStorage.class);
+  private static final FileIndexer INDEX = mock(FileIndexer.class);
   private static final FileService SERVICE_UNDER_TEST = new FileService(STORE, INDEX);
 
   private static final String SHA224 = "55d4c44f5bc05762d8807f75f3f24b4095afa583ef70ac97eaf7afc6";

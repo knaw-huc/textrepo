@@ -8,10 +8,10 @@ import io.dropwizard.setup.Environment;
 import nl.knaw.huc.resources.DocumentsResource;
 import nl.knaw.huc.resources.FilesResource;
 import nl.knaw.huc.resources.TestResource;
-import nl.knaw.huc.service.ElasticFileIndexService;
+import nl.knaw.huc.service.index.ElasticFileIndexer;
 import nl.knaw.huc.service.FileService;
 import nl.knaw.huc.service.DocumentService;
-import nl.knaw.huc.service.JdbiFileStoreService;
+import nl.knaw.huc.service.store.JdbiFileStorage;
 import nl.knaw.huc.service.JdbiVersionService;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 import org.slf4j.Logger;
@@ -51,8 +51,8 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     jdbi.installPlugin(new SqlObjectPlugin());
 
     var managedEsClient = new ManagedElasticsearchClient(config.getElasticsearch());
-    var fileIndexService = new ElasticFileIndexService(managedEsClient.client());
-    var fileStoreService = new JdbiFileStoreService(jdbi);
+    var fileIndexService = new ElasticFileIndexer(managedEsClient.client());
+    var fileStoreService = new JdbiFileStorage(jdbi);
     var fileService = new FileService(fileStoreService, fileIndexService);
     var filesResource = new FilesResource(fileService);
 

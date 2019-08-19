@@ -1,4 +1,4 @@
-package nl.knaw.huc.service;
+package nl.knaw.huc.service.store;
 
 import nl.knaw.huc.api.TextRepoFile;
 import nl.knaw.huc.db.FileDao;
@@ -9,12 +9,12 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 
-public class JdbiFileStoreService implements FileStoreService {
-  private final Logger logger = LoggerFactory.getLogger(JdbiFileStoreService.class);
+public class JdbiFileStorage implements FileStorage {
+  private final Logger logger = LoggerFactory.getLogger(JdbiFileStorage.class);
 
   private final Jdbi jdbi;
 
-  public JdbiFileStoreService(Jdbi jdbi) {
+  public JdbiFileStorage(Jdbi jdbi) {
     this.jdbi = jdbi;
   }
 

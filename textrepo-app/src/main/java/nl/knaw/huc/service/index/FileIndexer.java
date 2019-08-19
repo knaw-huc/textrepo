@@ -1,7 +1,7 @@
-package nl.knaw.huc.service;
+package nl.knaw.huc.service.index;
 
 import nl.knaw.huc.api.TextRepoFile;
 
-public interface FileIndexService {
+public interface FileIndexer {
   void indexFile(TextRepoFile file);
 }

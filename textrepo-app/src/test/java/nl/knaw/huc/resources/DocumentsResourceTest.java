@@ -4,9 +4,9 @@ import io.dropwizard.testing.junit.ResourceTestRule;
 import nl.knaw.huc.api.TextRepoFile;
 import nl.knaw.huc.db.VersionDao;
 import nl.knaw.huc.service.DocumentService;
-import nl.knaw.huc.service.FileIndexService;
+import nl.knaw.huc.service.index.FileIndexer;
 import nl.knaw.huc.service.FileService;
-import nl.knaw.huc.service.FileStoreService;
+import nl.knaw.huc.service.store.FileStorage;
 import nl.knaw.huc.service.JdbiVersionService;
 import nl.knaw.huc.service.VersionService;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
@@ -34,8 +34,8 @@ public class DocumentsResourceTest {
   private static final String uuid = "b59c2b24-cafe-babe-9bb3-deadbeefc2c6";
   private static final String content = "hello test";
 
-  private static final FileIndexService fileIndexService = mock(FileIndexService.class);
-  private static final FileService files = new FileService(mock(FileStoreService.class), fileIndexService);
+  private static final FileIndexer FILE_INDEXER = mock(FileIndexer.class);
+  private static final FileService files = new FileService(mock(FileStorage.class), FILE_INDEXER);
   private static final Jdbi jdbi = mock(Jdbi.class);
   private static final VersionService versions = new JdbiVersionService(jdbi, files);
   @SuppressWarnings("unchecked")
@@ -58,7 +58,7 @@ public class DocumentsResourceTest {
 
   @After
   public void resetMocks() {
-    reset(jdbi, versionDao, fileIndexService);
+    reset(jdbi, versionDao, FILE_INDEXER);
   }
 
   @Test
@@ -72,7 +72,7 @@ public class DocumentsResourceTest {
   public void testAddDocument_addsFileToIndex() {
     postTestFile();
     var argument = ArgumentCaptor.forClass(TextRepoFile.class);
-    verify(fileIndexService).indexFile(argument.capture());
+    verify(FILE_INDEXER).indexFile(argument.capture());
     assertThat(argument.getValue().getContent()).isEqualTo(content.getBytes());
   }
 

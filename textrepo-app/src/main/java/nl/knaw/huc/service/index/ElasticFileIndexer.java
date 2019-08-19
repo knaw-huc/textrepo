@@ -1,4 +1,4 @@
-package nl.knaw.huc.service;
+package nl.knaw.huc.service.index;
 
 import nl.knaw.huc.api.TextRepoFile;
 import org.elasticsearch.action.index.IndexRequest;
@@ -9,11 +9,11 @@ import java.io.IOException;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class ElasticFileIndexService implements FileIndexService {
+public class ElasticFileIndexer implements FileIndexer {
 
   private RestHighLevelClient elasticsearchClient;
 
-  public ElasticFileIndexService(RestHighLevelClient elasticsearchClient) {
+  public ElasticFileIndexer(RestHighLevelClient elasticsearchClient) {
     this.elasticsearchClient = elasticsearchClient;
   }
 

@@ -3,9 +3,9 @@ package nl.knaw.huc.resources;
 import com.jayway.jsonpath.JsonPath;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import nl.knaw.huc.api.TextRepoFile;
-import nl.knaw.huc.service.FileIndexService;
+import nl.knaw.huc.service.index.FileIndexer;
 import nl.knaw.huc.service.FileService;
-import nl.knaw.huc.service.FileStoreService;
+import nl.knaw.huc.service.store.FileStorage;
 import org.apache.commons.io.IOUtils;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -31,8 +31,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class FilesResourceTest {
-  private static final FileStoreService fileStoreService = mock(FileStoreService.class);
-  private static final FileIndexService fileIndexService = mock(FileIndexService.class);
+  private static final FileStorage FILE_STORAGE = mock(FileStorage.class);
+  private static final FileIndexer FILE_INDEXER = mock(FileIndexer.class);
 
   private final static String sha224 = "55d4c44f5bc05762d8807f75f3f24b4095afa583ef70ac97eaf7afc6";
   private final static String content = "hello test";
@@ -45,7 +45,7 @@ public class FilesResourceTest {
   public static final ResourceTestRule resource = ResourceTestRule
     .builder()
     .addProvider(MultiPartFeature.class)
-    .addResource(new FilesResource(new FileService(fileStoreService, fileIndexService)))
+    .addResource(new FilesResource(new FileService(FILE_STORAGE, FILE_INDEXER)))
     .build();
 
   @Before
@@ -54,8 +54,8 @@ public class FilesResourceTest {
 
   @After
   public void teardown() {
-    reset(fileStoreService);
-    reset(fileIndexService);
+    reset(FILE_STORAGE);
+    reset(FILE_INDEXER);
   }
 
   @Test
@@ -117,13 +117,13 @@ public class FilesResourceTest {
     assertThat(response.getStatus()).isEqualTo(201);
 
     var argument = ArgumentCaptor.forClass(TextRepoFile.class);
-    verify(fileIndexService).indexFile(argument.capture());
+    verify(FILE_INDEXER).indexFile(argument.capture());
     assertThat(argument.getValue().getContent()).isEqualTo(content.getBytes());
   }
 
   @Test
   public void testGetFileBySha224_returnsFileContents_whenFileExists() throws IOException {
-    when(fileStoreService.getBySha224(eq(sha224))).thenReturn(textRepoFile);
+    when(FILE_STORAGE.getBySha224(eq(sha224))).thenReturn(textRepoFile);
 
     var response = resource.client().target("/files/" + sha224).request().get();
     var inputStream = response.readEntity(InputStream.class);
@@ -143,7 +143,7 @@ public class FilesResourceTest {
 
   @Test
   public void testGetFileBySha224_returns404NotFound_whenNoSuchSha224Exists() {
-    when(fileStoreService.getBySha224(any())).thenThrow(new NotFoundException("File not found"));
+    when(FILE_STORAGE.getBySha224(any())).thenThrow(new NotFoundException("File not found"));
 
     var response = resource.client().target("/files/" + sha224).request().get();
     assertThat(response.getStatus()).isEqualTo(404);
