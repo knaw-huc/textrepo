@@ -24,3 +24,8 @@ Test:
 curl -X POST 'localhost:8080/files' -F file=@{file}
 curl -X GET 'localhost:8080/files/{sha224}'
 ```
+
+Clean ES volume:
+```
+docker-compose down --volumes
+```

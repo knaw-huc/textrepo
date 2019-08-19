@@ -4,6 +4,7 @@ import com.jayway.jsonpath.JsonPath;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import nl.knaw.huc.api.TextRepoFile;
 import nl.knaw.huc.db.FileDao;
+import nl.knaw.huc.service.FileIndexService;
 import nl.knaw.huc.service.JdbiFileService;
 import org.apache.commons.io.IOUtils;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
@@ -13,6 +14,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 import javax.ws.rs.client.Entity;
 import java.io.IOException;
@@ -26,6 +28,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
@@ -33,20 +36,23 @@ public class FilesResourceTest {
 
   private static final Jdbi jdbi = mock(Jdbi.class);
   private static final FileDao fileDao = mock(FileDao.class);
+  private static final FileIndexService fileIndexService = mock(FileIndexService.class);
 
   private final static String sha224 = "55d4c44f5bc05762d8807f75f3f24b4095afa583ef70ac97eaf7afc6";
   private final static String content = "hello test";
   private final static TextRepoFile textRepoFile = new TextRepoFile(
-          sha224,
-          content.getBytes()
+    sha224,
+    content.getBytes()
   );
 
   @ClassRule
   public static final ResourceTestRule resource = ResourceTestRule
-          .builder()
-          .addProvider(MultiPartFeature.class)
-          .addResource(new FilesResource(new JdbiFileService(jdbi)))
-          .build();
+    .builder()
+    .addProvider(MultiPartFeature.class)
+    .addResource(new FilesResource(
+      new JdbiFileService(jdbi),
+      fileIndexService
+    )).build();
 
   @Before
   public void setup() {
@@ -57,18 +63,19 @@ public class FilesResourceTest {
   public void teardown() {
     reset(jdbi);
     reset(fileDao);
+    reset(fileIndexService);
   }
 
   @Test
   public void testPostFile_returns201CreatedWithLocationHeader_whenFileUploaded() {
     var multiPart = new FormDataMultiPart()
-            .field("file", content);
+      .field("file", content);
 
     final var request = resource
-            .client()
-            .register(MultiPartFeature.class)
-            .target("/files")
-            .request();
+      .client()
+      .register(MultiPartFeature.class)
+      .target("/files")
+      .request();
 
     final var entity = Entity.entity(multiPart, multiPart.getMediaType());
     var response = request.post(entity);
@@ -83,22 +90,43 @@ public class FilesResourceTest {
   public void testPostFile_returnsStatus400BadRequest_whenFileIsMissing() {
     // No .field("file", content):
     var multiPart = new FormDataMultiPart()
-            .field("filename", "just-a-filename.txt");
+      .field("filename", "just-a-filename.txt");
 
     final var request = resource
-            .client()
-            .register(MultiPartFeature.class)
-            .target("/files")
-            .request();
+      .client()
+      .register(MultiPartFeature.class)
+      .target("/files")
+      .request();
 
     var entity = Entity.entity(multiPart, multiPart.getMediaType());
 
     var response = request.post(entity);
     assertThat(response.getStatus()).isEqualTo(400);
     var message = JsonPath
-            .parse(response.readEntity(String.class))
-            .read("$.message");
+      .parse(response.readEntity(String.class))
+      .read("$.message");
     assertThat(message).isEqualTo("File is missing");
+  }
+
+  @Test
+  public void testPostFile_addsFileToIndex() {
+    var multiPart = new FormDataMultiPart()
+      .field("file", content);
+
+    final var request = resource
+      .client()
+      .register(MultiPartFeature.class)
+      .target("/files")
+      .request();
+
+    var entity = Entity.entity(multiPart, multiPart.getMediaType());
+
+    var response = request.post(entity);
+    assertThat(response.getStatus()).isEqualTo(201);
+
+    var argument = ArgumentCaptor.forClass(TextRepoFile.class);
+    verify(fileIndexService).addFile(argument.capture());
+    assertThat(argument.getValue().getContent()).isEqualTo("hello test".getBytes());
   }
 
   @Test
@@ -115,7 +143,7 @@ public class FilesResourceTest {
   public void testGetFileBySha224_returns400BadRequest_whenIllegalSha224() {
     var response = resource.client().target("/files/55d4c44f5bc05762d8807f75f3").request().get();
     assertThat(response.getStatus()).isEqualTo(400);
-    String actualErrorMessage = responsePart(response, "$.message");
+    var actualErrorMessage = responsePart(response, "$.message");
     assertThat(actualErrorMessage).contains("not a sha224");
     assertThat(actualErrorMessage).contains("55d4c44f5bc05762d8807f75f3");
   }

@@ -3,6 +3,7 @@ package nl.knaw.huc.resources;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import nl.knaw.huc.api.Version;
 import nl.knaw.huc.service.DocumentService;
+import nl.knaw.huc.service.FileIndexService;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.junit.ClassRule;
@@ -20,12 +21,13 @@ public class DocumentsResourceTest {
   private static final DocumentService documentService = mock(DocumentService.class);
   private static final String uuid = "b59c2b24-cafe-babe-9bb3-deadbeefc2c6";
   private static final String content = "hello test";
+  private static final FileIndexService fileIndexService = mock(FileIndexService.class);
 
   @ClassRule
   public static final ResourceTestRule resource = ResourceTestRule
           .builder()
           .addProvider(MultiPartFeature.class)
-          .addResource(new DocumentsResource(documentService))
+          .addResource(new DocumentsResource(documentService, fileIndexService))
           .build();
 
   @Test
