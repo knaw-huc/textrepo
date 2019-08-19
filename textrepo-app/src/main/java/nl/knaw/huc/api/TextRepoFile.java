@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 
+import javax.annotation.Nonnull;
 import java.beans.ConstructorProperties;
 
 public class TextRepoFile {
@@ -12,7 +13,7 @@ public class TextRepoFile {
   private final String sha224;
   private final byte[] content;
 
-  public static TextRepoFile fromContent(byte[] content) {
+  public static TextRepoFile fromContent(@Nonnull byte[] content) {
     return new TextRepoFile(SHA_224.digestAsHex(content), content);
   }
 
