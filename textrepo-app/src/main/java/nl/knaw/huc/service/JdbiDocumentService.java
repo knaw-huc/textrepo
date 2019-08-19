@@ -22,18 +22,15 @@ public class JdbiDocumentService implements DocumentService {
   }
 
   @Override
-  public Version addDocument(@Nonnull byte[] content) {
-    final var file = TextRepoFile.fromContent(content);
+  public Version addDocument(@Nonnull TextRepoFile file) {
     return insertNewVersion(documentIdGenerator.nextUniqueId(), file);
   }
 
   @Override
-  public Version replaceDocument(@Nonnull UUID documentId, @Nonnull byte[] content) {
-    final var replacementFile = TextRepoFile.fromContent(content);
-
+  public Version replaceDocument(@Nonnull UUID documentId, @Nonnull TextRepoFile file) {
     return findLatest(documentId)
-            .filter(v -> v.getFileSha().equals(replacementFile.getSha224())) // already the current version
-            .orElseGet(() -> insertNewVersion(documentId, replacementFile));
+            .filter(v -> v.getFileSha().equals(file.getSha224())) // already the current version
+            .orElseGet(() -> insertNewVersion(documentId, file));
   }
 
   @Override
