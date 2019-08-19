@@ -11,19 +11,20 @@ import javax.ws.rs.NotFoundException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 public class JdbiDocumentService implements DocumentService {
   private final Jdbi jdbi;
-  private final IdGenerator<UUID> documentIdGenerator;
+  private final Supplier<UUID> documentIdGenerator;
 
-  public JdbiDocumentService(Jdbi jdbi, IdGenerator<UUID> documentIdGenerator) {
+  public JdbiDocumentService(Jdbi jdbi, Supplier<UUID> documentIdGenerator) {
     this.jdbi = jdbi;
     this.documentIdGenerator = documentIdGenerator;
   }
 
   @Override
   public Version addDocument(@Nonnull TextRepoFile file) {
-    return insertNewVersion(documentIdGenerator.nextUniqueId(), file);
+    return insertNewVersion(documentIdGenerator.get(), file);
   }
 
   @Override
