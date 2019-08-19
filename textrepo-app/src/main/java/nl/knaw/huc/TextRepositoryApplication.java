@@ -45,7 +45,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     );
     jdbi.installPlugin(new SqlObjectPlugin());
 
-    var documentsResource = new DocumentsResource(new JdbiDocumentService(jdbi, () -> UUID.randomUUID()));
+    var documentsResource = new DocumentsResource(new JdbiDocumentService(jdbi, UUID::randomUUID));
     var filesResource = new FilesResource(new JdbiFileService(jdbi));
     var testResource = new TestResource(jdbi);
 
