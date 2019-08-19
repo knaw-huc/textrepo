@@ -11,10 +11,10 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class FileIndexService {
 
-  private ManagedES client;
+  private ManagedEs client;
 
   public FileIndexService(RestClientBuilder builder) {
-    this.client = new ManagedES(builder);
+    this.client = new ManagedEs(builder);
   }
 
   public void addFile(TextRepoFile file) {

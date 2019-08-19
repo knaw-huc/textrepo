@@ -7,10 +7,10 @@ import org.elasticsearch.client.RestHighLevelClient;
 /**
  * Dropwizard-managed Elasticsearch client.
  */
-class ManagedES implements Managed {
+class ManagedEs implements Managed {
   private RestHighLevelClient client;
 
-  public ManagedES(RestClientBuilder builder) {
+  public ManagedEs(RestClientBuilder builder) {
     client = new RestHighLevelClient(builder);
   }
 
