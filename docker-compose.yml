@@ -57,7 +57,11 @@ services:
     networks:
     - textrepo_network
     volumes:
-    - ./integration/test:/integration
+    - ./integration/test:/integration/test
+    environment:
+      ES_HOST: elasticsearch:9200
+      PG_HOST: postgres:5432
+      APP_HOST: textrepo-app:8080
 
 networks:
   textrepo_network:

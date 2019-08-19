@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 
 import json
-import unittest
 
 import requests
 
+from integration.test.abstract_test_case import AbstractTestCase
 
-class FilesResourceTest(unittest.TestCase):
+
+class DocumentsResourceTest(AbstractTestCase):
 
     def test_add_get_replace_document(self):
         file_content='hello test'

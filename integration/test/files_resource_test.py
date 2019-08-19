@@ -4,25 +4,21 @@ import unittest
 
 import requests
 
+from integration.test.abstract_test_case import AbstractTestCase
+from integration.test.config import HTTP_ES_HOST, HTTP_APP_HOST
 
-class FilesResourceTest(unittest.TestCase):
+
+class FilesResourceTest(AbstractTestCase):
 
     def test_post_and_get_file(self):
-        es_host = 'http://elasticsearch:9200'
-        textrepo_host = 'http://textrepo-app:8080'
+        es_host = HTTP_ES_HOST
+        textrepo_host = HTTP_APP_HOST
         sha = '55d4c44f5bc05762d8807f75f3f24b4095afa583ef70ac97eaf7afc6'
         content = 'hello test'
 
-        self.__clear_files_index(es_host, sha)
         self.__test_post_file(sha, textrepo_host, content)
         self.__test_get_file(sha, textrepo_host, content)
         self.__test_file_is_in_files_index(es_host, sha, content)
-
-    def __clear_files_index(self, es_host, sha):
-        clear_index = requests.delete('%s/files' % es_host)
-        self.assertEqual(clear_index.status_code, 200)
-        test_file_in_index_response = requests.get('%s/files/_doc/%s' % (es_host, sha))
-        self.assertEqual(test_file_in_index_response.status_code, 404)
 
     def __test_post_file(self, sha, textrepohost, content):
         multipart_form_data = {

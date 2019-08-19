@@ -1,5 +1,5 @@
-FROM python:3-slim-buster
+FROM python:3.6-slim-buster
 
-WORKDIR /integration/
+WORKDIR /integration/test
 COPY ./scripts/* /utils/
 RUN pip install requests
