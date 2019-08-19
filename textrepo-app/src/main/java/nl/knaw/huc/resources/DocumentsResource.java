@@ -54,7 +54,6 @@ public class DocumentsResource {
                               @FormDataParam("file") FormDataContentDisposition fileDetail) {
     final var file = fromContent(readContent(uploadedInputStream));
     final var version = documentService.addDocument(file);
-    // TODO: test file is added to index
     fileIndexService.addFile(file);
     return Response.created(locationOf(version)).build();
   }
