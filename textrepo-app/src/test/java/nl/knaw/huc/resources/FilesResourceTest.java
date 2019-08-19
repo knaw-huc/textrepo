@@ -3,23 +3,21 @@ package nl.knaw.huc.resources;
 import com.jayway.jsonpath.JsonPath;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import nl.knaw.huc.api.TextRepoFile;
-import nl.knaw.huc.db.FileDao;
 import nl.knaw.huc.service.FileIndexService;
-import nl.knaw.huc.service.JdbiFileService;
+import nl.knaw.huc.service.FileService;
 import org.apache.commons.io.IOUtils;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
-import org.jdbi.v3.core.Jdbi;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.client.Entity;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Optional;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static nl.knaw.huc.resources.ResourceTestUtils.responsePart;
@@ -31,11 +29,8 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-
 public class FilesResourceTest {
-
-  private static final Jdbi jdbi = mock(Jdbi.class);
-  private static final FileDao fileDao = mock(FileDao.class);
+  private static final FileService fileService = mock(FileService.class);
   private static final FileIndexService fileIndexService = mock(FileIndexService.class);
 
   private final static String sha224 = "55d4c44f5bc05762d8807f75f3f24b4095afa583ef70ac97eaf7afc6";
@@ -50,19 +45,16 @@ public class FilesResourceTest {
     .builder()
     .addProvider(MultiPartFeature.class)
     .addResource(new FilesResource(
-      new JdbiFileService(jdbi),
+      fileService,
       fileIndexService
     )).build();
 
   @Before
   public void setup() {
-    when(jdbi.onDemand(any())).thenReturn(fileDao);
   }
 
   @After
   public void teardown() {
-    reset(jdbi);
-    reset(fileDao);
     reset(fileIndexService);
   }
 
@@ -126,12 +118,12 @@ public class FilesResourceTest {
 
     var argument = ArgumentCaptor.forClass(TextRepoFile.class);
     verify(fileIndexService).addFile(argument.capture());
-    assertThat(argument.getValue().getContent()).isEqualTo("hello test".getBytes());
+    assertThat(argument.getValue().getContent()).isEqualTo(content);
   }
 
   @Test
   public void testGetFileBySha224_returnsFileContents_whenFileExists() throws IOException {
-    when(fileDao.findBySha224(eq(sha224))).thenReturn(Optional.of(textRepoFile));
+    when(fileService.getBySha224(eq(sha224))).thenReturn(textRepoFile);
 
     var response = resource.client().target("/files/" + sha224).request().get();
     var inputStream = response.readEntity(InputStream.class);
@@ -143,6 +135,7 @@ public class FilesResourceTest {
   public void testGetFileBySha224_returns400BadRequest_whenIllegalSha224() {
     var response = resource.client().target("/files/55d4c44f5bc05762d8807f75f3").request().get();
     assertThat(response.getStatus()).isEqualTo(400);
+
     var actualErrorMessage = responsePart(response, "$.message");
     assertThat(actualErrorMessage).contains("not a sha224");
     assertThat(actualErrorMessage).contains("55d4c44f5bc05762d8807f75f3");
@@ -150,8 +143,11 @@ public class FilesResourceTest {
 
   @Test
   public void testGetFileBySha224_returns404NotFound_whenNoSuchSha224Exists() {
+    when(fileService.getBySha224(any())).thenThrow(new NotFoundException("File not found"));
+
     var response = resource.client().target("/files/" + sha224).request().get();
     assertThat(response.getStatus()).isEqualTo(404);
+
     String actualErrorMessage = responsePart(response, "$.message");
     assertThat(actualErrorMessage).contains("not found");
   }
