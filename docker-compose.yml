@@ -46,7 +46,7 @@ services:
     command: ["/utils/wait-for-it.sh", "postgres:5432", "elasticsearch:9200",
       "--timeout=0",
       "--",
-      "java", "-jar", "/textrepo-app/textrepo.jar", "server", "files.yml"]
+      "java", "-jar", "/textrepo-app/textrepo.jar", "server", "config.yml"]
 
   integration:
     command: ["/utils/wait-for-it.sh", "textrepo-app:8080",

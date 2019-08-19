@@ -17,3 +17,7 @@ logging:
   level: INFO
   loggers:
     nl.knaw.huc: DEBUG
+
+elasticsearch:
+  host: elasticsearch
+  port: 9200

@@ -11,6 +11,7 @@ import nl.knaw.huc.resources.TestResource;
 import nl.knaw.huc.service.FileIndexService;
 import nl.knaw.huc.service.JdbiDocumentService;
 import nl.knaw.huc.service.JdbiFileService;
+import nl.knaw.huc.service.ManagedEs;
 import org.apache.http.HttpHost;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 import org.slf4j.Logger;
@@ -43,18 +44,21 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
   public void run(TextRepositoryConfiguration configuration, Environment environment) {
     var factory = new JdbiFactory();
     var jdbi = factory.build(
-            environment,
-            configuration.getDataSourceFactory(),
-            "postgresql"
+      environment,
+      configuration.getDataSourceFactory(),
+      "postgresql"
     );
     jdbi.installPlugin(new SqlObjectPlugin());
 
-    var indexer = new FileIndexService(
-      builder(new HttpHost("elasticsearch", 9200, "http"))
+    var indexService = new FileIndexService(
+      new ManagedEs(builder(new HttpHost(
+        configuration.getElasticsearch().getHost(),
+        configuration.getElasticsearch().getPort()
+      ))).client()
     );
 
-    var filesResource = new FilesResource(new JdbiFileService(jdbi), indexer);
-    var documentsResource = new DocumentsResource(new JdbiDocumentService(jdbi, UUID::randomUUID), indexer);
+    var filesResource = new FilesResource(new JdbiFileService(jdbi), indexService);
+    var documentsResource = new DocumentsResource(new JdbiDocumentService(jdbi, UUID::randomUUID), indexService);
 
     var testResource = new TestResource(jdbi);
 

@@ -18,6 +18,10 @@ public class TextRepositoryConfiguration extends Configuration {
   @NotNull
   private JerseyClientConfiguration jerseyClient = new JerseyClientConfiguration();
 
+  @Valid
+  @NotNull
+  private ElasticsearchConfiguration elasticsearch = new ElasticsearchConfiguration();
+
   @JsonProperty("jerseyClient")
   public JerseyClientConfiguration getJerseyClientConfiguration() {
     return jerseyClient;
@@ -38,4 +42,13 @@ public class TextRepositoryConfiguration extends Configuration {
     return database;
   }
 
+  @JsonProperty("elasticsearch")
+  public ElasticsearchConfiguration getElasticsearch() {
+    return elasticsearch;
+  }
+
+  @JsonProperty("elasticsearch")
+  public void setElasticsearch(ElasticsearchConfiguration elasticsearch) {
+    this.elasticsearch = elasticsearch;
+  }
 }
