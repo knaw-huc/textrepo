@@ -34,12 +34,11 @@ public class DocumentsResourceTest {
   private static final String uuid = "b59c2b24-cafe-babe-9bb3-deadbeefc2c6";
   private static final String content = "hello test";
 
-//  private static final DocumentService documentService = mock(DocumentService.class);
   private static final FileIndexService fileIndexService = mock(FileIndexService.class);
-
   private static final FileService files = new FileService(mock(FileStoreService.class), fileIndexService);
   private static final Jdbi jdbi = mock(Jdbi.class);
   private static final VersionService versions = new JdbiVersionService(jdbi, files);
+  @SuppressWarnings("unchecked")
   private static final Supplier<UUID> idGenerator = mock(Supplier.class);
   private static final DocumentService documentService = new DocumentService(versions, idGenerator);
 
