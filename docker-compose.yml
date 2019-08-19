@@ -6,7 +6,7 @@ services:
     networks:
     - textrepo_network
     ports:
-    - 5432:5432
+    - 5432
     volumes:
     - ./postgres/initdb:/docker-entrypoint-initdb.d
     environment:
@@ -31,22 +31,32 @@ services:
     volumes:
     - esdata:/usr/share/elasticsearch/data
     ports:
-    - 9200:9200
+    - 9200
     networks:
     - textrepo_network
 
   textrepo-app:
     build: ./textrepo-app
-    depends_on:
-      - "postgres"
     ports:
-      - 8080:8080
+      - 8080
     networks:
       - textrepo_network
     command: ["/utils/wait-for-it.sh", "postgres:5432", "elasticsearch:9200",
       "--timeout=0",
       "--",
       "java", "-jar", "/textrepo-app/textrepo.jar", "server", "config.yml"]
+
+  nginx:
+    image: nginx:1.17
+    networks:
+    - textrepo_network
+    depends_on:
+      - textrepo-app
+    volumes:
+    - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+    - 9200:9200
+    - 8080:8080
 
   integration:
     command: ["/utils/wait-for-it.sh", "textrepo-app:8080",
