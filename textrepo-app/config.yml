@@ -19,5 +19,7 @@ logging:
     nl.knaw.huc: DEBUG
 
 elasticsearch:
-  host: elasticsearch
-  port: 9200
+  # Hosts must be a list of hosts in the Elasticsearch cluster.
+  # The format is <hostname> or <hostname>:<port>. The port defaults to 9200.
+  hosts:
+    - elasticsearch:9200
