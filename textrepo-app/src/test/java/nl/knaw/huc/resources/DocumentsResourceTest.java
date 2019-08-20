@@ -49,7 +49,7 @@ public class DocumentsResourceTest {
   public static final ResourceTestRule resource = ResourceTestRule
       .builder()
       .addProvider(MultiPartFeature.class)
-      .addResource(new DocumentsResource(documentService))
+      .addResource(new DocumentsResource(documentService, files))
       .build();
 
   @Before

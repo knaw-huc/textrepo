@@ -27,6 +27,11 @@ public class JdbiMetadataService implements MetadataService {
   }
 
   @Override
+  public List<MetadataEntry> find(@Nonnull UUID documentId) {
+    return getMetadataDao().findByDocumentUuid(documentId);
+  }
+
+  @Override
   public Optional<MetadataEntry> find(@Nonnull UUID documentId, @Nonnull String key) {
     return getMetadataDao().findByDocumentUuidAndKey(documentId, key);
   }

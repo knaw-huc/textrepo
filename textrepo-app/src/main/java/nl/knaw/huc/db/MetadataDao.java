@@ -23,7 +23,11 @@ public interface MetadataDao {
   void bulkInsert(@BindBean List<MetadataEntry> entries);
 
   @SqlQuery("select document_uuid, key, value from metadata where document_uuid = ? and key = ?")
-  @RegisterConstructorMapper(value = MetadataEntry.class)
+  @RegisterConstructorMapper(MetadataEntry.class)
   Optional<MetadataEntry> findByDocumentUuidAndKey(@Bind UUID documentUuid, @Bind String key);
+
+  @SqlQuery("select document_uuid, key, value from metadata where document_uuid = ?")
+  @RegisterConstructorMapper(MetadataEntry.class)
+  List<MetadataEntry> findByDocumentUuid(@Bind UUID documentUuid);
 
 }

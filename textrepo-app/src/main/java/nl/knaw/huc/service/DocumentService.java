@@ -7,6 +7,7 @@ import nl.knaw.huc.api.Version;
 
 import javax.annotation.Nonnull;
 import javax.ws.rs.NotFoundException;
+import java.beans.ConstructorProperties;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -58,10 +59,24 @@ public class DocumentService {
         .orElseGet(() -> versionService.insertNewVersion(documentId, file));
   }
 
+  public List<KeyValue> getMetadata(UUID documentId) {
+    return metadataService
+        .find(documentId)
+        .stream()
+        .map(entry -> new KeyValue(entry.getKey(), entry.getValue()))
+        .collect(toList());
+  }
+
   public static class KeyValue {
     @JsonProperty
-    public String key;
+    private final String key;
     @JsonProperty
-    public String value;
+    private final String value;
+
+    @ConstructorProperties({"key", "value"})
+    public KeyValue(String key, String value) {
+      this.key = key;
+      this.value = value;
+    }
   }
 }
