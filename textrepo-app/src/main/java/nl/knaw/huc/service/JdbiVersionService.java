@@ -6,12 +6,9 @@ import nl.knaw.huc.db.VersionDao;
 import org.jdbi.v3.core.Jdbi;
 
 import javax.annotation.Nonnull;
-import javax.ws.rs.NotFoundException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
-
-import static java.lang.String.format;
 
 public class JdbiVersionService implements VersionService {
   private final Jdbi jdbi;
@@ -23,9 +20,8 @@ public class JdbiVersionService implements VersionService {
   }
 
   @Override
-  public Version getLatestVersion(@Nonnull UUID documentId) {
-    return findLatest(documentId)
-        .orElseThrow(() -> new NotFoundException(format("No version found for document: %s", documentId)));
+  public Optional<Version> findLatestVersion(@Nonnull UUID documentId) {
+    return getVersionDao().findLatestByDocumentUuid(documentId);
   }
 
   @Override
@@ -34,17 +30,6 @@ public class JdbiVersionService implements VersionService {
     var newVersion = new Version(documentId, LocalDateTime.now(), file.getSha224());
     getVersionDao().insert(newVersion);
     return newVersion;
-  }
-
-  @Override
-  public Version replace(@Nonnull UUID documentId, @Nonnull TextRepoFile file) {
-    return findLatest(documentId)
-        .filter(v -> v.getFileSha().equals(file.getSha224())) // already the current version
-        .orElseGet(() -> insertNewVersion(documentId, file));
-  }
-
-  private Optional<Version> findLatest(@Nonnull UUID documentId) {
-    return getVersionDao().findLatestByDocumentUuid(documentId);
   }
 
   private VersionDao getVersionDao() {

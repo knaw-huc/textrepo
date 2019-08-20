@@ -54,16 +54,17 @@ public class DocumentsResource {
   @Consumes(MULTIPART_FORM_DATA)
   @Produces(APPLICATION_JSON)
   @Path("/{uuid}/_file")
-  public Response replaceDocument(@PathParam("uuid") @Valid UUID documentId,
-                                  @FormDataParam("file") InputStream uploadedInputStream,
-                                  @FormDataParam("file") FormDataContentDisposition fileDetail) {
-    logger.warn("replacing file of document {}", documentId);
+  public Response replaceDocumentFile(@PathParam("uuid") @Valid UUID documentId,
+                                      @FormDataParam("file") InputStream uploadedInputStream,
+                                      @FormDataParam("file") FormDataContentDisposition fileDetail) {
+    logger.debug("replacing file of document {}", documentId);
     final var file = fromContent(readContent(uploadedInputStream));
     final var now = LocalDateTime.now();
-    final var version = documentService.replaceDocument(documentId, file);
+    final var version = documentService.replaceDocumentFile(documentId, file);
 
     if (version.getDate().isBefore(now)) {
-      return Response.notModified().build();
+      logger.debug("already current, not modified");
+      return Response.notModified().build();  // this file is already the current version
     }
 
     return Response.ok()
