@@ -7,9 +7,9 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import nl.knaw.huc.resources.DocumentsResource;
 import nl.knaw.huc.resources.FilesResource;
-import nl.knaw.huc.resources.TestResource;
 import nl.knaw.huc.service.DocumentService;
 import nl.knaw.huc.service.FileService;
+import nl.knaw.huc.service.JdbiMetadataService;
 import nl.knaw.huc.service.JdbiVersionService;
 import nl.knaw.huc.service.index.ElasticFileIndexer;
 import nl.knaw.huc.service.store.JdbiFileStorage;
@@ -54,15 +54,13 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     var fileService = new FileService(fileStoreService, fileIndexService);
     var filesResource = new FilesResource(fileService);
 
+    var metadataService = new JdbiMetadataService(jdbi);
     var versionService = new JdbiVersionService(jdbi, fileService);
-    var documentService = new DocumentService(versionService, UUID::randomUUID);
+    var documentService = new DocumentService(metadataService, versionService, UUID::randomUUID);
     var documentsResource = new DocumentsResource(documentService);
-
-    var testResource = new TestResource(jdbi);
 
     environment.jersey().register(documentsResource);
     environment.jersey().register(filesResource);
-    environment.jersey().register(testResource);
   }
 
 }

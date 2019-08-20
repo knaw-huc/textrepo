@@ -6,6 +6,7 @@ import nl.knaw.huc.db.VersionDao;
 import nl.knaw.huc.service.DocumentService;
 import nl.knaw.huc.service.FileService;
 import nl.knaw.huc.service.JdbiVersionService;
+import nl.knaw.huc.service.MetadataService;
 import nl.knaw.huc.service.VersionService;
 import nl.knaw.huc.service.index.FileIndexer;
 import nl.knaw.huc.service.store.FileStorage;
@@ -40,7 +41,8 @@ public class DocumentsResourceTest {
   private static final VersionService versions = new JdbiVersionService(jdbi, files);
   @SuppressWarnings("unchecked")
   private static final Supplier<UUID> idGenerator = mock(Supplier.class);
-  private static final DocumentService documentService = new DocumentService(versions, idGenerator);
+  private static final MetadataService metadataService = mock(MetadataService.class);
+  private static final DocumentService documentService = new DocumentService(metadataService, versions, idGenerator);
   private static final VersionDao versionDao = mock(VersionDao.class);
 
   @ClassRule

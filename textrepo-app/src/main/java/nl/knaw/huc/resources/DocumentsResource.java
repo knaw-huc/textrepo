@@ -3,6 +3,7 @@ package nl.knaw.huc.resources;
 import com.codahale.metrics.annotation.Timed;
 import nl.knaw.huc.api.Version;
 import nl.knaw.huc.service.DocumentService;
+import nl.knaw.huc.service.DocumentService.KeyValue;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
@@ -21,6 +22,7 @@ import javax.ws.rs.core.UriBuilder;
 import java.io.InputStream;
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -47,6 +49,17 @@ public class DocumentsResource {
     final var file = fromContent(readContent(uploadedInputStream));
     final var version = documentService.addDocument(file);
     return Response.created(locationOf(version)).build();
+  }
+
+  @POST
+  @Timed
+  @Consumes(APPLICATION_JSON)
+  @Produces(APPLICATION_JSON)
+  @Path("/{uuid}")
+  public Response addMetadata(@PathParam("uuid") @Valid UUID documentId, List<KeyValue> metadata) {
+    logger.debug("addMetadata: uuid={}, metadata={}", documentId, metadata);
+    documentService.addMetadata(documentId, metadata);
+    return Response.ok().build();
   }
 
   @PUT
