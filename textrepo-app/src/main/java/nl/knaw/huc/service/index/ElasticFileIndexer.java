@@ -5,6 +5,8 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 
+import javax.annotation.Nonnull;
+
 import java.io.IOException;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -17,7 +19,7 @@ public class ElasticFileIndexer implements FileIndexer {
     this.elasticsearchClient = elasticsearchClient;
   }
 
-  public void indexFile(TextRepoFile file) {
+  public void indexFile(@Nonnull TextRepoFile file) {
     var content = file.getContent();
     var indexRequest = new IndexRequest("files")
         .id(file.getSha224())
