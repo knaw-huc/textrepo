@@ -11,12 +11,8 @@ public class MetadataEntry {
   private String key;
   private String value;
 
-  @ConstructorProperties( {"document_uuid", "key", "value"})
-  public MetadataEntry(
-    UUID documentUuid,
-    String key,
-    String value
-  ) {
+  @ConstructorProperties({"document_uuid", "key", "value"})
+  public MetadataEntry(UUID documentUuid, String key, String value) {
     this.documentUuid = documentUuid;
     this.key = key;
     this.value = value;

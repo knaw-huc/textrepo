@@ -20,8 +20,8 @@ public class ElasticFileIndexer implements FileIndexer {
   public void indexFile(TextRepoFile file) {
     var content = file.getContent();
     var indexRequest = new IndexRequest("files")
-      .id(file.getSha224())
-      .source("content", new String(content, UTF_8));
+        .id(file.getSha224())
+        .source("content", new String(content, UTF_8));
     try {
       elasticsearchClient.index(indexRequest, RequestOptions.DEFAULT);
     } catch (IOException ex) {

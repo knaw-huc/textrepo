@@ -47,8 +47,8 @@ public class FilesResource {
     fileService.addFile(file);
 
     return Response.created(locationOf(file))
-            .entity(new AddFileResult(file))
-            .build();
+                   .entity(new AddFileResult(file))
+                   .build();
   }
 
   @GET
@@ -63,16 +63,15 @@ public class FilesResource {
 
     final var file = fileService.getBySha224(sha224);
 
-    return Response
-            .ok(file.getContent(), APPLICATION_OCTET_STREAM)
-            .header("Content-Disposition", "attachment;")
-            .build();
+    return Response.ok(file.getContent(), APPLICATION_OCTET_STREAM)
+                   .header("Content-Disposition", "attachment;")
+                   .build();
   }
 
   private static URI locationOf(TextRepoFile file) {
     return UriBuilder.fromResource(FilesResource.class)
-            .path("{sha224}")
-            .build(file.getSha224());
+                     .path("{sha224}")
+                     .build(file.getSha224());
   }
 
   private static class AddFileResult {

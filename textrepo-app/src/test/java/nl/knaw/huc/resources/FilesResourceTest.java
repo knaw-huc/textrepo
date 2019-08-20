@@ -3,8 +3,8 @@ package nl.knaw.huc.resources;
 import com.jayway.jsonpath.JsonPath;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import nl.knaw.huc.api.TextRepoFile;
-import nl.knaw.huc.service.index.FileIndexer;
 import nl.knaw.huc.service.FileService;
+import nl.knaw.huc.service.index.FileIndexer;
 import nl.knaw.huc.service.store.FileStorage;
 import org.apache.commons.io.IOUtils;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
@@ -37,16 +37,16 @@ public class FilesResourceTest {
   private final static String sha224 = "55d4c44f5bc05762d8807f75f3f24b4095afa583ef70ac97eaf7afc6";
   private final static String content = "hello test";
   private final static TextRepoFile textRepoFile = new TextRepoFile(
-    sha224,
-    content.getBytes()
+      sha224,
+      content.getBytes()
   );
 
   @ClassRule
   public static final ResourceTestRule resource = ResourceTestRule
-    .builder()
-    .addProvider(MultiPartFeature.class)
-    .addResource(new FilesResource(new FileService(FILE_STORAGE, FILE_INDEXER)))
-    .build();
+      .builder()
+      .addProvider(MultiPartFeature.class)
+      .addResource(new FilesResource(new FileService(FILE_STORAGE, FILE_INDEXER)))
+      .build();
 
   @Before
   public void setup() {
@@ -61,13 +61,13 @@ public class FilesResourceTest {
   @Test
   public void testPostFile_returns201CreatedWithLocationHeader_whenFileUploaded() {
     var multiPart = new FormDataMultiPart()
-      .field("file", content);
+        .field("file", content);
 
     final var request = resource
-      .client()
-      .register(MultiPartFeature.class)
-      .target("/files")
-      .request();
+        .client()
+        .register(MultiPartFeature.class)
+        .target("/files")
+        .request();
 
     final var entity = Entity.entity(multiPart, multiPart.getMediaType());
     var response = request.post(entity);
@@ -82,34 +82,34 @@ public class FilesResourceTest {
   public void testPostFile_returnsStatus400BadRequest_whenFileIsMissing() {
     // No .field("file", content):
     var multiPart = new FormDataMultiPart()
-      .field("filename", "just-a-filename.txt");
+        .field("filename", "just-a-filename.txt");
 
     final var request = resource
-      .client()
-      .register(MultiPartFeature.class)
-      .target("/files")
-      .request();
+        .client()
+        .register(MultiPartFeature.class)
+        .target("/files")
+        .request();
 
     var entity = Entity.entity(multiPart, multiPart.getMediaType());
 
     var response = request.post(entity);
     assertThat(response.getStatus()).isEqualTo(400);
     var message = JsonPath
-      .parse(response.readEntity(String.class))
-      .read("$.message");
+        .parse(response.readEntity(String.class))
+        .read("$.message");
     assertThat(message).isEqualTo("File is missing");
   }
 
   @Test
   public void testPostFile_addsFileToIndex() {
     var multiPart = new FormDataMultiPart()
-      .field("file", content);
+        .field("file", content);
 
     final var request = resource
-      .client()
-      .register(MultiPartFeature.class)
-      .target("/files")
-      .request();
+        .client()
+        .register(MultiPartFeature.class)
+        .target("/files")
+        .request();
 
     var entity = Entity.entity(multiPart, multiPart.getMediaType());
 

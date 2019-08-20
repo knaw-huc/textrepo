@@ -1,9 +1,7 @@
 package nl.knaw.huc;
 
 import io.dropwizard.lifecycle.Managed;
-import nl.knaw.huc.ElasticsearchConfiguration;
 import org.apache.http.HttpHost;
-import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
 
 import static org.elasticsearch.client.RestClient.builder;
@@ -16,8 +14,8 @@ public class ManagedElasticsearchClient implements Managed {
 
   public ManagedElasticsearchClient(ElasticsearchConfiguration configuration) {
     var httpHost = new HttpHost(
-      configuration.getHost(),
-      configuration.getPort()
+        configuration.getHost(),
+        configuration.getPort()
     );
     var restClientBuilder = builder(httpHost);
     client = new RestHighLevelClient(restClientBuilder);

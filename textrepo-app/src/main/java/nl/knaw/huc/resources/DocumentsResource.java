@@ -68,8 +68,8 @@ public class DocumentsResource {
     }
 
     return Response.ok()
-            .entity(version)
-            .build();
+                   .entity(version)
+                   .build();
   }
 
   @GET
@@ -84,8 +84,8 @@ public class DocumentsResource {
 
   private static URI locationOf(Version version) {
     return UriBuilder.fromResource(DocumentsResource.class)
-            .path("{uuid}")
-            .build(version.getDocumentUuid());
+                     .path("{uuid}")
+                     .build(version.getDocumentUuid());
   }
 
 }

@@ -8,18 +8,16 @@ import io.dropwizard.setup.Environment;
 import nl.knaw.huc.resources.DocumentsResource;
 import nl.knaw.huc.resources.FilesResource;
 import nl.knaw.huc.resources.TestResource;
-import nl.knaw.huc.service.index.ElasticFileIndexer;
-import nl.knaw.huc.service.FileService;
 import nl.knaw.huc.service.DocumentService;
-import nl.knaw.huc.service.store.JdbiFileStorage;
+import nl.knaw.huc.service.FileService;
 import nl.knaw.huc.service.JdbiVersionService;
+import nl.knaw.huc.service.index.ElasticFileIndexer;
+import nl.knaw.huc.service.store.JdbiFileStorage;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
-
-import static org.elasticsearch.client.RestClient.builder;
 
 public class TextRepositoryApplication extends Application<TextRepositoryConfiguration> {
 
@@ -44,9 +42,9 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
   public void run(TextRepositoryConfiguration config, Environment environment) {
     var factory = new JdbiFactory();
     var jdbi = factory.build(
-      environment,
-      config.getDataSourceFactory(),
-      "postgresql"
+        environment,
+        config.getDataSourceFactory(),
+        "postgresql"
     );
     jdbi.installPlugin(new SqlObjectPlugin());
 

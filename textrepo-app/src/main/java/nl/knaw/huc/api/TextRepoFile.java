@@ -17,7 +17,7 @@ public class TextRepoFile {
     return new TextRepoFile(SHA_224.digestAsHex(content), content);
   }
 
-  @ConstructorProperties( {"sha224", "content"})
+  @ConstructorProperties({"sha224", "content"})
   public TextRepoFile(String sha224, byte[] content) {
     this.sha224 = sha224;
     this.content = content;

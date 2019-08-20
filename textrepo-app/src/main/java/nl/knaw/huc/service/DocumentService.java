@@ -24,15 +24,17 @@ public class DocumentService {
   }
 
   public Version getLatestVersion(@Nonnull UUID documentId) {
-    return versionService.findLatestVersion(documentId)
-            .orElseThrow(() -> new NotFoundException(format("No such document: %s", documentId)));
+    return versionService
+        .findLatestVersion(documentId)
+        .orElseThrow(() -> new NotFoundException(format("No such document: %s", documentId)));
   }
 
   public Version replaceDocumentFile(@Nonnull UUID documentId, @Nonnull TextRepoFile file) {
     final var currentSha224 = file.getSha224();
-    return versionService.findLatestVersion(documentId)
-            .filter(v -> v.getFileSha().equals(currentSha224)) // already the current file for this document
-            .orElseGet(() -> versionService.insertNewVersion(documentId, file));
+    return versionService
+        .findLatestVersion(documentId)
+        .filter(v -> v.getFileSha().equals(currentSha224)) // already the current file for this document
+        .orElseGet(() -> versionService.insertNewVersion(documentId, file));
   }
 
 }

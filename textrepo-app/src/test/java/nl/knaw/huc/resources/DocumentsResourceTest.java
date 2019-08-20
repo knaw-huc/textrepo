@@ -4,11 +4,11 @@ import io.dropwizard.testing.junit.ResourceTestRule;
 import nl.knaw.huc.api.TextRepoFile;
 import nl.knaw.huc.db.VersionDao;
 import nl.knaw.huc.service.DocumentService;
-import nl.knaw.huc.service.index.FileIndexer;
 import nl.knaw.huc.service.FileService;
-import nl.knaw.huc.service.store.FileStorage;
 import nl.knaw.huc.service.JdbiVersionService;
 import nl.knaw.huc.service.VersionService;
+import nl.knaw.huc.service.index.FileIndexer;
+import nl.knaw.huc.service.store.FileStorage;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.jdbi.v3.core.Jdbi;
@@ -45,10 +45,10 @@ public class DocumentsResourceTest {
 
   @ClassRule
   public static final ResourceTestRule resource = ResourceTestRule
-    .builder()
-    .addProvider(MultiPartFeature.class)
-    .addResource(new DocumentsResource(documentService))
-    .build();
+      .builder()
+      .addProvider(MultiPartFeature.class)
+      .addResource(new DocumentsResource(documentService))
+      .build();
 
   @Before
   public void setupMocks() {
