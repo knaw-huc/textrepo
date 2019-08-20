@@ -42,14 +42,15 @@ public class DocumentsResourceTest {
   @SuppressWarnings("unchecked")
   private static final Supplier<UUID> idGenerator = mock(Supplier.class);
   private static final MetadataService metadataService = mock(MetadataService.class);
-  private static final DocumentService documentService = new DocumentService(metadataService, versions, idGenerator);
+  private static final DocumentService documentService =
+      new DocumentService(files, metadataService, versions, idGenerator);
   private static final VersionDao versionDao = mock(VersionDao.class);
 
   @ClassRule
   public static final ResourceTestRule resource = ResourceTestRule
       .builder()
       .addProvider(MultiPartFeature.class)
-      .addResource(new DocumentsResource(documentService, files))
+      .addResource(new DocumentsResource(documentService))
       .build();
 
   @Before

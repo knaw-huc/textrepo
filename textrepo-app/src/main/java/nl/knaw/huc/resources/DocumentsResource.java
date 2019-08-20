@@ -4,7 +4,6 @@ import com.codahale.metrics.annotation.Timed;
 import nl.knaw.huc.api.Version;
 import nl.knaw.huc.service.DocumentService;
 import nl.knaw.huc.service.DocumentService.KeyValue;
-import nl.knaw.huc.service.FileService;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
@@ -37,11 +36,9 @@ public class DocumentsResource {
   private final Logger logger = LoggerFactory.getLogger(DocumentsResource.class);
 
   private final DocumentService documentService;
-  private final FileService fileService;
 
-  public DocumentsResource(DocumentService documentService, FileService fileService) {
+  public DocumentsResource(DocumentService documentService) {
     this.documentService = documentService;
-    this.fileService = fileService;
   }
 
   @POST
@@ -100,8 +97,7 @@ public class DocumentsResource {
   @Timed
   @Produces(APPLICATION_OCTET_STREAM)
   public Response getFile(@PathParam("uuid") @Valid UUID documentId) {
-    var version = documentService.getLatestVersion(documentId);
-    var file = fileService.getBySha224(version.getFileSha());
+    var file = documentService.getLatestFile(documentId);
     return Response.ok(file.getContent(), APPLICATION_OCTET_STREAM)
                    .header("Content-Disposition", "attachment;")
                    .build();

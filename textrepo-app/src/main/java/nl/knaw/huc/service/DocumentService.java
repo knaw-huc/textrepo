@@ -16,13 +16,16 @@ import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
 
 public class DocumentService {
+  private final FileService fileService;
   private final MetadataService metadataService;
   private final VersionService versionService;
   private final Supplier<UUID> documentIdGenerator;
 
-  public DocumentService(MetadataService metadataService,
+  public DocumentService(FileService fileService,
+                         MetadataService metadataService,
                          VersionService versionService,
                          Supplier<UUID> documentIdGenerator) {
+    this.fileService = fileService;
     this.metadataService = metadataService;
     this.versionService = versionService;
     this.documentIdGenerator = documentIdGenerator;
@@ -49,6 +52,11 @@ public class DocumentService {
     return versionService
         .findLatestVersion(documentId)
         .orElseThrow(() -> new NotFoundException(format("No such document: %s", documentId)));
+  }
+
+  public TextRepoFile getLatestFile(UUID documentId) {
+    var version = getLatestVersion(documentId);
+    return fileService.getBySha224(version.getFileSha());
   }
 
   public Version replaceDocumentFile(@Nonnull UUID documentId, @Nonnull TextRepoFile file) {
