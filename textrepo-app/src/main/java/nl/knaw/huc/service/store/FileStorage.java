@@ -2,8 +2,10 @@ package nl.knaw.huc.service.store;
 
 import nl.knaw.huc.api.TextRepoFile;
 
-public interface FileStorage {
-  void storeFile(TextRepoFile file);
+import javax.annotation.Nonnull;
 
-  TextRepoFile getBySha224(String sha224);
+public interface FileStorage {
+  void storeFile(@Nonnull TextRepoFile file);
+
+  TextRepoFile getBySha224(@Nonnull String sha224);
 }
