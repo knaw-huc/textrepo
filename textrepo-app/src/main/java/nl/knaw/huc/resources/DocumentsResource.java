@@ -52,17 +52,6 @@ public class DocumentsResource {
     return Response.created(locationOf(version)).build();
   }
 
-  @POST
-  @Timed
-  @Consumes(APPLICATION_JSON)
-  @Produces(APPLICATION_JSON)
-  @Path("/{uuid}/_meta")
-  public Response addMetadata(@PathParam("uuid") @Valid UUID documentId, List<KeyValue> metadata) {
-    logger.debug("addMetadata: uuid={}, metadata={}", documentId, metadata);
-    documentService.addMetadata(documentId, metadata);
-    return Response.ok().build();
-  }
-
   @PUT
   @Timed
   @Consumes(MULTIPART_FORM_DATA)
@@ -82,14 +71,6 @@ public class DocumentsResource {
     }
 
     return Response.ok(version).build();
-  }
-
-  @GET
-  @Path("/{uuid}/_meta")
-  @Timed
-  @Produces(APPLICATION_JSON)
-  public Response getMetadata(@PathParam("uuid") @Valid UUID documentId) {
-    return Response.ok().entity(documentService.getMetadata(documentId)).build();
   }
 
   @GET

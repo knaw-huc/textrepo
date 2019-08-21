@@ -35,19 +35,6 @@ public class DocumentService {
     return versionService.insertNewVersion(documentIdGenerator.get(), file);
   }
 
-  public void addMetadata(@Nonnull UUID documentId, @Nonnull String key, @Nonnull String value) {
-    metadataService.insert(new MetadataEntry(documentId, key, value));
-  }
-
-  public void addMetadata(@Nonnull UUID documentId, @Nonnull KeyValue metadata) {
-    addMetadata(documentId, metadata.key, metadata.value);
-  }
-
-  public void addMetadata(@Nonnull UUID documentId, @Nonnull List<KeyValue> metadata) {
-    var entries = metadata.stream().map(kv -> new MetadataEntry(documentId, kv.key, kv.value)).collect(toList());
-    metadataService.bulkInsert(entries);
-  }
-
   public Version getLatestVersion(@Nonnull UUID documentId) {
     return versionService
         .findLatestVersion(documentId)
@@ -67,19 +54,11 @@ public class DocumentService {
         .orElseGet(() -> versionService.insertNewVersion(documentId, file));
   }
 
-  public List<KeyValue> getMetadata(UUID documentId) {
-    return metadataService
-        .find(documentId)
-        .stream()
-        .map(entry -> new KeyValue(entry.getKey(), entry.getValue()))
-        .collect(toList());
-  }
-
   public static class KeyValue {
     @JsonProperty
-    private final String key;
+    public final String key;
     @JsonProperty
-    private final String value;
+    public final String value;
 
     @ConstructorProperties({"key", "value"})
     public KeyValue(String key, String value) {
