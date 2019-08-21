@@ -11,7 +11,7 @@ Build with:
 
 On first run:
 ```
-cd textrepo-app && docker build -t textrepo-builder -f Dockerfile.builder .
+docker build -t textrepo-builder -f textrepo-app/Dockerfile.builder textrepo-app
 ```
 
 Build and start:
