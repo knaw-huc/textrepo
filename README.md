@@ -11,7 +11,7 @@ Build with:
 
 On first run:
 ```
-cd textrepo-app && docker build -t textrepo-builder -f Dockerfile.builder .
+docker build -t textrepo-builder -f textrepo-app/Dockerfile.builder textrepo-app
 ```
 
 Build and start:
@@ -35,15 +35,13 @@ sysctl -w vm.max_map_count=262144
 ```
 # Create document from file:
 curl -v -X POST 'localhost:8080/textrepo/documents' -F file=@{file}
-# ... and copy id from `Location` header
 
-# Get version:
-curl -X GET 'localhost:8080/textrepo/document/{id}'
-# ... and copy sha
+# Get version from `Location` header:
+curl -X GET 'localhost:8080/textrepo/documents/{uuid}'
 
-# Get file content:
-curl -X GET 'localhost:8080/textrepo/files/{sha}'
+# Get file from sha:
+curl -X GET 'localhost:8080/textrepo/files/{fileSha}'
 
-# Search in documents index containing content of latest version:
+# Search for latest document version of in elasticsearch index:
 curl -X GET 'localhost:8080/index/documents/_search?q=content:{term}'
 ```
