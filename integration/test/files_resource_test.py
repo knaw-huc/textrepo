@@ -11,14 +11,12 @@ from integration.test.config import HTTP_ES_HOST, HTTP_APP_HOST
 class FilesResourceTest(AbstractTestCase):
 
     def test_post_and_get_file(self):
-        es_host = HTTP_ES_HOST
         textrepo_host = HTTP_APP_HOST
         sha = '55d4c44f5bc05762d8807f75f3f24b4095afa583ef70ac97eaf7afc6'
         content = 'hello test'
 
         self.__test_post_file(sha, textrepo_host, content)
         self.__test_get_file(sha, textrepo_host, content)
-        self.__test_file_is_in_files_index(es_host, sha, content)
 
     def __test_post_file(self, sha, textrepohost, content):
         multipart_form_data = {
@@ -45,8 +43,3 @@ class FilesResourceTest(AbstractTestCase):
         expected_text = content
         self.assertEqual(response.text, expected_text)
 
-    def __test_file_is_in_files_index(self, es_host, sha, content):
-        test_file_in_index_response = requests.get('%s/files/_doc/%s' % (es_host, sha))
-        self.assertEqual(test_file_in_index_response.status_code, 200)
-        response_json = json.loads(test_file_in_index_response.text)
-        self.assertEqual(response_json['_source']['content'], content)

@@ -1,14 +1,13 @@
 package nl.knaw.huc.resources;
 
 import io.dropwizard.testing.junit.ResourceTestRule;
-import nl.knaw.huc.api.TextRepoFile;
 import nl.knaw.huc.db.VersionDao;
 import nl.knaw.huc.service.DocumentService;
 import nl.knaw.huc.service.FileService;
 import nl.knaw.huc.service.JdbiVersionService;
 import nl.knaw.huc.service.MetadataService;
 import nl.knaw.huc.service.VersionService;
-import nl.knaw.huc.service.index.FileIndexer;
+import nl.knaw.huc.service.index.ElasticDocumentIndexer;
 import nl.knaw.huc.service.store.FileStorage;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -35,10 +34,10 @@ public class DocumentsResourceTest {
   private static final String uuid = "b59c2b24-cafe-babe-9bb3-deadbeefc2c6";
   private static final String content = "hello test";
 
-  private static final FileIndexer FILE_INDEXER = mock(FileIndexer.class);
-  private static final FileService files = new FileService(mock(FileStorage.class), FILE_INDEXER);
+  private static final FileService files = new FileService(mock(FileStorage.class));
   private static final Jdbi jdbi = mock(Jdbi.class);
-  private static final VersionService versions = new JdbiVersionService(jdbi, files);
+  private static final ElasticDocumentIndexer documentIndexer = mock(ElasticDocumentIndexer.class);
+  private static final VersionService versions = new JdbiVersionService(jdbi, files, documentIndexer);
   @SuppressWarnings("unchecked")
   private static final Supplier<UUID> idGenerator = mock(Supplier.class);
   private static final MetadataService metadataService = mock(MetadataService.class);
@@ -61,7 +60,7 @@ public class DocumentsResourceTest {
 
   @After
   public void resetMocks() {
-    reset(jdbi, versionDao, FILE_INDEXER);
+    reset(jdbi, versionDao, documentIndexer);
   }
 
   @Test
@@ -72,11 +71,13 @@ public class DocumentsResourceTest {
   }
 
   @Test
-  public void testAddDocument_addsFileToIndex() {
+  public void testAddDocument_addsFileWithDocumentIdToIndex() {
     postTestFile();
-    var argument = ArgumentCaptor.forClass(TextRepoFile.class);
-    verify(FILE_INDEXER).indexFile(argument.capture());
-    assertThat(argument.getValue().getContent()).isEqualTo(content.getBytes());
+    var documentId = ArgumentCaptor.forClass(UUID.class);
+    var latestVersionContent = ArgumentCaptor.forClass(String.class);
+    verify(documentIndexer).indexDocument(documentId.capture(), latestVersionContent.capture());
+    assertThat(documentId.getValue()).isOfAnyClassIn(UUID.class);
+    assertThat(latestVersionContent.getValue()).isEqualTo(content);
   }
 
   private Response postTestFile() {

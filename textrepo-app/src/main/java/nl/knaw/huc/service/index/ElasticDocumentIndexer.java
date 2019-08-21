@@ -1,29 +1,26 @@
 package nl.knaw.huc.service.index;
 
-import nl.knaw.huc.api.TextRepoFile;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 
 import javax.annotation.Nonnull;
-
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
+import java.util.UUID;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
-public class ElasticFileIndexer implements FileIndexer {
+public class ElasticDocumentIndexer implements DocumentIndexer {
 
   private RestHighLevelClient elasticsearchClient;
 
-  public ElasticFileIndexer(RestHighLevelClient elasticsearchClient) {
+  public ElasticDocumentIndexer(RestHighLevelClient elasticsearchClient) {
     this.elasticsearchClient = elasticsearchClient;
   }
 
-  public void indexFile(@Nonnull TextRepoFile file) {
-    var content = file.getContent();
-    var indexRequest = new IndexRequest("files")
-        .id(file.getSha224())
-        .source("content", new String(content, UTF_8));
+  public void indexDocument(@Nonnull UUID document, @NotNull String latestVersionContent) {
+    var indexRequest = new IndexRequest("documents")
+        .id(document.toString())
+        .source("content", latestVersionContent);
     try {
       elasticsearchClient.index(indexRequest, RequestOptions.DEFAULT);
     } catch (IOException ex) {

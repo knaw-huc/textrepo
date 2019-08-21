@@ -11,7 +11,7 @@ import nl.knaw.huc.service.DocumentService;
 import nl.knaw.huc.service.FileService;
 import nl.knaw.huc.service.JdbiMetadataService;
 import nl.knaw.huc.service.JdbiVersionService;
-import nl.knaw.huc.service.index.ElasticFileIndexer;
+import nl.knaw.huc.service.index.ElasticDocumentIndexer;
 import nl.knaw.huc.service.store.JdbiFileStorage;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 import org.slf4j.Logger;
@@ -49,13 +49,13 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     jdbi.installPlugin(new SqlObjectPlugin());
 
     var managedEsClient = new ManagedElasticsearchClient(config.getElasticsearch());
-    var fileIndexService = new ElasticFileIndexer(managedEsClient.client());
+    var documentIndexService = new ElasticDocumentIndexer(managedEsClient.client());
     var fileStoreService = new JdbiFileStorage(jdbi);
-    var fileService = new FileService(fileStoreService, fileIndexService);
+    var fileService = new FileService(fileStoreService);
     var filesResource = new FilesResource(fileService);
 
     var metadataService = new JdbiMetadataService(jdbi);
-    var versionService = new JdbiVersionService(jdbi, fileService);
+    var versionService = new JdbiVersionService(jdbi, fileService, documentIndexService);
     var documentService = new DocumentService(fileService, metadataService, versionService, UUID::randomUUID);
     var documentsResource = new DocumentsResource(documentService);
 

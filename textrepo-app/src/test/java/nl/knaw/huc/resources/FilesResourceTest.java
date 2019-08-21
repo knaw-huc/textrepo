@@ -4,7 +4,6 @@ import com.jayway.jsonpath.JsonPath;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import nl.knaw.huc.api.TextRepoFile;
 import nl.knaw.huc.service.FileService;
-import nl.knaw.huc.service.index.FileIndexer;
 import nl.knaw.huc.service.store.FileStorage;
 import org.apache.commons.io.IOUtils;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
@@ -28,11 +27,11 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 public class FilesResourceTest {
   private static final FileStorage FILE_STORAGE = mock(FileStorage.class);
-  private static final FileIndexer FILE_INDEXER = mock(FileIndexer.class);
 
   private final static String sha224 = "55d4c44f5bc05762d8807f75f3f24b4095afa583ef70ac97eaf7afc6";
   private final static String content = "hello test";
@@ -45,7 +44,7 @@ public class FilesResourceTest {
   public static final ResourceTestRule resource = ResourceTestRule
       .builder()
       .addProvider(MultiPartFeature.class)
-      .addResource(new FilesResource(new FileService(FILE_STORAGE, FILE_INDEXER)))
+      .addResource(new FilesResource(new FileService(FILE_STORAGE)))
       .build();
 
   @Before
@@ -55,7 +54,6 @@ public class FilesResourceTest {
   @After
   public void teardown() {
     reset(FILE_STORAGE);
-    reset(FILE_INDEXER);
   }
 
   @Test
@@ -98,27 +96,6 @@ public class FilesResourceTest {
         .parse(response.readEntity(String.class))
         .read("$.message");
     assertThat(message).isEqualTo("File is missing");
-  }
-
-  @Test
-  public void testPostFile_addsFileToIndex() {
-    var multiPart = new FormDataMultiPart()
-        .field("file", content);
-
-    final var request = resource
-        .client()
-        .register(MultiPartFeature.class)
-        .target("/files")
-        .request();
-
-    var entity = Entity.entity(multiPart, multiPart.getMediaType());
-
-    var response = request.post(entity);
-    assertThat(response.getStatus()).isEqualTo(201);
-
-    var argument = ArgumentCaptor.forClass(TextRepoFile.class);
-    verify(FILE_INDEXER).indexFile(argument.capture());
-    assertThat(argument.getValue().getContent()).isEqualTo(content.getBytes());
   }
 
   @Test

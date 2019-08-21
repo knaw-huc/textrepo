@@ -5,21 +5,21 @@ import json
 import requests
 
 from integration.test.abstract_test_case import AbstractTestCase
+from integration.test.config import HTTP_ES_HOST
 
 
 class DocumentsResourceTest(AbstractTestCase):
 
-    def test_add_get_replace_document(self):
-        file_content='hello test'
-        file_sha='55d4c44f5bc05762d8807f75f3f24b4095afa583ef70ac97eaf7afc6'
+    def test_add_get_search_document(self):
+        es_host = HTTP_ES_HOST
+
+        file_content = 'hello test'
+        file_sha = '55d4c44f5bc05762d8807f75f3f24b4095afa583ef70ac97eaf7afc6'
         document_location = self.__test_add_document(file_content)
+        document_id = document_location.rsplit('/', 1)[-1]
 
         self.__test_get_latest_version_of_document(document_location, file_content, file_sha)
-
-        updated_file_content='hello test 2'
-        updated_file_sha='ef2c433609e63cb570b1392d3461bf53da03c54bdde0ab33aa806d59'
-        self.__test_replace_document(document_location, updated_file_content, updated_file_sha)
-
+        self.__test_file_is_in_files_index(es_host, document_id, file_content)
         self.__test_get_latest_version_of_document(document_location, file_content, file_sha)
 
     def __test_add_document(self, content):
@@ -37,6 +37,7 @@ class DocumentsResourceTest(AbstractTestCase):
 
         document_location = response.headers['Location']
         self.assertIsNotNone(document_location)
+
         return document_location
 
     def __test_get_latest_version_of_document(self, document_location, expected_content, expected_sha):
@@ -54,6 +55,8 @@ class DocumentsResourceTest(AbstractTestCase):
 
         self.assertEqual(get_file_response.text, expected_content)
 
-    def __test_replace_document(self, document_location, updated_file_content, updated_file_sha):
-        print('TODO: create __test_replace_document')
-
+    def __test_file_is_in_files_index(self, es_host, document_id, content):
+        test_file_in_index_response = requests.get('%s/documents/_doc/%s' % (es_host, document_id))
+        self.assertEqual(test_file_in_index_response.status_code, 200)
+        response_json = json.loads(test_file_in_index_response.text)
+        self.assertEqual(response_json['_source']['content'], content)
