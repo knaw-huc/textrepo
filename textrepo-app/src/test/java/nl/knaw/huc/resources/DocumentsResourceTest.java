@@ -42,7 +42,7 @@ public class DocumentsResourceTest {
   private static final Supplier<UUID> idGenerator = mock(Supplier.class);
   private static final MetadataService metadataService = mock(MetadataService.class);
   private static final DocumentService documentService =
-      new DocumentService(files, metadataService, versions, idGenerator);
+      new DocumentService(versions, idGenerator);
   private static final VersionDao versionDao = mock(VersionDao.class);
 
   @ClassRule

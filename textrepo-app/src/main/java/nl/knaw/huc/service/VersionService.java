@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface VersionService {
+
   Optional<Version> findLatestVersion(@Nonnull UUID documentId);
 
   Version insertNewVersion(@Nonnull UUID documentId, @Nonnull TextRepoFile file);

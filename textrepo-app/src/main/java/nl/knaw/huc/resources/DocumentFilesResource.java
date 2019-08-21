@@ -1,7 +1,7 @@
 package nl.knaw.huc.resources;
 
 import com.codahale.metrics.annotation.Timed;
-import nl.knaw.huc.service.DocumentService;
+import nl.knaw.huc.service.DocumentFileService;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
@@ -29,10 +29,10 @@ import static nl.knaw.huc.resources.ResourceUtils.readContent;
 public class DocumentFilesResource {
   private final Logger logger = LoggerFactory.getLogger(DocumentFilesResource.class);
 
-  private final DocumentService documentService;
+  private final DocumentFileService documentService;
 
-  public DocumentFilesResource(DocumentService documentService) {
-    this.documentService = documentService;
+  public DocumentFilesResource(DocumentFileService documentFileService) {
+    this.documentService = documentFileService;
   }
 
   @PUT

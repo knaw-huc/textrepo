@@ -12,7 +12,6 @@ import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -20,11 +19,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import java.io.InputStream;
 import java.net.URI;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
 import static nl.knaw.huc.api.TextRepoFile.fromContent;
 import static nl.knaw.huc.resources.ResourceUtils.readContent;
@@ -63,9 +60,10 @@ public class DocumentsResource {
   }
 
   private static URI locationOf(Version version) {
-    return UriBuilder.fromResource(DocumentsResource.class)
-                     .path("{uuid}")
-                     .build(version.getDocumentUuid());
+    return UriBuilder
+        .fromResource(DocumentsResource.class)
+        .path("{uuid}")
+        .build(version.getDocumentUuid());
   }
 
 }
