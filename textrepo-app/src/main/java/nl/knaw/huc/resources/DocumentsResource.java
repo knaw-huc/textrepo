@@ -3,6 +3,7 @@ package nl.knaw.huc.resources;
 import com.codahale.metrics.annotation.Timed;
 import nl.knaw.huc.api.Version;
 import nl.knaw.huc.service.DocumentService;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
@@ -25,6 +26,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
 import static nl.knaw.huc.api.TextRepoFile.fromContent;
 import static nl.knaw.huc.resources.ResourceUtils.readContent;
+import static org.apache.commons.io.FilenameUtils.getExtension;
 
 @Path("/documents")
 public class DocumentsResource {
@@ -40,13 +42,27 @@ public class DocumentsResource {
   @Timed
   @Consumes(MULTIPART_FORM_DATA)
   @Produces(APPLICATION_JSON)
-  public Response addDocument(
+  public Response createDocument(
       @FormDataParam("file") InputStream uploadedInputStream,
-      @FormDataParam("file") FormDataContentDisposition fileDetail
+      @FormDataParam("file") FormDataContentDisposition fileDetail,
+      @FormDataParam("file") FormDataBodyPart bodyPart
   ) {
+    if (isZip(bodyPart, fileDetail)) {
+      var versions = documentService.uploadBatch(uploadedInputStream);
+      return Response.ok(versions).build();
+    }
+
     final var file = fromContent(readContent(uploadedInputStream));
     final var version = documentService.addDocument(file);
     return Response.created(locationOf(version)).build();
+  }
+
+  private boolean isZip(
+      FormDataBodyPart bodyPart,
+      FormDataContentDisposition fileDetail
+  ) {
+    return "application/zip".equals(bodyPart.getMediaType().toString()) ||
+        "zip".equals(getExtension(fileDetail.getName()));
   }
 
   @GET

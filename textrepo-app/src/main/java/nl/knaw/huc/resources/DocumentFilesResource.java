@@ -39,10 +39,11 @@ public class DocumentFilesResource {
   @Timed
   @Consumes(MULTIPART_FORM_DATA)
   @Produces(APPLICATION_JSON)
-  public Response replaceDocumentFile(
+  public Response updateDocumentFile(
       @PathParam("uuid") @Valid UUID documentId,
       @FormDataParam("file") InputStream uploadedInputStream,
-      @FormDataParam("file") FormDataContentDisposition fileDetail) {
+      @FormDataParam("file") FormDataContentDisposition fileDetail
+  ) {
     logger.debug("replacing file of document {}", documentId);
     final var file = fromContent(readContent(uploadedInputStream));
     final var now = LocalDateTime.now();
