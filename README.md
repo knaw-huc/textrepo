@@ -37,7 +37,7 @@ sysctl -w vm.max_map_count=262144
 curl -v -X POST 'localhost:8080/textrepo/documents' -F file=@{file}
 
 # Get version from `Location` header:
-curl -X GET 'localhost:8080/textrepo/document/{uuid}'
+curl -X GET 'localhost:8080/textrepo/documents/{uuid}'
 
 # Get file from sha:
 curl -X GET 'localhost:8080/textrepo/files/{fileSha}'
