@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
-import json
-import unittest
 
 import requests
 
 from integration.test.abstract_test_case import AbstractTestCase
-from integration.test.config import HTTP_ES_HOST, HTTP_APP_HOST
+from integration.test.config import HTTP_APP_HOST
 
 
 class FilesResourceTest(AbstractTestCase):

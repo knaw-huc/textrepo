@@ -35,13 +35,15 @@ sysctl -w vm.max_map_count=262144
 ```
 # Create document from file:
 curl -v -X POST 'localhost:8080/textrepo/documents' -F file=@{file}
+# ... and copy id from `Location` header
 
-# Get version from `Location` header:
-curl -X GET 'localhost:8080/textrepo/document/{uuid}'
+# Get version:
+curl -X GET 'localhost:8080/textrepo/document/{id}'
+# ... and copy sha
 
-# Get file from sha:
-curl -X GET 'localhost:8080/textrepo/files/{fileSha}'
+# Get file content:
+curl -X GET 'localhost:8080/textrepo/files/{sha}'
 
-# Search for latest document version of in elasticsearch index:
+# Search in documents index containing content of latest version:
 curl -X GET 'localhost:8080/index/documents/_search?q=content:{term}'
 ```
