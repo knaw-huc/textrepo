@@ -5,6 +5,7 @@ import io.dropwizard.forms.MultiPartBundle;
 import io.dropwizard.jdbi3.JdbiFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import nl.knaw.huc.resources.DocumentFilesResource;
 import nl.knaw.huc.resources.DocumentsResource;
 import nl.knaw.huc.resources.FilesResource;
 import nl.knaw.huc.resources.MetadataResource;
@@ -59,10 +60,12 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     var versionService = new JdbiVersionService(jdbi, fileService, documentIndexService);
     var documentService = new DocumentService(fileService, metadataService, versionService, UUID::randomUUID);
     var documentsResource = new DocumentsResource(documentService);
+    var documentFilesResource = new DocumentFilesResource(documentService);
     var metadataResource = new MetadataResource(metadataService);
 
     environment.jersey().register(metadataResource);
     environment.jersey().register(documentsResource);
+    environment.jersey().register(documentFilesResource);
     environment.jersey().register(filesResource);
   }
 
