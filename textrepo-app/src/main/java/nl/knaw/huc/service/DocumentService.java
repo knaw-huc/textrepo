@@ -1,5 +1,6 @@
 package nl.knaw.huc.service;
 
+import nl.knaw.huc.api.KeyValue;
 import nl.knaw.huc.api.TextRepoFile;
 import nl.knaw.huc.api.Version;
 import org.slf4j.Logger;
@@ -21,6 +22,7 @@ import java.util.zip.ZipInputStream;
 
 import static java.lang.String.format;
 import static nl.knaw.huc.api.TextRepoFile.fromContent;
+import static nl.knaw.huc.resources.ResourceUtils.readContent;
 
 public class DocumentService {
   private final VersionService versionService;
@@ -36,9 +38,20 @@ public class DocumentService {
     this.documentIdGenerator = documentIdGenerator;
   }
 
-  public Version addDocument(@Nonnull TextRepoFile file) {
-    return versionService.insertNewVersion(documentIdGenerator.get(), file);
+  public Version addDocument(@Nonnull TextRepoFile file, @Nonnull List<KeyValue> metadata) {
+    return versionService.insertNewVersion(documentIdGenerator.get(), file, metadata);
   }
+
+  public Version createVersionWithMetadata(
+      byte[] content,
+      String filepath
+  ) {
+    final var file = fromContent(content);
+    var metadata = new ArrayList<KeyValue>();
+    metadata.add(new KeyValue("filename", new File(filepath).getName()));
+    return addDocument(file, metadata);
+  }
+
 
   public Version getLatestVersion(@Nonnull UUID documentId) {
     return versionService
@@ -59,7 +72,7 @@ public class DocumentService {
           continue;
         }
         logger.info("add zipped file [{}]", entry.getName());
-        versions.add(handleEntry(zipInputStream, buffer));
+        versions.add(handleEntry(zipInputStream, buffer, entry.getName()));
       }
     } catch (IllegalArgumentException | IOException ex) {
       throw new BadRequestException("Zip could not be processed", ex);
@@ -82,18 +95,18 @@ public class DocumentService {
 
   private Version handleEntry(
       ZipInputStream zis,
-      byte[] buffer
+      byte[] buffer,
+      String filename
   ) throws IOException {
-    TextRepoFile file;
+    byte[] content;
     try (var output = new ByteArrayOutputStream()) {
       int len;
       while ((len = zis.read(buffer)) > 0) {
         output.write(buffer, 0, len);
       }
-      var content = output.toByteArray();
-      file = fromContent(content);
+      content = output.toByteArray();
     }
-    return addDocument(file);
+    return createVersionWithMetadata(content, filename);
   }
 
   private boolean isHiddenFile(ZipEntry entry) {

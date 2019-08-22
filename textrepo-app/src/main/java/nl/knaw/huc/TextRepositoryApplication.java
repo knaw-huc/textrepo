@@ -58,7 +58,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     var filesResource = new FilesResource(fileService);
 
     var metadataService = new JdbiMetadataService(jdbi);
-    var versionService = new JdbiVersionService(jdbi, fileService, documentIndexService);
+    var versionService = new JdbiVersionService(jdbi, fileService, documentIndexService, metadataService);
     var documentFileService = new DocumentFileService(fileService, versionService);
     var documentService = new DocumentService(versionService, UUID::randomUUID);
     var documentsResource = new DocumentsResource(documentService);

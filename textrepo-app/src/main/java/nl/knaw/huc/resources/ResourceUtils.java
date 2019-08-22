@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class ResourceUtils {
-  static byte[] readContent(InputStream uploadedInputStream) {
+  public static byte[] readContent(InputStream uploadedInputStream) {
     if (uploadedInputStream == null) {
       throw new BadRequestException("File is missing");
     }

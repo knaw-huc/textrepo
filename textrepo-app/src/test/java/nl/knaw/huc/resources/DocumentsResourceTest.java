@@ -5,6 +5,7 @@ import nl.knaw.huc.db.VersionDao;
 import nl.knaw.huc.service.DocumentService;
 import nl.knaw.huc.service.FileService;
 import nl.knaw.huc.service.JdbiVersionService;
+import nl.knaw.huc.service.MetadataService;
 import nl.knaw.huc.service.VersionService;
 import nl.knaw.huc.service.index.ElasticDocumentIndexer;
 import nl.knaw.huc.service.store.FileStorage;
@@ -18,6 +19,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.mockito.Mock;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
@@ -43,7 +45,7 @@ public class DocumentsResourceTest {
   private static final FileService files = new FileService(mock(FileStorage.class));
   private static final Jdbi jdbi = mock(Jdbi.class);
   private static final ElasticDocumentIndexer documentIndexer = mock(ElasticDocumentIndexer.class);
-  private static final VersionService versions = new JdbiVersionService(jdbi, files, documentIndexer);
+  private static final VersionService versions = new JdbiVersionService(jdbi, files, documentIndexer, mock(MetadataService.class));
   @SuppressWarnings("unchecked")
   private static final Supplier<UUID> idGenerator = mock(Supplier.class);
   private static final DocumentService documentService = new DocumentService(versions, idGenerator);

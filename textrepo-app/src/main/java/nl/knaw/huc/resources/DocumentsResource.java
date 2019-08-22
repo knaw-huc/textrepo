@@ -27,7 +27,6 @@ import java.util.UUID;
 import static java.util.stream.Collectors.toList;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
-import static nl.knaw.huc.api.TextRepoFile.fromContent;
 import static nl.knaw.huc.resources.ResourceUtils.readContent;
 import static org.apache.commons.io.FilenameUtils.getExtension;
 
@@ -55,8 +54,10 @@ public class DocumentsResource {
       return Response.ok(new MultipleLocations(versions)).build();
     }
 
-    final var file = fromContent(readContent(uploadedInputStream));
-    final var version = documentService.addDocument(file);
+    var version = documentService.createVersionWithMetadata(
+        readContent(uploadedInputStream),
+        fileDetail.getName()
+    );
     return Response.created(locationOf(version)).build();
   }
 
@@ -96,6 +97,8 @@ public class DocumentsResource {
           .map(v -> locationOf(v))
           .collect(toList());
     }
+
+
   }
 
 }

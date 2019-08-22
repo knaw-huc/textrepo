@@ -35,6 +35,8 @@ public class DocumentFilesResource {
     this.documentService = documentFileService;
   }
 
+  // TODO: handle zip files
+  // TODO: update filename metadata
   @PUT
   @Timed
   @Consumes(MULTIPART_FORM_DATA)
