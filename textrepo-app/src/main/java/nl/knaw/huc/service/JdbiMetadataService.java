@@ -1,6 +1,7 @@
 package nl.knaw.huc.service;
 
 import nl.knaw.huc.api.MetadataEntry;
+import nl.knaw.huc.api.KeyValue;
 import nl.knaw.huc.db.MetadataDao;
 import org.jdbi.v3.core.Jdbi;
 
@@ -18,22 +19,21 @@ public class JdbiMetadataService implements MetadataService {
   }
 
   @Override
-  public List<DocumentService.KeyValue> getMetadata(UUID documentId) {
+  public List<KeyValue> getMetadata(UUID documentId) {
     return this
         .find(documentId)
         .stream()
-        .map(entry -> new DocumentService.KeyValue(entry.getKey(), entry.getValue()))
+        .map(entry -> new KeyValue(entry.getKey(), entry.getValue()))
         .collect(toList());
   }
 
   @Override
-  public void addMetadata(@Nonnull UUID documentId, @Nonnull List<DocumentService.KeyValue> metadata) {
-    var entries = metadata.stream().map(kv -> new MetadataEntry(documentId, kv.key, kv.value)).collect(toList());
+  public void addMetadata(@Nonnull UUID documentId, @Nonnull List<KeyValue> metadata) {
+    var entries = metadata
+        .stream()
+        .map(kv -> new MetadataEntry(documentId, kv.key, kv.value))
+        .collect(toList());
     bulkInsert(entries);
-  }
-
-  public void addMetadata(@Nonnull UUID documentId, @Nonnull String key, @Nonnull String value) {
-    insert(new MetadataEntry(documentId, key, value));
   }
 
   @Override

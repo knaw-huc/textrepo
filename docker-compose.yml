@@ -6,7 +6,7 @@ services:
     networks:
     - textrepo_network
     ports:
-    - 5432
+    - 5432:5432
     volumes:
     - ./postgres/initdb:/docker-entrypoint-initdb.d
     environment:
@@ -24,6 +24,7 @@ services:
     - cluster.name=textrepo-cluster
     - bootstrap.memory_lock=true
     - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    restart: always
     ulimits:
       memlock:
         soft: -1

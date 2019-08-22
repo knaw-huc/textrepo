@@ -1,13 +1,13 @@
 package nl.knaw.huc.service;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import nl.knaw.huc.api.TextRepoFile;
 import nl.knaw.huc.api.Version;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
-import java.beans.ConstructorProperties;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -25,6 +25,8 @@ import static nl.knaw.huc.api.TextRepoFile.fromContent;
 public class DocumentService {
   private final VersionService versionService;
   private final Supplier<UUID> documentIdGenerator;
+
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   public DocumentService(
       VersionService versionService,
@@ -44,32 +46,54 @@ public class DocumentService {
         .orElseThrow(() -> new NotFoundException(format("No such document: %s", documentId)));
   }
 
-  public List<Version> uploadBatch(InputStream uploadedInputStream) {
+  public List<Version> addZippedDocuments(InputStream uploadedInputStream) {
     var versions = new ArrayList<Version>();
+
     var zipInputStream = new ZipInputStream(uploadedInputStream);
     var buffer = new byte[2048];
 
     ZipEntry entry;
     try {
       while ((entry = zipInputStream.getNextEntry()) != null) {
-        if (isHiddenFile(entry)) {
+        if (skipEntry(entry)) {
           continue;
         }
-        TextRepoFile file;
-        try (var output = new ByteArrayOutputStream((int) entry.getSize())) {
-          int len;
-          while ((len = zipInputStream.read(buffer)) > 0) {
-            output.write(buffer, 0, len);
-          }
-          var content = output.toByteArray();
-          file = fromContent(content);
-        }
-        versions.add(addDocument(file));
+        logger.info("add zipped file [{}]", entry.getName());
+        versions.add(handleEntry(zipInputStream, buffer));
       }
-    } catch (IOException ex) {
-      throw new BadRequestException("Zip file could not be read");
+    } catch (IllegalArgumentException | IOException ex) {
+      throw new BadRequestException("Zip could not be processed", ex);
     }
+
     return versions;
+  }
+
+  private boolean skipEntry(ZipEntry entry) {
+    if (isHiddenFile(entry)) {
+      logger.info("skip hidden file [{}]", entry.getName());
+      return true;
+    }
+    if (entry.isDirectory()) {
+      logger.info("skip directory [{}]", entry.getName());
+      return true;
+    }
+    return false;
+  }
+
+  private Version handleEntry(
+      ZipInputStream zis,
+      byte[] buffer
+  ) throws IOException {
+    TextRepoFile file;
+    try (var output = new ByteArrayOutputStream()) {
+      int len;
+      while ((len = zis.read(buffer)) > 0) {
+        output.write(buffer, 0, len);
+      }
+      var content = output.toByteArray();
+      file = fromContent(content);
+    }
+    return addDocument(file);
   }
 
   private boolean isHiddenFile(ZipEntry entry) {
@@ -77,16 +101,4 @@ public class DocumentService {
     return filename.startsWith(".");
   }
 
-  public static class KeyValue {
-    @JsonProperty
-    public final String key;
-    @JsonProperty
-    public final String value;
-
-    @ConstructorProperties({"key", "value"})
-    public KeyValue(String key, String value) {
-      this.key = key;
-      this.value = value;
-    }
-  }
 }
