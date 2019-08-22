@@ -32,16 +32,28 @@ sysctl -w vm.max_map_count=262144
 (see https://github.com/docker-library/elasticsearch/issues/111)
 
 ## Demo
+
+Create document from file:
 ```
-# Create document from file:
-curl -v -X POST 'localhost:8080/textrepo/documents' -F file=@{file}
+curl -v 'localhost:8080/textrepo/documents' -F file=@{file}
+```
 
-# Get version from `Location` header:
-curl -X GET 'localhost:8080/textrepo/documents/{uuid}'
+Create multiple documents from zip file:
+```
+curl 'localhost:8080/textrepo/documents' -F 'file=@{file};type=application/zip'
+```
 
-# Get file from sha:
-curl -X GET 'localhost:8080/textrepo/files/{fileSha}'
+Get document by `Location` header or json response:
+```
+curl 'localhost:8080/textrepo/documents/{uuid}'
+```
 
-# Search for latest document version of in elasticsearch index:
-curl -X GET 'localhost:8080/index/documents/_search?q=content:{term}'
+Get file from sha:
+```
+curl 'localhost:8080/textrepo/files/{sha}'
+```
+
+Search for latest document version of in elasticsearch index:
+```
+curl 'localhost:8080/index/documents/_search?q=content:{term}'
 ```
