@@ -10,7 +10,7 @@ from integration.test.config import HTTP_ES_HOST
 
 class DocumentsResourceTest(AbstractTestCase):
 
-    def test_add_get_search_document(self):
+    def test_add_get_document(self):
         es_host = HTTP_ES_HOST
 
         file_content = 'hello test'
