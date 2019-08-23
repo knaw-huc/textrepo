@@ -8,8 +8,8 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
+
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -97,8 +97,9 @@ public class DocumentService {
   }
 
   private boolean isHiddenFile(ZipEntry entry) {
-    var filename = new File(entry.getName()).getName();
-    return filename.startsWith(".");
+    var name = entry.getName();
+    int base = 1 + name.lastIndexOf('/'); // Zip always uses / as the dir separator
+    return base < name.length() && name.charAt(base) == '.';
   }
 
 }
