@@ -35,6 +35,8 @@ import java.util.function.Supplier;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
+import static nl.knaw.huc.resources.TestUtils.getResourceFileBits;
+import static nl.knaw.huc.resources.TestUtils.getResourceFileString;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -180,15 +182,6 @@ public class DocumentsResourceTest {
     assertThat(metadataEntries.get(0).getValue()).isEqualTo("hello-test.txt");
     assertThat(metadataEntries.get(1).getKey()).isEqualTo("filename");
     assertThat(metadataEntries.get(1).getValue()).isEqualTo("hello-test2.txt");
-
-  }
-
-  private byte[] getResourceFileBits(String resourcePath) throws IOException {
-    return IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream(resourcePath));
-  }
-
-  private String getResourceFileString(String resourcePath) throws IOException {
-    return IOUtils.toString(getClass().getClassLoader().getResourceAsStream(resourcePath), UTF_8);
   }
 
   private Response postTestFile() {
