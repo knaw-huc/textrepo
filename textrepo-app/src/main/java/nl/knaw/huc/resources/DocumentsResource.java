@@ -1,9 +1,10 @@
 package nl.knaw.huc.resources;
 
 import com.codahale.metrics.annotation.Timed;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import nl.knaw.huc.api.MultipleLocations;
 import nl.knaw.huc.api.Version;
 import nl.knaw.huc.service.DocumentService;
+import nl.knaw.huc.service.ZipService;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -18,27 +19,26 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import java.io.InputStream;
-import java.net.URI;
-import java.util.List;
 import java.util.UUID;
 
-import static java.util.stream.Collectors.toList;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
 import static nl.knaw.huc.api.TextRepoFile.fromContent;
+import static nl.knaw.huc.resources.ResourceUtils.locationOf;
 import static nl.knaw.huc.resources.ResourceUtils.readContent;
-import static org.apache.commons.io.FilenameUtils.getExtension;
+import static nl.knaw.huc.service.ZipService.isZip;
 
 @Path("/documents")
 public class DocumentsResource {
   private final Logger logger = LoggerFactory.getLogger(DocumentsResource.class);
 
   private final DocumentService documentService;
+  private ZipService zipService;
 
-  public DocumentsResource(DocumentService documentService) {
+  public DocumentsResource(DocumentService documentService, ZipService zipService) {
     this.documentService = documentService;
+    this.zipService = zipService;
   }
 
   @POST
@@ -51,21 +51,18 @@ public class DocumentsResource {
       @FormDataParam("file") FormDataBodyPart bodyPart
   ) {
     if (isZip(bodyPart, fileDetail)) {
-      var versions = documentService.addZippedDocuments(uploadedInputStream);
+      var versions = zipService.handleZipFiles(uploadedInputStream, this::handleNewDocument);
       return Response.ok(new MultipleLocations(versions)).build();
     }
 
-    final var file = fromContent(readContent(uploadedInputStream));
-    final var version = documentService.addDocument(file);
+    var content = readContent(uploadedInputStream);
+    var version = handleNewDocument(content);
     return Response.created(locationOf(version)).build();
   }
 
-  private boolean isZip(
-      FormDataBodyPart bodyPart,
-      FormDataContentDisposition fileDetail
-  ) {
-    return "application/zip".equals(bodyPart.getMediaType().toString()) ||
-        "zip".equals(getExtension(fileDetail.getFileName()));
+  private Version handleNewDocument(byte[] content) {
+    final var file = fromContent(content);
+    return documentService.addDocument(file);
   }
 
   @GET
@@ -76,26 +73,6 @@ public class DocumentsResource {
     logger.info("getting latest version of: " + documentId.toString());
     var version = documentService.getLatestVersion(documentId);
     return Response.ok(version).build();
-  }
-
-  private static URI locationOf(Version version) {
-    return UriBuilder
-        .fromResource(DocumentsResource.class)
-        .path("{uuid}")
-        .build(version.getDocumentUuid());
-  }
-
-  public static class MultipleLocations {
-
-    @JsonProperty
-    public final List<URI> locations;
-
-    MultipleLocations(List<Version> versions) {
-      locations = versions
-          .stream()
-          .map(v -> locationOf(v))
-          .collect(toList());
-    }
   }
 
 }

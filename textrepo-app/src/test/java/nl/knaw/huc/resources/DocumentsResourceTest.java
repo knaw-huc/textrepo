@@ -6,6 +6,7 @@ import nl.knaw.huc.service.DocumentService;
 import nl.knaw.huc.service.FileService;
 import nl.knaw.huc.service.JdbiVersionService;
 import nl.knaw.huc.service.VersionService;
+import nl.knaw.huc.service.ZipService;
 import nl.knaw.huc.service.index.ElasticDocumentIndexer;
 import nl.knaw.huc.service.store.FileStorage;
 import org.apache.commons.io.IOUtils;
@@ -53,7 +54,7 @@ public class DocumentsResourceTest {
   public static final ResourceTestRule resource = ResourceTestRule
       .builder()
       .addProvider(MultiPartFeature.class)
-      .addResource(new DocumentsResource(documentService))
+      .addResource(new DocumentsResource(documentService, new ZipService()))
       .build();
 
   @Before
