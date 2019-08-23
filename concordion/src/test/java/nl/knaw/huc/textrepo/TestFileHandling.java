@@ -13,8 +13,8 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
 
 @RunWith(ConcordionRunner.class)
-public class FileHandlingTest {
-  private final Logger logger = LoggerFactory.getLogger(FileHandlingTest.class);
+public class TestFileHandling {
+  private final Logger logger = LoggerFactory.getLogger(TestFileHandling.class);
 
   private static final String sha224 = "55d4c44f5bc05762d8807f75f3f24b4095afa583ef70ac97eaf7afc6";
   // private static final String content = "hello test";
