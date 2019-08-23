@@ -1,8 +1,12 @@
 package nl.knaw.huc.resources;
 
+import nl.knaw.huc.api.Version;
+
 import javax.ws.rs.BadRequestException;
+import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 
 public class ResourceUtils {
   public static byte[] readContent(InputStream uploadedInputStream) {
@@ -15,5 +19,12 @@ public class ResourceUtils {
     } catch (IOException e) {
       throw new BadRequestException("Could not read input stream of posted file", e);
     }
+  }
+
+  public static URI locationOf(Version version) {
+    return UriBuilder
+        .fromResource(DocumentsResource.class)
+        .path("{uuid}")
+        .build(version.getDocumentUuid());
   }
 }

@@ -14,6 +14,7 @@ import nl.knaw.huc.service.DocumentService;
 import nl.knaw.huc.service.FileService;
 import nl.knaw.huc.service.JdbiMetadataService;
 import nl.knaw.huc.service.JdbiVersionService;
+import nl.knaw.huc.service.ZipService;
 import nl.knaw.huc.service.index.ElasticDocumentIndexer;
 import nl.knaw.huc.service.store.JdbiFileStorage;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
@@ -61,8 +62,9 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     var versionService = new JdbiVersionService(jdbi, fileService, documentIndexService, metadataService);
     var documentFileService = new DocumentFileService(fileService, versionService);
     var documentService = new DocumentService(versionService, UUID::randomUUID);
-    var documentsResource = new DocumentsResource(documentService);
-    var documentFilesResource = new DocumentFilesResource(documentFileService);
+    var zipService = new ZipService();
+    var documentsResource = new DocumentsResource(documentService, zipService);
+    var documentFilesResource = new DocumentFilesResource(documentFileService, zipService);
     var metadataResource = new MetadataResource(metadataService);
 
     environment.jersey().register(metadataResource);
