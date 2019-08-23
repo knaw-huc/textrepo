@@ -1,10 +1,11 @@
-import time
 import unittest
 
 import psycopg2
 import requests
 
-from integration.test.config import HTTP_ES_HOST, POSTGRES_HOST, POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD
+from integration.test.config import (
+        HTTP_ES_HOST, POSTGRES_HOST, POSTGRES_DB,
+        POSTGRES_USER, POSTGRES_PASSWORD)
 
 
 class AbstractTestCase(unittest.TestCase):

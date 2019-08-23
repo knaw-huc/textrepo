@@ -90,8 +90,10 @@ public class ZipService {
   }
 
   private boolean isHiddenFile(ZipEntry entry) {
-    var filename = new File(entry.getName()).getName();
-    return filename.startsWith(".");
+    var name = entry.getName();
+    // Zip always uses / as the dir separator:
+    var base = 1 + name.lastIndexOf('/');
+    return base < name.length() && name.charAt(base) == '.';
   }
 
 
