@@ -40,4 +40,3 @@ class FilesResourceTest(AbstractTestCase):
 
         expected_text = content
         self.assertEqual(response.text, expected_text)
-
