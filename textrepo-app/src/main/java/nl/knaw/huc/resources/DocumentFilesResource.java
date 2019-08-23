@@ -57,13 +57,17 @@ public class DocumentFilesResource {
     if (isZip(bodyPart, fileDetail)) {
       var versions = zipService.handleZipFiles(
         uploadedInputStream,
-        (file) -> handleUpdate(documentId, file.getContent())
+        (file) -> handleUpdate(documentId, file.getContent(), file.getName())
       );
       return Response.ok(new MultipleLocations(versions)).build();
     }
 
     try {
-      var version = handleUpdate(documentId, readContent(uploadedInputStream));
+      var version = handleUpdate(
+          documentId,
+          readContent(uploadedInputStream),
+          fileDetail.getFileName()
+      );
       return Response.ok(version).build();
     } catch (ExistsException e) {
       return Response.notModified().build();
@@ -71,15 +75,18 @@ public class DocumentFilesResource {
   }
 
   /**
-   * Try to update, returns updated version
+   * Try to update
+   *
+   * @return new version
    */
   private Version handleUpdate(
       UUID documentId,
-      byte[] content
+      byte[] content,
+      String filename
   ) throws ExistsException {
     logger.debug("replacing file of document [{}]", documentId);
     var file = fromContent(content);
-    var version = documentFileService.replaceDocumentFile(documentId, file);
+    var version = documentFileService.replaceDocumentFile(documentId, file, filename);
 
     if (version.getDate().isBefore(now())) {
       logger.debug("already current, not modified");

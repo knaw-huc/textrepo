@@ -19,6 +19,10 @@ public interface MetadataDao {
   void insert(@BindBean MetadataEntry metadataEntry);
 
   @Transaction
+  @SqlUpdate("update metadata set value = :value where document_uuid = :documentUuid and key = :key ")
+  void update(@BindBean MetadataEntry metadataEntry);
+
+  @Transaction
   @SqlBatch("insert into metadata (document_uuid, key, value) values (:documentUuid, :key, :value)")
   void bulkInsert(@BindBean List<MetadataEntry> entries);
 

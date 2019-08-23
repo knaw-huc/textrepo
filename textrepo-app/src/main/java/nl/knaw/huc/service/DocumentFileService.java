@@ -1,5 +1,7 @@
 package nl.knaw.huc.service;
 
+import nl.knaw.huc.api.KeyValue;
+import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.api.TextRepoFile;
 import nl.knaw.huc.api.Version;
 
@@ -13,13 +15,16 @@ public class DocumentFileService {
 
   private final FileService fileService;
   private final VersionService versionService;
+  private MetadataService metadataService;
 
   public DocumentFileService(
       FileService fileService,
-      VersionService versionService
+      VersionService versionService,
+      MetadataService metadataService
   ) {
     this.fileService = fileService;
     this.versionService = versionService;
+    this.metadataService = metadataService;
   }
 
   public TextRepoFile getLatestFile(UUID documentId) {
@@ -31,12 +36,17 @@ public class DocumentFileService {
     return fileService.getBySha224(version.getFileSha());
   }
 
-  public Version replaceDocumentFile(@Nonnull UUID documentId, @Nonnull TextRepoFile file) {
+  public Version replaceDocumentFile(@Nonnull UUID documentId, @Nonnull TextRepoFile file, String filename) {
     final var currentSha224 = file.getSha224();
-    return versionService
+
+    var version = versionService
         .findLatestVersion(documentId)
         .filter(v -> v.getFileSha().equals(currentSha224)) // already the current file for this document
-        .orElseGet(() -> versionService.insertNewVersion(documentId, file));
+        .orElseGet(() -> versionService.insertNewVersion(documentId, file, filename));
+
+    metadataService.update(new MetadataEntry(version.getDocumentUuid(), "filename", filename));
+
+    return version;
   }
 
 }

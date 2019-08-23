@@ -46,17 +46,19 @@ public class DocumentsResource {
   @Consumes(MULTIPART_FORM_DATA)
   @Produces(APPLICATION_JSON)
   public Response addDocument(
-      @FormDataParam("file") InputStream uploadedInputStream,
+      @FormDataParam("file") InputStream inputStream,
       @FormDataParam("file") FormDataContentDisposition fileDetail,
       @FormDataParam("file") FormDataBodyPart bodyPart
   ) {
     if (isZip(bodyPart, fileDetail)) {
-      var versions = zipService.handleZipFiles(uploadedInputStream, this::handleNewDocument);
+      var versions = zipService.handleZipFiles(inputStream, this::handleNewDocument);
       return Response.ok(new MultipleLocations(versions)).build();
     }
 
-    var content = readContent(uploadedInputStream);
-    var version = handleNewDocument(new FormFile(fileDetail.getFileName(), content));
+    var version = handleNewDocument(new FormFile(
+        fileDetail.getFileName(),
+        readContent(inputStream)
+    ));
 
     return Response.created(locationOf(version)).build();
   }

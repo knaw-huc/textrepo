@@ -16,6 +16,7 @@ public interface MetadataService {
 
   void bulkInsert(@Nonnull List<MetadataEntry> entries);
 
-  List<MetadataEntry> find(@Nonnull UUID documentId);
+  void update(MetadataEntry entry);
 
+  List<MetadataEntry> find(@Nonnull UUID documentId);
 }

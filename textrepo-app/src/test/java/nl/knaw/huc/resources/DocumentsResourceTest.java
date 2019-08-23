@@ -2,6 +2,7 @@ package nl.knaw.huc.resources;
 
 import io.dropwizard.testing.junit.ResourceTestRule;
 import nl.knaw.huc.api.KeyValue;
+import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.db.VersionDao;
 import nl.knaw.huc.service.DocumentService;
 import nl.knaw.huc.service.FileService;
@@ -54,7 +55,7 @@ public class DocumentsResourceTest {
   private static final VersionService versions = new JdbiVersionService(jdbi, files, documentIndexer, metadataService);
   @SuppressWarnings("unchecked")
   private static final Supplier<UUID> idGenerator = mock(Supplier.class);
-  private static final DocumentService documentService = new DocumentService(versions, idGenerator);
+  private static final DocumentService documentService = new DocumentService(versions, idGenerator, metadataService);
   private static final VersionDao versionDao = mock(VersionDao.class);
 
   @ClassRule
@@ -65,9 +66,7 @@ public class DocumentsResourceTest {
       .build();
 
   @Captor
-  private ArgumentCaptor<List<KeyValue>> metadataCaptor;
-  @Captor
-  private ArgumentCaptor<UUID> documentIdCaptor;
+  private ArgumentCaptor<MetadataEntry> metadataEntryCaptor;
 
   @Before
   public void setupMocks() {
@@ -155,15 +154,13 @@ public class DocumentsResourceTest {
   public void testAddDocument_addsFilenameMetadata() throws IOException {
     postTestFile();
 
-    verify(metadataService, times(1)).addMetadata(
-        documentIdCaptor.capture(),
-        metadataCaptor.capture()
+    verify(metadataService, times(1)).insert(
+        metadataEntryCaptor.capture()
     );
 
-    var metadata = this.metadataCaptor.getValue();
-    assertThat(metadata.size()).isEqualTo(1);
-    assertThat(metadata.get(0).key).isEqualTo("filename");
-    assertThat(metadata.get(0).value).isEqualTo(filename);
+    var metadataEntry = this.metadataEntryCaptor.getValue();
+    assertThat(metadataEntry.getKey()).isEqualTo("filename");
+    assertThat(metadataEntry.getValue()).isEqualTo(filename);
   }
 
   @Test
@@ -173,18 +170,16 @@ public class DocumentsResourceTest {
 
     postTestFile(zipFile, zipFilename);
 
-    verify(metadataService, times(2)).addMetadata(
-        documentIdCaptor.capture(),
-        metadataCaptor.capture()
+    verify(metadataService, times(2)).insert(
+        metadataEntryCaptor.capture()
     );
-    var allMetadata = this.metadataCaptor.getAllValues();
-    assertThat(allMetadata.get(0).size()).isEqualTo(1);
-    assertThat(allMetadata.get(0).get(0).key).isEqualTo("filename");
-    assertThat(allMetadata.get(0).get(0).value).isEqualTo("hello-test.txt");
 
-    assertThat(allMetadata.get(1).size()).isEqualTo(1);
-    assertThat(allMetadata.get(1).get(0).key).isEqualTo("filename");
-    assertThat(allMetadata.get(1).get(0).value).isEqualTo("hello-test2.txt");
+    var metadataEntries = this.metadataEntryCaptor.getAllValues();
+    assertThat(metadataEntries.size()).isEqualTo(2);
+    assertThat(metadataEntries.get(0).getKey()).isEqualTo("filename");
+    assertThat(metadataEntries.get(0).getValue()).isEqualTo("hello-test.txt");
+    assertThat(metadataEntries.get(1).getKey()).isEqualTo("filename");
+    assertThat(metadataEntries.get(1).getValue()).isEqualTo("hello-test2.txt");
 
   }
 

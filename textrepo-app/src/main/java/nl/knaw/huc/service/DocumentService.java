@@ -1,6 +1,7 @@
 package nl.knaw.huc.service;
 
 import nl.knaw.huc.api.KeyValue;
+import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.api.TextRepoFile;
 import nl.knaw.huc.api.Version;
 import org.slf4j.Logger;
@@ -8,9 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.ws.rs.NotFoundException;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -22,27 +20,29 @@ public class DocumentService {
   private final Supplier<UUID> documentIdGenerator;
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private MetadataService metadataService;
 
   public DocumentService(
       VersionService versionService,
-      Supplier<UUID> documentIdGenerator
-  ) {
+      Supplier<UUID> documentIdGenerator,
+      MetadataService metadataService) {
     this.versionService = versionService;
     this.documentIdGenerator = documentIdGenerator;
+    this.metadataService = metadataService;
   }
 
   public Version createVersionWithMetadata(
       byte[] content,
-      String filepath
+      String filename
   ) {
     final var file = fromContent(content);
-    var metadata = new ArrayList<KeyValue>();
-    metadata.add(new KeyValue("filename", new File(filepath).getName()));
-    return addDocument(file, metadata);
+    return addDocument(file, filename);
   }
 
-  public Version addDocument(@Nonnull TextRepoFile file, @Nonnull List<KeyValue> metadata) {
-    return versionService.insertNewVersion(documentIdGenerator.get(), file, metadata);
+  private Version addDocument(@Nonnull TextRepoFile file, String filename) {
+    var version = versionService.insertNewVersion(documentIdGenerator.get(), file, filename);
+    metadataService.insert(new MetadataEntry(version.getDocumentUuid(), "filename", filename));
+    return version;
   }
 
 

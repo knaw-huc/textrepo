@@ -31,7 +31,7 @@ public class ZipService {
 
   public <T> List<T> handleZipFiles(
       InputStream uploadedInputStream,
-      CheckedFunction<FormFile, T> handleContent
+      CheckedFunction<FormFile, T> handleFile
   ) {
     var results = new ArrayList<T>();
 
@@ -48,7 +48,7 @@ public class ZipService {
 
         // add result only when new:
         try {
-          results.add(handleEntry(inputStream, buffer, entry.getName(), handleContent));
+          results.add(handleEntry(inputStream, buffer, entry.getName(), handleFile));
         } catch (ExistsException e) {
           logger.info("skip existing [{}]", entry.getName());
         }
