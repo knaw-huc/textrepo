@@ -50,7 +50,7 @@ public class DocumentService {
     var versions = new ArrayList<Version>();
 
     var zipInputStream = new ZipInputStream(uploadedInputStream);
-    var buffer = new byte[2048];
+    var buffer = new ByteArrayOutputStream();
 
     ZipEntry entry;
     try {
@@ -59,7 +59,9 @@ public class DocumentService {
           continue;
         }
         logger.info("add zipped file [{}]", entry.getName());
-        versions.add(handleEntry(zipInputStream, buffer));
+        zipInputStream.transferTo(buffer);
+        versions.add(addDocument(fromContent(buffer.toByteArray())));
+        buffer.reset();
       }
     } catch (IllegalArgumentException | IOException ex) {
       throw new BadRequestException("Zip could not be processed", ex);
@@ -78,22 +80,6 @@ public class DocumentService {
       return true;
     }
     return false;
-  }
-
-  private Version handleEntry(
-      ZipInputStream zis,
-      byte[] buffer
-  ) throws IOException {
-    TextRepoFile file;
-    try (var output = new ByteArrayOutputStream()) {
-      int len;
-      while ((len = zis.read(buffer)) > 0) {
-        output.write(buffer, 0, len);
-      }
-      var content = output.toByteArray();
-      file = fromContent(content);
-    }
-    return addDocument(file);
   }
 
   private boolean isHiddenFile(ZipEntry entry) {
