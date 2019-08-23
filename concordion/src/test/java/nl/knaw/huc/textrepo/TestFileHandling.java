@@ -7,38 +7,65 @@ import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.junit.runner.RunWith;
 
+import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.Response;
 
 @RunWith(ConcordionRunner.class)
 public class TestFileHandling {
-  public static String responsePart(Response response, String s) {
-    return JsonPath.parse(response.readEntity(String.class)).read(s);
+  private static Client client() {
+    return JerseyClientBuilder.newClient();
   }
 
-  public Result upload(String content) {
+  private static Entity<FormDataMultiPart> multiPartEntity(FormDataMultiPart multiPart) {
+    return Entity.entity(multiPart, multiPart.getMediaType());
+  }
+
+  public UploadResult upload(String content) {
     var multiPart = new FormDataMultiPart().field("file", content);
 
-    var client = JerseyClientBuilder.newClient();
-    var entity = Entity.entity(multiPart, multiPart.getMediaType());
-    var request = client
+    var request = client()
         .register(MultiPartFeature.class)
         .target("http://localhost:8080/textrepo/files")
         .request();
 
-    var response = request.post(entity);
-    final var sha224 = responsePart(response, "$.sha224");
+    var response = request.post(multiPartEntity(multiPart));
+    var entity = response.readEntity(String.class);
 
-    final Result result = new Result();
+    var result = new UploadResult();
     result.status = response.getStatus();
-    result.sha224 = sha224;
+    result.sha224 = JsonPath.parse(entity).read("$.sha224");
     result.location = response.getHeaderString("Location");
     return result;
   }
 
-  class Result {
+  class UploadResult {
     public int status;
     public String sha224;
     public String location;
+
+  }
+
+  public RetrievalResult retrieve(String uri) {
+    var url = "http://localhost:8080/textrepo/" + uri;
+    var response = client().target(url).request().get();
+    var entity = response.readEntity(String.class);
+
+    var result = new RetrievalResult();
+    result.status = response.getStatus();
+    if (entity.contains("message")) {
+      result.content = "";
+      result.message = JsonPath.parse(entity).read("$.message");
+    } else {
+      result.content = entity;
+      result.message = "";
+    }
+
+    return result;
+  }
+
+  class RetrievalResult {
+    public int status;
+    public String content;
+    public String message;
   }
 }
