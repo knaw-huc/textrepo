@@ -1,8 +1,10 @@
 package nl.knaw.huc.resources;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import nl.knaw.huc.api.KeyValue;
 import nl.knaw.huc.api.MetadataEntry;
+import nl.knaw.huc.api.MultipleLocations;
 import nl.knaw.huc.db.VersionDao;
 import nl.knaw.huc.service.DocumentService;
 import nl.knaw.huc.service.FileService;
@@ -29,6 +31,7 @@ import org.mockito.MockitoAnnotations;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -112,13 +115,34 @@ public class DocumentsResourceTest {
   }
 
   @Test
-  public void testAddDocument_addsMultipleFiles_whenZip() throws IOException {
+  public void testAddDocument_addsMultipleFilesToIndex_whenZip() throws IOException {
     var zipFilename = "multiple-hello-tests.zip";
     var zipFile = getResourceFileBits("zip/" + zipFilename);
 
     postTestFile(zipFile, zipFilename);
 
     verify(documentIndexer, times(2)).indexDocument(any(UUID.class), any(String.class));
+  }
+
+  @Test
+  public void testAddDocument_returnsLocationsByFile_whenZip() throws IOException {
+    var zipFilename = "multiple-hello-tests.zip";
+    var zipFile = getResourceFileBits("zip/" + zipFilename);
+
+    var response = postTestFile(zipFile, zipFilename);
+    var body = response.readEntity(String.class);
+
+    var locations = new ObjectMapper().readValue(body, MultipleLocations.class).locations;
+
+    var file1 = locations.get("hello-test.txt");
+    assertThat(file1).isNotNull();
+    // check is valid uuid:
+    UUID.fromString(file1.toString().split("/")[2]);
+
+    var file2 = locations.get("hello-test2.txt");
+    assertThat(file2).isNotNull();
+    // check is valid uuid:
+    UUID.fromString(file2.toString().split("/")[2]);
   }
 
   @Test

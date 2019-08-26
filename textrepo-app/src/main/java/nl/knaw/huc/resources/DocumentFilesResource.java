@@ -2,7 +2,7 @@ package nl.knaw.huc.resources;
 
 import com.codahale.metrics.annotation.Timed;
 import nl.knaw.huc.api.MultipleLocations;
-import nl.knaw.huc.api.Version;
+import nl.knaw.huc.api.ResultFile;
 import nl.knaw.huc.service.DocumentFileService;
 import nl.knaw.huc.service.ExistsException;
 import nl.knaw.huc.service.ZipService;
@@ -79,7 +79,7 @@ public class DocumentFilesResource {
    *
    * @return new version
    */
-  private Version handleUpdate(
+  private ResultFile handleUpdate(
       UUID documentId,
       byte[] content,
       String filename
@@ -93,7 +93,7 @@ public class DocumentFilesResource {
       throw new ExistsException();
     }
 
-    return version;
+    return new ResultFile(filename, version);
   }
 
   @GET

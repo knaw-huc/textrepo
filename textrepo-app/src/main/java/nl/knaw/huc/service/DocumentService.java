@@ -31,7 +31,7 @@ public class DocumentService {
     this.metadataService = metadataService;
   }
 
-  public Version createVersionWithMetadata(
+  public Version createVersionWithFilenameMetadata(
       byte[] content,
       String filename
   ) {

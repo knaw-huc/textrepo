@@ -2,21 +2,30 @@ package nl.knaw.huc.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.beans.ConstructorProperties;
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toList;
 import static nl.knaw.huc.resources.ResourceUtils.locationOf;
 
 public class MultipleLocations {
 
   @JsonProperty
-  public final List<URI> locations;
+  public Map<String, URI> locations;
 
-  public MultipleLocations(List<Version> versions) {
-    locations = versions
+  public MultipleLocations() {
+    // jackson
+  }
+
+  public MultipleLocations(List<ResultFile> resultFiles) {
+    locations = resultFiles
         .stream()
-        .map(v -> locationOf(v))
-        .collect(toList());
+        .collect(Collectors.toMap(
+          ResultFile::getFilename,
+          r -> locationOf(r.getVersion())
+        ));
   }
 }

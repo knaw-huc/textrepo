@@ -3,6 +3,7 @@ package nl.knaw.huc.resources;
 import com.codahale.metrics.annotation.Timed;
 import nl.knaw.huc.api.FormFile;
 import nl.knaw.huc.api.MultipleLocations;
+import nl.knaw.huc.api.ResultFile;
 import nl.knaw.huc.api.Version;
 import nl.knaw.huc.service.DocumentService;
 import nl.knaw.huc.service.ZipService;
@@ -55,19 +56,20 @@ public class DocumentsResource {
       return Response.ok(new MultipleLocations(versions)).build();
     }
 
-    var version = handleNewDocument(new FormFile(
+    var resultFile = handleNewDocument(new FormFile(
         fileDetail.getFileName(),
         readContent(inputStream)
     ));
 
-    return Response.created(locationOf(version)).build();
+    return Response.created(locationOf(resultFile.getVersion())).build();
   }
 
-  private Version handleNewDocument(FormFile formFile) {
-    return documentService.createVersionWithMetadata(
+  private ResultFile handleNewDocument(FormFile formFile) {
+    Version version = documentService.createVersionWithFilenameMetadata(
         formFile.getContent(),
         formFile.getName()
     );
+    return new ResultFile(formFile.getName(), version);
   }
 
   @GET
