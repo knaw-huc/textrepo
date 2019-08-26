@@ -28,11 +28,8 @@ public class ZipService {
         "zip".equals(getExtension(fileDetail.getFileName()));
   }
 
-  public <T> List<T> handleZipFiles(
-      InputStream uploadedInputStream,
-      CheckedFunction<FormFile, T> fileHandler
-  ) {
-    var results = new ArrayList<T>();
+  public List<FormFile> handleZipFiles(InputStream uploadedInputStream) {
+    var results = new ArrayList<FormFile>();
 
     var inputStream = new ZipInputStream(uploadedInputStream);
 
@@ -46,12 +43,10 @@ public class ZipService {
         var filename = entry.getName();
         logger.info("handle zipped [{}]", filename);
 
-        // only add files that have been changed:
-        try {
-          results.add(handleEntry(inputStream, filename, buffer, fileHandler));
-        } catch (ExistsException e) {
-          logger.info("skip existing [{}]", filename);
-        }
+        inputStream.transferTo(buffer);
+        var content = buffer.toByteArray();
+        buffer.reset();
+        results.add(new FormFile(filename, content));
 
       }
     } catch (IllegalArgumentException | IOException ex) {
@@ -59,18 +54,6 @@ public class ZipService {
     }
 
     return results;
-  }
-
-  private <T> T handleEntry(
-      ZipInputStream zis,
-      String name,
-      ByteArrayOutputStream buffer,
-      CheckedFunction<FormFile, T> fileHandler
-  ) throws IOException, ExistsException {
-    zis.transferTo(buffer);
-    var content = buffer.toByteArray();
-    buffer.reset();
-    return fileHandler.apply(new FormFile(name, content));
   }
 
   private boolean skipEntry(ZipEntry entry) {
