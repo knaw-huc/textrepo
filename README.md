@@ -46,6 +46,7 @@ curl 'localhost:8080/textrepo/documents' -F 'file=@{file};type=application/zip'
 Get document by `Location` header or json response:
 ```
 curl 'localhost:8080/textrepo/documents/{uuid}'
+curl 'localhost:8080/textrepo/documents/{uuid}/metadata'
 ```
 
 Get file from sha:
