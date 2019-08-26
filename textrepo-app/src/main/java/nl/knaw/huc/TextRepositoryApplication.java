@@ -54,6 +54,8 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
 
     var esConfig = config.getElasticsearch();
     var managedEsClient = new ManagedElasticsearchClient(esConfig.hosts);
+    environment.lifecycle().manage(managedEsClient);
+
     var documentIndexService = new ElasticDocumentIndexer(managedEsClient.client(), esConfig.index);
     var fileStoreService = new JdbiFileStorage(jdbi);
     var fileService = new FileService(fileStoreService);
