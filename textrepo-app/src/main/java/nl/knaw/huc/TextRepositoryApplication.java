@@ -52,8 +52,9 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     );
     jdbi.installPlugin(new SqlObjectPlugin());
 
-    var managedEsClient = new ManagedElasticsearchClient(config.getElasticsearch());
-    var documentIndexService = new ElasticDocumentIndexer(managedEsClient.client());
+    var esConfig = config.getElasticsearch();
+    var managedEsClient = new ManagedElasticsearchClient(esConfig.hosts);
+    var documentIndexService = new ElasticDocumentIndexer(managedEsClient.client(), esConfig.index);
     var fileStoreService = new JdbiFileStorage(jdbi);
     var fileService = new FileService(fileStoreService);
     var filesResource = new FilesResource(fileService);

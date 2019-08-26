@@ -23,3 +23,4 @@ elasticsearch:
   # The format is <hostname> or <hostname>:<port>. The port defaults to 9200.
   hosts:
     - elasticsearch:9200
+  index: documents
