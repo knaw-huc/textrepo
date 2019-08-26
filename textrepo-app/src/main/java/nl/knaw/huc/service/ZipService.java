@@ -43,7 +43,10 @@ public class ZipService {
         var filename = entry.getName();
         logger.info("handle zipped [{}]", filename);
 
-        results.add(handleEntry(inputStream, filename, buffer));
+        inputStream.transferTo(buffer);
+        var content = buffer.toByteArray();
+        buffer.reset();
+        results.add(new FormFile(filename, content));
 
       }
     } catch (IllegalArgumentException | IOException ex) {
@@ -51,13 +54,6 @@ public class ZipService {
     }
 
     return results;
-  }
-
-  private FormFile handleEntry(ZipInputStream zis, String name, ByteArrayOutputStream buffer) throws IOException {
-    zis.transferTo(buffer);
-    var content = buffer.toByteArray();
-    buffer.reset();
-    return new FormFile(name, content);
   }
 
   private boolean skipEntry(ZipEntry entry) {
