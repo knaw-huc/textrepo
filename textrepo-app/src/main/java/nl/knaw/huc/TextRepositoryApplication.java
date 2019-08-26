@@ -14,7 +14,6 @@ import nl.knaw.huc.service.DocumentService;
 import nl.knaw.huc.service.FileService;
 import nl.knaw.huc.service.JdbiMetadataService;
 import nl.knaw.huc.service.JdbiVersionService;
-import nl.knaw.huc.service.ZipService;
 import nl.knaw.huc.service.index.ElasticDocumentIndexer;
 import nl.knaw.huc.service.store.JdbiFileStorage;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
@@ -52,8 +51,11 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     );
     jdbi.installPlugin(new SqlObjectPlugin());
 
-    var managedEsClient = new ManagedElasticsearchClient(config.getElasticsearch());
-    var documentIndexService = new ElasticDocumentIndexer(managedEsClient.client());
+    var esConfig = config.getElasticsearch();
+    var managedEsClient = new ManagedElasticsearchClient(esConfig.hosts);
+    environment.lifecycle().manage(managedEsClient);
+
+    var documentIndexService = new ElasticDocumentIndexer(managedEsClient.client(), esConfig.index);
     var fileStoreService = new JdbiFileStorage(jdbi);
     var fileService = new FileService(fileStoreService);
     var filesResource = new FilesResource(fileService);
@@ -62,9 +64,8 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     var versionService = new JdbiVersionService(jdbi, fileService, documentIndexService, metadataService);
     var documentFileService = new DocumentFileService(fileService, versionService, metadataService);
     var documentService = new DocumentService(versionService, UUID::randomUUID, metadataService);
-    var zipService = new ZipService();
-    var documentsResource = new DocumentsResource(documentService, zipService);
-    var documentFilesResource = new DocumentFilesResource(documentFileService, zipService);
+    var documentsResource = new DocumentsResource(documentService);
+    var documentFilesResource = new DocumentFilesResource(documentFileService);
     var metadataResource = new MetadataResource(metadataService);
 
     environment.jersey().register(metadataResource);

@@ -4,6 +4,8 @@ import io.dropwizard.lifecycle.Managed;
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestHighLevelClient;
 
+import java.util.List;
+
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.text.StringEscapeUtils.escapeJava;
 import static org.elasticsearch.client.RestClient.builder;
@@ -14,12 +16,11 @@ import static org.elasticsearch.client.RestClient.builder;
 public class ManagedElasticsearchClient implements Managed {
   private RestHighLevelClient client;
 
-  public ManagedElasticsearchClient(ElasticsearchConfiguration configuration) {
-    var hosts = configuration.hosts.stream()
+  public ManagedElasticsearchClient(List<String> hosts) {
+    var restClientBuilder = builder(hosts.stream()
                                    .map(ManagedElasticsearchClient::parseAddr)
                                    .collect(toList())
-                                   .toArray(new HttpHost[configuration.hosts.size()]);
-    var restClientBuilder = builder(hosts);
+                                   .toArray(new HttpHost[hosts.size()]));
     client = new RestHighLevelClient(restClientBuilder);
   }
 

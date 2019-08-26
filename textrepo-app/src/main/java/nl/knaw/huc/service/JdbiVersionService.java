@@ -1,6 +1,5 @@
 package nl.knaw.huc.service;
 
-import nl.knaw.huc.api.KeyValue;
 import nl.knaw.huc.api.TextRepoFile;
 import nl.knaw.huc.api.Version;
 import nl.knaw.huc.db.VersionDao;
@@ -8,8 +7,8 @@ import nl.knaw.huc.service.index.ElasticDocumentIndexer;
 import org.jdbi.v3.core.Jdbi;
 
 import javax.annotation.Nonnull;
+
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -38,10 +37,11 @@ public class JdbiVersionService implements VersionService {
   }
 
   @Override
-  public Version insertNewVersion(@Nonnull UUID documentId, @Nonnull TextRepoFile file, @Nonnull String filename) {
+  public Version insertNewVersion(@Nonnull UUID documentId, @Nonnull TextRepoFile file, @Nonnull String filename,
+                                  @Nonnull LocalDateTime time) {
     fileService.addFile(file);
     documentIndexService.indexDocument(documentId, new String(file.getContent(), UTF_8));
-    var newVersion = new Version(documentId, LocalDateTime.now(), file.getSha224());
+    var newVersion = new Version(documentId, time, file.getSha224());
     getVersionDao().insert(newVersion);
     return newVersion;
   }

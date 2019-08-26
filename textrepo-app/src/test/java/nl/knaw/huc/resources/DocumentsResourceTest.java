@@ -2,7 +2,6 @@ package nl.knaw.huc.resources;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.testing.junit.ResourceTestRule;
-import nl.knaw.huc.api.KeyValue;
 import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.api.MultipleLocations;
 import nl.knaw.huc.db.VersionDao;
@@ -11,10 +10,8 @@ import nl.knaw.huc.service.FileService;
 import nl.knaw.huc.service.JdbiVersionService;
 import nl.knaw.huc.service.MetadataService;
 import nl.knaw.huc.service.VersionService;
-import nl.knaw.huc.service.ZipService;
 import nl.knaw.huc.service.index.ElasticDocumentIndexer;
 import nl.knaw.huc.service.store.FileStorage;
-import org.apache.commons.io.IOUtils;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
@@ -31,12 +28,9 @@ import org.mockito.MockitoAnnotations;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.net.URI;
-import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
 import static nl.knaw.huc.resources.TestUtils.getResourceFileBits;
 import static nl.knaw.huc.resources.TestUtils.getResourceFileString;
@@ -67,7 +61,7 @@ public class DocumentsResourceTest {
   public static final ResourceTestRule resource = ResourceTestRule
       .builder()
       .addProvider(MultiPartFeature.class)
-      .addResource(new DocumentsResource(documentService, new ZipService()))
+      .addResource(new DocumentsResource(documentService))
       .build();
 
   @Captor

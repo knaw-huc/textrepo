@@ -4,9 +4,7 @@ import com.codahale.metrics.annotation.Timed;
 import nl.knaw.huc.api.FormFile;
 import nl.knaw.huc.api.MultipleLocations;
 import nl.knaw.huc.api.ResultFile;
-import nl.knaw.huc.api.Version;
 import nl.knaw.huc.service.DocumentService;
-import nl.knaw.huc.service.ZipService;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -21,6 +19,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
+
 import java.io.InputStream;
 import java.util.UUID;
 
@@ -29,21 +28,17 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
 import static nl.knaw.huc.resources.ResourceUtils.locationOf;
 import static nl.knaw.huc.resources.ResourceUtils.readContent;
-import static nl.knaw.huc.service.ZipService.isZip;
+import static nl.knaw.huc.resources.ZipHandling.handleZipFile;
+import static nl.knaw.huc.resources.ZipHandling.isZip;
 
 @Path("/documents")
 public class DocumentsResource {
   private final Logger logger = LoggerFactory.getLogger(DocumentsResource.class);
 
   private final DocumentService documentService;
-  private ZipService zipService;
 
-  public DocumentsResource(
-      DocumentService documentService,
-      ZipService zipService
-  ) {
+  public DocumentsResource(DocumentService documentService) {
     this.documentService = documentService;
-    this.zipService = zipService;
   }
 
   @POST
@@ -56,8 +51,7 @@ public class DocumentsResource {
       @FormDataParam("file") FormDataBodyPart bodyPart
   ) {
     if (isZip(bodyPart, fileDetail)) {
-      var versions = zipService
-        .handleZipFiles(inputStream)
+      var versions = handleZipFile(inputStream)
         .stream()
         .map(this::handleNewDocument)
         .collect(toList());

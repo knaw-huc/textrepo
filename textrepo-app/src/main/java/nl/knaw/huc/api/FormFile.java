@@ -1,9 +1,5 @@
 package nl.knaw.huc.api;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import java.beans.ConstructorProperties;
-
 public class FormFile {
 
   private final String name;

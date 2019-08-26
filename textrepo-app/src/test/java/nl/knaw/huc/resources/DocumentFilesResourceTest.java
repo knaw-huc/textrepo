@@ -8,7 +8,6 @@ import nl.knaw.huc.service.FileService;
 import nl.knaw.huc.service.JdbiVersionService;
 import nl.knaw.huc.service.MetadataService;
 import nl.knaw.huc.service.VersionService;
-import nl.knaw.huc.service.ZipService;
 import nl.knaw.huc.service.index.ElasticDocumentIndexer;
 import nl.knaw.huc.service.store.FileStorage;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
@@ -25,6 +24,7 @@ import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 
 import javax.ws.rs.client.Entity;
+
 import java.io.IOException;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
@@ -65,7 +65,7 @@ public class DocumentFilesResourceTest {
   public static final ResourceTestRule resource = ResourceTestRule
       .builder()
       .addProvider(MultiPartFeature.class)
-      .addResource(new DocumentFilesResource(documentFileService, new ZipService()))
+      .addResource(new DocumentFilesResource(documentFileService))
       .build();
 
   @Captor

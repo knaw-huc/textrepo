@@ -12,13 +12,15 @@ import java.util.UUID;
 public class ElasticDocumentIndexer implements DocumentIndexer {
 
   private RestHighLevelClient elasticsearchClient;
+  private final String index;
 
-  public ElasticDocumentIndexer(RestHighLevelClient elasticsearchClient) {
+  public ElasticDocumentIndexer(RestHighLevelClient elasticsearchClient, String index) {
     this.elasticsearchClient = elasticsearchClient;
+    this.index = index;
   }
 
   public void indexDocument(@Nonnull UUID document, @NotNull String latestVersionContent) {
-    var indexRequest = new IndexRequest("documents")
+    var indexRequest = new IndexRequest(index)
         .id(document.toString())
         .source("content", latestVersionContent);
     try {
