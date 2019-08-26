@@ -1,4 +1,4 @@
-package nl.knaw.huc.service;
+package nl.knaw.huc.resources;
 
 import nl.knaw.huc.api.FormFile;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
@@ -17,18 +17,21 @@ import java.util.zip.ZipInputStream;
 
 import static org.apache.commons.io.FilenameUtils.getExtension;
 
-public class ZipService {
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+class ZipHandling {
+  private static final Logger logger = LoggerFactory.getLogger(ZipHandling.class);
 
-  public static boolean isZip(
-      FormDataBodyPart bodyPart,
-      FormDataContentDisposition fileDetail
+  private ZipHandling() {
+  }
+
+  static boolean isZip(
+    FormDataBodyPart bodyPart,
+    FormDataContentDisposition fileDetail
   ) {
     return "application/zip".equals(bodyPart.getMediaType().toString()) ||
         "zip".equals(getExtension(fileDetail.getFileName()));
   }
 
-  public List<FormFile> handleZipFiles(InputStream uploadedInputStream) {
+  static List<FormFile> handleZipFile(InputStream uploadedInputStream) {
     var results = new ArrayList<FormFile>();
 
     var inputStream = new ZipInputStream(uploadedInputStream);
@@ -56,7 +59,7 @@ public class ZipService {
     return results;
   }
 
-  private boolean skipEntry(ZipEntry entry) {
+  private static boolean skipEntry(ZipEntry entry) {
     if (isHiddenFile(entry)) {
       logger.info("skip hidden file [{}]", entry.getName());
       return true;
@@ -68,7 +71,7 @@ public class ZipService {
     return false;
   }
 
-  private boolean isHiddenFile(ZipEntry entry) {
+  private static boolean isHiddenFile(ZipEntry entry) {
     var name = entry.getName();
     // Zip always uses / as the dir separator:
     var base = 1 + name.lastIndexOf('/');

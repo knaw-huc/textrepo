@@ -4,7 +4,6 @@ import com.codahale.metrics.annotation.Timed;
 import nl.knaw.huc.api.MultipleLocations;
 import nl.knaw.huc.api.ResultFile;
 import nl.knaw.huc.service.DocumentFileService;
-import nl.knaw.huc.service.ZipService;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -21,7 +20,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import java.io.InputStream;
-import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -32,18 +30,17 @@ import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
 import static nl.knaw.huc.api.TextRepoFile.fromContent;
 import static nl.knaw.huc.resources.ResourceUtils.readContent;
-import static nl.knaw.huc.service.ZipService.isZip;
+import static nl.knaw.huc.resources.ZipHandling.handleZipFile;
+import static nl.knaw.huc.resources.ZipHandling.isZip;
 
 @Path("/documents/{uuid}/files")
 public class DocumentFilesResource {
   private final Logger logger = LoggerFactory.getLogger(DocumentFilesResource.class);
 
   private final DocumentFileService documentFileService;
-  private ZipService zipService;
 
-  public DocumentFilesResource(DocumentFileService documentFileService, ZipService zipService) {
+  public DocumentFilesResource(DocumentFileService documentFileService) {
     this.documentFileService = documentFileService;
-    this.zipService = zipService;
   }
 
   // TODO: update filename metadata
@@ -58,8 +55,7 @@ public class DocumentFilesResource {
       @FormDataParam("file") FormDataBodyPart bodyPart
   ) {
     if (isZip(bodyPart, fileDetail)) {
-      var versions = zipService
-        .handleZipFiles(uploadedInputStream)
+      var versions = handleZipFile(uploadedInputStream)
         .stream()
         .map(file -> handleUpdate(documentId, file.getContent(), file.getName()))
         .filter(Objects::nonNull)
