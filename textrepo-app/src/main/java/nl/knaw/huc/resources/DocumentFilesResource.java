@@ -4,7 +4,6 @@ import com.codahale.metrics.annotation.Timed;
 import nl.knaw.huc.api.MultipleLocations;
 import nl.knaw.huc.api.Version;
 import nl.knaw.huc.service.DocumentFileService;
-import nl.knaw.huc.service.ExistsException;
 import nl.knaw.huc.service.ZipService;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
@@ -20,10 +19,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
+
 import java.io.InputStream;
+import java.util.Objects;
 import java.util.UUID;
 
 import static java.time.LocalDateTime.now;
+import static java.util.stream.Collectors.toList;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
@@ -55,42 +57,36 @@ public class DocumentFilesResource {
       @FormDataParam("file") FormDataBodyPart bodyPart
   ) {
     if (isZip(bodyPart, fileDetail)) {
-      var versions = zipService.handleZipFiles(
-        uploadedInputStream,
-        (file) -> handleUpdate(documentId, file.getContent(), file.getName())
-      );
+      var versions = zipService
+        .handleZipFiles(uploadedInputStream)
+        .stream()
+        .map(file -> handleUpdate(documentId, file.getContent(), file.getName()))
+        .filter(Objects::nonNull)
+        .collect(toList());
       return Response.ok(new MultipleLocations(versions)).build();
     }
 
-    try {
-      var version = handleUpdate(
-          documentId,
-          readContent(uploadedInputStream),
-          fileDetail.getFileName()
-      );
-      return Response.ok(version).build();
-    } catch (ExistsException e) {
-      return Response.notModified().build();
-    }
+    var version = handleUpdate(
+      documentId,
+      readContent(uploadedInputStream),
+      fileDetail.getFileName()
+    );
+    return Response.ok(version).build();
   }
 
   /**
    * Try to update
    *
-   * @return new version
+   * @return new version, or null if not replaced
    */
-  private Version handleUpdate(
-      UUID documentId,
-      byte[] content,
-      String filename
-  ) throws ExistsException {
+  private Version handleUpdate(UUID documentId, byte[] content, String filename) {
     logger.debug("replacing file of document [{}]", documentId);
     var file = fromContent(content);
     var version = documentFileService.replaceDocumentFile(documentId, file, filename);
 
     if (version.getDate().isBefore(now())) {
-      logger.debug("already current, not modified");
-      throw new ExistsException();
+      logger.info("skip existing [{}]", filename);
+      return null;
     }
 
     return version;
