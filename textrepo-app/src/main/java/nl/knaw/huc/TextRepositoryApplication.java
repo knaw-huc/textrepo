@@ -9,6 +9,7 @@ import nl.knaw.huc.resources.DocumentFilesResource;
 import nl.knaw.huc.resources.DocumentsResource;
 import nl.knaw.huc.resources.FilesResource;
 import nl.knaw.huc.resources.MetadataResource;
+import nl.knaw.huc.resources.VersionsResource;
 import nl.knaw.huc.service.DocumentFileService;
 import nl.knaw.huc.service.DocumentService;
 import nl.knaw.huc.service.FileService;
@@ -61,17 +62,19 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     var filesResource = new FilesResource(fileService);
 
     var metadataService = new JdbiMetadataService(jdbi);
-    var versionService = new JdbiVersionService(jdbi, fileService, documentIndexService, metadataService);
+    var versionService = new JdbiVersionService(jdbi, fileService, documentIndexService);
     var documentFileService = new DocumentFileService(fileService, versionService, metadataService);
     var documentService = new DocumentService(versionService, UUID::randomUUID, metadataService);
     var documentsResource = new DocumentsResource(documentService);
     var documentFilesResource = new DocumentFilesResource(documentFileService);
     var metadataResource = new MetadataResource(metadataService);
+    var versionsResource = new VersionsResource(versionService);
 
     environment.jersey().register(metadataResource);
     environment.jersey().register(documentsResource);
     environment.jersey().register(documentFilesResource);
     environment.jersey().register(filesResource);
+    environment.jersey().register(versionsResource);
   }
 
 }

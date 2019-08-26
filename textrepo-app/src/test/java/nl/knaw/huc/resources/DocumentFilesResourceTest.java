@@ -38,7 +38,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class DocumentFilesResourceTest {
-  private static final String uuid = "b59c2b24-cafe-babe-9bb3-deadbeefc2c6";
   private static final String content = "hello test";
   private String filename = "just-a-filename.txt";
 
@@ -49,8 +48,7 @@ public class DocumentFilesResourceTest {
 
   private static final VersionService versionService = new JdbiVersionService(
       jdbi, fileService,
-      documentIndexer,
-      metadataService
+      documentIndexer
   );
 
   private static final DocumentFileService documentFileService = new DocumentFileService(

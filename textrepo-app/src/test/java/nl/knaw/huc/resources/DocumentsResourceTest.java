@@ -51,7 +51,7 @@ public class DocumentsResourceTest {
   private static final Jdbi jdbi = mock(Jdbi.class);
   private static final ElasticDocumentIndexer documentIndexer = mock(ElasticDocumentIndexer.class);
   private static final MetadataService metadataService = mock(MetadataService.class);
-  private static final VersionService versions = new JdbiVersionService(jdbi, files, documentIndexer, metadataService);
+  private static final VersionService versions = new JdbiVersionService(jdbi, files, documentIndexer);
   @SuppressWarnings("unchecked")
   private static final Supplier<UUID> idGenerator = mock(Supplier.class);
   private static final DocumentService documentService = new DocumentService(versions, idGenerator, metadataService);

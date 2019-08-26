@@ -8,6 +8,7 @@ import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -24,4 +25,7 @@ public interface VersionDao {
   @RegisterConstructorMapper(value = Version.class)
   Optional<Version> findLatestByDocumentUuid(@Bind UUID documentUuid);
 
+  @SqlQuery("select document_uuid, date, file_sha from versions where document_uuid = ?")
+  @RegisterConstructorMapper(value = Version.class)
+  List<Version> findByUuid(UUID uuid);
 }

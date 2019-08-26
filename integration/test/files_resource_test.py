@@ -13,10 +13,10 @@ class FilesResourceTest(AbstractTestCase):
         sha = '55d4c44f5bc05762d8807f75f3f24b4095afa583ef70ac97eaf7afc6'
         content = 'hello test'
 
-        self.__test_post_file(sha, textrepo_host, content)
-        self.__test_get_file(sha, textrepo_host, content)
+        self.__test_post_file(sha, content, textrepo_host)
+        self.__test_get_file(sha, content, textrepo_host)
 
-    def __test_post_file(self, sha, textrepohost, content):
+    def __test_post_file(self, sha, content, textrepohost):
         multipart_form_data = {
             'file': ('file.txt', content),
         }
@@ -32,7 +32,7 @@ class FilesResourceTest(AbstractTestCase):
         expected_text = '{"sha224":"%s"}' % sha
         self.assertEqual(response.text, expected_text)
 
-    def __test_get_file(self, sha, textrepo_host, content):
+    def __test_get_file(self, sha, content, textrepo_host):
         response = requests.get((textrepo_host + '/files/%s') % sha)
 
         expected_status = 200

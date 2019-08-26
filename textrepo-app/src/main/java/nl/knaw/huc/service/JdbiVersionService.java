@@ -9,6 +9,7 @@ import org.jdbi.v3.core.Jdbi;
 import javax.annotation.Nonnull;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -18,17 +19,15 @@ public class JdbiVersionService implements VersionService {
   private final Jdbi jdbi;
   private final FileService fileService;
   private ElasticDocumentIndexer documentIndexService;
-  private final MetadataService metadataService;
 
   public JdbiVersionService(
       Jdbi jdbi,
       FileService fileService,
-      ElasticDocumentIndexer documentIndexService,
-      MetadataService metadataService) {
+      ElasticDocumentIndexer documentIndexService
+  ) {
     this.jdbi = jdbi;
     this.fileService = fileService;
     this.documentIndexService = documentIndexService;
-    this.metadataService = metadataService;
   }
 
   @Override
@@ -44,6 +43,11 @@ public class JdbiVersionService implements VersionService {
     var newVersion = new Version(documentId, time, file.getSha224());
     getVersionDao().insert(newVersion);
     return newVersion;
+  }
+
+  @Override
+  public List<Version> getVersions(UUID documentId) {
+    return getVersionDao().findByUuid(documentId);
   }
 
   private VersionDao getVersionDao() {
