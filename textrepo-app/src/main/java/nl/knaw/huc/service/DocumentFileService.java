@@ -1,15 +1,16 @@
 package nl.knaw.huc.service;
 
-import nl.knaw.huc.api.KeyValue;
 import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.api.TextRepoFile;
 import nl.knaw.huc.api.Version;
 
 import javax.annotation.Nonnull;
 import javax.ws.rs.NotFoundException;
+
 import java.util.UUID;
 
 import static java.lang.String.format;
+import static java.time.LocalDateTime.now;
 
 public class DocumentFileService {
 
@@ -42,7 +43,7 @@ public class DocumentFileService {
     var version = versionService
         .findLatestVersion(documentId)
         .filter(v -> v.getFileSha().equals(currentSha224)) // already the current file for this document
-        .orElseGet(() -> versionService.insertNewVersion(documentId, file, filename));
+        .orElseGet(() -> versionService.insertNewVersion(documentId, file, filename, now()));
 
     metadataService.update(new MetadataEntry(version.getDocumentUuid(), "filename", filename));
 

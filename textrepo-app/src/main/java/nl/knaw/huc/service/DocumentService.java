@@ -1,6 +1,5 @@
 package nl.knaw.huc.service;
 
-import nl.knaw.huc.api.KeyValue;
 import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.api.TextRepoFile;
 import nl.knaw.huc.api.Version;
@@ -9,10 +8,12 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.ws.rs.NotFoundException;
+
 import java.util.UUID;
 import java.util.function.Supplier;
 
 import static java.lang.String.format;
+import static java.time.LocalDateTime.now;
 import static nl.knaw.huc.api.TextRepoFile.fromContent;
 
 public class DocumentService {
@@ -40,7 +41,7 @@ public class DocumentService {
   }
 
   private Version addDocument(@Nonnull TextRepoFile file, String filename) {
-    var version = versionService.insertNewVersion(documentIdGenerator.get(), file, filename);
+    var version = versionService.insertNewVersion(documentIdGenerator.get(), file, filename, now());
     metadataService.insert(new MetadataEntry(version.getDocumentUuid(), "filename", filename));
     return version;
   }
