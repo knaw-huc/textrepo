@@ -21,6 +21,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import java.io.InputStream;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -86,9 +87,11 @@ public class DocumentFilesResource {
   ) {
     logger.debug("replacing file of document [{}]", documentId);
     var file = fromContent(content);
+
+    final var startReplacing = now();
     var version = documentFileService.replaceDocumentFile(documentId, file, filename);
 
-    if (version.getDate().isBefore(now())) {
+    if (version.getDate().isBefore(startReplacing)) {
       logger.info("skip existing [{}]", filename);
       return null;
     }

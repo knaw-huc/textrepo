@@ -38,7 +38,10 @@ public class DocumentsResource {
   private final DocumentService documentService;
   private ZipService zipService;
 
-  public DocumentsResource(DocumentService documentService, ZipService zipService) {
+  public DocumentsResource(
+      DocumentService documentService,
+      ZipService zipService
+  ) {
     this.documentService = documentService;
     this.zipService = zipService;
   }
