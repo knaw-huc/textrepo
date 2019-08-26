@@ -11,11 +11,11 @@ public class ElasticsearchConfiguration {
    * The port defaults to 9200.
    */
   @JsonProperty
-  List<String> hosts;
+  public List<String> hosts;
 
   /**
    * Name of index to use.
    */
   @JsonProperty
-  String index;
+  public String index;
 }
