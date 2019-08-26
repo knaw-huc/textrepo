@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.BadRequestException;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -31,26 +30,27 @@ public class ZipService {
 
   public <T> List<T> handleZipFiles(
       InputStream uploadedInputStream,
-      CheckedFunction<FormFile, T> handleFile
+      CheckedFunction<FormFile, T> fileHandler
   ) {
     var results = new ArrayList<T>();
 
     var inputStream = new ZipInputStream(uploadedInputStream);
-    var buffer = new byte[2048];
 
     ZipEntry entry;
+    var buffer = new ByteArrayOutputStream();
     try {
       while ((entry = inputStream.getNextEntry()) != null) {
         if (skipEntry(entry)) {
           continue;
         }
-        logger.info("handle zipped file [{}]", entry.getName());
+        var filename = entry.getName();
+        logger.info("handle zipped [{}]", filename);
 
-        // add result only when new:
+        // only add files that have been changed:
         try {
-          results.add(handleEntry(inputStream, buffer, entry.getName(), handleFile));
+          results.add(handleEntry(inputStream, filename, buffer, fileHandler));
         } catch (ExistsException e) {
-          logger.info("skip existing [{}]", entry.getName());
+          logger.info("skip existing [{}]", filename);
         }
 
       }
@@ -63,18 +63,14 @@ public class ZipService {
 
   private <T> T handleEntry(
       ZipInputStream zis,
-      byte[] buffer,
       String name,
-      CheckedFunction<FormFile, T> handleContent
+      ByteArrayOutputStream buffer,
+      CheckedFunction<FormFile, T> fileHandler
   ) throws IOException, ExistsException {
-    try (var output = new ByteArrayOutputStream()) {
-      int len;
-      while ((len = zis.read(buffer)) > 0) {
-        output.write(buffer, 0, len);
-      }
-      var content = output.toByteArray();
-      return handleContent.apply(new FormFile(name, content));
-    }
+    zis.transferTo(buffer);
+    var content = buffer.toByteArray();
+    buffer.reset();
+    return fileHandler.apply(new FormFile(name, content));
   }
 
   private boolean skipEntry(ZipEntry entry) {
@@ -95,6 +91,5 @@ public class ZipService {
     var base = 1 + name.lastIndexOf('/');
     return base < name.length() && name.charAt(base) == '.';
   }
-
 
 }
