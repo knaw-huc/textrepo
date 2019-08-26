@@ -47,6 +47,7 @@ Get document by `Location` header or json response:
 ```
 curl 'localhost:8080/textrepo/documents/{uuid}'
 curl 'localhost:8080/textrepo/documents/{uuid}/metadata'
+curl 'localhost:8080/textrepo/documents/{uuid}/versions'
 ```
 
 Get file from sha:
