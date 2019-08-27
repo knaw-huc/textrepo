@@ -20,5 +20,5 @@ public interface MetadataService {
 
   void update(MetadataEntry entry);
 
-  List<MetadataEntry> find(@Nonnull UUID documentId);
+  Iterator<MetadataEntry> find(@Nonnull UUID documentId);
 }

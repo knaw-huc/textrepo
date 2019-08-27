@@ -22,7 +22,7 @@ public class JdbiMetadataService implements MetadataService {
   @Override
   public Map<String, String> getMetadata(UUID documentId) {
     final var result = new HashMap<String, String>();
-    find(documentId).forEach(entry -> result.put(entry.getKey(), entry.getValue()));
+    find(documentId).forEachRemaining(entry -> result.put(entry.getKey(), entry.getValue()));
     return result;
   }
 
@@ -51,7 +51,7 @@ public class JdbiMetadataService implements MetadataService {
   }
 
   @Override
-  public List<MetadataEntry> find(@Nonnull UUID documentId) {
+  public Iterator<MetadataEntry> find(@Nonnull UUID documentId) {
     return getMetadataDao().findByDocumentUuid(documentId);
   }
 

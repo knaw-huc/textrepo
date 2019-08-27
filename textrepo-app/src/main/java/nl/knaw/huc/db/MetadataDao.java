@@ -11,7 +11,6 @@ import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 import org.jdbi.v3.sqlobject.transaction.Transaction;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -35,6 +34,6 @@ public interface MetadataDao {
 
   @SqlQuery("select document_uuid, key, value from metadata where document_uuid = ?")
   @RegisterConstructorMapper(MetadataEntry.class)
-  List<MetadataEntry> findByDocumentUuid(@Bind UUID documentUuid);
+  Iterator<MetadataEntry> findByDocumentUuid(@Bind UUID documentUuid);
 
 }
