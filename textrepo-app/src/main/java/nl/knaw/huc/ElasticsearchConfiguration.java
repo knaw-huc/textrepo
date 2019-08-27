@@ -18,4 +18,10 @@ public class ElasticsearchConfiguration {
    */
   @JsonProperty
   public String index;
+
+  /**
+   * Field in which to store document content.
+   */
+  @JsonProperty
+  public String contentField;
 }

@@ -19,7 +19,7 @@ import static org.elasticsearch.client.RestClient.builder;
 
 public class ElasticDocumentIndexer implements DocumentIndexer, Managed {
   private RestHighLevelClient client;
-  private final String index;
+  private final ElasticsearchConfiguration config;
 
   public ElasticDocumentIndexer(ElasticsearchConfiguration config) {
     var restClientBuilder = builder(config.hosts
@@ -28,13 +28,13 @@ public class ElasticDocumentIndexer implements DocumentIndexer, Managed {
         .collect(toList())
         .toArray(new HttpHost[config.hosts.size()]));
     client = new RestHighLevelClient(restClientBuilder);
-    index = config.index;
+    this.config = config;
   }
 
   public void indexDocument(@Nonnull UUID document, @NotNull String latestVersionContent) {
-    var indexRequest = new IndexRequest(index)
+    var indexRequest = new IndexRequest(config.index)
         .id(document.toString())
-        .source("content", latestVersionContent);
+        .source(config.contentField, latestVersionContent);
     try {
       client.index(indexRequest, RequestOptions.DEFAULT);
     } catch (IOException ex) {

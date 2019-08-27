@@ -24,3 +24,4 @@ elasticsearch:
   hosts:
     - elasticsearch:9200
   index: documents
+  contentField: content
