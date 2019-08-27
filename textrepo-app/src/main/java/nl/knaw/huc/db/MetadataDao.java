@@ -4,6 +4,7 @@ import nl.knaw.huc.api.MetadataEntry;
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.customizer.BindBean;
+import org.jdbi.v3.sqlobject.statement.BatchChunkSize;
 import org.jdbi.v3.sqlobject.statement.SqlBatch;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
@@ -24,6 +25,7 @@ public interface MetadataDao {
 
   @Transaction
   @SqlBatch("insert into metadata (document_uuid, key, value) values (:documentUuid, :key, :value)")
+  @BatchChunkSize(1000)
   void bulkInsert(@BindBean List<MetadataEntry> entries);
 
   @SqlQuery("select document_uuid, key, value from metadata where document_uuid = ? and key = ?")
