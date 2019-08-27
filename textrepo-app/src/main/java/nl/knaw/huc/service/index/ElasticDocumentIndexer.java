@@ -9,7 +9,6 @@ import org.elasticsearch.client.RestHighLevelClient;
 
 import javax.annotation.Nonnull;
 import javax.validation.constraints.NotNull;
-
 import java.io.IOException;
 import java.util.UUID;
 
@@ -23,10 +22,11 @@ public class ElasticDocumentIndexer implements DocumentIndexer, Managed {
   private final String index;
 
   public ElasticDocumentIndexer(ElasticsearchConfiguration config) {
-    var restClientBuilder = builder(config.hosts.stream()
-                                   .map(ElasticDocumentIndexer::parseAddr)
-                                   .collect(toList())
-                                   .toArray(new HttpHost[config.hosts.size()]));
+    var restClientBuilder = builder(config.hosts
+        .stream()
+        .map(ElasticDocumentIndexer::parseAddr)
+        .collect(toList())
+        .toArray(new HttpHost[config.hosts.size()]));
     client = new RestHighLevelClient(restClientBuilder);
     index = config.index;
   }
@@ -62,7 +62,7 @@ public class ElasticDocumentIndexer implements DocumentIndexer, Managed {
           port = Integer.parseInt(after);
         } catch (NumberFormatException e) {
           throw new IllegalArgumentException(
-            String.format("Invalid port number \"%s\"", escapeJava(after)), e);
+              String.format("Invalid port number \"%s\"", escapeJava(after)), e);
         }
         addr = addr.substring(0, colon);
       }
