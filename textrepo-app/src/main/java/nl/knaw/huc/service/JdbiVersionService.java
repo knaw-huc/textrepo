@@ -3,11 +3,10 @@ package nl.knaw.huc.service;
 import nl.knaw.huc.api.TextRepoFile;
 import nl.knaw.huc.api.Version;
 import nl.knaw.huc.db.VersionDao;
-import nl.knaw.huc.service.index.ElasticDocumentIndexer;
+import nl.knaw.huc.service.index.DocumentIndexer;
 import org.jdbi.v3.core.Jdbi;
 
 import javax.annotation.Nonnull;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -18,12 +17,12 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class JdbiVersionService implements VersionService {
   private final Jdbi jdbi;
   private final FileService fileService;
-  private ElasticDocumentIndexer documentIndexService;
+  private DocumentIndexer documentIndexService;
 
   public JdbiVersionService(
       Jdbi jdbi,
       FileService fileService,
-      ElasticDocumentIndexer documentIndexService
+      DocumentIndexer documentIndexService
   ) {
     this.jdbi = jdbi;
     this.fileService = fileService;
