@@ -1,16 +1,16 @@
 package nl.knaw.huc.service;
 
-import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.api.KeyValue;
+import nl.knaw.huc.api.MetadataEntry;
 
 import javax.annotation.Nonnull;
-
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public interface MetadataService {
-  List<KeyValue> getMetadata(UUID documentId);
+  Map<String, String> getMetadata(UUID documentId);
 
   void addMetadata(@Nonnull UUID documentId, @Nonnull List<KeyValue> metadata);
 
