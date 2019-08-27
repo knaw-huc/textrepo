@@ -38,7 +38,7 @@ public class ElasticDocumentIndexer implements DocumentIndexer, Managed {
     try {
       client.index(indexRequest, RequestOptions.DEFAULT);
     } catch (IOException ex) {
-      throw new RuntimeException("Could not index document %s in Elasticsearch", ex);
+      throw new RuntimeException("Could not index document in Elasticsearch", ex);
     }
   }
 
