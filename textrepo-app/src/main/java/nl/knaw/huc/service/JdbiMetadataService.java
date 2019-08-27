@@ -6,6 +6,8 @@ import nl.knaw.huc.db.MetadataDao;
 import org.jdbi.v3.core.Jdbi;
 
 import javax.annotation.Nonnull;
+
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,7 +34,7 @@ public class JdbiMetadataService implements MetadataService {
     var entries = metadata
         .stream()
         .map(kv -> new MetadataEntry(documentId, kv.key, kv.value))
-        .collect(toList());
+        .iterator();
     bulkInsert(entries);
   }
 
@@ -42,7 +44,7 @@ public class JdbiMetadataService implements MetadataService {
   }
 
   @Override
-  public void bulkInsert(@Nonnull List<MetadataEntry> entries) {
+  public void bulkInsert(@Nonnull Iterator<MetadataEntry> entries) {
     getMetadataDao().bulkInsert(entries);
   }
 

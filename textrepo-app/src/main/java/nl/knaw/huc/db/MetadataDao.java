@@ -10,6 +10,7 @@ import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 import org.jdbi.v3.sqlobject.transaction.Transaction;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -26,7 +27,7 @@ public interface MetadataDao {
   @Transaction
   @SqlBatch("insert into metadata (document_uuid, key, value) values (:documentUuid, :key, :value)")
   @BatchChunkSize(1000)
-  void bulkInsert(@BindBean List<MetadataEntry> entries);
+  void bulkInsert(@BindBean Iterator<MetadataEntry> entries);
 
   @SqlQuery("select document_uuid, key, value from metadata where document_uuid = ? and key = ?")
   @RegisterConstructorMapper(MetadataEntry.class)

@@ -4,6 +4,8 @@ import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.api.KeyValue;
 
 import javax.annotation.Nonnull;
+
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,7 +16,7 @@ public interface MetadataService {
 
   void insert(@Nonnull MetadataEntry entry);
 
-  void bulkInsert(@Nonnull List<MetadataEntry> entries);
+  void bulkInsert(@Nonnull Iterator<MetadataEntry> entries);
 
   void update(MetadataEntry entry);
 
