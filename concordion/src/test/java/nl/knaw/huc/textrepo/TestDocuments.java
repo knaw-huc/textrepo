@@ -1,31 +1,20 @@
 package nl.knaw.huc.textrepo;
 
-import org.concordion.api.FullOGNL;
 import org.concordion.api.MultiValueResult;
-import org.concordion.integration.junit4.ConcordionRunner;
-import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
-import org.junit.runner.RunWith;
+import org.junit.Ignore;
 
-import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
 import java.util.Optional;
 import java.util.UUID;
 
 import static nl.knaw.huc.textrepo.Config.HTTP_APP_HOST;
-import static nl.knaw.huc.textrepo.Config.HTTP_ES_HOST;
 
-@FullOGNL
-@RunWith(ConcordionRunner.class)
-public class TestDocuments {
+public class TestDocuments extends AbstractConcordionTest {
   private static final String HOST = HTTP_APP_HOST;
   private static final String DOCUMENTS_URL = HOST + "/documents";
-
-  private static Client client() {
-    return JerseyClientBuilder.newClient();
-  }
 
   private static Entity<FormDataMultiPart> multiPartEntity(FormDataMultiPart multiPart) {
     return Entity.entity(multiPart, multiPart.getMediaType());
