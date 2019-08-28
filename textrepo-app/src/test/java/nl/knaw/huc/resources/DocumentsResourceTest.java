@@ -1,5 +1,7 @@
 package nl.knaw.huc.resources;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import nl.knaw.huc.api.MetadataEntry;
@@ -28,6 +30,7 @@ import org.mockito.MockitoAnnotations;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Supplier;
 

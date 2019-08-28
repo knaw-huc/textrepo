@@ -30,7 +30,7 @@ public class TestDocuments extends AbstractConcordionTest {
 
     var response = request.post(multiPartEntity(multiPart));
     var locationHeader = getLocation(response);
-    var optionalDocumentId = locationHeader.map(this::getDocumentId);
+    var optionalDocumentId = locationHeader.map(TestUtils::getDocumentId);
     var documentId = optionalDocumentId.orElse("No document id");
 
     return new MultiValueResult()
@@ -38,9 +38,9 @@ public class TestDocuments extends AbstractConcordionTest {
         .with("hasLocationHeader", locationHeader.map(l -> "has a Location header")
                                                  .orElse("Missing Location header"))
         .with("location", locationHeader.orElse("No location"))
-        .with("esLocation", ES_HOST + "/documents/_doc/" + documentId)
+        .with("esLocation", "/documents/_doc/" + documentId)
         .with("documentId", documentId)
-        .with("documentIdIsUUID", optionalDocumentId.map(this::isValidUUID).orElse("No document id"));
+        .with("documentIdIsUUID", optionalDocumentId.map(TestUtils::isValidUUID).orElse("No document id"));
   }
 
   public MultiValueResult latest(Object loc) {
@@ -65,19 +65,6 @@ public class TestDocuments extends AbstractConcordionTest {
 
   private static String getStatus(Response response) {
     return response.getStatus() + " " + response.getStatusInfo();
-  }
-
-  private String isValidUUID(String documentId) {
-    try {
-      UUID.fromString(documentId);
-      return "valid UUID";
-    } catch (Exception e) {
-      return "invalid UUID: " + e.getMessage();
-    }
-  }
-
-  private String getDocumentId(String location) {
-    return location.substring(location.lastIndexOf('/') + 1);
   }
 
   private Optional<String> getLocation(Response response) {
