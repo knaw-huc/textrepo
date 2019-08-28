@@ -10,8 +10,12 @@ import org.junit.runner.RunWith;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 
+import static nl.knaw.huc.textrepo.Config.HTTP_APP_HOST;
+
 @RunWith(ConcordionRunner.class)
 public class TestFileHandling {
+  private final static String HOST = HTTP_APP_HOST;
+
   private static Client client() {
     return JerseyClientBuilder.newClient();
   }
@@ -25,7 +29,7 @@ public class TestFileHandling {
 
     var request = client()
         .register(MultiPartFeature.class)
-        .target("http://localhost:8080/textrepo/files")
+        .target(HOST + "/files")
         .request();
 
     var response = request.post(multiPartEntity(multiPart));
@@ -46,7 +50,7 @@ public class TestFileHandling {
   }
 
   public RetrievalResult retrieve(String uri) {
-    var url = "http://localhost:8080/textrepo/" + uri;
+    var url = HOST + uri;
     var response = client().target(url).request().get();
     var entity = response.readEntity(String.class);
 
