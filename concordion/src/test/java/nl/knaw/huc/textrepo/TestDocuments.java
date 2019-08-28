@@ -1,9 +1,9 @@
 package nl.knaw.huc.textrepo;
 
+import com.jayway.jsonpath.JsonPath;
 import org.concordion.api.MultiValueResult;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
-import org.junit.Ignore;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
@@ -30,25 +30,37 @@ public class TestDocuments extends AbstractConcordionTest {
 
     var response = request.post(multiPartEntity(multiPart));
     var locationHeader = getLocation(response);
-    var documentId = locationHeader.map(this::getDocumentId);
+    var optionalDocumentId = locationHeader.map(this::getDocumentId);
+    var documentId = optionalDocumentId.orElse("No document id");
 
     return new MultiValueResult()
         .with("status", getStatus(response))
         .with("hasLocationHeader", locationHeader.map(l -> "has a Location header")
                                                  .orElse("Missing Location header"))
         .with("location", locationHeader.orElse("No location"))
-        .with("documentId", documentId.orElse("No document id"))
-        .with("documentIdIsUUID", documentId.map(this::isValidUUID).orElse("No document id"));
+        .with("esLocation", ES_HOST + "/documents/_doc/" + documentId)
+        .with("documentId", documentId)
+        .with("documentIdIsUUID", optionalDocumentId.map(this::isValidUUID).orElse("No document id"));
   }
 
   public MultiValueResult latest(Object loc) {
-    String location = (String) loc;
+    var location = (String) loc;
     System.err.println("latest: " + location);
     var request = client().target(location + "/files").request();
     var response = request.get();
     return new MultiValueResult()
         .with("status", getStatus(response))
         .with("entity", response.readEntity(String.class));
+  }
+
+  public MultiValueResult index(Object param) {
+    var documentId = (String) param;
+    System.err.println("latest: " + documentId);
+    var request = client().target(ES_HOST + "/documents/_doc/" + documentId).request();
+    var response = request.get();
+    return new MultiValueResult()
+        .with("status", getStatus(response))
+        .with("entity", JsonPath.parse(response.readEntity(String.class)).read("$._source.content"));
   }
 
   private static String getStatus(Response response) {
