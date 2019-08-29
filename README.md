@@ -12,6 +12,7 @@ Build with:
 On first run:
 ```
 docker build -t textrepo-builder -f textrepo-app/Dockerfile.builder textrepo-app
+docker build -t concordion-builder -f concordion/Dockerfile.builder concordion
 ```
 
 Build and start:
