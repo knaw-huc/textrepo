@@ -12,10 +12,9 @@ create table versions (
   document_uuid uuid not null,
   date timestamp with time zone not null,
   file_sha char(56),
+  primary key (document_uuid, date),
   foreign key (file_sha) references files (sha224)
 );
-
-create index version_by_uuid on (document_uuid);
 
 -- Document metadata items. Each item is a key-value pair linked to a
 -- document.
