@@ -1,9 +1,14 @@
 package nl.knaw.huc.textrepo;
 
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.Option;
+import com.jayway.jsonpath.ParseContext;
 import org.concordion.api.BeforeSpecification;
 import org.concordion.api.FullOGNL;
 import org.concordion.integration.junit4.ConcordionRunner;
 import org.glassfish.jersey.client.JerseyClientBuilder;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 
 import javax.ws.rs.client.Client;
@@ -28,6 +33,16 @@ public abstract class AbstractConcordionTest {
 
   final static String APP_HOST = HTTP_APP_HOST;
   final static String ES_HOST = HTTP_ES_HOST;
+
+  private final static Configuration jsonPathConf = Configuration
+      .defaultConfiguration()
+      .addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL)
+      .addOptions(Option.SUPPRESS_EXCEPTIONS);
+
+  /**
+   * Do not throw an exception but return null when node doesn't exist
+   */
+  final static ParseContext jsonPath = JsonPath.using(jsonPathConf);
 
   @BeforeSpecification
   public void setUp() {

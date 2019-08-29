@@ -7,6 +7,7 @@ import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.junit.Ignore;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;

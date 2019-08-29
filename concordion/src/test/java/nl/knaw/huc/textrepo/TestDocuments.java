@@ -4,6 +4,7 @@ import com.jayway.jsonpath.JsonPath;
 import org.concordion.api.MultiValueResult;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.junit.Ignore;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
@@ -11,14 +12,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static nl.knaw.huc.textrepo.Config.HTTP_APP_HOST;
+import static nl.knaw.huc.textrepo.TestUtils.getLocation;
+import static nl.knaw.huc.textrepo.TestUtils.getMultiPartEntity;
 
 public class TestDocuments extends AbstractConcordionTest {
   private static final String HOST = HTTP_APP_HOST;
   private static final String DOCUMENTS_URL = HOST + "/documents";
-
-  private static Entity<FormDataMultiPart> multiPartEntity(FormDataMultiPart multiPart) {
-    return Entity.entity(multiPart, multiPart.getMediaType());
-  }
 
   public MultiValueResult upload(String content) {
     var multiPart = new FormDataMultiPart().field("file", content);
@@ -28,7 +27,7 @@ public class TestDocuments extends AbstractConcordionTest {
         .target(DOCUMENTS_URL)
         .request();
 
-    var response = request.post(multiPartEntity(multiPart));
+    var response = request.post(getMultiPartEntity(multiPart));
     var locationHeader = getLocation(response);
     var optionalDocumentId = locationHeader.map(TestUtils::getDocumentId);
     var documentId = optionalDocumentId.orElse("No document id");
@@ -65,7 +64,4 @@ public class TestDocuments extends AbstractConcordionTest {
     return response.getStatus() + " " + response.getStatusInfo();
   }
 
-  private Optional<String> getLocation(Response response) {
-    return Optional.ofNullable(response.getHeaderString("Location"));
-  }
 }
