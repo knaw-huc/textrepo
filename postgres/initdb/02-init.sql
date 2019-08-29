@@ -15,7 +15,7 @@ create table versions (
   foreign key (file_sha) references files (sha224)
 );
 
-create index version_by_uuid on (document_uuid);
+-- create index version_by_uuid on (document_uuid);
 
 -- Document metadata items. Each item is a key-value pair linked to a
 -- document.
