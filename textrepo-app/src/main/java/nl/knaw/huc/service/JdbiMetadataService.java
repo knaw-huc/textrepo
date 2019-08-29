@@ -7,7 +7,6 @@ import org.jdbi.v3.core.Jdbi;
 import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -27,27 +26,17 @@ public class JdbiMetadataService implements MetadataService {
 
   @Override
   public void addMetadata(@Nonnull UUID documentId, @Nonnull Map<String, String> metadata) {
-    var entries = metadata
-        .entrySet()
-        .stream()
-        .map(kv -> new MetadataEntry(documentId, kv.getKey(), kv.getValue()))
-        .iterator();
-    bulkInsert(entries);
+    getMetadataDao().bulkInsert(documentId, metadata.entrySet().iterator());
   }
 
   @Override
-  public void insert(@Nonnull MetadataEntry entry) {
-    getMetadataDao().insert(entry);
+  public void insert(@Nonnull UUID documentId, @Nonnull MetadataEntry entry) {
+    getMetadataDao().insert(documentId, entry);
   }
 
   @Override
-  public void bulkInsert(@Nonnull Iterator<MetadataEntry> entries) {
-    getMetadataDao().bulkInsert(entries);
-  }
-
-  @Override
-  public void update(MetadataEntry entry) {
-    getMetadataDao().update(entry);
+  public void update(@Nonnull UUID documentId, MetadataEntry entry) {
+    getMetadataDao().update(documentId, entry);
   }
 
   @Override

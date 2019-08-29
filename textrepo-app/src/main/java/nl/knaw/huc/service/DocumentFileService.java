@@ -45,7 +45,7 @@ public class DocumentFileService {
         .filter(v -> v.getFileSha().equals(currentSha224)) // already the current file for this document
         .orElseGet(() -> versionService.insertNewVersion(documentId, file, filename, now()));
 
-    metadataService.update(new MetadataEntry(version.getDocumentUuid(), "filename", filename));
+    metadataService.update(documentId, new MetadataEntry("filename", filename));
 
     return version;
   }

@@ -65,6 +65,9 @@ public class DocumentsResourceTest {
       .build();
 
   @Captor
+  private ArgumentCaptor<UUID> uuidCaptor;
+
+  @Captor
   private ArgumentCaptor<MetadataEntry> metadataEntryCaptor;
 
   @Before
@@ -175,6 +178,7 @@ public class DocumentsResourceTest {
     postTestFile();
 
     verify(metadataService, times(1)).insert(
+        uuidCaptor.capture(),
         metadataEntryCaptor.capture()
     );
 
@@ -191,6 +195,7 @@ public class DocumentsResourceTest {
     postTestFile(zipFile, zipFilename);
 
     verify(metadataService, times(2)).insert(
+        uuidCaptor.capture(),
         metadataEntryCaptor.capture()
     );
 

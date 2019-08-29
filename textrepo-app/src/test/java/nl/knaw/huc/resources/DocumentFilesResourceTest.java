@@ -24,8 +24,8 @@ import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 
 import javax.ws.rs.client.Entity;
-
 import java.io.IOException;
+import java.util.UUID;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
 import static nl.knaw.huc.resources.TestUtils.getResourceFileBits;
@@ -67,6 +67,9 @@ public class DocumentFilesResourceTest {
       .build();
 
   @Captor
+  private ArgumentCaptor<UUID> uuidCaptor;
+
+  @Captor
   private ArgumentCaptor<MetadataEntry> metadataEntryCaptor;
 
   @Before
@@ -85,6 +88,7 @@ public class DocumentFilesResourceTest {
     putTestFile();
 
     verify(metadataService, times(1)).update(
+        uuidCaptor.capture(),
         metadataEntryCaptor.capture()
     );
 
@@ -101,6 +105,7 @@ public class DocumentFilesResourceTest {
     putTestFile(zipFile, zipFilename);
 
     verify(metadataService, times(2)).update(
+        uuidCaptor.capture(),
         metadataEntryCaptor.capture()
     );
 

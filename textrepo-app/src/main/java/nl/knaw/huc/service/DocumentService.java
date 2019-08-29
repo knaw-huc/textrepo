@@ -42,7 +42,7 @@ public class DocumentService {
 
   private Version addDocument(@Nonnull TextRepoFile file, String filename) {
     var version = versionService.insertNewVersion(documentIdGenerator.get(), file, filename, now());
-    metadataService.insert(new MetadataEntry(version.getDocumentUuid(), "filename", filename));
+    metadataService.insert(version.getDocumentUuid(), new MetadataEntry("filename", filename));
     return version;
   }
 
