@@ -111,7 +111,6 @@ public class TestZipDocuments extends AbstractConcordionTest {
         .bodyPart(new FormDataBodyPart(contentDisposition, bytes, APPLICATION_OCTET_STREAM_TYPE));
 
     var documentsEndpoint = APP_HOST + "/documents";
-    System.out.println("documentsEndpoint: " + documentsEndpoint);
     final var request = client()
         .register(MultiPartFeature.class)
         .target(documentsEndpoint)

@@ -45,7 +45,6 @@ public class TestDocuments extends AbstractConcordionTest {
 
   public MultiValueResult latest(Object loc) {
     var location = (String) loc;
-    System.err.println("latest: " + location);
     var request = client().target(location + "/files").request();
     var response = request.get();
     return new MultiValueResult()
@@ -55,7 +54,6 @@ public class TestDocuments extends AbstractConcordionTest {
 
   public MultiValueResult index(Object param) {
     var documentId = (String) param;
-    System.err.println("latest: " + documentId);
     var request = client().target(ES_HOST + "/documents/_doc/" + documentId).request();
     var response = request.get();
     return new MultiValueResult()
