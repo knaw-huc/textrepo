@@ -29,12 +29,19 @@ public class TestMetadata extends AbstractConcordionTest {
     public String foo;
     public String spam;
     public String filename;
-    public String stillFoo;
-    public String stillSpam;
-    public String updatedFilename;
   }
 
-  public TestMetadataResult createAndUpdateMetadata(String filename, String metadata, String newFilename)
+  public static class TestUpdateFilenameResult {
+    public String foo;
+    public String spam;
+    public String filename;
+  }
+
+  public String concatStupid(String test) {
+    return test + "stupid";
+  }
+
+  public TestMetadataResult createDocumentWithMetadata(String filename, String metadata)
       throws MalformedURLException {
     var result = new TestMetadataResult();
 
@@ -53,15 +60,21 @@ public class TestMetadata extends AbstractConcordionTest {
     result.spam = JsonPath.parse(getJson).read("$.spam");
     result.filename = JsonPath.parse(getJson).read("$.filename");
 
+    return result;
+  }
+
+  public TestUpdateFilenameResult updateDocumentFilename(String documentId, String newFilename) {
+    var result = new TestUpdateFilenameResult();
+
     // update filename
-    updateFilename(newFilename, result.documentId);
+    updateFilename(newFilename, documentId);
 
     // check updated filename
-    var updatedMetadata = getMetadata(result.documentId);
+    var updatedMetadata = getMetadata(documentId);
     var updatedJson = updatedMetadata.readEntity(String.class);
-    result.stillFoo = JsonPath.parse(updatedJson).read("$.foo");
-    result.stillSpam = JsonPath.parse(updatedJson).read("$.spam");
-    result.updatedFilename = JsonPath.parse(updatedJson).read("$.filename");
+    result.foo = JsonPath.parse(updatedJson).read("$.foo");
+    result.spam = JsonPath.parse(updatedJson).read("$.spam");
+    result.filename = JsonPath.parse(updatedJson).read("$.filename");
 
     return result;
   }
