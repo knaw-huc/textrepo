@@ -25,7 +25,7 @@ public interface VersionDao {
   @RegisterConstructorMapper(value = Version.class)
   Optional<Version> findLatestByDocumentUuid(@Bind UUID documentUuid);
 
-  @SqlQuery("select document_uuid, date, file_sha from versions where document_uuid = ?")
+  @SqlQuery("select document_uuid, date, file_sha from versions where document_uuid = ? order by date asc")
   @RegisterConstructorMapper(value = Version.class)
   List<Version> findByUuid(UUID uuid);
 }
