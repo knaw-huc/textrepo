@@ -45,7 +45,7 @@ public class MetadataResource {
   @Timed
   @Produces(APPLICATION_JSON)
   public Response getMetadata(@PathParam("uuid") @Valid UUID documentId) {
-    return Response.ok().entity(metadataService.getMetadata(documentId)).build();
+    return Response.ok(metadataService.getMetadata(documentId)).build();
   }
 
 }
