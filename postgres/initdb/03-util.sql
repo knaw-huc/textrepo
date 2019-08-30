@@ -1,4 +1,4 @@
--- trucate all tables owned by username
+-- truncate all tables owned by username
 CREATE OR REPLACE FUNCTION truncate_tables_by_username(username IN VARCHAR) RETURNS void AS $$
 DECLARE
     statements CURSOR FOR
