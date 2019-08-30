@@ -8,10 +8,12 @@ import org.concordion.api.BeforeSpecification;
 import org.concordion.api.FullOGNL;
 import org.concordion.integration.junit4.ConcordionRunner;
 import org.glassfish.jersey.client.JerseyClientBuilder;
-import org.junit.Ignore;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.junit.runner.RunWith;
 
 import javax.ws.rs.client.Client;
+import javax.ws.rs.core.Response;
 import java.sql.SQLException;
 
 import static java.sql.DriverManager.getConnection;
@@ -21,6 +23,7 @@ import static nl.knaw.huc.textrepo.Config.POSTGRES_DB;
 import static nl.knaw.huc.textrepo.Config.POSTGRES_HOST;
 import static nl.knaw.huc.textrepo.Config.POSTGRES_PASSWORD;
 import static nl.knaw.huc.textrepo.Config.POSTGRES_USER;
+import static nl.knaw.huc.textrepo.TestUtils.getMultiPartEntity;
 import static org.junit.Assert.assertEquals;
 
 @FullOGNL

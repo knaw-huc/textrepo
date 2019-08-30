@@ -39,8 +39,10 @@ public class FilesResource {
   @Timed
   @Consumes(MULTIPART_FORM_DATA)
   @Produces(APPLICATION_JSON)
-  public Response postFile(@FormDataParam("file") InputStream uploadedInputStream,
-                           @FormDataParam("file") FormDataContentDisposition fileDetail) {
+  public Response postFile(
+      @FormDataParam("file") InputStream uploadedInputStream,
+      @FormDataParam("file") FormDataContentDisposition fileDetail
+  ) {
 
     final var file = TextRepoFile.fromContent(readContent(uploadedInputStream));
 
