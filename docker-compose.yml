@@ -55,6 +55,7 @@ services:
     - textrepo-app
     volumes:
     - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    - ./concordion:/concordion:ro
     ports:
     - 8080:8080
 
