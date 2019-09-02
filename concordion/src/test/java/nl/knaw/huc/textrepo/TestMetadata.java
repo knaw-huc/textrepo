@@ -4,7 +4,6 @@ import com.jayway.jsonpath.JsonPath;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
 import javax.ws.rs.core.Response;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -35,10 +34,6 @@ public class TestMetadata extends AbstractConcordionTest {
     public String foo;
     public String spam;
     public String filename;
-  }
-
-  public String concatStupid(String test) {
-    return test + "stupid";
   }
 
   public TestMetadataResult createDocumentWithMetadata(String filename, String metadata)

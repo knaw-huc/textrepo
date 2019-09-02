@@ -20,6 +20,10 @@ Build and start:
 docker-compose up --build
 ```
 
+### Concordion
+Concordion test results are served at: `localhost:8080/concordion/nl/knaw/huc/textrepo/Textrepo.html`.
+
+### Elasticsearch
 If you run into this Elasticsearch warning:
 ```
 max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]
