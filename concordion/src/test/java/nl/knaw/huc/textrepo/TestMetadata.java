@@ -1,11 +1,13 @@
 package nl.knaw.huc.textrepo;
 
 import com.jayway.jsonpath.JsonPath;
+import org.apache.commons.text.StringSubstitutor;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
 import javax.ws.rs.core.Response;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Map;
 
 import static java.lang.String.format;
 import static javax.ws.rs.client.Entity.entity;
@@ -15,12 +17,11 @@ import static nl.knaw.huc.textrepo.TestUtils.getDocumentId;
 import static nl.knaw.huc.textrepo.TestUtils.getLocation;
 import static nl.knaw.huc.textrepo.TestUtils.postFileWithFilename;
 import static nl.knaw.huc.textrepo.TestUtils.putFileWithFilename;
+import static nl.knaw.huc.textrepo.TestUtils.replace;
 
 public class TestMetadata extends AbstractConcordionTest {
 
-  private final String DOCUMENTS_URL = HTTP_APP_HOST + "/documents";
   private static final String PUT_DOCUMENT_FILE_URL = HTTP_APP_HOST + "/documents/%s/files";
-  private static final String METADATA_URL = HTTP_APP_HOST + "/documents/%s/metadata";
 
   public static class TestMetadataResult {
     public String documentId;
@@ -36,16 +37,20 @@ public class TestMetadata extends AbstractConcordionTest {
     public String filename;
   }
 
-  public TestMetadataResult createDocumentWithMetadata(String filename, String metadata)
-      throws MalformedURLException {
+  public TestMetadataResult createDocumentWithMetadata(
+      String filename,
+      String documentEndpoint,
+      String metadata,
+      String metadataEndpoint
+  ) throws MalformedURLException {
     var result = new TestMetadataResult();
 
     // create document
-    var response = createDocument(filename);
+    var response = createDocument(filename, documentEndpoint);
     result.documentId = getDocumentId(getLocation(response).orElse(""));
 
     // add metadata
-    var responseAddMetadata = addMetadata(result.documentId, metadata);
+    var responseAddMetadata = addMetadata(result.documentId, metadata, metadataEndpoint);
     result.addMetadataStatus = responseAddMetadata.getStatus();
 
     // check metadata + filename
@@ -58,11 +63,11 @@ public class TestMetadata extends AbstractConcordionTest {
     return result;
   }
 
-  public TestUpdateFilenameResult updateDocumentFilename(String documentId, String newFilename) {
+  public TestUpdateFilenameResult updateDocumentFilename(String documentFileEndpoint, String documentId, String newFilename) {
     var result = new TestUpdateFilenameResult();
 
     // update filename
-    updateFilename(newFilename, documentId);
+    updateFilename(documentFileEndpoint, newFilename, documentId);
 
     // check updated filename
     var updatedMetadata = getMetadata(documentId);
@@ -74,21 +79,23 @@ public class TestMetadata extends AbstractConcordionTest {
     return result;
   }
 
-  private Response createDocument(String filename) throws MalformedURLException {
-    return postFileWithFilename(client(), new URL(DOCUMENTS_URL), filename, "".getBytes());
+  private Response createDocument(String filename, String documentsUrl) throws MalformedURLException {
+    return postFileWithFilename(client(), new URL(HTTP_APP_HOST + documentsUrl), filename, "".getBytes());
   }
 
-  private void updateFilename(String newFilename, String documentId) {
+  private void updateFilename(String documentFileEndpoint, String newFilename, String documentId) {
+    var url = HTTP_APP_HOST + documentFileEndpoint;
     putFileWithFilename(
         client(),
-        format(PUT_DOCUMENT_FILE_URL, documentId),
+        replace(url, "documentId", documentId),
         newFilename,
         "content2".getBytes()
     );
   }
 
-  private Response addMetadata(String documentId, String metadata) {
-    var url = format(METADATA_URL, documentId);
+  private Response addMetadata(String documentId, String metadata, String metadataEndpoint) {
+    var urlString = HTTP_APP_HOST + metadataEndpoint;
+    var url = replace(urlString, "documentId", documentId);
     return client()
         .register(MultiPartFeature.class)
         .target(url)
@@ -98,7 +105,7 @@ public class TestMetadata extends AbstractConcordionTest {
   private Response getMetadata(String documentId) {
     return client()
         .register(MultiPartFeature.class)
-        .target(format(METADATA_URL, documentId))
+        .target(format(HTTP_APP_HOST + "/documents/%s/metadata", documentId))
         .request().get();
   }
 

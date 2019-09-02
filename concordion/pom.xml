@@ -38,6 +38,8 @@
     <json-path.version>2.4.0</json-path.version>
     <mockito-core.version>3.0.0</mockito-core.version>
     <postgresql.version>42.2.6</postgresql.version>
+    <commons-text.version>1.7</commons-text.version>
+    <guava.version>28.1-jre</guava.version>
   </properties>
 
   <dependencies>
@@ -102,6 +104,11 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
       <version>3.9</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-text</artifactId>
+      <version>${commons-text.version}</version>
     </dependency>
 
     <dependency>

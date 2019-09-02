@@ -7,7 +7,6 @@ import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
-import org.junit.Ignore;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
@@ -33,9 +32,15 @@ public class TestZipDocuments extends AbstractConcordionTest {
     public String documentIdIsUUID2;
     public String documentId2;
 
+  }
+
+  public static class VersionsResult {
     public String fileHash1;
     public String fileHash2;
 
+  }
+
+  public static class EsDocsResult {
     public String getIndexDocument1;
     public String getIndexDocument2;
   }
@@ -63,12 +68,20 @@ public class TestZipDocuments extends AbstractConcordionTest {
     result.documentId2 = TestUtils.getDocumentId(result.location2);
     result.documentIdIsUUID2 = TestUtils.isValidUUID(result.documentId2);
 
-    result.fileHash1 = getLatestVersionHash(result.documentId1);
-    result.fileHash2 = getLatestVersionHash(result.documentId2);
+    return result;
+  }
 
-    result.getIndexDocument1 = getIndexDocument(result.documentId1);
-    result.getIndexDocument2 = getIndexDocument(result.documentId2);
+  public VersionsResult requestLatestVersions(String documentId1, String documentId2) {
+    var result = new VersionsResult();
+    result.fileHash1 = getLatestVersionHash(documentId1);
+    result.fileHash2 = getLatestVersionHash(documentId2);
+    return result;
+  }
 
+  public EsDocsResult requestEsDocs(String documentId1, String documentId2) {
+    var result = new EsDocsResult();
+    result.getIndexDocument1 = getIndexDocument(documentId1);
+    result.getIndexDocument2 = getIndexDocument(documentId2);
     return result;
   }
 
@@ -78,7 +91,7 @@ public class TestZipDocuments extends AbstractConcordionTest {
   }
 
   private String getIndexDocument(String documentId) {
-    String url = ES_HOST + "/documents/_doc/" + documentId;
+    var url = ES_HOST + "/documents/_doc/" + documentId;
     return JsonPath.parse(getByUrl(url)).read("$._source.content");
   }
 
@@ -121,5 +134,4 @@ public class TestZipDocuments extends AbstractConcordionTest {
 
     return request.post(entity);
   }
-
 }

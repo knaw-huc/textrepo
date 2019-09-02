@@ -1,6 +1,7 @@
 package nl.knaw.huc.textrepo;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.text.StringSubstitutor;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
@@ -11,6 +12,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -101,5 +103,11 @@ public class TestUtils {
 
     return request.put(entity);
   }
+
+  public static String replace(String url, String placeholder, String value) {
+    var toReplace = Map.of(placeholder, value);
+    return StringSubstitutor.replace(url, toReplace, "{", "}");
+  }
+
 
 }
