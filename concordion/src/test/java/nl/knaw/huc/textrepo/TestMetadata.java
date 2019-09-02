@@ -1,13 +1,11 @@
 package nl.knaw.huc.textrepo;
 
 import com.jayway.jsonpath.JsonPath;
-import org.apache.commons.text.StringSubstitutor;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
 import javax.ws.rs.core.Response;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Map;
 
 import static java.lang.String.format;
 import static javax.ws.rs.client.Entity.entity;
@@ -29,9 +27,15 @@ public class TestMetadata extends AbstractConcordionTest {
     public String foo;
     public String spam;
     public String filename;
+
+  }
+  public static class TestUpdateFilenameResult {
+    public String foo;
+    public String spam;
+    public String filename;
   }
 
-  public static class TestUpdateFilenameResult {
+  public static class UpdateMetadataEntryResult {
     public String foo;
     public String spam;
     public String filename;
@@ -72,10 +76,29 @@ public class TestMetadata extends AbstractConcordionTest {
     // check updated filename
     var updatedMetadata = getMetadata(documentId);
     var updatedJson = updatedMetadata.readEntity(String.class);
-    result.foo = JsonPath.parse(updatedJson).read("$.foo");
-    result.spam = JsonPath.parse(updatedJson).read("$.spam");
-    result.filename = JsonPath.parse(updatedJson).read("$.filename");
+    var parsed = JsonPath.parse(updatedJson);
+    result.foo = parsed.read("$.foo");
+    result.spam = parsed.read("$.spam");
+    result.filename = parsed.read("$.filename");
 
+    return result;
+  }
+
+  public TestUpdateFilenameResult updateMetadataEntry(
+      String documentMetadataEndpoint,
+      String documentId,
+      String updatedKey,
+      String updatedValue
+  ) {
+    var result = new TestUpdateFilenameResult();
+    putMetadataEntry(documentMetadataEndpoint, documentId, updatedKey, updatedValue);
+
+    var updatedMetadata = getMetadata(documentId);
+    var updatedJson = updatedMetadata.readEntity(String.class);
+    var parsed = JsonPath.parse(updatedJson);
+    result.foo = parsed.read("$.foo");
+    result.spam = parsed.read("$.spam");
+    result.filename = parsed.read("$.filename");
     return result;
   }
 
@@ -99,7 +122,27 @@ public class TestMetadata extends AbstractConcordionTest {
     return client()
         .register(MultiPartFeature.class)
         .target(url)
-        .request().post(entity(metadata, APPLICATION_JSON));
+        .request()
+        .post(entity(metadata, APPLICATION_JSON));
+  }
+
+  private Response putMetadataEntry(
+      String metadataEndpoint,
+      String documentId,
+      String key,
+      String value
+  ) {
+    var urlString = HTTP_APP_HOST + metadataEndpoint;
+    System.out.println("urlString: "+urlString);
+    var url = replace(urlString, "documentId", documentId);
+    url = replace(url, "key", key);
+    System.out.println("url: "+url);
+
+    return client()
+        .register(MultiPartFeature.class)
+        .target(url)
+        .request()
+        .put(entity(value, APPLICATION_JSON));
   }
 
   private Response getMetadata(String documentId) {
@@ -108,5 +151,4 @@ public class TestMetadata extends AbstractConcordionTest {
         .target(format(HTTP_APP_HOST + "/documents/%s/metadata", documentId))
         .request().get();
   }
-
 }

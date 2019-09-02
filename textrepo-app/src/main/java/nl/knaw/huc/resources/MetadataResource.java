@@ -1,6 +1,7 @@
 package nl.knaw.huc.resources;
 
 import com.codahale.metrics.annotation.Timed;
+import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.service.MetadataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +10,7 @@ import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -38,6 +40,21 @@ public class MetadataResource {
   ) {
     logger.debug("addMetadata: uuid={}, metadata={}", documentId, metadata);
     metadataService.addMetadata(documentId, metadata);
+    return Response.ok().build();
+  }
+
+  @PUT
+  @Timed
+  @Consumes(APPLICATION_JSON)
+  @Produces(APPLICATION_JSON)
+  @Path("/{key}")
+  public Response updateMetadataEntry(
+      @PathParam("uuid") @Valid UUID documentId,
+      @PathParam("key") @Valid String key,
+      String value
+  ) {
+    logger.debug("updateMetadata: uuid={}, key={}, value={}", documentId, key, value);
+    metadataService.update(documentId, new MetadataEntry(key, value));
     return Response.ok().build();
   }
 

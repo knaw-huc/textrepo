@@ -25,9 +25,6 @@ public class TestUtils {
     return IOUtils.toByteArray(TestUtils.class.getClassLoader().getResourceAsStream(resourcePath));
   }
 
-  public static String getResourceFileString(String resourcePath) throws IOException {
-    return IOUtils.toString(TestUtils.class.getClassLoader().getResourceAsStream(resourcePath), UTF_8);
-  }
   public static String isValidUUID(String documentId) {
     try {
       UUID.fromString(documentId);
