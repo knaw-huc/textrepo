@@ -1,4 +1,4 @@
-# Concordion acceptance tests
+# Text Repository Acceptance Tests
 
  - [Documents](./TestDocuments.md "c:run")
  - [File handling](./TestFileHandling.md "c:run")
