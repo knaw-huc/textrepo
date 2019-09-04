@@ -48,7 +48,7 @@ public class DocumentFilesResource {
   @Timed
   @Consumes(MULTIPART_FORM_DATA)
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Put new document")
+  @ApiOperation(value = "Create a new document version by uploading a new file")
   @ApiResponses(value = {@ApiResponse(code = 200, response = Version.class, message = "OK")})
   public Response updateDocumentFile(
       @PathParam("uuid") @Valid UUID documentId,
@@ -94,6 +94,8 @@ public class DocumentFilesResource {
   @GET
   @Timed
   @Produces(APPLICATION_OCTET_STREAM)
+  @ApiOperation(value = "Download latest file of document")
+  @ApiResponses(value = {@ApiResponse(code = 200, response = byte[].class, message = "OK")})
   public Response getFile(@PathParam("uuid") @Valid UUID documentId) {
     var file = documentFileService.getLatestFile(documentId);
     return Response

@@ -2,6 +2,10 @@ package nl.knaw.huc.resources;
 
 import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.TextRepoFile;
 import nl.knaw.huc.service.FileService;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
@@ -26,6 +30,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
 import static nl.knaw.huc.resources.ResourceUtils.readContent;
 
+@Api
 @Path("/files")
 public class FilesResource {
   private final Logger logger = LoggerFactory.getLogger(FilesResource.class);
@@ -39,6 +44,8 @@ public class FilesResource {
   @Timed
   @Consumes(MULTIPART_FORM_DATA)
   @Produces(APPLICATION_JSON)
+  @ApiOperation(value = "Create new file")
+  @ApiResponses(value = {@ApiResponse(code = 200, response = ResultFile.class, message = "OK")})
   public Response postFile(
       @FormDataParam("file") InputStream uploadedInputStream,
       @FormDataParam("file") FormDataContentDisposition fileDetail
@@ -49,7 +56,7 @@ public class FilesResource {
     fileService.addFile(file);
 
     return Response.created(locationOf(file))
-                   .entity(new AddFileResult(file))
+                   .entity(new ResultFile(file))
                    .build();
   }
 
@@ -57,6 +64,8 @@ public class FilesResource {
   @Path("/{sha224}")
   @Timed
   @Produces(APPLICATION_OCTET_STREAM)
+  @ApiOperation(value = "Download file by sha224")
+  @ApiResponses(value = {@ApiResponse(code = 200, response = byte[].class, message = "OK")})
   public Response getFileBySha224(@PathParam("sha224") String sha224) {
     if (sha224.length() != 56) {
       logger.warn("bad length in sha224 ({}): {}", sha224.length(), sha224);
@@ -76,10 +85,10 @@ public class FilesResource {
                      .build(file.getSha224());
   }
 
-  private static class AddFileResult {
+  private static class ResultFile {
     private final TextRepoFile file;
 
-    private AddFileResult(TextRepoFile file) {
+    private ResultFile(TextRepoFile file) {
       this.file = file;
     }
 

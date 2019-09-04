@@ -1,9 +1,14 @@
 package nl.knaw.huc.resources;
 
 import com.codahale.metrics.annotation.Timed;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.FormFile;
 import nl.knaw.huc.api.MultipleLocations;
 import nl.knaw.huc.api.ResultFile;
+import nl.knaw.huc.api.Version;
 import nl.knaw.huc.service.DocumentService;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
@@ -31,6 +36,7 @@ import static nl.knaw.huc.resources.ResourceUtils.readContent;
 import static nl.knaw.huc.resources.ZipHandling.handleZipFile;
 import static nl.knaw.huc.resources.ZipHandling.isZip;
 
+@Api
 @Path("/documents")
 public class DocumentsResource {
   private final Logger logger = LoggerFactory.getLogger(DocumentsResource.class);
@@ -45,6 +51,10 @@ public class DocumentsResource {
   @Timed
   @Consumes(MULTIPART_FORM_DATA)
   @Produces(APPLICATION_JSON)
+  @ApiOperation(value = "Create new document by uploading a file or create multiple documents by uploading a zip")
+  @ApiResponses(value = {
+      @ApiResponse(code = 201, message = "OK"),
+      @ApiResponse(code = 200, response = MultipleLocations.class, message = "OK")})
   public Response addDocument(
       @FormDataParam("file") InputStream inputStream,
       @FormDataParam("file") FormDataContentDisposition fileDetail,
@@ -78,6 +88,8 @@ public class DocumentsResource {
   @Path("/{uuid}")
   @Timed
   @Produces(APPLICATION_JSON)
+  @ApiOperation(value = "Get latest version of document")
+  @ApiResponses(value = {@ApiResponse(code = 200, response = Version.class, message = "OK")})
   public Response getLatestVersionOfDocument(@PathParam("uuid") @Valid UUID documentId) {
     logger.info("getting latest version of: " + documentId.toString());
     var version = documentService.getLatestVersion(documentId);
