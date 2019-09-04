@@ -97,26 +97,6 @@ public class DocumentFilesResourceTest {
     assertThat(metadataEntry.getValue()).isEqualTo(filename);
   }
 
-  @Test
-  public void testUpdateDocumentFile_addsFilenameMetadata_whenZip() throws IOException {
-    var zipFilename = "multiple-hello-tests.zip";
-    var zipFile = getResourceFileBits("zip/" + zipFilename);
-
-    putTestFile(zipFile, zipFilename);
-
-    verify(metadataService, times(2)).update(
-        uuidCaptor.capture(),
-        metadataEntryCaptor.capture()
-    );
-
-    var metadataEntries = this.metadataEntryCaptor.getAllValues();
-    assertThat(metadataEntries.size()).isEqualTo(2);
-    assertThat(metadataEntries.get(0).getKey()).isEqualTo("filename");
-    assertThat(metadataEntries.get(0).getValue()).isEqualTo("hello-test.txt");
-    assertThat(metadataEntries.get(1).getKey()).isEqualTo("filename");
-    assertThat(metadataEntries.get(1).getValue()).isEqualTo("hello-test2.txt");
-  }
-
   private void putTestFile() {
     var bytes = content.getBytes();
     putTestFile(bytes, filename);
