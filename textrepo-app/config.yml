@@ -25,3 +25,6 @@ elasticsearch:
     - elasticsearch:9200
   index: documents
   contentField: content
+
+swagger:
+  resourcePackage: nl.knaw.huc.resources

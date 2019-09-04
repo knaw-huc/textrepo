@@ -1,6 +1,10 @@
 package nl.knaw.huc.resources;
 
 import com.codahale.metrics.annotation.Timed;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.MultipleLocations;
 import nl.knaw.huc.api.ResultFile;
 import nl.knaw.huc.service.DocumentFileService;
@@ -32,6 +36,7 @@ import static nl.knaw.huc.resources.ResourceUtils.readContent;
 import static nl.knaw.huc.resources.ZipHandling.handleZipFile;
 import static nl.knaw.huc.resources.ZipHandling.isZip;
 
+@Api
 @Path("/documents/{uuid}/files")
 public class DocumentFilesResource {
   private final Logger logger = LoggerFactory.getLogger(DocumentFilesResource.class);
@@ -42,11 +47,19 @@ public class DocumentFilesResource {
     this.documentFileService = documentFileService;
   }
 
-  // TODO: update filename metadata
   @PUT
   @Timed
   @Consumes(MULTIPART_FORM_DATA)
   @Produces(APPLICATION_JSON)
+  @ApiOperation(
+      produces = "application/json",
+      value = "Put new document",
+      httpMethod = "PUT",
+      notes = "<br>This endpoint updates a new document with a new file")
+  @ApiResponses(value = {@ApiResponse(
+      code = 200,
+      response = ResultFile.class,
+      message = "Successful operation")})
   public Response updateDocumentFile(
       @PathParam("uuid") @Valid UUID documentId,
       @FormDataParam("file") InputStream uploadedInputStream,

@@ -35,6 +35,7 @@
     <json-path.version>2.4.0</json-path.version>
     <mockito-core.version>3.0.0</mockito-core.version>
     <postgresql.version>42.2.6</postgresql.version>
+    <dropwizard-swagger.version>1.3.12-1</dropwizard-swagger.version>
   </properties>
 
   <dependencyManagement>
@@ -84,6 +85,24 @@
       <groupId>io.dropwizard</groupId>
       <artifactId>dropwizard-forms</artifactId>
       <version>${dropwizard.version}</version>
+    </dependency>
+
+    <!-- Swagger -->
+    <dependency>
+      <groupId>org.reflections</groupId>
+      <artifactId>reflections</artifactId>
+      <version>0.9.10</version>
+    </dependency>
+    <dependency>
+      <groupId>com.smoketurner</groupId>
+      <artifactId>dropwizard-swagger</artifactId>
+      <version>${dropwizard-swagger.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.reflections</groupId>
+          <artifactId>reflections</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- Testing: -->

@@ -1,10 +1,13 @@
 package nl.knaw.huc;
 
 import io.dropwizard.Application;
+import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.forms.MultiPartBundle;
 import io.dropwizard.jdbi3.JdbiFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.federecio.dropwizard.swagger.SwaggerBundle;
+import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import nl.knaw.huc.resources.DocumentFilesResource;
 import nl.knaw.huc.resources.DocumentsResource;
 import nl.knaw.huc.resources.FilesResource;
@@ -40,6 +43,16 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
   @Override
   public void initialize(final Bootstrap<TextRepositoryConfiguration> bootstrap) {
     bootstrap.addBundle(new MultiPartBundle());
+    bootstrap.addBundle(getSwaggerBundle());
+  }
+
+  private SwaggerBundle<TextRepositoryConfiguration> getSwaggerBundle() {
+    return new SwaggerBundle<TextRepositoryConfiguration>() {
+      @Override
+      protected SwaggerBundleConfiguration getSwaggerBundleConfiguration(TextRepositoryConfiguration configuration) {
+        return configuration.getSwaggerBundleConfiguration();
+      }
+    };
   }
 
   @Override

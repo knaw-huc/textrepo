@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;
 import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.db.DataSourceFactory;
+import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -21,6 +22,10 @@ public class TextRepositoryConfiguration extends Configuration {
   @Valid
   @NotNull
   private ElasticsearchConfiguration elasticsearch = new ElasticsearchConfiguration();
+
+  @Valid
+  @NotNull
+  private SwaggerBundleConfiguration swaggerBundleConfiguration = new SwaggerBundleConfiguration();
 
   @JsonProperty("jerseyClient")
   public JerseyClientConfiguration getJerseyClientConfiguration() {
@@ -50,5 +55,16 @@ public class TextRepositoryConfiguration extends Configuration {
   @JsonProperty("elasticsearch")
   public void setElasticsearch(ElasticsearchConfiguration elasticsearch) {
     this.elasticsearch = elasticsearch;
+  }
+
+  @JsonProperty("swagger")
+  public SwaggerBundleConfiguration getSwaggerBundleConfiguration() {
+    return swaggerBundleConfiguration;
+  }
+
+  @JsonProperty("swagger")
+  public void setSwaggerBundleConfiguration(
+      SwaggerBundleConfiguration swaggerBundleConfiguration) {
+    this.swaggerBundleConfiguration = swaggerBundleConfiguration;
   }
 }
