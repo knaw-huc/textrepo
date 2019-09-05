@@ -3,7 +3,6 @@ package nl.knaw.huc.textrepo;
 import com.jayway.jsonpath.JsonPath;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
-import org.junit.Ignore;
 
 import javax.ws.rs.client.Entity;
 
@@ -18,16 +17,24 @@ public class TestFileHandling extends AbstractConcordionTest {
 
     var request = client()
         .register(MultiPartFeature.class)
-        .target(APP_HOST + "/files")
+        .target(APP_HOST + "/documents")
         .request();
 
     var response = request.post(multiPartEntity(multiPart));
-    var entity = response.readEntity(String.class);
 
     var result = new UploadResult();
     result.status = response.getStatus();
-    result.sha224 = JsonPath.parse(entity).read("$.sha224");
-    result.location = response.getHeaderString("Location");
+    var docLocation = response.getHeaderString("Location");
+
+    var requestVersion = client()
+        .register(MultiPartFeature.class)
+        .target(docLocation)
+        .request()
+        .get();
+    var versionJson = requestVersion.readEntity(String.class);
+    System.out.println("versionJson: " + versionJson);
+    result.sha224 = JsonPath.parse(versionJson).read("$.fileSha");
+
     return result;
   }
 

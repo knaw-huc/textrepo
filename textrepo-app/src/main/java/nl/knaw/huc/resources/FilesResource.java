@@ -33,31 +33,11 @@ import static nl.knaw.huc.resources.ResourceUtils.readContent;
 @Api(tags = {"files"})
 @Path("/files")
 public class FilesResource {
-  private final Logger logger = LoggerFactory.getLogger(FilesResource.class);
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final FileService fileService;
 
   public FilesResource(FileService fileService) {
     this.fileService = fileService;
-  }
-
-  @POST
-  @Timed
-  @Consumes(MULTIPART_FORM_DATA)
-  @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Create new file")
-  @ApiResponses(value = {@ApiResponse(code = 200, response = ResultFile.class, message = "OK")})
-  public Response postFile(
-      @FormDataParam("file") InputStream uploadedInputStream,
-      @FormDataParam("file") FormDataContentDisposition fileDetail
-  ) {
-
-    final var file = TextRepoFile.fromContent(readContent(uploadedInputStream));
-
-    fileService.addFile(file);
-
-    return Response.created(locationOf(file))
-                   .entity(new ResultFile(file))
-                   .build();
   }
 
   @GET
@@ -67,6 +47,7 @@ public class FilesResource {
   @ApiOperation(value = "Download file by sha224")
   @ApiResponses(value = {@ApiResponse(code = 200, response = byte[].class, message = "OK")})
   public Response getFileBySha224(@PathParam("sha224") String sha224) {
+    logger.debug("getFileBySha224: sha224={}", sha224);
     if (sha224.length() != 56) {
       logger.warn("bad length in sha224 ({}): {}", sha224.length(), sha224);
       throw new BadRequestException("not a sha224: " + sha224);
