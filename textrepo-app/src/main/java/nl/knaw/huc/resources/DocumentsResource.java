@@ -36,7 +36,7 @@ import static nl.knaw.huc.resources.ResourceUtils.readContent;
 import static nl.knaw.huc.resources.ZipHandling.handleZipFile;
 import static nl.knaw.huc.resources.ZipHandling.isZip;
 
-@Api
+@Api(tags = {"documents"})
 @Path("/documents")
 public class DocumentsResource {
   private final Logger logger = LoggerFactory.getLogger(DocumentsResource.class);

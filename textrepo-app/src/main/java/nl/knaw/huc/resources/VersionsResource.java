@@ -18,7 +18,7 @@ import java.util.UUID;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
-@Api
+@Api(tags = {"documents", "versions"})
 @Path("/documents/{uuid}/versions")
 public class VersionsResource {
   private VersionService versionService;

@@ -30,7 +30,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
 import static nl.knaw.huc.resources.ResourceUtils.readContent;
 
-@Api
+@Api(tags = {"files"})
 @Path("/files")
 public class FilesResource {
   private final Logger logger = LoggerFactory.getLogger(FilesResource.class);

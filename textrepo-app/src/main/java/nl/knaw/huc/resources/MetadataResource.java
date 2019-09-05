@@ -24,7 +24,7 @@ import java.util.UUID;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
-@Api
+@Api(tags = {"documents", "metadata"})
 @Path("/documents/{uuid}/metadata")
 public class MetadataResource {
   private final Logger logger = LoggerFactory.getLogger(MetadataResource.class);
