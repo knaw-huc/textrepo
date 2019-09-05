@@ -24,11 +24,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
-
 import java.io.InputStream;
 import java.util.UUID;
 
-import static java.util.stream.Collectors.toList;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
 import static nl.knaw.huc.resources.ResourceUtils.locationOf;
@@ -63,11 +61,8 @@ public class DocumentsResource {
   ) {
     logger.debug("addDocument: file={}", fileDetail == null ? "" : fileDetail.getFileName());
     if (isZip(bodyPart, fileDetail)) {
-      var versions = handleZipFile(inputStream)
-        .stream()
-        .map(this::handleNewDocument)
-        .collect(toList());
-      return Response.ok(new MultipleLocations(versions)).build();
+      var resultFiles = handleZipFile(inputStream, this::handleNewDocument);
+      return Response.ok(new MultipleLocations(resultFiles)).build();
     }
 
     var resultFile = handleNewDocument(new FormFile(

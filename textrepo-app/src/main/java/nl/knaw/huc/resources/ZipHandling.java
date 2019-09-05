@@ -1,6 +1,7 @@
 package nl.knaw.huc.resources;
 
 import nl.knaw.huc.api.FormFile;
+import nl.knaw.huc.api.ResultFile;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.slf4j.Logger;
@@ -11,7 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.function.Function;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -31,8 +32,11 @@ class ZipHandling {
         "zip".equals(getExtension(fileDetail.getFileName()));
   }
 
-  static List<FormFile> handleZipFile(InputStream uploadedInputStream) {
-    var results = new ArrayList<FormFile>();
+  static ArrayList<ResultFile> handleZipFile(
+      InputStream uploadedInputStream,
+      Function<FormFile, ResultFile> handleFile
+  ) {
+    var results = new ArrayList<ResultFile>();
 
     var inputStream = new ZipInputStream(uploadedInputStream);
 
@@ -49,8 +53,9 @@ class ZipHandling {
         inputStream.transferTo(buffer);
         var content = buffer.toByteArray();
         buffer.reset();
-        results.add(new FormFile(filename, content));
-
+        var formFile = new FormFile(filename, content);
+        var resultFile = handleFile.apply(formFile);
+        results.add(resultFile);
       }
     } catch (IllegalArgumentException | IOException ex) {
       throw new BadRequestException("Zip could not be processed", ex);

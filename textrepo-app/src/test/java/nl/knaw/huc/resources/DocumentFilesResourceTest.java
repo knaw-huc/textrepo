@@ -24,11 +24,9 @@ import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 
 import javax.ws.rs.client.Entity;
-import java.io.IOException;
 import java.util.UUID;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
-import static nl.knaw.huc.resources.TestUtils.getResourceFileBits;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -84,7 +82,7 @@ public class DocumentFilesResourceTest {
   }
 
   @Test
-  public void testUpdateDocumentFile_addsFilenameMetadata() throws IOException {
+  public void testUpdateDocumentFile_addsFilenameMetadata() {
     putTestFile();
 
     verify(metadataService, times(1)).update(
