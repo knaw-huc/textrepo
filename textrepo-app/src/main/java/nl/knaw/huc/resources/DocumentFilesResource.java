@@ -36,7 +36,8 @@ import static nl.knaw.huc.resources.ResourceUtils.readContent;
 @Api(tags = {"documents", "files"})
 @Path("/documents/{uuid}/files")
 public class DocumentFilesResource {
-  private final Logger logger = LoggerFactory.getLogger(DocumentFilesResource.class);
+
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   private final DocumentFileService documentFileService;
 
@@ -56,6 +57,7 @@ public class DocumentFilesResource {
       @FormDataParam("file") FormDataContentDisposition fileDetail,
       @FormDataParam("file") FormDataBodyPart bodyPart
   ) {
+    logger.debug("updateDocumentFile: documentId={}, file={}", documentId, fileDetail.getFileName());
     var resultFile = handleUpdate(
         documentId,
         readContent(uploadedInputStream),
@@ -65,6 +67,20 @@ public class DocumentFilesResource {
       throw new NotFoundException("Could not replace document file");
     }
     return Response.ok(resultFile.getVersion()).build();
+  }
+
+  @GET
+  @Timed
+  @Produces(APPLICATION_OCTET_STREAM)
+  @ApiOperation(value = "Download latest file of document")
+  @ApiResponses(value = {@ApiResponse(code = 200, response = byte[].class, message = "OK")})
+  public Response getFile(@PathParam("uuid") @Valid UUID documentId) {
+    logger.debug("getFile: documentId={}", documentId);
+    var file = documentFileService.getLatestFile(documentId);
+    return Response
+        .ok(file.getContent(), APPLICATION_OCTET_STREAM)
+        .header("Content-Disposition", "attachment;")
+        .build();
   }
 
   /**
@@ -77,7 +93,7 @@ public class DocumentFilesResource {
       byte[] content,
       String filename
   ) {
-    logger.debug("replacing file of document [{}]", documentId);
+    logger.debug("replacing file: documentId={}", documentId);
     var file = fromContent(content);
 
     final var startReplacing = now();
@@ -89,18 +105,5 @@ public class DocumentFilesResource {
     }
 
     return new ResultFile(filename, version);
-  }
-
-  @GET
-  @Timed
-  @Produces(APPLICATION_OCTET_STREAM)
-  @ApiOperation(value = "Download latest file of document")
-  @ApiResponses(value = {@ApiResponse(code = 200, response = byte[].class, message = "OK")})
-  public Response getFile(@PathParam("uuid") @Valid UUID documentId) {
-    var file = documentFileService.getLatestFile(documentId);
-    return Response
-        .ok(file.getContent(), APPLICATION_OCTET_STREAM)
-        .header("Content-Disposition", "attachment;")
-        .build();
   }
 }

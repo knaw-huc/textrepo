@@ -7,6 +7,8 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.Version;
 import nl.knaw.huc.service.VersionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
 import javax.ws.rs.GET;
@@ -21,6 +23,9 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 @Api(tags = {"documents", "versions"})
 @Path("/documents/{uuid}/versions")
 public class VersionsResource {
+
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
   private VersionService versionService;
 
   public VersionsResource(VersionService versionService) {
@@ -35,6 +40,7 @@ public class VersionsResource {
   public Response getVersions(
       @PathParam("uuid") @Valid UUID documentId
   ) {
+    logger.debug("getVersions: documentId={}", documentId);
     return Response.ok().entity(versionService.getVersions(documentId)).build();
   }
 

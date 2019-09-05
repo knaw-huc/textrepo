@@ -39,7 +39,8 @@ import static nl.knaw.huc.resources.ZipHandling.isZip;
 @Api(tags = {"documents"})
 @Path("/documents")
 public class DocumentsResource {
-  private final Logger logger = LoggerFactory.getLogger(DocumentsResource.class);
+
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   private final DocumentService documentService;
 
@@ -60,6 +61,7 @@ public class DocumentsResource {
       @FormDataParam("file") FormDataContentDisposition fileDetail,
       @FormDataParam("file") FormDataBodyPart bodyPart
   ) {
+    logger.debug("addDocument: file={}", fileDetail == null ? "" : fileDetail.getFileName());
     if (isZip(bodyPart, fileDetail)) {
       var versions = handleZipFile(inputStream)
         .stream()
@@ -76,14 +78,6 @@ public class DocumentsResource {
     return Response.created(locationOf(resultFile.getVersion())).build();
   }
 
-  private ResultFile handleNewDocument(FormFile formFile) {
-    var version = documentService.createVersionWithFilenameMetadata(
-        formFile.getContent(),
-        formFile.getName()
-    );
-    return new ResultFile(formFile.getName(), version);
-  }
-
   @GET
   @Path("/{uuid}")
   @Timed
@@ -91,9 +85,17 @@ public class DocumentsResource {
   @ApiOperation(value = "Get latest version of document")
   @ApiResponses(value = {@ApiResponse(code = 200, response = Version.class, message = "OK")})
   public Response getLatestVersionOfDocument(@PathParam("uuid") @Valid UUID documentId) {
-    logger.info("getting latest version of: " + documentId.toString());
+    logger.debug("getLatestVersionOfDocument: documentId={}", documentId);
     var version = documentService.getLatestVersion(documentId);
     return Response.ok(version).build();
+  }
+
+  private ResultFile handleNewDocument(FormFile formFile) {
+    var version = documentService.createVersionWithFilenameMetadata(
+        formFile.getContent(),
+        formFile.getName()
+    );
+    return new ResultFile(formFile.getName(), version);
   }
 
 }

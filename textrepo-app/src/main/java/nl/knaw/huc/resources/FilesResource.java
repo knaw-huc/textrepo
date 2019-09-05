@@ -33,6 +33,7 @@ import static nl.knaw.huc.resources.ResourceUtils.readContent;
 @Api(tags = {"files"})
 @Path("/files")
 public class FilesResource {
+
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final FileService fileService;
 

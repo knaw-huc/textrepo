@@ -27,7 +27,8 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 @Api(tags = {"documents", "metadata"})
 @Path("/documents/{uuid}/metadata")
 public class MetadataResource {
-  private final Logger logger = LoggerFactory.getLogger(MetadataResource.class);
+
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   private final MetadataService metadataService;
 
@@ -45,7 +46,7 @@ public class MetadataResource {
       @PathParam("uuid") @Valid UUID documentId,
       Map<String, String> metadata
   ) {
-    logger.debug("addMetadata: uuid={}, metadata={}", documentId, metadata);
+    logger.debug("addMetadata: documentId={}, metadata={}", documentId, metadata);
     metadataService.addMetadata(documentId, metadata);
     return Response.ok().build();
   }
@@ -62,7 +63,7 @@ public class MetadataResource {
       @PathParam("key") @Valid String key,
       String value
   ) {
-    logger.debug("updateMetadata: uuid={}, key={}, value={}", documentId, key, value);
+    logger.debug("updateMetadata: documentId={}, key={}, value={}", documentId, key, value);
     metadataService.update(documentId, new MetadataEntry(key, value));
     return Response.ok().build();
   }
@@ -73,6 +74,7 @@ public class MetadataResource {
   @ApiOperation(value = "Get all metadata of a document")
   @ApiResponses(value = {@ApiResponse(code = 200, responseContainer = "Map", response = String.class, message = "OK")})
   public Response getMetadata(@PathParam("uuid") @Valid UUID documentId) {
+    logger.debug("getMetadata: documentId={}", documentId);
     return Response.ok(metadataService.getMetadata(documentId)).build();
   }
 
