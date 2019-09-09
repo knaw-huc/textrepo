@@ -1,4 +1,4 @@
-FROM textrepo-builder:latest AS builder
+FROM knawhuc/textrepo-builder:latest AS builder
 WORKDIR /build/
 COPY . /build/
 RUN mvn clean install

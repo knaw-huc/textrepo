@@ -1,4 +1,4 @@
-version: '3.4'
+version: '3'
 
 services:
   postgres:
@@ -38,6 +38,7 @@ services:
 
   textrepo-app:
     build: ./textrepo-app
+    image: knawhuc/textrepo-app:latest
     ports:
     - 8080
     networks:
@@ -61,6 +62,7 @@ services:
 
   concordion:
     build: ./concordion
+    image: knawhuc/textrepo-concordion:latest
     ports:
     - 8080
     networks:

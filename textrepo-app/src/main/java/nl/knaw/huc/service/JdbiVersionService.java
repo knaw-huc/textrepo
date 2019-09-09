@@ -35,8 +35,12 @@ public class JdbiVersionService implements VersionService {
   }
 
   @Override
-  public Version insertNewVersion(@Nonnull UUID documentId, @Nonnull TextRepoFile file, @Nonnull String filename,
-                                  @Nonnull LocalDateTime time) {
+  public Version insertNewVersion(
+      @Nonnull UUID documentId,
+      @Nonnull TextRepoFile file,
+      @Nonnull String filename,
+      @Nonnull LocalDateTime time
+  ) {
     fileService.addFile(file);
     documentIndexService.indexDocument(documentId, new String(file.getContent(), UTF_8));
     var newVersion = new Version(documentId, time, file.getSha224());
