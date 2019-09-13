@@ -1,5 +1,7 @@
 apiVersion: v1
 items:
+
+# Concordion Service
 - apiVersion: v1
   kind: Service
   metadata:
@@ -20,7 +22,7 @@ items:
   status:
     loadBalancer: {}
 
-# Elasticsearch
+# Elasticsearch Service
 - apiVersion: v1
   kind: Service
   metadata:
@@ -41,7 +43,7 @@ items:
   status:
     loadBalancer: {}
 
-# Nginx
+# Nginx Service
 - apiVersion: v1
   kind: Service
   metadata:
@@ -62,46 +64,29 @@ items:
   status:
     loadBalancer: {}
 
+# Postgres Service
 - apiVersion: v1
   kind: Service
   metadata:
     name: postgres
-    annotations:
-      kompose.cmd: kompose convert -o ./kubernetes/docker-kubernetes.yml
-      kompose.version: 1.17.0 (a74acad)
-    creationTimestamp: null
-    labels:
-      io.kompose.service: postgres
   spec:
     ports:
-    - name: "5432"
-      port: 5432
+    - port: 5432
       targetPort: 5432
-    selector:
-      io.kompose.service: postgres
   status:
     loadBalancer: {}
+
+# Textrepo-service Service
 - apiVersion: v1
   kind: Service
   metadata:
     name: textrepo-app
-    annotations:
-      kompose.cmd: kompose convert -o ./kubernetes/docker-kubernetes.yml
-      kompose.version: 1.17.0 (a74acad)
-    creationTimestamp: null
-    labels:
-      io.kompose.service: textrepo-app
   spec:
     ports:
-    - name: "8080"
-      port: 8080
+    - port: 8080
       targetPort: 8080
-    selector:
-      io.kompose.service: textrepo-app
-  status:
-    loadBalancer: {}
 
-# DEPLOYMENT CONDORDION
+# Condordion Deployment
 - apiVersion: extensions/v1beta1
   kind: Deployment
   metadata:
@@ -137,9 +122,13 @@ items:
           - name: ES_HOST
             value: elasticsearch:9200
           - name: POSTGRES_DB
+            value: textrepo
           - name: POSTGRES_HOST
+            value: textrepo
           - name: POSTGRES_PASSWORD
+            value: textrepo
           - name: POSTGRES_USER
+            value: textrepo
           image: knawhuc/textrepo-concordion:latest
           name: concordion
           ports:
@@ -160,6 +149,8 @@ items:
           persistentVolumeClaim:
             claimName: concordion-claim0
   status: {}
+
+# Volume
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
@@ -174,6 +165,8 @@ items:
       requests:
         storage: 100Mi
   status: {}
+
+# Elasticsearch Deployment
 - apiVersion: extensions/v1beta1
   kind: Deployment
   metadata:
@@ -226,6 +219,8 @@ items:
           persistentVolumeClaim:
             claimName: esdata
   status: {}
+
+# PersistentVolumeClaim
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
@@ -240,6 +235,8 @@ items:
       requests:
         storage: 100Mi
   status: {}
+
+# Nginx Deployment
 - apiVersion: extensions/v1beta1
   kind: Deployment
   metadata:
@@ -288,6 +285,8 @@ items:
             claimName: nginx-claim1
             readOnly: true
   status: {}
+
+# Volume
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
@@ -302,6 +301,8 @@ items:
       requests:
         storage: 100Mi
   status: {}
+
+#Volume
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
@@ -316,6 +317,8 @@ items:
       requests:
         storage: 100Mi
   status: {}
+
+# Postgres Deployment
 - apiVersion: extensions/v1beta1
   kind: Deployment
   metadata:
@@ -339,11 +342,15 @@ items:
         containers:
         - env:
           - name: POSTGRES_DB
+            value: textrepo
           - name: POSTGRES_HOST
             value: postgres.textrepo
           - name: POSTGRES_PASSWORD
+            value: textrepo
           - name: POSTGRES_PORT
+            value: textrepo
           - name: POSTGRES_USER
+            value: textrepo
           image: postgres:11-alpine
           name: postgres
           ports:
@@ -364,6 +371,8 @@ items:
           persistentVolumeClaim:
             claimName: postgres-claim0
   status: {}
+
+# Volume
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
@@ -378,15 +387,11 @@ items:
       requests:
         storage: 100Mi
   status: {}
+
+# Textrepo-app Deployment
 - apiVersion: extensions/v1beta1
   kind: Deployment
   metadata:
-    annotations:
-      kompose.cmd: kompose convert -o ./kubernetes/docker-kubernetes.yml
-      kompose.version: 1.17.0 (a74acad)
-    creationTimestamp: null
-    labels:
-      io.kompose.service: textrepo-app
     name: textrepo-app
   spec:
     replicas: 1
