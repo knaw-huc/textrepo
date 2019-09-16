@@ -103,8 +103,11 @@ items:
     name: postgres
   spec:
     ports:
-    - port: 5432
+    - name: "5432"
+      port: 5432
       targetPort: 5432
+    selector:
+      io.kompose.service: postgres
   status:
     loadBalancer: {}
 
@@ -113,7 +116,7 @@ items:
   kind: Deployment
   metadata:
     labels:
-      io.kompose.service: elasticsearch
+      io.kompose.service: postgres
     name: postgres
   spec:
     replicas: 1
@@ -209,7 +212,8 @@ items:
             value: textrepo
           - name: POSTGRES_USER
             value: textrepo
-          image: knawhuc/textrepo-concordion:latest
+          image: knawhuc/textrepo-concordion
+          imagePullPolicy: Always
           name: concordion
           ports:
           - containerPort: 8080
@@ -220,29 +224,7 @@ items:
             requests:
               cpu: 200m
               memory: 200Mi
-          volumeMounts:
-          - mountPath: /concordion
-            name: concordion-claim0
         restartPolicy: Always
-        volumes:
-        - name: concordion-claim0
-          persistentVolumeClaim:
-            claimName: concordion-claim0
-
-# Concordion volume
-- apiVersion: v1
-  kind: PersistentVolumeClaim
-  metadata:
-    labels:
-      io.kompose.service: concordion-claim0
-    name: concordion-claim0
-  spec:
-    accessModes:
-    - ReadWriteOnce
-    resources:
-      requests:
-        storage: 100Mi
-  status: {}
 
 # NGINX
 
@@ -285,10 +267,6 @@ items:
           name: nginx
           ports:
           - containerPort: 8080
-          volumeMounts:
-          - mountPath: /concordion
-            name: nginx-claim1
-            readOnly: true
           resources:
             limits:
               cpu: 200m
@@ -297,14 +275,6 @@ items:
               cpu: 200m
               memory: 200Mi
         restartPolicy: Always
-        volumes:
-        - name: nginx-claim0
-          persistentVolumeClaim:
-            claimName: nginx-claim0
-        - name: nginx-claim1
-          persistentVolumeClaim:
-            claimName: nginx-claim1
-            readOnly: true
 
 # Nginx PersistentVolumeClaim
 - apiVersion: v1
@@ -330,8 +300,11 @@ items:
     name: textrepo-app
   spec:
     ports:
-    - port: 8080
+    - name: "8080"
+      port: 8080
       targetPort: 8080
+    selector:
+      io.kompose.service: textrepo-app
 
 # Textrepo-app Deployment
 - apiVersion: extensions/v1beta1
