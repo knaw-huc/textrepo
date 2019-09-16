@@ -39,7 +39,7 @@ sysctl -w vm.max_map_count=262144
 (see https://github.com/docker-library/elasticsearch/issues/111)
 
 ### Kubernetes
-Try:
+WIP:
 ```
 kubectl -n <namespace> delete all --all && kubectl apply -f ./kubernetes/docker-kubernetes.yml
 ```
