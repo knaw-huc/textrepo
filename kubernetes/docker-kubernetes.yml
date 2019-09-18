@@ -8,9 +8,6 @@ items:
   kind: Service
   metadata:
     name: elasticsearch
-    annotations:
-      kompose.cmd: kompose convert -o ./kubernetes/docker-kubernetes.yml
-      kompose.version: 1.17.0 (a74acad)
     labels:
       io.kompose.service: elasticsearch
   spec:
@@ -20,16 +17,11 @@ items:
       targetPort: 9200
     selector:
       io.kompose.service: elasticsearch
-  status:
-    loadBalancer: {}
 
 # Elasticsearch Deployment
 - apiVersion: extensions/v1beta1
   kind: Deployment
   metadata:
-    annotations:
-      kompose.cmd: kompose convert -o ./kubernetes/docker-kubernetes.yml
-      kompose.version: 1.17.0 (a74acad)
     labels:
       io.kompose.service: elasticsearch
     name: elasticsearch
@@ -48,9 +40,9 @@ items:
             value: "-Xms750m -Xmx750m"
           # TODO:
           # To prevent the following error: 'memory locking requested for elasticsearch process but memory is not locked'
-          # We have to set bootstrap.memory_lock=false
-          # But I guess we should alow it: www.elastic.co/guide/en/elasticsearch/reference/current/setup-configuration-memory.html#bootstrap-memory_lock
-          # How to set `kube-apiserver --allow-privileged`?
+          # we have to set bootstrap.memory_lock=false
+          # but I guess it should be alowed: www.elastic.co/guide/en/elasticsearch/reference/current/setup-configuration-memory.html#bootstrap-memory_lock
+          # so how to set `kube-apiserver --allow-privileged`?
           - name: bootstrap.memory_lock
             value: "false"
           - name: cluster.initial_master_nodes
@@ -68,17 +60,16 @@ items:
             name: esdata
           resources:
             limits:
-              cpu: 1000m
-              memory: 2Gi
+              cpu: 200m
+              memory: 1Gi
             requests:
-              cpu: 100m
-              memory: 2Gi
+              cpu: 200m
+              memory: 1Gi
         restartPolicy: Always
         volumes:
         - name: esdata
           persistentVolumeClaim:
             claimName: esdata
-  status: {}
 
 # Elasticsearch PersistentVolumeClaim
 - apiVersion: v1
@@ -93,7 +84,6 @@ items:
     resources:
       requests:
         storage: 100Mi
-  status: {}
 
 # POSTGRES
 
@@ -109,8 +99,6 @@ items:
       targetPort: 5432
     selector:
       io.kompose.service: postgres
-  status:
-    loadBalancer: {}
 
 # Postgres Deployment
 - apiVersion: extensions/v1beta1
@@ -160,9 +148,6 @@ items:
   kind: Service
   metadata:
     name: concordion
-    annotations:
-      kompose.cmd: kompose convert -o ./kubernetes/docker-kubernetes.yml
-      kompose.version: 1.17.0 (a74acad)
     labels:
       io.kompose.service: concordion
   spec:
@@ -172,8 +157,6 @@ items:
       targetPort: 8080
     selector:
       io.kompose.service: concordion
-  status:
-    loadBalancer: {}
 
 # Condordion Deployment
 - apiVersion: extensions/v1beta1
@@ -220,11 +203,11 @@ items:
           - containerPort: 8080
           resources:
             limits:
-              cpu: 1000m
-              memory: 1000Mi
+              cpu: 200m
+              memory: 200Mi
             requests:
-              cpu: 1000m
-              memory: 1000Mi
+              cpu: 200m
+              memory: 200Mi
 
 # Concordion NetworkPolicy
 - apiVersion: extensions/v1beta1
@@ -247,9 +230,6 @@ items:
   kind: Service
   metadata:
     name: nginx
-    annotations:
-      kompose.cmd: kompose convert -o ./kubernetes/docker-kubernetes.yml
-      kompose.version: 1.17.0 (a74acad)
     labels:
       io.kompose.service: nginx
   spec:
@@ -259,8 +239,6 @@ items:
       targetPort: 8080
     selector:
       io.kompose.service: nginx
-  status:
-    loadBalancer: {}
 
 # Nginx Deployment
 - apiVersion: extensions/v1beta1
@@ -302,8 +280,7 @@ items:
     - ReadOnlyMany
     resources:
       requests:
-        storage: 100Mi
-  status: {}
+        storage: 200Mi
 
 # TEXTREPO
 
@@ -312,9 +289,6 @@ items:
   kind: Service
   metadata:
     name: textrepo-app
-    annotations:
-      kompose.cmd: kompose convert -o ./kubernetes/docker-kubernetes.yml
-      kompose.version: 1.17.0 (a74acad)
     labels:
       io.kompose.service: textrepo-app
   spec:
@@ -324,22 +298,6 @@ items:
       targetPort: 8080
     selector:
       io.kompose.service: textrepo-app
-  status:
-    loadBalancer: {}
-
-# Textrepo-app NetworkPolicy
-- apiVersion: extensions/v1beta1
-  kind: NetworkPolicy
-  metadata:
-    name: textrepo-app-network-policy
-  spec:
-    podSelector:
-      matchLabels:
-        io.kompose.service: textrepo-app
-    policyTypes:
-    - Egress
-    egress:
-    - {}
 
 # Textrepo-app Deployment
 - apiVersion: extensions/v1beta1
@@ -378,8 +336,6 @@ items:
               cpu: 200m
               memory: 200Mi
         restartPolicy: Always
-  status: {}
-
 
 kind: List
 metadata: {}
