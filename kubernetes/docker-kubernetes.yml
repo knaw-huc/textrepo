@@ -47,9 +47,10 @@ items:
           - name: ES_JAVA_OPTS
             value: "-Xms750m -Xmx750m"
           # TODO:
-          # To prevent this error: 'memory locking requested for elasticsearch process but memory is not locked'
-          # I guess we should alow it: www.elastic.co/guide/en/elasticsearch/reference/current/setup-configuration-memory.html#bootstrap-memory_lock
-          # But how to set `kube-apiserver --allow-privileged`?
+          # To prevent the following error: 'memory locking requested for elasticsearch process but memory is not locked'
+          # We have to set bootstrap.memory_lock=false
+          # But I guess we should alow it: www.elastic.co/guide/en/elasticsearch/reference/current/setup-configuration-memory.html#bootstrap-memory_lock
+          # How to set `kube-apiserver --allow-privileged`?
           - name: bootstrap.memory_lock
             value: "false"
           - name: cluster.initial_master_nodes
@@ -204,9 +205,9 @@ items:
             value: textrepo-app:8080
           - name: ES_HOST
             value: elasticsearch:9200
-          - name: POSTGRES_DB
-            value: textrepo
           - name: POSTGRES_HOST
+            value: postgres
+          - name: POSTGRES_DB
             value: textrepo
           - name: POSTGRES_PASSWORD
             value: textrepo
@@ -219,12 +220,13 @@ items:
           - containerPort: 8080
           resources:
             limits:
-              cpu: 200m
-              memory: 200Mi
+              cpu: 1000m
+              memory: 1000Mi
             requests:
-              cpu: 200m
-              memory: 200Mi
+              cpu: 1000m
+              memory: 1000Mi
 
+# Concordion NetworkPolicy
 - apiVersion: extensions/v1beta1
   kind: NetworkPolicy
   metadata:
@@ -272,7 +274,7 @@ items:
     template:
       metadata:
         labels:
-          io.kompose.service: elasticsearch
+          io.kompose.service: nginx
       spec:
         containers:
         - image: knawhuc/textrepo-nginx:latest
@@ -305,11 +307,16 @@ items:
 
 # TEXTREPO
 
-# Textrepo-service Service
+# Textrepo-app Service
 - apiVersion: v1
   kind: Service
   metadata:
     name: textrepo-app
+    annotations:
+      kompose.cmd: kompose convert -o ./kubernetes/docker-kubernetes.yml
+      kompose.version: 1.17.0 (a74acad)
+    labels:
+      io.kompose.service: textrepo-app
   spec:
     ports:
     - name: "8080"
@@ -317,6 +324,22 @@ items:
       targetPort: 8080
     selector:
       io.kompose.service: textrepo-app
+  status:
+    loadBalancer: {}
+
+# Textrepo-app NetworkPolicy
+- apiVersion: extensions/v1beta1
+  kind: NetworkPolicy
+  metadata:
+    name: textrepo-app-network-policy
+  spec:
+    podSelector:
+      matchLabels:
+        io.kompose.service: textrepo-app
+    policyTypes:
+    - Egress
+    egress:
+    - {}
 
 # Textrepo-app Deployment
 - apiVersion: extensions/v1beta1
