@@ -224,7 +224,19 @@ items:
             requests:
               cpu: 200m
               memory: 200Mi
-        restartPolicy: Always
+
+- apiVersion: extensions/v1beta1
+  kind: NetworkPolicy
+  metadata:
+    name: concordion-network-policy
+  spec:
+    podSelector:
+      matchLabels:
+        io.kompose.service: concordion
+    policyTypes:
+    - Egress
+    egress:
+    - {}
 
 # NGINX
 
