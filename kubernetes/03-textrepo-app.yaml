@@ -1,0 +1,52 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: textrepo-app
+  labels:
+    io.kompose.service: textrepo-app
+spec:
+  ports:
+  - name: "8080"
+    port: 8080
+    targetPort: 8080
+  selector:
+    io.kompose.service: textrepo-app
+
+---
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: textrepo-app
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        io.kompose.service: textrepo-app
+    spec:
+      containers:
+      - args:
+        - /utils/wait-for-it.sh
+        - postgres:5432
+        - elasticsearch:9200
+        - --timeout=0
+        - --
+        - java
+        - -jar
+        - /textrepo-app/textrepo.jar
+        - server
+        - config.yml
+        image: knawhuc/textrepo-app:latest
+        name: textrepo-app
+        ports:
+        - containerPort: 8080
+        resources:
+          limits:
+            cpu: 200m
+            memory: 200Mi
+          requests:
+            cpu: 200m
+            memory: 200Mi
+      restartPolicy: Always
