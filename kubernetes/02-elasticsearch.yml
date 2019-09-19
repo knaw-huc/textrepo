@@ -4,21 +4,21 @@ apiVersion: v1
 metadata:
   name: elasticsearch
   labels:
-    io.kompose.service: elasticsearch
+    textrepo.service: elasticsearch
 spec:
   ports:
   - name: "9200"
     port: 9200
     targetPort: 9200
   selector:
-    io.kompose.service: elasticsearch
+    textrepo.service: elasticsearch
 
 ---
 kind: Deployment
 apiVersion: extensions/v1beta1
 metadata:
   labels:
-    io.kompose.service: elasticsearch
+    textrepo.service: elasticsearch
   name: elasticsearch
 spec:
   replicas: 1
@@ -27,7 +27,7 @@ spec:
   template:
     metadata:
       labels:
-        io.kompose.service: elasticsearch
+        textrepo.service: elasticsearch
     spec:
       containers:
       - env:
@@ -71,7 +71,7 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   labels:
-    io.kompose.service: esdata
+    textrepo.service: esdata
   name: esdata
 spec:
   accessModes:

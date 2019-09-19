@@ -4,14 +4,14 @@ apiVersion: v1
 metadata:
   name: textrepo-app
   labels:
-    io.kompose.service: textrepo-app
+    textrepo.service: textrepo-app
 spec:
   ports:
   - name: "8080"
     port: 8080
     targetPort: 8080
   selector:
-    io.kompose.service: textrepo-app
+    textrepo.service: textrepo-app
 
 ---
 kind: Deployment
@@ -24,7 +24,7 @@ spec:
   template:
     metadata:
       labels:
-        io.kompose.service: textrepo-app
+        textrepo.service: textrepo-app
     spec:
       containers:
       - args:

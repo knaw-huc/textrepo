@@ -4,14 +4,14 @@ kind: Service
 metadata:
   name: concordion
   labels:
-    io.kompose.service: concordion
+    textrepo.service: concordion
 spec:
   ports:
   - name: "8080"
     port: 8080
     targetPort: 8080
   selector:
-    io.kompose.service: concordion
+    textrepo.service: concordion
 
 ---
 apiVersion: extensions/v1beta1
@@ -19,7 +19,7 @@ kind: Deployment
 metadata:
   name: concordion
   labels:
-    io.kompose.service: concordion
+    textrepo.service: concordion
 spec:
   replicas: 1
   strategy:
@@ -27,7 +27,7 @@ spec:
   template:
     metadata:
       labels:
-        io.kompose.service: concordion
+        textrepo.service: concordion
     spec:
       containers:
       - args:
@@ -72,7 +72,7 @@ metadata:
 spec:
   podSelector:
     matchLabels:
-      io.kompose.service: concordion
+      textrepo.service: concordion
   policyTypes:
   - Egress
   egress:
