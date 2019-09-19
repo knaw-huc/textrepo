@@ -1,0 +1,77 @@
+{
+  "mappings": {
+    "doc": {
+      "properties": {
+        "id": {
+          "type": "keyword"
+        },
+        "text": {
+          "type": "text"
+        },
+        "facsimiles": {
+          "type": "keyword"
+        },
+        "corr": {
+          "type": "keyword"
+        },
+        "texttypes": {
+          "type": "keyword"
+        },
+        "languages": {
+          "type": "keyword"
+        },
+        "has_date": {
+          "type": "boolean"
+        },
+        "sender_or_recipient": {
+          "type": "keyword"
+        },
+        "person": {
+          "type": "keyword"
+        },
+        "org": {
+          "type": "keyword"
+        },
+        "loc": {
+          "type": "keyword"
+        },
+        "misc": {
+          "type": "keyword"
+        },
+        "date": {
+          "type": "date"
+        },
+        "recipient": {
+          "type": "keyword"
+        },
+        "recipientloc": {
+          "type": "keyword"
+        },
+        "recipientgender": {
+          "type": "keyword"
+        },
+        "recipientprof": {
+          "type": "keyword"
+        },
+        "sender": {
+          "type": "keyword"
+        },
+        "senderprof": {
+          "type": "keyword"
+        },
+        "senderloc": {
+          "type": "keyword"
+        },
+        "sendergender": {
+          "type": "keyword"
+        },
+        "recipientship": {
+          "type": "keyword"
+        },
+        "sendership": {
+          "type": "keyword"
+        }
+      }
+    }
+  }
+}
