@@ -27,6 +27,10 @@ public class TextRepositoryConfiguration extends Configuration {
   @NotNull
   private SwaggerBundleConfiguration swaggerBundleConfiguration = new SwaggerBundleConfiguration();
 
+  @Valid
+  @NotNull
+  private CustomFacetIndexerConfiguration customFacetIndexer = new CustomFacetIndexerConfiguration();
+
   @JsonProperty("jerseyClient")
   public JerseyClientConfiguration getJerseyClientConfiguration() {
     return jerseyClient;
@@ -66,5 +70,15 @@ public class TextRepositoryConfiguration extends Configuration {
   public void setSwaggerBundleConfiguration(
       SwaggerBundleConfiguration swaggerBundleConfiguration) {
     this.swaggerBundleConfiguration = swaggerBundleConfiguration;
+  }
+
+  @JsonProperty("customFacetIndexer")
+  public CustomFacetIndexerConfiguration getCustomFacetIndexer() {
+    return customFacetIndexer;
+  }
+
+  @JsonProperty("customFacetIndexer")
+  public void setCustomFacetIndexer(CustomFacetIndexerConfiguration customFacetIndexer) {
+    this.customFacetIndexer = customFacetIndexer;
   }
 }

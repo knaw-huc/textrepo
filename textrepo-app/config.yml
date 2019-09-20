@@ -26,5 +26,14 @@ elasticsearch:
   index: documents
   contentField: content
 
+customFacetIndexer:
+  mapping: http://localhost:8080/custom-index/kranten1700/mapping
+  fields: http://localhost:8080/custom-index/kranten1700/fields
+  elasticsearch:
+    index: custom-facet
+    contentField: content
+    hosts:
+      - elasticsearch:9200
+
 swagger:
   resourcePackage: nl.knaw.huc.resources

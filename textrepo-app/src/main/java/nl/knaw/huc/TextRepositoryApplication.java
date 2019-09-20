@@ -18,6 +18,7 @@ import nl.knaw.huc.service.DocumentService;
 import nl.knaw.huc.service.FileService;
 import nl.knaw.huc.service.JdbiMetadataService;
 import nl.knaw.huc.service.JdbiVersionService;
+import nl.knaw.huc.service.index.ElasticCustomFacetIndexer;
 import nl.knaw.huc.service.index.ElasticDocumentIndexer;
 import nl.knaw.huc.service.store.JdbiFileStorage;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
@@ -66,6 +67,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     jdbi.installPlugin(new SqlObjectPlugin());
 
     var documentIndexService = new ElasticDocumentIndexer(config.getElasticsearch());
+    var customFacetIndexer = new ElasticCustomFacetIndexer(config.getCustomFacetIndexer());
     environment.lifecycle().manage(documentIndexService);
 
     var fileStoreService = new JdbiFileStorage(jdbi);
