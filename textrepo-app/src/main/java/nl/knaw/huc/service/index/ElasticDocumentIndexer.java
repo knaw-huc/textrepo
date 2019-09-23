@@ -1,7 +1,6 @@
 package nl.knaw.huc.service.index;
 
 import io.dropwizard.lifecycle.Managed;
-import nl.knaw.huc.ElasticsearchConfiguration;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.RequestOptions;
 

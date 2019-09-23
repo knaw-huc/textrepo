@@ -27,8 +27,8 @@ elasticsearch:
   contentField: content
 
 customFacetIndexer:
-  mapping: http://localhost:8080/custom-index/kranten1700/mapping
-  fields: http://localhost:8080/custom-index/kranten1700/fields
+  mapping: http://nginx:8080/custom-index/mapping.json
+  fields: http://nginx:8080/custom-index/fields.json
   elasticsearch:
     index: custom-facet
     contentField: content

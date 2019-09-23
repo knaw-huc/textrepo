@@ -1,7 +1,5 @@
 package nl.knaw.huc.resources;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import nl.knaw.huc.api.MetadataEntry;
@@ -30,13 +28,12 @@ import org.mockito.MockitoAnnotations;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.util.Map;
 import java.util.UUID;
 import java.util.function.Supplier;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
-import static nl.knaw.huc.resources.TestUtils.getResourceFileBits;
-import static nl.knaw.huc.resources.TestUtils.getResourceFileString;
+import static nl.knaw.huc.resources.TestUtils.getResourceAsBytes;
+import static nl.knaw.huc.resources.TestUtils.getResourceAsString;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -105,7 +102,7 @@ public class DocumentsResourceTest {
   @Test
   public void testAddDocument_addsZippedFile_whenZip() throws IOException {
     var zipFilename = "hello-test.zip";
-    var zipFile = getResourceFileBits("zip/" + zipFilename);
+    var zipFile = getResourceAsBytes("zip/" + zipFilename);
 
     postTestFile(zipFile, zipFilename);
 
@@ -117,7 +114,7 @@ public class DocumentsResourceTest {
   @Test
   public void testAddDocument_addsMultipleFilesToIndex_whenZip() throws IOException {
     var zipFilename = "multiple-hello-tests.zip";
-    var zipFile = getResourceFileBits("zip/" + zipFilename);
+    var zipFile = getResourceAsBytes("zip/" + zipFilename);
 
     postTestFile(zipFile, zipFilename);
 
@@ -127,7 +124,7 @@ public class DocumentsResourceTest {
   @Test
   public void testAddDocument_returnsLocationsByFile_whenZip() throws IOException {
     var zipFilename = "multiple-hello-tests.zip";
-    var zipFile = getResourceFileBits("zip/" + zipFilename);
+    var zipFile = getResourceAsBytes("zip/" + zipFilename);
 
     var response = postTestFile(zipFile, zipFilename);
     var body = response.readEntity(String.class);
@@ -148,7 +145,7 @@ public class DocumentsResourceTest {
   @Test
   public void testAddDocument_skipsZippedDirectories_whenZip() throws IOException {
     var zipFilename = "hello-test-in-dir.zip";
-    var zipFile = getResourceFileBits("zip/" + zipFilename);
+    var zipFile = getResourceAsBytes("zip/" + zipFilename);
 
     postTestFile(zipFile, zipFilename);
 
@@ -163,12 +160,12 @@ public class DocumentsResourceTest {
   @Test
   public void testAddDocument_skipsHiddenFiles_whenZip() throws IOException {
     var zipFilename = "mac-archive.zip";
-    var zipFile = getResourceFileBits("zip/" + zipFilename);
+    var zipFile = getResourceAsBytes("zip/" + zipFilename);
 
     postTestFile(zipFile, zipFilename);
 
     var zippedFile = ArgumentCaptor.forClass(String.class);
-    var zippedContent = getResourceFileString("zip/mac-archive-content.xml");
+    var zippedContent = getResourceAsString("zip/mac-archive-content.xml");
     verify(documentIndexer, times(1)).indexDocument(
         ArgumentCaptor.forClass(UUID.class).capture(),
         zippedFile.capture()
@@ -193,7 +190,7 @@ public class DocumentsResourceTest {
   @Test
   public void testAddDocument_addsFilenameMetadata_whenZip() throws IOException {
     var zipFilename = "multiple-hello-tests.zip";
-    var zipFile = getResourceFileBits("zip/" + zipFilename);
+    var zipFile = getResourceAsBytes("zip/" + zipFilename);
 
     postTestFile(zipFile, zipFilename);
 

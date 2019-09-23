@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://example.com/es-mapping.schema.json",
+  "title": "Elasticsearch mapping",
+  "type": "object",
+  "properties": {
+    "mappings": {
+      "description": "mapping root tag",
+      "type": "object",
+      "properties": {
+        "properties": {
+          "description": "Elasticseach mapping has 'properties'-property...",
+          "type": "object",
+          "properties": {
+            "id": {
+              "description": "id",
+              "type": "object"
+            },
+            "text": {
+              "description": "text",
+              "type": "object"
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": ["mappings"]
+}

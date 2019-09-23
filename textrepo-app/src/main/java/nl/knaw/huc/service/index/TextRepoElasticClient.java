@@ -1,6 +1,5 @@
 package nl.knaw.huc.service.index;
 
-import nl.knaw.huc.ElasticsearchConfiguration;
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestHighLevelClient;
 

@@ -5,6 +5,8 @@ import io.dropwizard.Configuration;
 import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.db.DataSourceFactory;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
+import nl.knaw.huc.service.index.CustomFacetIndexerConfiguration;
+import nl.knaw.huc.service.index.ElasticsearchConfiguration;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;

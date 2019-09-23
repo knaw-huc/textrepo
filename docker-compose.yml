@@ -35,18 +35,6 @@ services:
     networks:
     - textrepo_network
 
-  textrepo-app:
-    image: knawhuc/textrepo-app:latest
-    build: ./textrepo-app
-    ports:
-    - 8080
-    networks:
-    - textrepo_network
-    command: ["/utils/wait-for-it.sh", "postgres:5432", "elasticsearch:9200",
-              "--timeout=0",
-              "--",
-              "java", "-jar", "/textrepo-app/textrepo.jar", "server", "config.yml"]
-
   nginx:
     image: knawhuc/textrepo-nginx:latest
     build: ./nginx
@@ -58,6 +46,18 @@ services:
     - concordiondata:/concordion:ro
     ports:
     - 8080:8080
+
+  textrepo-app:
+    image: knawhuc/textrepo-app:latest
+    build: ./textrepo-app
+    ports:
+    - 8080
+    networks:
+    - textrepo_network
+    command: ["/utils/wait-for-it.sh", "postgres:5432", "elasticsearch:9200", "nginx:8080",
+              "--timeout=0",
+              "--",
+              "java", "-jar", "/textrepo-app/textrepo.jar", "server", "config.yml"]
 
   concordion:
     image: knawhuc/textrepo-concordion:latest

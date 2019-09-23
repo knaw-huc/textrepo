@@ -1,7 +1,6 @@
 package nl.knaw.huc.service.index;
 
 import io.dropwizard.lifecycle.Managed;
-import nl.knaw.huc.CustomFacetIndexerConfiguration;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.glassfish.jersey.client.JerseyClientBuilder;
@@ -21,8 +20,8 @@ import static org.elasticsearch.common.xcontent.XContentType.JSON;
 
 public class ElasticCustomFacetIndexer implements DocumentIndexer, Managed {
 
-  private final String fieldsEndpoint;
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private String fieldsEndpoint;
+  private Logger logger = LoggerFactory.getLogger(this.getClass());
   private ElasticDocumentIndexer indexer;
 
   private Client jerseyClient = JerseyClientBuilder.newClient();
@@ -37,11 +36,13 @@ public class ElasticCustomFacetIndexer implements DocumentIndexer, Managed {
     var esMapping = jerseyClient
         .target(config.mapping)
         .request()
-        .get().readEntity(String.class);
+        .get()
+        .readEntity(String.class);
 
     var client = new TextRepoElasticClient(config.elasticsearch);
     var request = new CreateIndexRequest(config.elasticsearch.index)
         .source(esMapping, JSON);
+
     try {
       client
           .getClient()
