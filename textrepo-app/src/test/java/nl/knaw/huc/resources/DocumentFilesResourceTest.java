@@ -8,6 +8,7 @@ import nl.knaw.huc.service.FileService;
 import nl.knaw.huc.service.JdbiVersionService;
 import nl.knaw.huc.service.MetadataService;
 import nl.knaw.huc.service.VersionService;
+import nl.knaw.huc.service.index.ElasticCustomFacetIndexer;
 import nl.knaw.huc.service.index.ElasticDocumentIndexer;
 import nl.knaw.huc.service.store.FileStorage;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
@@ -43,10 +44,12 @@ public class DocumentFilesResourceTest {
   private static final FileService fileService = new FileService(mock(FileStorage.class));
   private static final ElasticDocumentIndexer documentIndexer = mock(ElasticDocumentIndexer.class);
   private static final MetadataService metadataService = mock(MetadataService.class);
+  private static final ElasticCustomFacetIndexer customFacetIndexer = mock(ElasticCustomFacetIndexer.class);
 
   private static final VersionService versionService = new JdbiVersionService(
       jdbi, fileService,
-      documentIndexer
+      documentIndexer,
+      customFacetIndexer
   );
 
   private static final DocumentFileService documentFileService = new DocumentFileService(

@@ -9,6 +9,7 @@ import nl.knaw.huc.db.VersionDao;
 import nl.knaw.huc.service.FileService;
 import nl.knaw.huc.service.JdbiVersionService;
 import nl.knaw.huc.service.VersionService;
+import nl.knaw.huc.service.index.ElasticCustomFacetIndexer;
 import nl.knaw.huc.service.index.ElasticDocumentIndexer;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.jdbi.v3.core.Jdbi;
@@ -41,7 +42,8 @@ public class VersionsResourceTest {
   private static final VersionService versionService = new JdbiVersionService(
       jdbi,
       mock(FileService.class),
-      mock(ElasticDocumentIndexer.class)
+      mock(ElasticDocumentIndexer.class),
+      mock(ElasticCustomFacetIndexer.class)
   );
 
   private static final VersionDao versionDao = mock(VersionDao.class);

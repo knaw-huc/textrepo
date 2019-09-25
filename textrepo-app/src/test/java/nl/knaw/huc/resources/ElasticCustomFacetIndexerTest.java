@@ -12,7 +12,9 @@ import org.mockserver.matchers.Times;
 import org.mockserver.model.HttpRequest;
 
 import java.io.IOException;
+import java.util.UUID;
 
+import static java.lang.String.format;
 import static nl.knaw.huc.resources.TestUtils.getResourceAsString;
 import static org.assertj.core.util.Lists.newArrayList;
 import static org.mockserver.model.HttpRequest.request;
@@ -68,6 +70,56 @@ public class ElasticCustomFacetIndexerTest {
     mockIndexServer.verify(putIndexRequest, once());
   }
 
+  @Test
+  public void testIndexDocument_requestsFields() throws IOException {
+    var config = createCustomFacetIndexerConfiguration();
+    mockMappingResponse();
+    mockCreatingIndexResponse(config);
+    var indexer = new ElasticCustomFacetIndexer(config);
+    var documentId = UUID.randomUUID();
+    var postDoc2FieldsRequest = request()
+        .withMethod("POST")
+        .withPath(mockFieldsEndpoint)
+        .withBody(getResourceAsString("fields/document.xml"));
+    mockDoc2FieldsResponse(postDoc2FieldsRequest);
+    var putDocumentRequest = request()
+        .withMethod("PUT")
+        .withPath(format("/%s/_doc/%s", config.elasticsearch.index, documentId))
+        .withBody(jsonSchema(getResourceAsString("fields/fields.schema.json")));
+    mockIndexFieldsResponse(putDocumentRequest);
+
+    indexer.indexDocument(documentId, getResourceAsString("fields/document.xml"));
+
+    mockServer.verify(postDoc2FieldsRequest, once());
+    mockIndexServer.verify(putDocumentRequest, once());
+  }
+
+  private void mockDoc2FieldsResponse(HttpRequest request) throws IOException {
+    mockServer.when(request,
+        Times.exactly(1)
+    ).respond(response()
+        .withStatusCode(200)
+        .withBody(getResourceAsString("fields/fields.json"))
+    );
+  }
+
+  private void mockIndexFieldsResponse(HttpRequest request) throws IOException {
+    mockIndexServer.when(request,
+        Times.exactly(1)
+    ).respond(response()
+        .withStatusCode(200)
+        .withHeader("Content-Type", "application/json")
+        .withBody(getResourceAsString("fields/fields-es-response.json"))
+    );
+  }
+
+  private void mockMappingResponse() throws IOException {
+    var getMappingRequest = request()
+        .withMethod("GET")
+        .withPath(mockMappingEndpoint);
+    mockMappingResponse(getResourceAsString("mapping/test.json"), getMappingRequest);
+  }
+
   private void mockMappingResponse(String testMapping, HttpRequest getMappingRequest) {
     mockServer.when(getMappingRequest,
         Times.exactly(1)
@@ -75,6 +127,15 @@ public class ElasticCustomFacetIndexerTest {
         .withStatusCode(200)
         .withBody(testMapping)
     );
+  }
+
+  private void mockCreatingIndexResponse(CustomFacetIndexerConfiguration config) throws IOException {
+    var putIndexRequest = request()
+        .withMethod("PUT")
+        .withPath("/" + config.elasticsearch.index)
+        // because es client changes order of fields, verify using json schema:
+        .withBody(jsonSchema(getResourceAsString("mapping/test.schema.json")));
+    mockCreatingIndexResponse(config.elasticsearch.index, putIndexRequest);
   }
 
   private void mockCreatingIndexResponse(String indexName, HttpRequest createIndexRequest) {

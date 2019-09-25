@@ -10,6 +10,7 @@ import nl.knaw.huc.service.FileService;
 import nl.knaw.huc.service.JdbiVersionService;
 import nl.knaw.huc.service.MetadataService;
 import nl.knaw.huc.service.VersionService;
+import nl.knaw.huc.service.index.ElasticCustomFacetIndexer;
 import nl.knaw.huc.service.index.ElasticDocumentIndexer;
 import nl.knaw.huc.service.store.FileStorage;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
@@ -51,7 +52,8 @@ public class DocumentsResourceTest {
   private static final Jdbi jdbi = mock(Jdbi.class);
   private static final ElasticDocumentIndexer documentIndexer = mock(ElasticDocumentIndexer.class);
   private static final MetadataService metadataService = mock(MetadataService.class);
-  private static final VersionService versions = new JdbiVersionService(jdbi, files, documentIndexer);
+  private static final ElasticCustomFacetIndexer facetIndexer = mock(ElasticCustomFacetIndexer.class);
+  private static final VersionService versions = new JdbiVersionService(jdbi, files, documentIndexer, facetIndexer);
   @SuppressWarnings("unchecked")
   private static final Supplier<UUID> idGenerator = mock(Supplier.class);
   private static final DocumentService documentService = new DocumentService(versions, idGenerator, metadataService);

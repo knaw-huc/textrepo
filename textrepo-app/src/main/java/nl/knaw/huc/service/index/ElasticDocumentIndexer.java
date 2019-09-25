@@ -3,11 +3,14 @@ package nl.knaw.huc.service.index;
 import io.dropwizard.lifecycle.Managed;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.common.xcontent.XContentType;
 
 import javax.annotation.Nonnull;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.UUID;
+
+import static org.elasticsearch.common.xcontent.XContentType.JSON;
 
 public class ElasticDocumentIndexer implements DocumentIndexer, Managed {
   private TextRepoElasticClient client;
@@ -21,7 +24,7 @@ public class ElasticDocumentIndexer implements DocumentIndexer, Managed {
   public void indexDocument(@Nonnull UUID document, @NotNull String latestVersionContent) {
     var indexRequest = new IndexRequest(config.index)
         .id(document.toString())
-        .source(config.contentField, latestVersionContent);
+        .source(latestVersionContent, JSON);
     try {
       client.getClient().index(indexRequest, RequestOptions.DEFAULT);
 

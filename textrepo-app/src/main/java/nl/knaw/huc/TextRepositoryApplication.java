@@ -68,13 +68,14 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     var documentIndexService = new ElasticDocumentIndexer(config.getElasticsearch());
     var customFacetIndexer = new ElasticCustomFacetIndexer(config.getCustomFacetIndexer());
     environment.lifecycle().manage(documentIndexService);
+    environment.lifecycle().manage(customFacetIndexer);
 
     var fileStoreService = new JdbiFileStorage(jdbi);
     var fileService = new FileService(fileStoreService);
     var filesResource = new FilesResource(fileService);
 
     var metadataService = new JdbiMetadataService(jdbi);
-    var versionService = new JdbiVersionService(jdbi, fileService, documentIndexService);
+    var versionService = new JdbiVersionService(jdbi, fileService, documentIndexService, customFacetIndexer);
     var documentFileService = new DocumentFileService(fileService, versionService, metadataService);
     var documentService = new DocumentService(versionService, UUID::randomUUID, metadataService);
     var documentsResource = new DocumentsResource(documentService);
