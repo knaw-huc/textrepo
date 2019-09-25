@@ -1,6 +1,5 @@
 package nl.knaw.huc.resources;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.knaw.huc.service.index.CustomFacetIndexerConfiguration;
 import nl.knaw.huc.service.index.ElasticCustomFacetIndexer;
 import nl.knaw.huc.service.index.ElasticsearchConfiguration;
@@ -10,6 +9,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockserver.integration.ClientAndServer;
 import org.mockserver.matchers.Times;
+import org.mockserver.model.HttpRequest;
 
 import java.io.IOException;
 
@@ -18,6 +18,7 @@ import static org.assertj.core.util.Lists.newArrayList;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 import static org.mockserver.model.JsonSchemaBody.jsonSchema;
+import static org.mockserver.verify.VerificationTimes.once;
 
 public class ElasticCustomFacetIndexerTest {
 
@@ -50,14 +51,25 @@ public class ElasticCustomFacetIndexerTest {
   @Test
   public void testInstantiationElasticCustomFacetIndexer_requestsMapping() throws IOException {
     var config = createCustomFacetIndexerConfiguration();
-    mockMappingResponse(getResourceAsString("mapping/test.json"));
-    mockCreatingIndexResponse(config.elasticsearch.index);
+    var getMappingRequest = request()
+        .withMethod("GET")
+        .withPath(mockMappingEndpoint);
+    mockMappingResponse(getResourceAsString("mapping/test.json"), getMappingRequest);
+    var putIndexRequest = request()
+        .withMethod("PUT")
+        .withPath("/" + config.elasticsearch.index)
+        // because es client changes order of fields, verify using json schema:
+        .withBody(jsonSchema(getResourceAsString("mapping/test.schema.json")));
+    mockCreatingIndexResponse(config.elasticsearch.index, putIndexRequest);
+
+    new ElasticCustomFacetIndexer(config);
+
+    mockServer.verify(getMappingRequest, once());
+    mockIndexServer.verify(putIndexRequest, once());
   }
 
-  private void mockMappingResponse(String testMapping) {
-    mockServer.when(request()
-        .withMethod("GET")
-        .withPath(mockMappingEndpoint),
+  private void mockMappingResponse(String testMapping, HttpRequest getMappingRequest) {
+    mockServer.when(getMappingRequest,
         Times.exactly(1)
     ).respond(response()
         .withStatusCode(200)
@@ -65,11 +77,8 @@ public class ElasticCustomFacetIndexerTest {
     );
   }
 
-  private void mockCreatingIndexResponse(String indexName) throws IOException {
-    mockIndexServer.when(request()
-        .withMethod("PUT")
-        .withPath("/" + indexName)
-        .withBody(jsonSchema(getResourceAsString("mapping/test.schema.json"))),
+  private void mockCreatingIndexResponse(String indexName, HttpRequest createIndexRequest) {
+    mockIndexServer.when(createIndexRequest,
         Times.exactly(1)
     ).respond(response()
         .withStatusCode(200)
