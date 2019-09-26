@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 import static javax.ws.rs.client.Entity.entity;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
+import static javax.ws.rs.core.MediaType.APPLICATION_XML_TYPE;
 import static org.elasticsearch.common.xcontent.XContentType.JSON;
 
 
@@ -69,7 +69,7 @@ public class ElasticCustomFacetIndexer implements DocumentIndexer, Managed {
     var esFacets = jerseyClient
         .target(config.fields)
         .request()
-        .post(entity(latestVersionContent, APPLICATION_JSON_TYPE))
+        .post(entity(latestVersionContent, APPLICATION_XML_TYPE))
         .readEntity(String.class);
 
     var indexRequest = new IndexRequest(this.config.elasticsearch.index)
