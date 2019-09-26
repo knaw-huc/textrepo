@@ -27,8 +27,8 @@ elasticsearch:
   contentField: content
 
 customFacetIndexer:
-  mapping: http://nginx:8080/custom-index/mapping.json
-  fields: http://nginx:8080/custom-index/fields.json
+  mapping: https://demo.gekaaptebrieven.diginfra.net/api/projects/gekaaptebrieven/mapping
+  fields: https://demo.gekaaptebrieven.diginfra.net/api/projects/gekaaptebrieven/documents/x/fields
   elasticsearch:
     index: custom-facet
     contentField: content
