@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.util.UUID;
 import java.util.function.Supplier;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
 import static nl.knaw.huc.resources.TestUtils.getResourceAsBytes;
 import static nl.knaw.huc.resources.TestUtils.getResourceAsString;
@@ -53,7 +54,7 @@ public class DocumentsResourceTest {
   private static final ElasticDocumentIndexer documentIndexer = mock(ElasticDocumentIndexer.class);
   private static final MetadataService metadataService = mock(MetadataService.class);
   private static final ElasticCustomFacetIndexer facetIndexer = mock(ElasticCustomFacetIndexer.class);
-  private static final VersionService versions = new JdbiVersionService(jdbi, files, documentIndexer, facetIndexer);
+  private static final VersionService versions = new JdbiVersionService(jdbi, files, documentIndexer, newArrayList(facetIndexer));
   @SuppressWarnings("unchecked")
   private static final Supplier<UUID> idGenerator = mock(Supplier.class);
   private static final DocumentService documentService = new DocumentService(versions, idGenerator, metadataService);

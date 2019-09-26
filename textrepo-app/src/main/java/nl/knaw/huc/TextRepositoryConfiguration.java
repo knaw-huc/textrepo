@@ -10,6 +10,8 @@ import nl.knaw.huc.service.index.ElasticsearchConfiguration;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TextRepositoryConfiguration extends Configuration {
 
@@ -31,7 +33,7 @@ public class TextRepositoryConfiguration extends Configuration {
 
   @Valid
   @NotNull
-  private CustomFacetIndexerConfiguration customFacetIndexer = new CustomFacetIndexerConfiguration();
+  private List<CustomFacetIndexerConfiguration> customFacetIndexers = new ArrayList<>();
 
   @JsonProperty("jerseyClient")
   public JerseyClientConfiguration getJerseyClientConfiguration() {
@@ -74,13 +76,13 @@ public class TextRepositoryConfiguration extends Configuration {
     this.swaggerBundleConfiguration = swaggerBundleConfiguration;
   }
 
-  @JsonProperty("customFacetIndexer")
-  public CustomFacetIndexerConfiguration getCustomFacetIndexer() {
-    return customFacetIndexer;
+  @JsonProperty("customFacetIndexers")
+  public List<CustomFacetIndexerConfiguration> getCustomFacetIndexers() {
+    return customFacetIndexers;
   }
 
-  @JsonProperty("customFacetIndexer")
-  public void setCustomFacetIndexer(CustomFacetIndexerConfiguration customFacetIndexer) {
-    this.customFacetIndexer = customFacetIndexer;
+  @JsonProperty("customFacetIndexers")
+  public void setCustomFacetIndexers(List<CustomFacetIndexerConfiguration> customFacetIndexers) {
+    this.customFacetIndexers = customFacetIndexers;
   }
 }

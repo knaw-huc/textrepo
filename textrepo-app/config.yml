@@ -26,8 +26,8 @@ elasticsearch:
   index: documents
   contentField: content
 
-customFacetIndexer:
-  mapping: https://demo.gekaaptebrieven.diginfra.net/api/projects/gekaaptebrieven/mapping
+customFacetIndexers:
+- mapping: https://demo.gekaaptebrieven.diginfra.net/api/projects/gekaaptebrieven/mapping
   fields: https://demo.gekaaptebrieven.diginfra.net/api/projects/gekaaptebrieven/documents/x/fields
   elasticsearch:
     index: custom-facet

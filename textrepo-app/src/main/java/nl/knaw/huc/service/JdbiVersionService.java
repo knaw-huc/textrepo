@@ -19,17 +19,17 @@ public class JdbiVersionService implements VersionService {
   private final Jdbi jdbi;
   private final FileService fileService;
   private DocumentIndexer documentIndexService;
-  private ElasticCustomFacetIndexer customFacetIndexer;
+  private List<ElasticCustomFacetIndexer> customFacetIndexers;
 
   public JdbiVersionService(
       Jdbi jdbi,
       FileService fileService,
       DocumentIndexer documentIndexService,
-      ElasticCustomFacetIndexer customFacetIndexer) {
+      List<ElasticCustomFacetIndexer> customFacetIndexers) {
     this.jdbi = jdbi;
     this.fileService = fileService;
     this.documentIndexService = documentIndexService;
-    this.customFacetIndexer = customFacetIndexer;
+    this.customFacetIndexers = customFacetIndexers;
   }
 
   @Override
@@ -48,7 +48,7 @@ public class JdbiVersionService implements VersionService {
 
     var latestVersionContent = new String(file.getContent(), UTF_8);
     documentIndexService.indexDocument(documentId, latestVersionContent);
-    customFacetIndexer.indexDocument(documentId, latestVersionContent);
+    customFacetIndexers.forEach(indexer -> indexer.indexDocument(documentId, latestVersionContent));
 
     var newVersion = new Version(documentId, time, file.getSha224());
     getVersionDao().insert(newVersion);

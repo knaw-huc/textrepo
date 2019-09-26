@@ -27,6 +27,7 @@ import org.mockito.MockitoAnnotations;
 import javax.ws.rs.client.Entity;
 import java.util.UUID;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -49,7 +50,7 @@ public class DocumentFilesResourceTest {
   private static final VersionService versionService = new JdbiVersionService(
       jdbi, fileService,
       documentIndexer,
-      customFacetIndexer
+      newArrayList(customFacetIndexer)
   );
 
   private static final DocumentFileService documentFileService = new DocumentFileService(

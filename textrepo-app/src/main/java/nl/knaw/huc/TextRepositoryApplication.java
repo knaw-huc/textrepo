@@ -24,6 +24,7 @@ import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class TextRepositoryApplication extends Application<TextRepositoryConfiguration> {
@@ -66,16 +67,21 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     jdbi.installPlugin(new SqlObjectPlugin());
 
     var documentIndexService = new ElasticDocumentIndexer(config.getElasticsearch());
-    var customFacetIndexer = new ElasticCustomFacetIndexer(config.getCustomFacetIndexer());
     environment.lifecycle().manage(documentIndexService);
-    environment.lifecycle().manage(customFacetIndexer);
+
+    var customIndexers = new ArrayList<ElasticCustomFacetIndexer>();
+    for (var customIndexerConfig : config.getCustomFacetIndexers()) {
+      var customFacetIndexer = new ElasticCustomFacetIndexer(customIndexerConfig);
+      environment.lifecycle().manage(customFacetIndexer);
+      customIndexers.add(customFacetIndexer);
+    }
 
     var fileStoreService = new JdbiFileStorage(jdbi);
     var fileService = new FileService(fileStoreService);
     var filesResource = new FilesResource(fileService);
 
     var metadataService = new JdbiMetadataService(jdbi);
-    var versionService = new JdbiVersionService(jdbi, fileService, documentIndexService, customFacetIndexer);
+    var versionService = new JdbiVersionService(jdbi, fileService, documentIndexService, customIndexers);
     var documentFileService = new DocumentFileService(fileService, versionService, metadataService);
     var documentService = new DocumentService(versionService, UUID::randomUUID, metadataService);
     var documentsResource = new DocumentsResource(documentService);
