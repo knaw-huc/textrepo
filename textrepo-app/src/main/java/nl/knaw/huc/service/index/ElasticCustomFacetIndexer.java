@@ -1,6 +1,8 @@
 package nl.knaw.huc.service.index;
 
 import io.dropwizard.lifecycle.Managed;
+import org.elasticsearch.ElasticsearchStatusException;
+import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.glassfish.jersey.client.JerseyClientBuilder;
@@ -20,34 +22,43 @@ import static org.elasticsearch.common.xcontent.XContentType.JSON;
 
 public class ElasticCustomFacetIndexer implements DocumentIndexer, Managed {
 
-  private String fieldsEndpoint;
+  private final CustomFacetIndexerConfiguration config;
   private Logger logger = LoggerFactory.getLogger(this.getClass());
   private ElasticDocumentIndexer indexer;
 
   private Client jerseyClient = JerseyClientBuilder.newClient();
 
   public ElasticCustomFacetIndexer(CustomFacetIndexerConfiguration config) {
+    this.config = config;
     indexer = new ElasticDocumentIndexer(config.elasticsearch);
     createIndex(config);
-    this.fieldsEndpoint = config.fields;
   }
 
   private void createIndex(CustomFacetIndexerConfiguration config) {
-    var esMapping = jerseyClient
+    var response = jerseyClient
         .target(config.mapping)
         .request()
-        .get()
+        .get();
+
+    var mappingResult = response
         .readEntity(String.class);
+
+    if (response.getStatus() != 200) {
+      logger.error("Could not get mapping: {} - {}", response.getStatus(), mappingResult);
+      return;
+    }
 
     var client = new TextRepoElasticClient(config.elasticsearch);
     var request = new CreateIndexRequest(config.elasticsearch.index)
-        .source(esMapping, JSON);
+        .source(mappingResult, JSON);
 
     try {
       client
           .getClient()
           .indices()
           .create(request, RequestOptions.DEFAULT);
+    } catch (ElasticsearchStatusException ex) {
+      logger.warn("Could not create index [{}], already exists", config.elasticsearch.index);
     } catch (IOException ex) {
       logger.error("Could not create index [{}]", config.elasticsearch.index, ex);
     }
@@ -56,12 +67,16 @@ public class ElasticCustomFacetIndexer implements DocumentIndexer, Managed {
   @Override
   public void indexDocument(@Nonnull UUID document, @NotNull String latestVersionContent) {
     var esFacets = jerseyClient
-        .target(fieldsEndpoint)
+        .target(config.fields)
         .request()
         .post(entity(latestVersionContent, APPLICATION_JSON_TYPE))
         .readEntity(String.class);
 
-    indexer.indexDocument(document, esFacets);
+    var indexRequest = new IndexRequest(this.config.elasticsearch.index)
+        .id(document.toString())
+        .source(esFacets, JSON);
+
+    indexer.indexRequest(indexRequest);
   }
 
   @Override

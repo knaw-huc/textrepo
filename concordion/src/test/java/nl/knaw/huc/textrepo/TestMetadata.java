@@ -133,10 +133,8 @@ public class TestMetadata extends AbstractConcordionTest {
       String value
   ) {
     var urlString = HTTP_APP_HOST + metadataEndpoint;
-    System.out.println("urlString: "+urlString);
     var url = replace(urlString, "documentId", documentId);
     url = replace(url, "key", key);
-    System.out.println("url: "+url);
 
     return client()
         .register(MultiPartFeature.class)
