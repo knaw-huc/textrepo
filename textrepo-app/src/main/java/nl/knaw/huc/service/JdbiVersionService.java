@@ -4,6 +4,7 @@ import nl.knaw.huc.api.TextRepoFile;
 import nl.knaw.huc.api.Version;
 import nl.knaw.huc.db.VersionDao;
 import nl.knaw.huc.service.index.DocumentIndexer;
+import nl.knaw.huc.service.index.ElasticCustomFacetIndexer;
 import org.jdbi.v3.core.Jdbi;
 
 import javax.annotation.Nonnull;
@@ -18,15 +19,17 @@ public class JdbiVersionService implements VersionService {
   private final Jdbi jdbi;
   private final FileService fileService;
   private DocumentIndexer documentIndexService;
+  private List<ElasticCustomFacetIndexer> customFacetIndexers;
 
   public JdbiVersionService(
       Jdbi jdbi,
       FileService fileService,
-      DocumentIndexer documentIndexService
-  ) {
+      DocumentIndexer documentIndexService,
+      List<ElasticCustomFacetIndexer> customFacetIndexers) {
     this.jdbi = jdbi;
     this.fileService = fileService;
     this.documentIndexService = documentIndexService;
+    this.customFacetIndexers = customFacetIndexers;
   }
 
   @Override
@@ -42,7 +45,11 @@ public class JdbiVersionService implements VersionService {
       @Nonnull LocalDateTime time
   ) {
     fileService.addFile(file);
-    documentIndexService.indexDocument(documentId, new String(file.getContent(), UTF_8));
+
+    var latestVersionContent = new String(file.getContent(), UTF_8);
+    documentIndexService.indexDocument(documentId, latestVersionContent);
+    customFacetIndexers.forEach(indexer -> indexer.indexDocument(documentId, latestVersionContent));
+
     var newVersion = new Version(documentId, time, file.getSha224());
     getVersionDao().insert(newVersion);
     return newVersion;

@@ -12,8 +12,11 @@ import org.junit.runner.RunWith;
 
 import javax.ws.rs.client.Client;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import static java.sql.DriverManager.getConnection;
+import static nl.knaw.huc.textrepo.Config.CUSTOM_INDEX;
+import static nl.knaw.huc.textrepo.Config.DOCUMENT_INDEX;
 import static nl.knaw.huc.textrepo.Config.HTTP_APP_HOST;
 import static nl.knaw.huc.textrepo.Config.HTTP_ES_HOST;
 import static nl.knaw.huc.textrepo.Config.POSTGRES_DB;
@@ -45,26 +48,33 @@ public abstract class AbstractConcordionTest {
 
   @BeforeSpecification
   public void setUp() {
-    deleteDocumentsIndex();
+    deleteIndices();
     emptyTextrepoDatabase();
   }
 
-  private void deleteDocumentsIndex() {
-    var documentsIndex = ES_HOST + "/documents";
+  private void deleteIndices() {
+    var indices = new ArrayList<String>();
+    indices.add(ES_HOST + "/" + DOCUMENT_INDEX);
+    indices.add(ES_HOST + "/" + CUSTOM_INDEX);
+    indices.forEach(this::deleteIndex);
+  }
+
+  private void deleteIndex(String index) {
+    System.out.printf("deleting index [%s]\n", index);
     var get = client()
-        .target(documentsIndex)
+        .target(index)
         .request().get();
     if (get.getStatus() == 404) {
       return;
     }
 
     var delete = client()
-        .target(documentsIndex)
+        .target(index)
         .request().delete();
     assertEquals(delete.getStatus(), 200);
 
     get = client()
-        .target(documentsIndex)
+        .target(index)
         .request().get();
     assertEquals(get.getStatus(), 404);
   }

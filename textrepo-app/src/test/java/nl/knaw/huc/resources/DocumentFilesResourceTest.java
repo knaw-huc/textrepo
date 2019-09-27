@@ -8,6 +8,7 @@ import nl.knaw.huc.service.FileService;
 import nl.knaw.huc.service.JdbiVersionService;
 import nl.knaw.huc.service.MetadataService;
 import nl.knaw.huc.service.VersionService;
+import nl.knaw.huc.service.index.ElasticCustomFacetIndexer;
 import nl.knaw.huc.service.index.ElasticDocumentIndexer;
 import nl.knaw.huc.service.store.FileStorage;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
@@ -26,6 +27,7 @@ import org.mockito.MockitoAnnotations;
 import javax.ws.rs.client.Entity;
 import java.util.UUID;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -43,10 +45,12 @@ public class DocumentFilesResourceTest {
   private static final FileService fileService = new FileService(mock(FileStorage.class));
   private static final ElasticDocumentIndexer documentIndexer = mock(ElasticDocumentIndexer.class);
   private static final MetadataService metadataService = mock(MetadataService.class);
+  private static final ElasticCustomFacetIndexer customFacetIndexer = mock(ElasticCustomFacetIndexer.class);
 
   private static final VersionService versionService = new JdbiVersionService(
       jdbi, fileService,
-      documentIndexer
+      documentIndexer,
+      newArrayList(customFacetIndexer)
   );
 
   private static final DocumentFileService documentFileService = new DocumentFileService(

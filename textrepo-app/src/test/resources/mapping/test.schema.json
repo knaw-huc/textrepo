@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://example.com/es-mapping.schema.json",
+  "title": "Elasticsearch mapping",
+  "type": "object",
+  "properties": {
+    "mappings": {
+      "description": "mapping root tag",
+      "type": "object",
+      "properties": {
+        "properties": {
+          "description": "Elasticseach mapping has 'properties'-property...",
+          "type": "object",
+          "properties": {
+            "id": {"type": "object", "properties": {"type": {"type":"string", "enum": ["keyword"]}}},
+            "text": {"type": "object", "properties": {"type": {"type":"string", "enum": ["text"]}}},
+            "facsimiles": {"type": "object", "properties": {"type": {"type":"string", "enum": ["keyword"]}}},
+            "corr": {"type": "object", "properties": {"type": {"type":"string", "enum": ["keyword"]}}},
+            "texttypes": {"type": "object", "properties": {"type": {"type":"string", "enum": ["keyword"]}}},
+            "languages": {"type": "object", "properties": {"type": {"type":"string", "enum": ["keyword"]}}},
+            "has_date": {"type": "object", "properties": {"type": {"type":"string", "enum": ["boolean"]}}},
+            "sender_or_recipient": {"type": "object", "properties": {"type": {"type":"string", "enum": ["keyword"]}}},
+            "person": {"type": "object", "properties": {"type": {"type":"string", "enum": ["keyword"]}}},
+            "org": {"type": "object", "properties": {"type": {"type":"string", "enum": ["keyword"]}}},
+            "loc": {"type": "object", "properties": {"type": {"type":"string", "enum": ["keyword"]}}},
+            "misc": {"type": "object", "properties": {"type": {"type":"string", "enum": ["keyword"]}}},
+            "date": {"type": "object", "properties": {"type": {"type":"string", "enum": ["date"]}}},
+            "recipient": {"type": "object", "properties": {"type": {"type":"string", "enum": ["keyword"]}}},
+            "recipientloc": {"type": "object", "properties": {"type": {"type":"string", "enum": ["keyword"]}}},
+            "recipientgender": {"type": "object", "properties": {"type": {"type":"string", "enum": ["keyword"]}}},
+            "recipientprof": {"type": "object", "properties": {"type": {"type":"string", "enum": ["keyword"]}}},
+            "sender": {"type": "object", "properties": {"type": {"type":"string", "enum": ["keyword"]}}},
+            "senderprof": {"type": "object", "properties": {"type": {"type":"string", "enum": ["keyword"]}}},
+            "senderloc": {"type": "object", "properties": {"type": {"type":"string", "enum": ["keyword"]}}},
+            "sendergender": {"type": "object", "properties": {"type": {"type":"string", "enum": ["keyword"]}}},
+            "recipientship": {"type": "object", "properties": {"type": {"type":"string", "enum": ["keyword"]}}},
+            "sendership": {"type": "object", "properties": {"type": {"type":"string", "enum": ["keyword"]}}}
+          },
+          "required": ["id", "text", "facsimiles", "corr", "texttypes", "languages", "has_date", "sender_or_recipient", "person", "org", "loc", "misc", "date", "recipient", "recipientloc", "recipientgender", "recipientprof", "sender", "senderprof", "senderloc", "sendergender", "recipientship", "sendership"]
+        }
+      },
+      "required": ["properties"]
+    }
+  },
+  "required": ["mappings"]
+}

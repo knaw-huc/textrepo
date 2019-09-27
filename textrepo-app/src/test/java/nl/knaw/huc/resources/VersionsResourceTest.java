@@ -9,6 +9,7 @@ import nl.knaw.huc.db.VersionDao;
 import nl.knaw.huc.service.FileService;
 import nl.knaw.huc.service.JdbiVersionService;
 import nl.knaw.huc.service.VersionService;
+import nl.knaw.huc.service.index.ElasticCustomFacetIndexer;
 import nl.knaw.huc.service.index.ElasticDocumentIndexer;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.jdbi.v3.core.Jdbi;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -41,7 +43,8 @@ public class VersionsResourceTest {
   private static final VersionService versionService = new JdbiVersionService(
       jdbi,
       mock(FileService.class),
-      mock(ElasticDocumentIndexer.class)
+      mock(ElasticDocumentIndexer.class),
+      newArrayList(mock(ElasticCustomFacetIndexer.class))
   );
 
   private static final VersionDao versionDao = mock(VersionDao.class);

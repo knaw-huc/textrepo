@@ -1,7 +1,5 @@
 package nl.knaw.huc.resources;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import nl.knaw.huc.api.MetadataEntry;
@@ -12,6 +10,7 @@ import nl.knaw.huc.service.FileService;
 import nl.knaw.huc.service.JdbiVersionService;
 import nl.knaw.huc.service.MetadataService;
 import nl.knaw.huc.service.VersionService;
+import nl.knaw.huc.service.index.ElasticCustomFacetIndexer;
 import nl.knaw.huc.service.index.ElasticDocumentIndexer;
 import nl.knaw.huc.service.store.FileStorage;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
@@ -30,13 +29,13 @@ import org.mockito.MockitoAnnotations;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.util.Map;
 import java.util.UUID;
 import java.util.function.Supplier;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
-import static nl.knaw.huc.resources.TestUtils.getResourceFileBits;
-import static nl.knaw.huc.resources.TestUtils.getResourceFileString;
+import static nl.knaw.huc.resources.TestUtils.getResourceAsBytes;
+import static nl.knaw.huc.resources.TestUtils.getResourceAsString;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -54,7 +53,8 @@ public class DocumentsResourceTest {
   private static final Jdbi jdbi = mock(Jdbi.class);
   private static final ElasticDocumentIndexer documentIndexer = mock(ElasticDocumentIndexer.class);
   private static final MetadataService metadataService = mock(MetadataService.class);
-  private static final VersionService versions = new JdbiVersionService(jdbi, files, documentIndexer);
+  private static final ElasticCustomFacetIndexer facetIndexer = mock(ElasticCustomFacetIndexer.class);
+  private static final VersionService versions = new JdbiVersionService(jdbi, files, documentIndexer, newArrayList(facetIndexer));
   @SuppressWarnings("unchecked")
   private static final Supplier<UUID> idGenerator = mock(Supplier.class);
   private static final DocumentService documentService = new DocumentService(versions, idGenerator, metadataService);
@@ -105,7 +105,7 @@ public class DocumentsResourceTest {
   @Test
   public void testAddDocument_addsZippedFile_whenZip() throws IOException {
     var zipFilename = "hello-test.zip";
-    var zipFile = getResourceFileBits("zip/" + zipFilename);
+    var zipFile = getResourceAsBytes("zip/" + zipFilename);
 
     postTestFile(zipFile, zipFilename);
 
@@ -117,7 +117,7 @@ public class DocumentsResourceTest {
   @Test
   public void testAddDocument_addsMultipleFilesToIndex_whenZip() throws IOException {
     var zipFilename = "multiple-hello-tests.zip";
-    var zipFile = getResourceFileBits("zip/" + zipFilename);
+    var zipFile = getResourceAsBytes("zip/" + zipFilename);
 
     postTestFile(zipFile, zipFilename);
 
@@ -127,7 +127,7 @@ public class DocumentsResourceTest {
   @Test
   public void testAddDocument_returnsLocationsByFile_whenZip() throws IOException {
     var zipFilename = "multiple-hello-tests.zip";
-    var zipFile = getResourceFileBits("zip/" + zipFilename);
+    var zipFile = getResourceAsBytes("zip/" + zipFilename);
 
     var response = postTestFile(zipFile, zipFilename);
     var body = response.readEntity(String.class);
@@ -148,7 +148,7 @@ public class DocumentsResourceTest {
   @Test
   public void testAddDocument_skipsZippedDirectories_whenZip() throws IOException {
     var zipFilename = "hello-test-in-dir.zip";
-    var zipFile = getResourceFileBits("zip/" + zipFilename);
+    var zipFile = getResourceAsBytes("zip/" + zipFilename);
 
     postTestFile(zipFile, zipFilename);
 
@@ -163,12 +163,12 @@ public class DocumentsResourceTest {
   @Test
   public void testAddDocument_skipsHiddenFiles_whenZip() throws IOException {
     var zipFilename = "mac-archive.zip";
-    var zipFile = getResourceFileBits("zip/" + zipFilename);
+    var zipFile = getResourceAsBytes("zip/" + zipFilename);
 
     postTestFile(zipFile, zipFilename);
 
     var zippedFile = ArgumentCaptor.forClass(String.class);
-    var zippedContent = getResourceFileString("zip/mac-archive-content.xml");
+    var zippedContent = getResourceAsString("zip/mac-archive-content.xml");
     verify(documentIndexer, times(1)).indexDocument(
         ArgumentCaptor.forClass(UUID.class).capture(),
         zippedFile.capture()
@@ -193,7 +193,7 @@ public class DocumentsResourceTest {
   @Test
   public void testAddDocument_addsFilenameMetadata_whenZip() throws IOException {
     var zipFilename = "multiple-hello-tests.zip";
-    var zipFile = getResourceFileBits("zip/" + zipFilename);
+    var zipFile = getResourceAsBytes("zip/" + zipFilename);
 
     postTestFile(zipFile, zipFilename);
 

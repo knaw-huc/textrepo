@@ -5,9 +5,13 @@ import io.dropwizard.Configuration;
 import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.db.DataSourceFactory;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
+import nl.knaw.huc.service.index.CustomFacetIndexerConfiguration;
+import nl.knaw.huc.service.index.ElasticsearchConfiguration;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TextRepositoryConfiguration extends Configuration {
 
@@ -26,6 +30,10 @@ public class TextRepositoryConfiguration extends Configuration {
   @Valid
   @NotNull
   private SwaggerBundleConfiguration swaggerBundleConfiguration = new SwaggerBundleConfiguration();
+
+  @Valid
+  @NotNull
+  private List<CustomFacetIndexerConfiguration> customFacetIndexers = new ArrayList<>();
 
   @JsonProperty("jerseyClient")
   public JerseyClientConfiguration getJerseyClientConfiguration() {
@@ -66,5 +74,15 @@ public class TextRepositoryConfiguration extends Configuration {
   public void setSwaggerBundleConfiguration(
       SwaggerBundleConfiguration swaggerBundleConfiguration) {
     this.swaggerBundleConfiguration = swaggerBundleConfiguration;
+  }
+
+  @JsonProperty("customFacetIndexers")
+  public List<CustomFacetIndexerConfiguration> getCustomFacetIndexers() {
+    return customFacetIndexers;
+  }
+
+  @JsonProperty("customFacetIndexers")
+  public void setCustomFacetIndexers(List<CustomFacetIndexerConfiguration> customFacetIndexers) {
+    this.customFacetIndexers = customFacetIndexers;
   }
 }

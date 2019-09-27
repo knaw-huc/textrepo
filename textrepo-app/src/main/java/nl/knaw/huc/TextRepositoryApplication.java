@@ -1,7 +1,6 @@
 package nl.knaw.huc;
 
 import io.dropwizard.Application;
-import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.forms.MultiPartBundle;
 import io.dropwizard.jdbi3.JdbiFactory;
 import io.dropwizard.setup.Bootstrap;
@@ -18,12 +17,14 @@ import nl.knaw.huc.service.DocumentService;
 import nl.knaw.huc.service.FileService;
 import nl.knaw.huc.service.JdbiMetadataService;
 import nl.knaw.huc.service.JdbiVersionService;
+import nl.knaw.huc.service.index.ElasticCustomFacetIndexer;
 import nl.knaw.huc.service.index.ElasticDocumentIndexer;
 import nl.knaw.huc.service.store.JdbiFileStorage;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class TextRepositoryApplication extends Application<TextRepositoryConfiguration> {
@@ -68,12 +69,19 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     var documentIndexService = new ElasticDocumentIndexer(config.getElasticsearch());
     environment.lifecycle().manage(documentIndexService);
 
+    var customIndexers = new ArrayList<ElasticCustomFacetIndexer>();
+    for (var customIndexerConfig : config.getCustomFacetIndexers()) {
+      var customFacetIndexer = new ElasticCustomFacetIndexer(customIndexerConfig);
+      environment.lifecycle().manage(customFacetIndexer);
+      customIndexers.add(customFacetIndexer);
+    }
+
     var fileStoreService = new JdbiFileStorage(jdbi);
     var fileService = new FileService(fileStoreService);
     var filesResource = new FilesResource(fileService);
 
     var metadataService = new JdbiMetadataService(jdbi);
-    var versionService = new JdbiVersionService(jdbi, fileService, documentIndexService);
+    var versionService = new JdbiVersionService(jdbi, fileService, documentIndexService, customIndexers);
     var documentFileService = new DocumentFileService(fileService, versionService, metadataService);
     var documentService = new DocumentService(versionService, UUID::randomUUID, metadataService);
     var documentsResource = new DocumentsResource(documentService);

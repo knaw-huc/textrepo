@@ -26,5 +26,14 @@ elasticsearch:
   index: documents
   contentField: content
 
+customFacetIndexers:
+- mapping: https://demo.gekaaptebrieven.diginfra.net/api/projects/gekaaptebrieven/mapping
+  fields: https://demo.gekaaptebrieven.diginfra.net/api/projects/gekaaptebrieven/documents/x/fields
+  elasticsearch:
+    index: custom-facet
+    contentField: content
+    hosts:
+      - elasticsearch:9200
+
 swagger:
   resourcePackage: nl.knaw.huc.resources

@@ -12,6 +12,8 @@ public class Config {
   public static final String POSTGRES_DB = requireNonBlank(getenv("POSTGRES_DB"));
   public static final String POSTGRES_USER = requireNonBlank(getenv("POSTGRES_USER"));
   public static final String POSTGRES_HOST = requireNonBlank(getenv("POSTGRES_HOST"));
+  public static final String DOCUMENT_INDEX = requireNonBlank(getenv("DOCUMENT_INDEX"));
+  public static final String CUSTOM_INDEX = requireNonBlank(getenv("CUSTOM_INDEX"));
 
   private static String requireNonBlank(String field) {
     if (isBlank(field)) {
