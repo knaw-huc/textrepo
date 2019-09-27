@@ -1,5 +1,6 @@
 package nl.knaw.huc.textrepo;
 
+import static java.lang.String.format;
 import static java.lang.System.getenv;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -14,7 +15,7 @@ public class Config {
 
   private static String requireNonBlank(String field) {
     if (isBlank(field)) {
-      throw new RuntimeException("Environment variable is not set");
+      throw new RuntimeException(format("Env var [%s] is not set", field));
     }
     return field;
   }
