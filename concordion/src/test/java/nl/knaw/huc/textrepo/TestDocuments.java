@@ -4,12 +4,8 @@ import com.jayway.jsonpath.JsonPath;
 import org.concordion.api.MultiValueResult;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
-import org.junit.Ignore;
 
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
-import java.util.Optional;
-import java.util.UUID;
 
 import static nl.knaw.huc.textrepo.Config.HTTP_APP_HOST;
 import static nl.knaw.huc.textrepo.TestUtils.getLocation;
@@ -31,6 +27,8 @@ public class TestDocuments extends AbstractConcordionTest {
     var locationHeader = getLocation(response);
     var optionalDocumentId = locationHeader.map(TestUtils::getDocumentId);
     var documentId = optionalDocumentId.orElse("No document id");
+
+    System.out.println("lets fail in sout");
 
     return new MultiValueResult()
         .with("status", getStatus(response))

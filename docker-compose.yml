@@ -81,6 +81,8 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_HOST: ${POSTGRES_HOST}
+      DOCUMENT_INDEX: ${DOCUMENT_INDEX}
+      CUSTOM_INDEX: ${CUSTOM_INDEX}
 
 networks:
   textrepo_network:
