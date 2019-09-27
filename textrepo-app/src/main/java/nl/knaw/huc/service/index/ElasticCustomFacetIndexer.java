@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.client.Client;
+import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.UUID;
 
@@ -66,11 +67,17 @@ public class ElasticCustomFacetIndexer implements DocumentIndexer, Managed {
 
   @Override
   public void indexDocument(@Nonnull UUID document, @NotNull String latestVersionContent) {
-    var esFacets = jerseyClient
+    Response response = jerseyClient
         .target(config.fields)
         .request()
-        .post(entity(latestVersionContent, APPLICATION_XML_TYPE))
+        .post(entity(latestVersionContent, APPLICATION_XML_TYPE));
+    var esFacets = response
         .readEntity(String.class);
+
+    if (response.getStatus() != 200) {
+      logger.error("Could not get fields: {} - {}", response.getStatus(), esFacets);
+      return;
+    }
 
     var indexRequest = new IndexRequest(this.config.elasticsearch.index)
         .id(document.toString())

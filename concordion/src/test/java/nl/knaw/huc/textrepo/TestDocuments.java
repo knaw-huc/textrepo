@@ -28,12 +28,12 @@ public class TestDocuments extends AbstractConcordionTest {
     var optionalDocumentId = locationHeader.map(TestUtils::getDocumentId);
     var documentId = optionalDocumentId.orElse("No document id");
 
-    System.out.println("lets fail in sout");
-
     return new MultiValueResult()
         .with("status", getStatus(response))
-        .with("hasLocationHeader", locationHeader.map(l -> "has a Location header")
-                                                 .orElse("Missing Location header"))
+        .with("hasLocationHeader", locationHeader
+            .map(l -> "has a Location header")
+            .orElse("Missing Location header")
+        )
         .with("location", locationHeader.orElse("No location"))
         .with("esLocation", "/documents/_doc/" + documentId)
         .with("documentId", documentId)
