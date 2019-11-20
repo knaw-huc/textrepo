@@ -17,24 +17,24 @@ import java.util.UUID;
 
 public interface MetadataDao {
 
-  @SqlUpdate("insert into metadata (document_uuid, key, value) values (:id, :key, :value)")
-  void insert(@Bind("id") UUID documentId, @BindBean MetadataEntry metadataEntry);
+  @SqlUpdate("insert into metadata (file_uuid, key, value) values (:id, :key, :value)")
+  void insert(@Bind("id") UUID fileId, @BindBean MetadataEntry metadataEntry);
 
   @Transaction
-  @SqlUpdate("update metadata set value = :value where document_uuid = :id and key = :key ")
-  void update(@Bind("id") UUID documentId, @BindBean MetadataEntry metadataEntry);
+  @SqlUpdate("update metadata set value = :value where file_uuid = :id and key = :key ")
+  void update(@Bind("id") UUID fileId, @BindBean MetadataEntry metadataEntry);
 
   @Transaction
-  @SqlBatch("insert into metadata (document_uuid, key, value) values (:id, :key, :value)")
+  @SqlBatch("insert into metadata (file_uuid, key, value) values (:id, :key, :value)")
   @BatchChunkSize(1000)
-  void bulkInsert(@Bind("id") UUID documentId, @BindBean Iterator<Map.Entry<String,String>> entries);
+  void bulkInsert(@Bind("id") UUID fileId, @BindBean Iterator<Map.Entry<String,String>> entries);
 
-  @SqlQuery("select document_uuid, key, value from metadata where document_uuid = ? and key = ?")
+  @SqlQuery("select file_uuid, key, value from metadata where file_uuid = ? and key = ?")
   @RegisterConstructorMapper(MetadataEntry.class)
-  Optional<MetadataEntry> findByDocumentUuidAndKey(@Bind UUID documentUuid, @Bind String key);
+  Optional<MetadataEntry> findByFileUuidAndKey(@Bind UUID fileUuid, @Bind String key);
 
-  @SqlQuery("select document_uuid, key, value from metadata where document_uuid = ?")
+  @SqlQuery("select file_uuid, key, value from metadata where file_uuid = ?")
   @RegisterConstructorMapper(MetadataEntry.class)
-  Iterator<MetadataEntry> findByDocumentUuid(@Bind UUID documentUuid);
+  Iterator<MetadataEntry> findByFileUuid(@Bind UUID fileUuid);
 
 }

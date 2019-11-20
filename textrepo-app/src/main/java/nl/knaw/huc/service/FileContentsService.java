@@ -12,13 +12,13 @@ import java.util.UUID;
 import static java.lang.String.format;
 import static java.time.LocalDateTime.now;
 
-public class DocumentContentsService {
+public class FileContentsService {
 
   private final ContentsService contentsService;
   private final VersionService versionService;
   private MetadataService metadataService;
 
-  public DocumentContentsService(
+  public FileContentsService(
       ContentsService contentsService,
       VersionService versionService,
       MetadataService metadataService
@@ -28,28 +28,28 @@ public class DocumentContentsService {
     this.metadataService = metadataService;
   }
 
-  public TextRepoContents getLatestFile(UUID documentId) {
+  public TextRepoContents getLatestFile(UUID fileId) {
 
     var version = versionService
-        .findLatestVersion(documentId)
-        .orElseThrow(() -> new NotFoundException(format("No such document: %s", documentId)));
+        .findLatestVersion(fileId)
+        .orElseThrow(() -> new NotFoundException(format("No such file: %s", fileId)));
 
     return contentsService.getBySha224(version.getContentsSha());
   }
 
-  public Version replaceDocumentContents(
-      @Nonnull UUID documentId,
+  public Version replaceFileContents(
+      @Nonnull UUID fileId,
       @Nonnull TextRepoContents contents,
       String filename
   ) {
     final var currentSha224 = contents.getSha224();
 
     var version = versionService
-        .findLatestVersion(documentId)
-        .filter(v -> v.getContentsSha().equals(currentSha224)) // already the current file for this document
-        .orElseGet(() -> versionService.insertNewVersion(documentId, contents, filename, now()));
+        .findLatestVersion(fileId)
+        .filter(v -> v.getContentsSha().equals(currentSha224)) // already the current file for this file
+        .orElseGet(() -> versionService.insertNewVersion(fileId, contents, filename, now()));
 
-    metadataService.update(documentId, new MetadataEntry("filename", filename));
+    metadataService.update(fileId, new MetadataEntry("filename", filename));
 
     return version;
   }

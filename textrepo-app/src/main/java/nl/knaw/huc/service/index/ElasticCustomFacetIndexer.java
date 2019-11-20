@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.client.Client;
-import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.UUID;
 
@@ -21,17 +20,17 @@ import static javax.ws.rs.core.MediaType.APPLICATION_XML_TYPE;
 import static org.elasticsearch.common.xcontent.XContentType.JSON;
 
 
-public class ElasticCustomFacetIndexer implements DocumentIndexer, Managed {
+public class ElasticCustomFacetIndexer implements FileIndexer, Managed {
 
   private final CustomFacetIndexerConfiguration config;
   private Logger logger = LoggerFactory.getLogger(this.getClass());
-  private ElasticDocumentIndexer indexer;
+  private ElasticFileIndexer indexer;
 
   private Client jerseyClient = JerseyClientBuilder.newClient();
 
   public ElasticCustomFacetIndexer(CustomFacetIndexerConfiguration config) {
     this.config = config;
-    indexer = new ElasticDocumentIndexer(config.elasticsearch);
+    indexer = new ElasticFileIndexer(config.elasticsearch);
     createIndex(config);
   }
 
@@ -66,7 +65,7 @@ public class ElasticCustomFacetIndexer implements DocumentIndexer, Managed {
   }
 
   @Override
-  public void indexDocument(@Nonnull UUID document, @NotNull String latestVersionContent) {
+  public void indexFile(@Nonnull UUID fileId, @NotNull String latestVersionContent) {
     var response = jerseyClient
         .target(config.fields)
         .request()
@@ -80,7 +79,7 @@ public class ElasticCustomFacetIndexer implements DocumentIndexer, Managed {
     }
 
     var indexRequest = new IndexRequest(this.config.elasticsearch.index)
-        .id(document.toString())
+        .id(fileId.toString())
         .source(esFacets, JSON);
 
     indexer.indexRequest(indexRequest);

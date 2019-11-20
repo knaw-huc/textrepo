@@ -13,14 +13,14 @@ import java.util.UUID;
 
 public interface VersionDao {
 
-  @SqlUpdate("insert into versions (document_uuid, date, contents_sha) values (:documentUuid, :date, :contentsSha)")
+  @SqlUpdate("insert into versions (file_uuid, date, contents_sha) values (:fileUuid, :date, :contentsSha)")
   void insert(@BindBean Version version);
 
-  @SqlQuery("select document_uuid, date, contents_sha from versions where document_uuid = ? order by date desc limit 1")
+  @SqlQuery("select file_uuid, date, contents_sha from versions where file_uuid = ? order by date desc limit 1")
   @RegisterConstructorMapper(value = Version.class)
-  Optional<Version> findLatestByDocumentUuid(@Bind UUID documentUuid);
+  Optional<Version> findLatestByFileUuid(@Bind UUID fileUuid);
 
-  @SqlQuery("select document_uuid, date, contents_sha from versions where document_uuid = ? order by date asc")
+  @SqlQuery("select file_uuid, date, contents_sha from versions where file_uuid = ? order by date asc")
   @RegisterConstructorMapper(value = Version.class)
   List<Version> findByUuid(UUID uuid);
 }

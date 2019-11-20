@@ -16,19 +16,19 @@ import static java.lang.String.format;
 import static java.time.LocalDateTime.now;
 import static nl.knaw.huc.api.TextRepoContents.fromContent;
 
-public class DocumentService {
+public class FileService {
   private final VersionService versionService;
-  private final Supplier<UUID> documentIdGenerator;
+  private final Supplier<UUID> fileIdGenerator;
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private MetadataService metadataService;
 
-  public DocumentService(
+  public FileService(
       VersionService versionService,
-      Supplier<UUID> documentIdGenerator,
+      Supplier<UUID> fileIdGenerator,
       MetadataService metadataService) {
     this.versionService = versionService;
-    this.documentIdGenerator = documentIdGenerator;
+    this.fileIdGenerator = fileIdGenerator;
     this.metadataService = metadataService;
   }
 
@@ -37,20 +37,20 @@ public class DocumentService {
       String filename
   ) {
     final var contents = fromContent(content);
-    return addDocument(contents, filename);
+    return addFile(contents, filename);
   }
 
-  private Version addDocument(@Nonnull TextRepoContents contents, String filename) {
-    var version = versionService.insertNewVersion(documentIdGenerator.get(), contents, filename, now());
-    metadataService.insert(version.getDocumentUuid(), new MetadataEntry("filename", filename));
+  private Version addFile(@Nonnull TextRepoContents contents, String filename) {
+    var version = versionService.insertNewVersion(fileIdGenerator.get(), contents, filename, now());
+    metadataService.insert(version.getFileUuid(), new MetadataEntry("filename", filename));
     return version;
   }
 
 
-  public Version getLatestVersion(@Nonnull UUID documentId) {
+  public Version getLatestVersion(@Nonnull UUID fileId) {
     return versionService
-        .findLatestVersion(documentId)
-        .orElseThrow(() -> new NotFoundException(format("No such document: %s", documentId)));
+        .findLatestVersion(fileId)
+        .orElseThrow(() -> new NotFoundException(format("No such file: %s", fileId)));
   }
 
 }

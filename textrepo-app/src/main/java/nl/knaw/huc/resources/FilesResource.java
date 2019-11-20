@@ -9,7 +9,7 @@ import nl.knaw.huc.api.FormContents;
 import nl.knaw.huc.api.MultipleLocations;
 import nl.knaw.huc.api.ResultContents;
 import nl.knaw.huc.api.Version;
-import nl.knaw.huc.service.DocumentService;
+import nl.knaw.huc.service.FileService;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -36,14 +36,14 @@ import static nl.knaw.huc.resources.ZipHandling.isZip;
 
 @Api(tags = {"documents"})
 @Path("/documents")
-public class DocumentsResource {
+public class FilesResource {
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-  private final DocumentService documentService;
+  private final FileService fileService;
 
-  public DocumentsResource(DocumentService documentService) {
-    this.documentService = documentService;
+  public FilesResource(FileService fileService) {
+    this.fileService = fileService;
   }
 
   @POST
@@ -54,18 +54,18 @@ public class DocumentsResource {
   @ApiResponses(value = {
       @ApiResponse(code = 201, message = "OK"),
       @ApiResponse(code = 200, response = MultipleLocations.class, message = "OK")})
-  public Response addDocument(
+  public Response addFile(
       @FormDataParam("contents") InputStream inputStream,
       @FormDataParam("contents") FormDataContentDisposition fileDetail,
       @FormDataParam("contents") FormDataBodyPart bodyPart
   ) {
-    logger.debug("addDocument: filename={}", fileDetail == null ? "" : fileDetail.getFileName());
+    logger.debug("addFile: filename={}", fileDetail == null ? "" : fileDetail.getFileName());
     if (isZip(bodyPart, fileDetail)) {
-      var resultFiles = handleZipFile(inputStream, this::handleNewDocument);
+      var resultFiles = handleZipFile(inputStream, this::handleNewFile);
       return Response.ok(new MultipleLocations(resultFiles)).build();
     }
 
-    var resultFile = handleNewDocument(new FormContents(
+    var resultFile = handleNewFile(new FormContents(
         fileDetail.getFileName(),
         readContent(inputStream)
     ));
@@ -79,14 +79,14 @@ public class DocumentsResource {
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Get latest version of document")
   @ApiResponses(value = {@ApiResponse(code = 200, response = Version.class, message = "OK")})
-  public Response getLatestVersionOfDocument(@PathParam("uuid") @Valid UUID documentId) {
-    logger.debug("getLatestVersionOfDocument: documentId={}", documentId);
-    var version = documentService.getLatestVersion(documentId);
+  public Response getLatestVersionOfFile(@PathParam("uuid") @Valid UUID fileId) {
+    logger.debug("getLatestVersionOfFile: documentId={}", fileId);
+    var version = fileService.getLatestVersion(fileId);
     return Response.ok(version).build();
   }
 
-  private ResultContents handleNewDocument(FormContents formContents) {
-    var version = documentService.createVersionWithFilenameMetadata(
+  private ResultContents handleNewFile(FormContents formContents) {
+    var version = fileService.createVersionWithFilenameMetadata(
         formContents.getContent(),
         formContents.getName()
     );

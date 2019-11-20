@@ -7,18 +7,18 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.federecio.dropwizard.swagger.SwaggerBundle;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
-import nl.knaw.huc.resources.DocumentFilesResource;
-import nl.knaw.huc.resources.DocumentsResource;
+import nl.knaw.huc.resources.FileContentsResource;
+import nl.knaw.huc.resources.FilesResource;
 import nl.knaw.huc.resources.ContentsResource;
 import nl.knaw.huc.resources.MetadataResource;
 import nl.knaw.huc.resources.VersionsResource;
-import nl.knaw.huc.service.DocumentContentsService;
-import nl.knaw.huc.service.DocumentService;
+import nl.knaw.huc.service.FileContentsService;
+import nl.knaw.huc.service.FileService;
 import nl.knaw.huc.service.ContentsService;
 import nl.knaw.huc.service.JdbiMetadataService;
 import nl.knaw.huc.service.JdbiVersionService;
 import nl.knaw.huc.service.index.ElasticCustomFacetIndexer;
-import nl.knaw.huc.service.index.ElasticDocumentIndexer;
+import nl.knaw.huc.service.index.ElasticFileIndexer;
 import nl.knaw.huc.service.store.JdbiContentsStorage;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 import org.slf4j.Logger;
@@ -66,8 +66,8 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     );
     jdbi.installPlugin(new SqlObjectPlugin());
 
-    var documentIndexService = new ElasticDocumentIndexer(config.getElasticsearch());
-    environment.lifecycle().manage(documentIndexService);
+    var fileIndexService = new ElasticFileIndexer(config.getElasticsearch());
+    environment.lifecycle().manage(fileIndexService);
 
     var customIndexers = new ArrayList<ElasticCustomFacetIndexer>();
     for (var customIndexerConfig : config.getCustomFacetIndexers()) {
@@ -78,21 +78,21 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
 
     var contentsStoreService = new JdbiContentsStorage(jdbi);
     var contentsService = new ContentsService(contentsStoreService);
-    var filesResource = new ContentsResource(contentsService);
+    var contentsResource = new ContentsResource(contentsService);
 
     var metadataService = new JdbiMetadataService(jdbi);
-    var versionService = new JdbiVersionService(jdbi, contentsService, documentIndexService, customIndexers);
-    var documentFileService = new DocumentContentsService(contentsService, versionService, metadataService);
-    var documentService = new DocumentService(versionService, UUID::randomUUID, metadataService);
-    var documentsResource = new DocumentsResource(documentService);
-    var documentFilesResource = new DocumentFilesResource(documentFileService);
+    var versionService = new JdbiVersionService(jdbi, contentsService, fileIndexService, customIndexers);
+    var fileContentsService = new FileContentsService(contentsService, versionService, metadataService);
+    var fileService = new FileService(versionService, UUID::randomUUID, metadataService);
+    var filesResource = new FilesResource(fileService);
+    var fileContentsResource = new FileContentsResource(fileContentsService);
     var metadataResource = new MetadataResource(metadataService);
     var versionsResource = new VersionsResource(versionService);
 
     environment.jersey().register(metadataResource);
-    environment.jersey().register(documentsResource);
-    environment.jersey().register(documentFilesResource);
     environment.jersey().register(filesResource);
+    environment.jersey().register(fileContentsResource);
+    environment.jersey().register(contentsResource);
     environment.jersey().register(versionsResource);
   }
 

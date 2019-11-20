@@ -23,8 +23,8 @@ public class ResourceUtils {
 
   public static URI locationOf(Version version) {
     return UriBuilder
-        .fromResource(DocumentsResource.class)
+        .fromResource(FilesResource.class)
         .path("{uuid}")
-        .build(version.getDocumentUuid());
+        .build(version.getFileUuid());
   }
 }

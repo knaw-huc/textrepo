@@ -9,19 +9,19 @@ import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.UUID;
 
-public class ElasticDocumentIndexer implements DocumentIndexer, Managed {
+public class ElasticFileIndexer implements FileIndexer, Managed {
 
   private TextRepoElasticClient client;
   private final ElasticsearchConfiguration config;
 
-  public ElasticDocumentIndexer(ElasticsearchConfiguration config) {
+  public ElasticFileIndexer(ElasticsearchConfiguration config) {
     this.config = config;
     client = new TextRepoElasticClient(config);
   }
 
-  public void indexDocument(@Nonnull UUID document, @NotNull String latestVersionContent) {
+  public void indexFile(@Nonnull UUID fileId, @NotNull String latestVersionContent) {
     var indexRequest = new IndexRequest(config.index)
-        .id(document.toString())
+        .id(fileId.toString())
         .source(config.contentField, latestVersionContent);
     indexRequest(indexRequest);
   }

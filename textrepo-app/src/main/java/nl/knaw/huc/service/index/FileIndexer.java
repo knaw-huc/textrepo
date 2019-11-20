@@ -4,6 +4,6 @@ import javax.annotation.Nonnull;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
-public interface DocumentIndexer {
-  void indexDocument(@Nonnull UUID documentId, @NotNull String latestVersionContent);
+public interface FileIndexer {
+  void indexFile(@Nonnull UUID fileId, @NotNull String latestVersionContent);
 }

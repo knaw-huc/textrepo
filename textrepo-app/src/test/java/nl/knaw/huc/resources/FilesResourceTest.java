@@ -5,13 +5,13 @@ import io.dropwizard.testing.junit.ResourceTestRule;
 import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.api.MultipleLocations;
 import nl.knaw.huc.db.VersionDao;
-import nl.knaw.huc.service.DocumentService;
+import nl.knaw.huc.service.FileService;
 import nl.knaw.huc.service.ContentsService;
 import nl.knaw.huc.service.JdbiVersionService;
 import nl.knaw.huc.service.MetadataService;
 import nl.knaw.huc.service.VersionService;
 import nl.knaw.huc.service.index.ElasticCustomFacetIndexer;
-import nl.knaw.huc.service.index.ElasticDocumentIndexer;
+import nl.knaw.huc.service.index.ElasticFileIndexer;
 import nl.knaw.huc.service.store.ContentsStorage;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
@@ -44,27 +44,27 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class DocumentsResourceTest {
+public class FilesResourceTest {
   private static final String uuid = "b59c2b24-cafe-babe-9bb3-deadbeefc2c6";
   private static final String content = "hello test";
   private String filename = "just-a-filename.txt";
 
   private static final ContentsService contentsService = new ContentsService(mock(ContentsStorage.class));
   private static final Jdbi jdbi = mock(Jdbi.class);
-  private static final ElasticDocumentIndexer documentIndexer = mock(ElasticDocumentIndexer.class);
+  private static final ElasticFileIndexer fileIndexer = mock(ElasticFileIndexer.class);
   private static final MetadataService metadataService = mock(MetadataService.class);
   private static final ElasticCustomFacetIndexer facetIndexer = mock(ElasticCustomFacetIndexer.class);
-  private static final VersionService versions = new JdbiVersionService(jdbi, contentsService, documentIndexer, newArrayList(facetIndexer));
+  private static final VersionService versions = new JdbiVersionService(jdbi, contentsService, fileIndexer, newArrayList(facetIndexer));
   @SuppressWarnings("unchecked")
   private static final Supplier<UUID> idGenerator = mock(Supplier.class);
-  private static final DocumentService documentService = new DocumentService(versions, idGenerator, metadataService);
+  private static final FileService FILE_SERVICE = new FileService(versions, idGenerator, metadataService);
   private static final VersionDao versionDao = mock(VersionDao.class);
 
   @ClassRule
   public static final ResourceTestRule resource = ResourceTestRule
       .builder()
       .addProvider(MultiPartFeature.class)
-      .addResource(new DocumentsResource(documentService))
+      .addResource(new FilesResource(FILE_SERVICE))
       .build();
 
   @Captor
@@ -82,50 +82,50 @@ public class DocumentsResourceTest {
 
   @After
   public void resetMocks() {
-    reset(jdbi, versionDao, documentIndexer, metadataService);
+    reset(jdbi, versionDao, fileIndexer, metadataService);
   }
 
   @Test
-  public void testPostDocument_returns201CreatedWithLocationHeader_whenContentsUploaded() {
+  public void testPostFile_returns201CreatedWithLocationHeader_whenContentsUploaded() {
     final var response = postTestContents();
     assertThat(response.getStatus()).isEqualTo(201);
     assertThat(response.getHeaderString("Location")).endsWith("documents/" + uuid);
   }
 
   @Test
-  public void testAddDocument_addsContentsWithDocumentIdToIndex() {
+  public void testAddFile_addsContentsWithFileIdToIndex() {
     postTestContents();
-    var documentId = ArgumentCaptor.forClass(UUID.class);
+    var fileId = ArgumentCaptor.forClass(UUID.class);
     var latestVersionContent = ArgumentCaptor.forClass(String.class);
-    verify(documentIndexer).indexDocument(documentId.capture(), latestVersionContent.capture());
-    assertThat(documentId.getValue()).isOfAnyClassIn(UUID.class);
+    verify(fileIndexer).indexFile(fileId.capture(), latestVersionContent.capture());
+    assertThat(fileId.getValue()).isOfAnyClassIn(UUID.class);
     assertThat(latestVersionContent.getValue()).isEqualTo(content);
   }
 
   @Test
-  public void testAddDocument_addsZippedContents_whenZip() throws IOException {
+  public void testAddFile_addsZippedContents_whenZip() throws IOException {
     var zipFilename = "hello-test.zip";
     var zipFile = getResourceAsBytes("zip/" + zipFilename);
 
     postTestContents(zipFile, zipFilename);
 
     var zippedFile = ArgumentCaptor.forClass(String.class);
-    verify(documentIndexer).indexDocument(ArgumentCaptor.forClass(UUID.class).capture(), zippedFile.capture());
+    verify(fileIndexer).indexFile(ArgumentCaptor.forClass(UUID.class).capture(), zippedFile.capture());
     assertThat(zippedFile.getValue()).isEqualToIgnoringWhitespace(content);
   }
 
   @Test
-  public void testAddDocument_addsMultipleFilesToIndex_whenZip() throws IOException {
+  public void testAddFile_addsMultipleFilesToIndex_whenZip() throws IOException {
     var zipFilename = "multiple-hello-tests.zip";
     var zipFile = getResourceAsBytes("zip/" + zipFilename);
 
     postTestContents(zipFile, zipFilename);
 
-    verify(documentIndexer, times(2)).indexDocument(any(UUID.class), any(String.class));
+    verify(fileIndexer, times(2)).indexFile(any(UUID.class), any(String.class));
   }
 
   @Test
-  public void testAddDocument_returnsLocationsByFile_whenZip() throws IOException {
+  public void testAddFile_returnsLocationsByFile_whenZip() throws IOException {
     var zipFilename = "multiple-hello-tests.zip";
     var zipFile = getResourceAsBytes("zip/" + zipFilename);
 
@@ -146,14 +146,14 @@ public class DocumentsResourceTest {
   }
 
   @Test
-  public void testAddDocument_skipsZippedDirectories_whenZip() throws IOException {
+  public void testAddFile_skipsZippedDirectories_whenZip() throws IOException {
     var zipFilename = "hello-test-in-dir.zip";
     var zipFile = getResourceAsBytes("zip/" + zipFilename);
 
     postTestContents(zipFile, zipFilename);
 
     var zippedFile = ArgumentCaptor.forClass(String.class);
-    verify(documentIndexer, times(1)).indexDocument(
+    verify(fileIndexer, times(1)).indexFile(
         ArgumentCaptor.forClass(UUID.class).capture(),
         zippedFile.capture()
     );
@@ -161,7 +161,7 @@ public class DocumentsResourceTest {
   }
 
   @Test
-  public void testAddDocument_skipsHiddenFiles_whenZip() throws IOException {
+  public void testAddFile_skipsHiddenFiles_whenZip() throws IOException {
     var zipFilename = "mac-archive.zip";
     var zipFile = getResourceAsBytes("zip/" + zipFilename);
 
@@ -169,7 +169,7 @@ public class DocumentsResourceTest {
 
     var zippedContentsCaptor = ArgumentCaptor.forClass(String.class);
     var zippedContent = getResourceAsString("zip/mac-archive-content.xml");
-    verify(documentIndexer, times(1)).indexDocument(
+    verify(fileIndexer, times(1)).indexFile(
         ArgumentCaptor.forClass(UUID.class).capture(),
         zippedContentsCaptor.capture()
     );
@@ -177,7 +177,7 @@ public class DocumentsResourceTest {
   }
 
   @Test
-  public void testAddDocument_addsFilenameMetadata() throws IOException {
+  public void testAddFile_addsFilenameMetadata() throws IOException {
     postTestContents();
 
     verify(metadataService, times(1)).insert(
@@ -191,7 +191,7 @@ public class DocumentsResourceTest {
   }
 
   @Test
-  public void testAddDocument_addsFilenameMetadata_whenZip() throws IOException {
+  public void testAddFile_addsFilenameMetadata_whenZip() throws IOException {
     var zipFilename = "multiple-hello-tests.zip";
     var zipFile = getResourceAsBytes("zip/" + zipFilename);
 

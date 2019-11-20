@@ -71,27 +71,27 @@ public class ElasticCustomFacetIndexerTest {
   }
 
   @Test
-  public void testIndexDocument_requestsFields() throws IOException {
+  public void testIndexFile_requestsFields() throws IOException {
     var config = createCustomFacetIndexerConfiguration();
     mockMappingResponse();
     mockCreatingIndexResponse(config);
     var indexer = new ElasticCustomFacetIndexer(config);
-    var documentId = UUID.randomUUID();
+    var fileId = UUID.randomUUID();
     var postDoc2FieldsRequest = request()
         .withMethod("POST")
         .withPath(mockFieldsEndpoint)
-        .withBody(getResourceAsString("fields/document.xml"));
+        .withBody(getResourceAsString("fields/file.xml"));
     mockDoc2FieldsResponse(postDoc2FieldsRequest);
-    var putDocumentRequest = request()
+    var putFileRequest = request()
         .withMethod("PUT")
-        .withPath(format("/%s/_doc/%s", config.elasticsearch.index, documentId))
+        .withPath(format("/%s/_doc/%s", config.elasticsearch.index, fileId))
         .withBody(jsonSchema(getResourceAsString("fields/fields.schema.json")));
-    mockIndexFieldsResponse(putDocumentRequest);
+    mockIndexFieldsResponse(putFileRequest);
 
-    indexer.indexDocument(documentId, getResourceAsString("fields/document.xml"));
+    indexer.indexFile(fileId, getResourceAsString("fields/file.xml"));
 
     mockServer.verify(postDoc2FieldsRequest, once());
-    mockIndexServer.verify(putDocumentRequest, once());
+    mockIndexServer.verify(putFileRequest, once());
   }
 
   private void mockDoc2FieldsResponse(HttpRequest request) throws IOException {

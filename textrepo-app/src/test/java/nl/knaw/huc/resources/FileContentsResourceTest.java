@@ -3,13 +3,13 @@ package nl.knaw.huc.resources;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.db.VersionDao;
-import nl.knaw.huc.service.DocumentContentsService;
+import nl.knaw.huc.service.FileContentsService;
 import nl.knaw.huc.service.ContentsService;
 import nl.knaw.huc.service.JdbiVersionService;
 import nl.knaw.huc.service.MetadataService;
 import nl.knaw.huc.service.VersionService;
 import nl.knaw.huc.service.index.ElasticCustomFacetIndexer;
-import nl.knaw.huc.service.index.ElasticDocumentIndexer;
+import nl.knaw.huc.service.index.ElasticFileIndexer;
 import nl.knaw.huc.service.store.ContentsStorage;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
@@ -37,23 +37,23 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class DocumentContentsResourceTest {
+public class FileContentsResourceTest {
   private static final String content = "hello test";
   private String filename = "just-a-filename.txt";
 
   private static final Jdbi jdbi = mock(Jdbi.class);
   private static final ContentsService CONTENTS_SERVICE = new ContentsService(mock(ContentsStorage.class));
-  private static final ElasticDocumentIndexer documentIndexer = mock(ElasticDocumentIndexer.class);
+  private static final ElasticFileIndexer fileIndexer = mock(ElasticFileIndexer.class);
   private static final MetadataService metadataService = mock(MetadataService.class);
   private static final ElasticCustomFacetIndexer customFacetIndexer = mock(ElasticCustomFacetIndexer.class);
 
   private static final VersionService versionService = new JdbiVersionService(
       jdbi, CONTENTS_SERVICE,
-      documentIndexer,
+      fileIndexer,
       newArrayList(customFacetIndexer)
   );
 
-  private static final DocumentContentsService DOCUMENT_CONTENTS_SERVICE = new DocumentContentsService(
+  private static final FileContentsService FILE_CONTENTS_SERVICE = new FileContentsService(
       CONTENTS_SERVICE,
       versionService,
       metadataService
@@ -65,7 +65,7 @@ public class DocumentContentsResourceTest {
   public static final ResourceTestRule resource = ResourceTestRule
       .builder()
       .addProvider(MultiPartFeature.class)
-      .addResource(new DocumentFilesResource(DOCUMENT_CONTENTS_SERVICE))
+      .addResource(new FileContentsResource(FILE_CONTENTS_SERVICE))
       .build();
 
   @Captor
@@ -82,11 +82,11 @@ public class DocumentContentsResourceTest {
 
   @After
   public void resetMocks() {
-    reset(jdbi, versionDao, documentIndexer, metadataService);
+    reset(jdbi, versionDao, fileIndexer, metadataService);
   }
 
   @Test
-  public void testUpdateDocumentFile_addsFilenameMetadata() {
+  public void testUpdateFileContents_addsFilenameMetadata() {
     putTestFile();
 
     verify(metadataService, times(1)).update(

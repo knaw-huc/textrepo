@@ -8,13 +8,13 @@ import java.util.Map;
 import java.util.UUID;
 
 public interface MetadataService {
-  Map<String, String> getMetadata(UUID documentId);
+  Map<String, String> getMetadata(UUID fileId);
 
-  void addMetadata(@Nonnull UUID documentId, @Nonnull Map<String, String> metadata);
+  void addMetadata(@Nonnull UUID fileId, @Nonnull Map<String, String> metadata);
 
-  void insert(@Nonnull UUID documentId, @Nonnull MetadataEntry entry);
+  void insert(@Nonnull UUID fileId, @Nonnull MetadataEntry entry);
 
-  void update(@Nonnull UUID documentId, MetadataEntry entry);
+  void update(@Nonnull UUID fileId, MetadataEntry entry);
 
-  Iterator<MetadataEntry> find(@Nonnull UUID documentId);
+  Iterator<MetadataEntry> find(@Nonnull UUID fileId);
 }

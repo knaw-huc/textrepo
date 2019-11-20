@@ -7,7 +7,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.ResultContents;
 import nl.knaw.huc.api.Version;
-import nl.knaw.huc.service.DocumentContentsService;
+import nl.knaw.huc.service.FileContentsService;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -35,36 +35,36 @@ import static nl.knaw.huc.resources.ResourceUtils.readContent;
 
 @Api(tags = {"documents", "contents"})
 @Path("/documents/{uuid}/contents")
-public class DocumentFilesResource {
+public class FileContentsResource {
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-  private final DocumentContentsService documentContentsService;
+  private final FileContentsService fileContentsService;
 
-  public DocumentFilesResource(DocumentContentsService documentContentsService) {
-    this.documentContentsService = documentContentsService;
+  public FileContentsResource(FileContentsService fileContentsService) {
+    this.fileContentsService = fileContentsService;
   }
 
   @PUT
   @Timed
   @Consumes(MULTIPART_FORM_DATA)
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Create a new document version by uploading a new file")
+  @ApiOperation(value = "Create a new file version by uploading a new file")
   @ApiResponses(value = {@ApiResponse(code = 200, response = Version.class, message = "OK")})
-  public Response updateDocumentFile(
-      @PathParam("uuid") @Valid UUID documentId,
+  public Response updateFileContents(
+      @PathParam("uuid") @Valid UUID fileId,
       @FormDataParam("contents") InputStream uploadedInputStream,
       @FormDataParam("contents") FormDataContentDisposition fileDetail,
       @FormDataParam("contents") FormDataBodyPart bodyPart
   ) {
-    logger.debug("updateDocumentFile: documentId={}, file={}", documentId, fileDetail.getFileName());
+    logger.debug("updateFileContents: fileId={}, file={}", fileId, fileDetail.getFileName());
     var resultFile = handleUpdate(
-        documentId,
+        fileId,
         readContent(uploadedInputStream),
         fileDetail.getFileName()
     );
     if (resultFile == null) {
-      throw new NotFoundException("Could not replace document file");
+      throw new NotFoundException("Could not replace file contents");
     }
     return Response.ok(resultFile.getVersion()).build();
   }
@@ -72,11 +72,11 @@ public class DocumentFilesResource {
   @GET
   @Timed
   @Produces(APPLICATION_OCTET_STREAM)
-  @ApiOperation(value = "Download latest file of document")
+  @ApiOperation(value = "Download latest file contents")
   @ApiResponses(value = {@ApiResponse(code = 200, response = byte[].class, message = "OK")})
-  public Response getFile(@PathParam("uuid") @Valid UUID documentId) {
-    logger.debug("getFile: documentId={}", documentId);
-    var contents = documentContentsService.getLatestFile(documentId);
+  public Response getContents(@PathParam("uuid") @Valid UUID fileId) {
+    logger.debug("getContents: fileId={}", fileId);
+    var contents = fileContentsService.getLatestFile(fileId);
     return Response
         .ok(contents.getContent(), APPLICATION_OCTET_STREAM)
         .header("Content-Disposition", "attachment;")
@@ -89,15 +89,15 @@ public class DocumentFilesResource {
    * @return new version, or null if not replaced
    */
   private ResultContents handleUpdate(
-      UUID documentId,
+      UUID fileId,
       byte[] content,
       String filename
   ) {
-    logger.debug("replacing contents: documentId={}", documentId);
+    logger.debug("replacing contents: fileId={}", fileId);
     var contents = fromContent(content);
 
     final var startReplacing = now();
-    var version = documentContentsService.replaceDocumentContents(documentId, contents, filename);
+    var version = fileContentsService.replaceFileContents(fileId, contents, filename);
 
     if (version.getDate().isBefore(startReplacing)) {
       logger.info("skip existing [{}]", filename);

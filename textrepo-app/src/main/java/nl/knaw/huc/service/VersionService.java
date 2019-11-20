@@ -12,10 +12,10 @@ import java.util.UUID;
 
 public interface VersionService {
 
-  Optional<Version> findLatestVersion(@Nonnull UUID documentId);
+  Optional<Version> findLatestVersion(@Nonnull UUID fileId);
 
-  Version insertNewVersion(@Nonnull UUID documentId, @Nonnull TextRepoContents contents, @Nonnull String filename,
+  Version insertNewVersion(@Nonnull UUID fileId, @Nonnull TextRepoContents contents, @Nonnull String filename,
                            @Nonnull LocalDateTime time);
 
-  List<Version> getVersions(UUID documentId);
+  List<Version> getVersions(UUID fileId);
 }

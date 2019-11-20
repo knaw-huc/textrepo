@@ -40,14 +40,14 @@ public class MetadataResource {
   @Timed
   @Consumes(APPLICATION_JSON)
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Create metadata for a document")
+  @ApiOperation(value = "Create metadata for a file")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
   public Response addMetadata(
-      @PathParam("uuid") @Valid UUID documentId,
+      @PathParam("uuid") @Valid UUID fileId,
       Map<String, String> metadata
   ) {
-    logger.debug("addMetadata: documentId={}, metadata={}", documentId, metadata);
-    metadataService.addMetadata(documentId, metadata);
+    logger.debug("addMetadata: documentId={}, metadata={}", fileId, metadata);
+    metadataService.addMetadata(fileId, metadata);
     return Response.ok().build();
   }
 
@@ -56,26 +56,26 @@ public class MetadataResource {
   @Timed
   @Consumes(APPLICATION_JSON)
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Update value of a document metadata entry")
+  @ApiOperation(value = "Update value of a file metadata entry")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
   public Response updateMetadataEntry(
-      @PathParam("uuid") @Valid UUID documentId,
+      @PathParam("uuid") @Valid UUID fileId,
       @PathParam("key") @Valid String key,
       String value
   ) {
-    logger.debug("updateMetadata: documentId={}, key={}, value={}", documentId, key, value);
-    metadataService.update(documentId, new MetadataEntry(key, value));
+    logger.debug("updateMetadata: fileId={}, key={}, value={}", fileId, key, value);
+    metadataService.update(fileId, new MetadataEntry(key, value));
     return Response.ok().build();
   }
 
   @GET
   @Timed
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Get all metadata of a document")
+  @ApiOperation(value = "Get all metadata of a file")
   @ApiResponses(value = {@ApiResponse(code = 200, responseContainer = "Map", response = String.class, message = "OK")})
-  public Response getMetadata(@PathParam("uuid") @Valid UUID documentId) {
-    logger.debug("getMetadata: documentId={}", documentId);
-    return Response.ok(metadataService.getMetadata(documentId)).build();
+  public Response getMetadata(@PathParam("uuid") @Valid UUID fileId) {
+    logger.debug("getMetadata: fileId={}", fileId);
+    return Response.ok(metadataService.getMetadata(fileId)).build();
   }
 
 }

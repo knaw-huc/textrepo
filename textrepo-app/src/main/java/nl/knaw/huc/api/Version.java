@@ -8,25 +8,25 @@ import java.util.UUID;
 
 public class Version {
 
-  private UUID documentUuid;
+  private UUID fileUuid;
   private LocalDateTime date;
   private String contentsSha;
 
-  @ConstructorProperties({"document_uuid", "date", "contents_sha"})
-  public Version(UUID documentUuid, LocalDateTime date, String contentsSha) {
-    this.documentUuid = documentUuid;
+  @ConstructorProperties({"file_uuid", "date", "contents_sha"})
+  public Version(UUID fileUuid, LocalDateTime date, String contentsSha) {
+    this.fileUuid = fileUuid;
     this.date = date;
     this.contentsSha = contentsSha;
   }
 
   @JsonProperty
-  public UUID getDocumentUuid() {
-    return documentUuid;
+  public UUID getFileUuid() {
+    return fileUuid;
   }
 
   @JsonProperty
-  public void setDocumentUuid(UUID documentUuid) {
-    this.documentUuid = documentUuid;
+  public void setFileUuid(UUID fileUuid) {
+    this.fileUuid = fileUuid;
   }
 
   @JsonProperty

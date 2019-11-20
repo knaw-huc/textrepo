@@ -18,30 +18,30 @@ public class JdbiMetadataService implements MetadataService {
   }
 
   @Override
-  public Map<String, String> getMetadata(UUID documentId) {
+  public Map<String, String> getMetadata(UUID fileId) {
     final var result = new HashMap<String, String>();
-    find(documentId).forEachRemaining(entry -> result.put(entry.getKey(), entry.getValue()));
+    find(fileId).forEachRemaining(entry -> result.put(entry.getKey(), entry.getValue()));
     return result;
   }
 
   @Override
-  public void addMetadata(@Nonnull UUID documentId, @Nonnull Map<String, String> metadata) {
-    getMetadataDao().bulkInsert(documentId, metadata.entrySet().iterator());
+  public void addMetadata(@Nonnull UUID fileId, @Nonnull Map<String, String> metadata) {
+    getMetadataDao().bulkInsert(fileId, metadata.entrySet().iterator());
   }
 
   @Override
-  public void insert(@Nonnull UUID documentId, @Nonnull MetadataEntry entry) {
-    getMetadataDao().insert(documentId, entry);
+  public void insert(@Nonnull UUID fileId, @Nonnull MetadataEntry entry) {
+    getMetadataDao().insert(fileId, entry);
   }
 
   @Override
-  public void update(@Nonnull UUID documentId, MetadataEntry entry) {
-    getMetadataDao().update(documentId, entry);
+  public void update(@Nonnull UUID fileId, MetadataEntry entry) {
+    getMetadataDao().update(fileId, entry);
   }
 
   @Override
-  public Iterator<MetadataEntry> find(@Nonnull UUID documentId) {
-    return getMetadataDao().findByDocumentUuid(documentId);
+  public Iterator<MetadataEntry> find(@Nonnull UUID fileId) {
+    return getMetadataDao().findByFileUuid(fileId);
   }
 
   private MetadataDao getMetadataDao() {

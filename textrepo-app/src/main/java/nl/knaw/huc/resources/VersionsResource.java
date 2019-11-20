@@ -38,10 +38,10 @@ public class VersionsResource {
   @ApiOperation(value = "Get all versions of a document")
   @ApiResponses(value = {@ApiResponse(code = 200, responseContainer = "Map", response = Version.class, message = "OK")})
   public Response getVersions(
-      @PathParam("uuid") @Valid UUID documentId
+      @PathParam("uuid") @Valid UUID fileId
   ) {
-    logger.debug("getVersions: documentId={}", documentId);
-    return Response.ok().entity(versionService.getVersions(documentId)).build();
+    logger.debug("getVersions: documentId={}", fileId);
+    return Response.ok().entity(versionService.getVersions(fileId)).build();
   }
 
 }

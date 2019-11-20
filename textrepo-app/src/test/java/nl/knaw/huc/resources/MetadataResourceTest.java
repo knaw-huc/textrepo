@@ -1,6 +1,5 @@
 package nl.knaw.huc.resources;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.db.MetadataDao;
@@ -30,7 +29,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class MetadataResourceTest {
-  private static final UUID documentId = UUID.fromString("adefaced-cafe-babe-0001-added1234567");
+  private static final UUID fileId = UUID.fromString("adefaced-cafe-babe-0001-added1234567");
 
   private static final Jdbi jdbi = mock(Jdbi.class);
 
@@ -48,7 +47,7 @@ public class MetadataResourceTest {
   @Captor
   private ArgumentCaptor<MetadataEntry> metadataCaptor;
   @Captor
-  private ArgumentCaptor<UUID> documentIdCaptor;
+  private ArgumentCaptor<UUID> fileIdCaptor;
 
   @Before
   public void setupMocks() {
@@ -67,19 +66,19 @@ public class MetadataResourceTest {
     var value = "FOXP2";
     var metadata = new MetadataEntry(key, value);
 
-    var response = putMetadata(documentId, metadata);
+    var response = putMetadata(fileId, metadata);
 
     assertThat(response.getStatus()).isEqualTo(200);
-    verify(metadataDao, times(1)).update(documentIdCaptor.capture(), metadataCaptor.capture());
-    assertThat(documentIdCaptor.getValue()).isEqualTo(documentId);
+    verify(metadataDao, times(1)).update(fileIdCaptor.capture(), metadataCaptor.capture());
+    assertThat(fileIdCaptor.getValue()).isEqualTo(fileId);
     assertThat(metadataCaptor.getValue().getKey()).isEqualTo(key);
     assertThat(metadataCaptor.getValue().getValue()).isEqualTo(value);
   }
 
-  private Response putMetadata(UUID documentId, MetadataEntry metadataEntry) throws JsonProcessingException {
+  private Response putMetadata(UUID fileId, MetadataEntry metadataEntry) {
     return resource
         .client()
-        .target("/documents/" + documentId.toString() + "/metadata/" + metadataEntry.getKey())
+        .target("/documents/" + fileId.toString() + "/metadata/" + metadataEntry.getKey())
         .request()
         .put(Entity.json(metadataEntry.getValue()));
 

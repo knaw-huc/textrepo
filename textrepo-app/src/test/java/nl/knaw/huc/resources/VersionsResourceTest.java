@@ -10,7 +10,7 @@ import nl.knaw.huc.service.ContentsService;
 import nl.knaw.huc.service.JdbiVersionService;
 import nl.knaw.huc.service.VersionService;
 import nl.knaw.huc.service.index.ElasticCustomFacetIndexer;
-import nl.knaw.huc.service.index.ElasticDocumentIndexer;
+import nl.knaw.huc.service.index.ElasticFileIndexer;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.jdbi.v3.core.Jdbi;
 import org.junit.After;
@@ -43,7 +43,7 @@ public class VersionsResourceTest {
   private static final VersionService versionService = new JdbiVersionService(
       jdbi,
       mock(ContentsService.class),
-      mock(ElasticDocumentIndexer.class),
+      mock(ElasticFileIndexer.class),
       newArrayList(mock(ElasticCustomFacetIndexer.class))
   );
 
@@ -87,9 +87,9 @@ public class VersionsResourceTest {
     mapper.registerModule(new JavaTimeModule());
     List<Version> actual = mapper.readValue(responseJson, new TypeReference<List<Version>>(){});
     assertThat(actual.size()).isEqualTo(2);
-    assertThat(actual.get(0).getDocumentUuid()).isEqualTo(uuid);
+    assertThat(actual.get(0).getFileUuid()).isEqualTo(uuid);
     assertThat(actual.get(0).getContentsSha()).isEqualTo(sha1);
-    assertThat(actual.get(1).getDocumentUuid()).isEqualTo(uuid);
+    assertThat(actual.get(1).getFileUuid()).isEqualTo(uuid);
     assertThat(actual.get(1).getContentsSha()).isEqualTo(sha2);
   }
 
