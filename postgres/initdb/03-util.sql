@@ -1,5 +1,5 @@
 -- truncate all tables owned by username
-CREATE OR REPLACE FUNCTION truncate_tables_by_username(username IN VARCHAR) RETURNS void AS $$
+CREATE OR REPLACE FUNCTION truncate_tables_by_owner(username IN VARCHAR) RETURNS void AS $$
 DECLARE
     statements CURSOR FOR
     SELECT tablename FROM pg_tables
