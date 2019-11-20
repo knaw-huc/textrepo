@@ -67,7 +67,7 @@ public class ElasticCustomFacetIndexer implements DocumentIndexer, Managed {
 
   @Override
   public void indexDocument(@Nonnull UUID document, @NotNull String latestVersionContent) {
-    Response response = jerseyClient
+    var response = jerseyClient
         .target(config.fields)
         .request()
         .post(entity(latestVersionContent, APPLICATION_XML_TYPE));

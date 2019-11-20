@@ -19,4 +19,4 @@ When [```/files/deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefcafebabe```](- "
 [retrieved](- "#result = retrieve(#uri)"):
 
   - the HTTP status should be [404](- "?=#result.status");
-  - the resulting object should contain the error message "[File not found](- "?=#result.message")"
+  - the resulting object should contain the error message "[Contents not found](- "?=#result.message")"

@@ -1,7 +1,7 @@
 package nl.knaw.huc.resources;
 
-import nl.knaw.huc.api.FormFile;
-import nl.knaw.huc.api.ResultFile;
+import nl.knaw.huc.api.FormContents;
+import nl.knaw.huc.api.ResultContents;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.slf4j.Logger;
@@ -32,11 +32,11 @@ class ZipHandling {
         "zip".equals(getExtension(fileDetail.getFileName()));
   }
 
-  static ArrayList<ResultFile> handleZipFile(
+  static ArrayList<ResultContents> handleZipFile(
       InputStream uploadedInputStream,
-      Function<FormFile, ResultFile> handleFile
+      Function<FormContents, ResultContents> handleFile
   ) {
-    var results = new ArrayList<ResultFile>();
+    var results = new ArrayList<ResultContents>();
 
     var inputStream = new ZipInputStream(uploadedInputStream);
 
@@ -53,7 +53,7 @@ class ZipHandling {
         inputStream.transferTo(buffer);
         var content = buffer.toByteArray();
         buffer.reset();
-        var formFile = new FormFile(filename, content);
+        var formFile = new FormContents(filename, content);
         var resultFile = handleFile.apply(formFile);
         results.add(resultFile);
       }

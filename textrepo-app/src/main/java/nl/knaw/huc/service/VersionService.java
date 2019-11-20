@@ -1,6 +1,6 @@
 package nl.knaw.huc.service;
 
-import nl.knaw.huc.api.TextRepoFile;
+import nl.knaw.huc.api.TextRepoContents;
 import nl.knaw.huc.api.Version;
 
 import javax.annotation.Nonnull;
@@ -14,7 +14,7 @@ public interface VersionService {
 
   Optional<Version> findLatestVersion(@Nonnull UUID documentId);
 
-  Version insertNewVersion(@Nonnull UUID documentId, @Nonnull TextRepoFile file, @Nonnull String filename,
+  Version insertNewVersion(@Nonnull UUID documentId, @Nonnull TextRepoContents contents, @Nonnull String filename,
                            @Nonnull LocalDateTime time);
 
   List<Version> getVersions(UUID documentId);

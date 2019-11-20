@@ -6,13 +6,13 @@ import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.api.MultipleLocations;
 import nl.knaw.huc.db.VersionDao;
 import nl.knaw.huc.service.DocumentService;
-import nl.knaw.huc.service.FileService;
+import nl.knaw.huc.service.ContentsService;
 import nl.knaw.huc.service.JdbiVersionService;
 import nl.knaw.huc.service.MetadataService;
 import nl.knaw.huc.service.VersionService;
 import nl.knaw.huc.service.index.ElasticCustomFacetIndexer;
 import nl.knaw.huc.service.index.ElasticDocumentIndexer;
-import nl.knaw.huc.service.store.FileStorage;
+import nl.knaw.huc.service.store.ContentsStorage;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
@@ -49,12 +49,12 @@ public class DocumentsResourceTest {
   private static final String content = "hello test";
   private String filename = "just-a-filename.txt";
 
-  private static final FileService files = new FileService(mock(FileStorage.class));
+  private static final ContentsService contentsService = new ContentsService(mock(ContentsStorage.class));
   private static final Jdbi jdbi = mock(Jdbi.class);
   private static final ElasticDocumentIndexer documentIndexer = mock(ElasticDocumentIndexer.class);
   private static final MetadataService metadataService = mock(MetadataService.class);
   private static final ElasticCustomFacetIndexer facetIndexer = mock(ElasticCustomFacetIndexer.class);
-  private static final VersionService versions = new JdbiVersionService(jdbi, files, documentIndexer, newArrayList(facetIndexer));
+  private static final VersionService versions = new JdbiVersionService(jdbi, contentsService, documentIndexer, newArrayList(facetIndexer));
   @SuppressWarnings("unchecked")
   private static final Supplier<UUID> idGenerator = mock(Supplier.class);
   private static final DocumentService documentService = new DocumentService(versions, idGenerator, metadataService);
@@ -86,15 +86,15 @@ public class DocumentsResourceTest {
   }
 
   @Test
-  public void testPostDocument_returns201CreatedWithLocationHeader_whenFileUploaded() {
-    final var response = postTestFile();
+  public void testPostDocument_returns201CreatedWithLocationHeader_whenContentsUploaded() {
+    final var response = postTestContents();
     assertThat(response.getStatus()).isEqualTo(201);
     assertThat(response.getHeaderString("Location")).endsWith("documents/" + uuid);
   }
 
   @Test
-  public void testAddDocument_addsFileWithDocumentIdToIndex() {
-    postTestFile();
+  public void testAddDocument_addsContentsWithDocumentIdToIndex() {
+    postTestContents();
     var documentId = ArgumentCaptor.forClass(UUID.class);
     var latestVersionContent = ArgumentCaptor.forClass(String.class);
     verify(documentIndexer).indexDocument(documentId.capture(), latestVersionContent.capture());
@@ -103,11 +103,11 @@ public class DocumentsResourceTest {
   }
 
   @Test
-  public void testAddDocument_addsZippedFile_whenZip() throws IOException {
+  public void testAddDocument_addsZippedContents_whenZip() throws IOException {
     var zipFilename = "hello-test.zip";
     var zipFile = getResourceAsBytes("zip/" + zipFilename);
 
-    postTestFile(zipFile, zipFilename);
+    postTestContents(zipFile, zipFilename);
 
     var zippedFile = ArgumentCaptor.forClass(String.class);
     verify(documentIndexer).indexDocument(ArgumentCaptor.forClass(UUID.class).capture(), zippedFile.capture());
@@ -119,7 +119,7 @@ public class DocumentsResourceTest {
     var zipFilename = "multiple-hello-tests.zip";
     var zipFile = getResourceAsBytes("zip/" + zipFilename);
 
-    postTestFile(zipFile, zipFilename);
+    postTestContents(zipFile, zipFilename);
 
     verify(documentIndexer, times(2)).indexDocument(any(UUID.class), any(String.class));
   }
@@ -129,7 +129,7 @@ public class DocumentsResourceTest {
     var zipFilename = "multiple-hello-tests.zip";
     var zipFile = getResourceAsBytes("zip/" + zipFilename);
 
-    var response = postTestFile(zipFile, zipFilename);
+    var response = postTestContents(zipFile, zipFilename);
     var body = response.readEntity(String.class);
 
     var locations = new ObjectMapper().readValue(body, MultipleLocations.class).locations;
@@ -150,7 +150,7 @@ public class DocumentsResourceTest {
     var zipFilename = "hello-test-in-dir.zip";
     var zipFile = getResourceAsBytes("zip/" + zipFilename);
 
-    postTestFile(zipFile, zipFilename);
+    postTestContents(zipFile, zipFilename);
 
     var zippedFile = ArgumentCaptor.forClass(String.class);
     verify(documentIndexer, times(1)).indexDocument(
@@ -165,20 +165,20 @@ public class DocumentsResourceTest {
     var zipFilename = "mac-archive.zip";
     var zipFile = getResourceAsBytes("zip/" + zipFilename);
 
-    postTestFile(zipFile, zipFilename);
+    postTestContents(zipFile, zipFilename);
 
-    var zippedFile = ArgumentCaptor.forClass(String.class);
+    var zippedContentsCaptor = ArgumentCaptor.forClass(String.class);
     var zippedContent = getResourceAsString("zip/mac-archive-content.xml");
     verify(documentIndexer, times(1)).indexDocument(
         ArgumentCaptor.forClass(UUID.class).capture(),
-        zippedFile.capture()
+        zippedContentsCaptor.capture()
     );
-    assertThat(zippedFile.getValue()).isEqualToIgnoringWhitespace(zippedContent);
+    assertThat(zippedContentsCaptor.getValue()).isEqualToIgnoringWhitespace(zippedContent);
   }
 
   @Test
   public void testAddDocument_addsFilenameMetadata() throws IOException {
-    postTestFile();
+    postTestContents();
 
     verify(metadataService, times(1)).insert(
         uuidCaptor.capture(),
@@ -195,7 +195,7 @@ public class DocumentsResourceTest {
     var zipFilename = "multiple-hello-tests.zip";
     var zipFile = getResourceAsBytes("zip/" + zipFilename);
 
-    postTestFile(zipFile, zipFilename);
+    postTestContents(zipFile, zipFilename);
 
     verify(metadataService, times(2)).insert(
         uuidCaptor.capture(),
@@ -210,12 +210,12 @@ public class DocumentsResourceTest {
     assertThat(metadataEntries.get(1).getValue()).isEqualTo("hello-test2.txt");
   }
 
-  private Response postTestFile() {
+  private Response postTestContents() {
     var bytes = content.getBytes();
-    return postTestFile(bytes, filename);
+    return postTestContents(bytes, filename);
   }
 
-  private Response postTestFile(byte[] bytes, String filename) {
+  private Response postTestContents(byte[] bytes, String filename) {
     var contentDisposition = FormDataContentDisposition
         .name("file")
         .fileName(filename)

@@ -2,12 +2,12 @@ package nl.knaw.huc.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ResultFile {
+public class ResultContents {
 
   private Version version;
   private String filename;
 
-  public ResultFile(String filename, Version version) {
+  public ResultContents(String filename, Version version) {
     this.version = version;
     this.filename = filename;
   }

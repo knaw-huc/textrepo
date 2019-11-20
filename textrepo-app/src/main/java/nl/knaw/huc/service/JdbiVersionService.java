@@ -1,6 +1,6 @@
 package nl.knaw.huc.service;
 
-import nl.knaw.huc.api.TextRepoFile;
+import nl.knaw.huc.api.TextRepoContents;
 import nl.knaw.huc.api.Version;
 import nl.knaw.huc.db.VersionDao;
 import nl.knaw.huc.service.index.DocumentIndexer;
@@ -17,17 +17,17 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class JdbiVersionService implements VersionService {
   private final Jdbi jdbi;
-  private final FileService fileService;
+  private final ContentsService contentsService;
   private DocumentIndexer documentIndexService;
   private List<ElasticCustomFacetIndexer> customFacetIndexers;
 
   public JdbiVersionService(
       Jdbi jdbi,
-      FileService fileService,
+      ContentsService contentsService,
       DocumentIndexer documentIndexService,
       List<ElasticCustomFacetIndexer> customFacetIndexers) {
     this.jdbi = jdbi;
-    this.fileService = fileService;
+    this.contentsService = contentsService;
     this.documentIndexService = documentIndexService;
     this.customFacetIndexers = customFacetIndexers;
   }
@@ -40,17 +40,17 @@ public class JdbiVersionService implements VersionService {
   @Override
   public Version insertNewVersion(
       @Nonnull UUID documentId,
-      @Nonnull TextRepoFile file,
+      @Nonnull TextRepoContents contents,
       @Nonnull String filename,
       @Nonnull LocalDateTime time
   ) {
-    fileService.addFile(file);
+    contentsService.addContents(contents);
 
-    var latestVersionContent = new String(file.getContent(), UTF_8);
+    var latestVersionContent = new String(contents.getContent(), UTF_8);
     documentIndexService.indexDocument(documentId, latestVersionContent);
     customFacetIndexers.forEach(indexer -> indexer.indexDocument(documentId, latestVersionContent));
 
-    var newVersion = new Version(documentId, time, file.getSha224());
+    var newVersion = new Version(documentId, time, contents.getSha224());
     getVersionDao().insert(newVersion);
     return newVersion;
   }

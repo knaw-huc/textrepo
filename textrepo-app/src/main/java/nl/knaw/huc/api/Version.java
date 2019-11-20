@@ -10,13 +10,13 @@ public class Version {
 
   private UUID documentUuid;
   private LocalDateTime date;
-  private String fileSha;
+  private String contentsSha;
 
   @ConstructorProperties({"document_uuid", "date", "file_sha"})
-  public Version(UUID documentUuid, LocalDateTime date, String fileSha) {
+  public Version(UUID documentUuid, LocalDateTime date, String contentsSha) {
     this.documentUuid = documentUuid;
     this.date = date;
-    this.fileSha = fileSha;
+    this.contentsSha = contentsSha;
   }
 
   @JsonProperty
@@ -40,12 +40,12 @@ public class Version {
   }
 
   @JsonProperty
-  public String getFileSha() {
-    return fileSha;
+  public String getContentsSha() {
+    return contentsSha;
   }
 
   @JsonProperty
-  public void setFileSha(String fileSha) {
-    this.fileSha = fileSha;
+  public void setContentsSha(String contentsSha) {
+    this.contentsSha = contentsSha;
   }
 }

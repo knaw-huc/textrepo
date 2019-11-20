@@ -87,7 +87,7 @@ public class TestZipDocuments extends AbstractConcordionTest {
 
   private String getLatestVersionHash(String documentId) {
     var url = APP_HOST + "/documents/" + documentId;
-    return JsonPath.parse(getByUrl(url)).read("$.fileSha");
+    return JsonPath.parse(getByUrl(url)).read("$.contentsSha");
   }
 
   private String getIndexDocument(String documentId) {

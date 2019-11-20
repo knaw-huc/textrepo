@@ -6,7 +6,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import nl.knaw.huc.api.Version;
 import nl.knaw.huc.db.VersionDao;
-import nl.knaw.huc.service.FileService;
+import nl.knaw.huc.service.ContentsService;
 import nl.knaw.huc.service.JdbiVersionService;
 import nl.knaw.huc.service.VersionService;
 import nl.knaw.huc.service.index.ElasticCustomFacetIndexer;
@@ -42,7 +42,7 @@ public class VersionsResourceTest {
 
   private static final VersionService versionService = new JdbiVersionService(
       jdbi,
-      mock(FileService.class),
+      mock(ContentsService.class),
       mock(ElasticDocumentIndexer.class),
       newArrayList(mock(ElasticCustomFacetIndexer.class))
   );
@@ -88,9 +88,9 @@ public class VersionsResourceTest {
     List<Version> actual = mapper.readValue(responseJson, new TypeReference<List<Version>>(){});
     assertThat(actual.size()).isEqualTo(2);
     assertThat(actual.get(0).getDocumentUuid()).isEqualTo(uuid);
-    assertThat(actual.get(0).getFileSha()).isEqualTo(sha1);
+    assertThat(actual.get(0).getContentsSha()).isEqualTo(sha1);
     assertThat(actual.get(1).getDocumentUuid()).isEqualTo(uuid);
-    assertThat(actual.get(1).getFileSha()).isEqualTo(sha2);
+    assertThat(actual.get(1).getContentsSha()).isEqualTo(sha2);
   }
 
   private Response getVersions(UUID filename) {

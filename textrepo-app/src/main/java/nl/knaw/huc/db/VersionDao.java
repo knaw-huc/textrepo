@@ -13,7 +13,7 @@ import java.util.UUID;
 
 public interface VersionDao {
 
-  @SqlUpdate("insert into versions (document_uuid, date, file_sha) values (:documentUuid, :date, :fileSha)")
+  @SqlUpdate("insert into versions (document_uuid, date, file_sha) values (:documentUuid, :date, :contentsSha)")
   void insert(@BindBean Version version);
 
   @SqlQuery("select document_uuid, date, file_sha from versions where document_uuid = ? order by date desc limit 1")

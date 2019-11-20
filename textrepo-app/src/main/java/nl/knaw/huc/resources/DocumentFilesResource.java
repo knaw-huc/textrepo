@@ -5,9 +5,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import nl.knaw.huc.api.ResultFile;
+import nl.knaw.huc.api.ResultContents;
 import nl.knaw.huc.api.Version;
-import nl.knaw.huc.service.DocumentFileService;
+import nl.knaw.huc.service.DocumentContentsService;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -30,7 +30,7 @@ import static java.time.LocalDateTime.now;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
-import static nl.knaw.huc.api.TextRepoFile.fromContent;
+import static nl.knaw.huc.api.TextRepoContents.fromContent;
 import static nl.knaw.huc.resources.ResourceUtils.readContent;
 
 @Api(tags = {"documents", "files"})
@@ -39,10 +39,10 @@ public class DocumentFilesResource {
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-  private final DocumentFileService documentFileService;
+  private final DocumentContentsService documentContentsService;
 
-  public DocumentFilesResource(DocumentFileService documentFileService) {
-    this.documentFileService = documentFileService;
+  public DocumentFilesResource(DocumentContentsService documentContentsService) {
+    this.documentContentsService = documentContentsService;
   }
 
   @PUT
@@ -76,9 +76,9 @@ public class DocumentFilesResource {
   @ApiResponses(value = {@ApiResponse(code = 200, response = byte[].class, message = "OK")})
   public Response getFile(@PathParam("uuid") @Valid UUID documentId) {
     logger.debug("getFile: documentId={}", documentId);
-    var file = documentFileService.getLatestFile(documentId);
+    var contents = documentContentsService.getLatestFile(documentId);
     return Response
-        .ok(file.getContent(), APPLICATION_OCTET_STREAM)
+        .ok(contents.getContent(), APPLICATION_OCTET_STREAM)
         .header("Content-Disposition", "attachment;")
         .build();
   }
@@ -88,22 +88,22 @@ public class DocumentFilesResource {
    *
    * @return new version, or null if not replaced
    */
-  private ResultFile handleUpdate(
+  private ResultContents handleUpdate(
       UUID documentId,
       byte[] content,
       String filename
   ) {
-    logger.debug("replacing file: documentId={}", documentId);
-    var file = fromContent(content);
+    logger.debug("replacing contents: documentId={}", documentId);
+    var contents = fromContent(content);
 
     final var startReplacing = now();
-    var version = documentFileService.replaceDocumentFile(documentId, file, filename);
+    var version = documentContentsService.replaceDocumentContents(documentId, contents, filename);
 
     if (version.getDate().isBefore(startReplacing)) {
       logger.info("skip existing [{}]", filename);
       return null;
     }
 
-    return new ResultFile(filename, version);
+    return new ResultContents(filename, version);
   }
 }

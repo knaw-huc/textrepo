@@ -32,7 +32,7 @@ public class TestFileHandling extends AbstractConcordionTest {
         .request()
         .get();
     var versionJson = requestVersion.readEntity(String.class);
-    result.sha224 = JsonPath.parse(versionJson).read("$.fileSha");
+    result.sha224 = JsonPath.parse(versionJson).read("$.contentsSha");
 
     return result;
   }

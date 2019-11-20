@@ -9,17 +9,17 @@ import io.federecio.dropwizard.swagger.SwaggerBundle;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import nl.knaw.huc.resources.DocumentFilesResource;
 import nl.knaw.huc.resources.DocumentsResource;
-import nl.knaw.huc.resources.FilesResource;
+import nl.knaw.huc.resources.ContentsResource;
 import nl.knaw.huc.resources.MetadataResource;
 import nl.knaw.huc.resources.VersionsResource;
-import nl.knaw.huc.service.DocumentFileService;
+import nl.knaw.huc.service.DocumentContentsService;
 import nl.knaw.huc.service.DocumentService;
-import nl.knaw.huc.service.FileService;
+import nl.knaw.huc.service.ContentsService;
 import nl.knaw.huc.service.JdbiMetadataService;
 import nl.knaw.huc.service.JdbiVersionService;
 import nl.knaw.huc.service.index.ElasticCustomFacetIndexer;
 import nl.knaw.huc.service.index.ElasticDocumentIndexer;
-import nl.knaw.huc.service.store.JdbiFileStorage;
+import nl.knaw.huc.service.store.JdbiContentsStorage;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,13 +76,13 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
       customIndexers.add(customFacetIndexer);
     }
 
-    var fileStoreService = new JdbiFileStorage(jdbi);
-    var fileService = new FileService(fileStoreService);
-    var filesResource = new FilesResource(fileService);
+    var contentsStoreService = new JdbiContentsStorage(jdbi);
+    var contentsService = new ContentsService(contentsStoreService);
+    var filesResource = new ContentsResource(contentsService);
 
     var metadataService = new JdbiMetadataService(jdbi);
-    var versionService = new JdbiVersionService(jdbi, fileService, documentIndexService, customIndexers);
-    var documentFileService = new DocumentFileService(fileService, versionService, metadataService);
+    var versionService = new JdbiVersionService(jdbi, contentsService, documentIndexService, customIndexers);
+    var documentFileService = new DocumentContentsService(contentsService, versionService, metadataService);
     var documentService = new DocumentService(versionService, UUID::randomUUID, metadataService);
     var documentsResource = new DocumentsResource(documentService);
     var documentFilesResource = new DocumentFilesResource(documentFileService);

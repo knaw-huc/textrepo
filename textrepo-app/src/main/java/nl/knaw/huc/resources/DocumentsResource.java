@@ -5,9 +5,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import nl.knaw.huc.api.FormFile;
+import nl.knaw.huc.api.FormContents;
 import nl.knaw.huc.api.MultipleLocations;
-import nl.knaw.huc.api.ResultFile;
+import nl.knaw.huc.api.ResultContents;
 import nl.knaw.huc.api.Version;
 import nl.knaw.huc.service.DocumentService;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
@@ -65,7 +65,7 @@ public class DocumentsResource {
       return Response.ok(new MultipleLocations(resultFiles)).build();
     }
 
-    var resultFile = handleNewDocument(new FormFile(
+    var resultFile = handleNewDocument(new FormContents(
         fileDetail.getFileName(),
         readContent(inputStream)
     ));
@@ -85,12 +85,12 @@ public class DocumentsResource {
     return Response.ok(version).build();
   }
 
-  private ResultFile handleNewDocument(FormFile formFile) {
+  private ResultContents handleNewDocument(FormContents formContents) {
     var version = documentService.createVersionWithFilenameMetadata(
-        formFile.getContent(),
-        formFile.getName()
+        formContents.getContent(),
+        formContents.getName()
     );
-    return new ResultFile(formFile.getName(), version);
+    return new ResultContents(formContents.getName(), version);
   }
 
 }
