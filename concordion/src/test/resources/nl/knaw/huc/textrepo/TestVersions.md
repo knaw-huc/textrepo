@@ -5,7 +5,7 @@
 When:
 
  - creating a document with content [`hello test`](- "#content") at [`/documents`](- "#documentsEndpoint");
- - updating it with [hello test2](- "#newContent") at [`/documents/{documentId}/files`](- "#documentFilesEndpoint");
+ - updating it with [hello test2](- "#newContent") at [`/documents/{documentId}/contents`](- "#documentFilesEndpoint");
 
 [ ](- "#doc=uploadMultipleVersions(#content, #documentsEndpoint, #newContent, #documentFilesEndpoint)")
 Then:

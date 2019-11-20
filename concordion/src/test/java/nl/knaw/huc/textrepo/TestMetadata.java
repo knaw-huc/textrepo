@@ -19,7 +19,7 @@ import static nl.knaw.huc.textrepo.TestUtils.replace;
 
 public class TestMetadata extends AbstractConcordionTest {
 
-  private static final String PUT_DOCUMENT_FILE_URL = HTTP_APP_HOST + "/documents/%s/files";
+  private static final String PUT_DOCUMENT_FILE_URL = HTTP_APP_HOST + "/documents/%s/contents";
 
   public static class TestMetadataResult {
     public String documentId;

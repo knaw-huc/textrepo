@@ -22,8 +22,8 @@ import java.net.URI;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
 
-@Api(tags = {"files"})
-@Path("/files")
+@Api(tags = {"file content"})
+@Path("/contents")
 public class ContentsResource {
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());

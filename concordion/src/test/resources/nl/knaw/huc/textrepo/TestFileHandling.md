@@ -7,7 +7,7 @@ When a file with contents "[hello test](- "#text")" is [```POST```ed](- "#result
 
 ## [Retrieving an existing file](- "retrieve-existing")
 
-When [```/files/55d4c44f5bc05762d8807f75f3f24b4095afa583ef70ac97eaf7afc6```](- "#uri") is 
+When [```/contents/55d4c44f5bc05762d8807f75f3f24b4095afa583ef70ac97eaf7afc6```](- "#uri") is 
 [retrieved](- "#result = retrieve(#uri)"):
 
   - the HTTP status should be [200](- "?=#result.status");
@@ -15,7 +15,7 @@ When [```/files/55d4c44f5bc05762d8807f75f3f24b4095afa583ef70ac97eaf7afc6```](- "
 
 ## [Retrieving a non-existent file](- "retrieve-non-existent")
 
-When [```/files/deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefcafebabe```](- "#uri") is
+When [```/contents/deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefcafebabe```](- "#uri") is
 [retrieved](- "#result = retrieve(#uri)"):
 
   - the HTTP status should be [404](- "?=#result.status");

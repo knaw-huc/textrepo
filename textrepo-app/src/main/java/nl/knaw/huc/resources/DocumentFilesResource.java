@@ -33,8 +33,8 @@ import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
 import static nl.knaw.huc.api.TextRepoContents.fromContent;
 import static nl.knaw.huc.resources.ResourceUtils.readContent;
 
-@Api(tags = {"documents", "files"})
-@Path("/documents/{uuid}/files")
+@Api(tags = {"documents", "contents"})
+@Path("/documents/{uuid}/contents")
 public class DocumentFilesResource {
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());

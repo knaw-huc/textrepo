@@ -19,7 +19,7 @@ Then:
 When:
 
  - updating document with 
-   file [test2.txt](- "#newFilename") at [`/documents/{documentId}/files`](- "#documentFileEndpoint")
+   file [test2.txt](- "#newFilename") at [`/documents/{documentId}/contents`](- "#documentFileEndpoint")
    [ ](- "#doc2=updateDocumentFilename(#documentFileEndpoint, #doc.documentId, #newFilename)")
 
 Then:

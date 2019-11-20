@@ -59,7 +59,7 @@ public class DocumentsResource {
       @FormDataParam("contents") FormDataContentDisposition fileDetail,
       @FormDataParam("contents") FormDataBodyPart bodyPart
   ) {
-    logger.debug("addDocument: file={}", fileDetail == null ? "" : fileDetail.getFileName());
+    logger.debug("addDocument: filename={}", fileDetail == null ? "" : fileDetail.getFileName());
     if (isZip(bodyPart, fileDetail)) {
       var resultFiles = handleZipFile(inputStream, this::handleNewDocument);
       return Response.ok(new MultipleLocations(resultFiles)).build();

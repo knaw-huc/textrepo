@@ -14,7 +14,7 @@ When a file with contents "[hello test](- "#text")" is [```POST```ed](- "#doc=up
 
 Assuming our "[hello test](- "#text")" document [was assigned](- "#doc=upload(#text)") ID [ ](- "c:echo=#doc.documentId"), we can issue
 
-  ```GET``` [ ](- "c:echo=#doc.location")```/files```
+  ```GET``` [ ](- "c:echo=#doc.location")```/contents```
 
 to [get the latest version](- "#result = latest(#doc.location)") and
 

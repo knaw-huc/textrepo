@@ -42,7 +42,7 @@ public class TestDocuments extends AbstractConcordionTest {
 
   public MultiValueResult latest(Object loc) {
     var location = (String) loc;
-    var request = client().target(location + "/files").request();
+    var request = client().target(location + "/contents").request();
     var response = request.get();
     return new MultiValueResult()
         .with("status", getStatus(response))

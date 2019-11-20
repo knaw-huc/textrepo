@@ -117,7 +117,7 @@ public class DocumentContentsResourceTest {
     final var request = resource
         .client()
         .register(MultiPartFeature.class)
-        .target("/documents/b59c2b24-cafe-babe-9bb3-deadbeefc2c6/files")
+        .target("/documents/b59c2b24-cafe-babe-9bb3-deadbeefc2c6/contents")
         .request();
 
     final var entity = Entity.entity(multiPart, multiPart.getMediaType());
