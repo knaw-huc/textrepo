@@ -22,7 +22,7 @@ import java.net.URI;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
 
-@Api(tags = {"file content"})
+@Api(tags = {"contents"})
 @Path("/contents")
 public class ContentsResource {
 

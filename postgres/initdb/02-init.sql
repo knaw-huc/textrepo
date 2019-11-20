@@ -1,6 +1,6 @@
--- A file is the contents of a document, identified by its SHA-224.
-create table files (
-  sha224 char(56) not null constraint files_pkey primary key,
+-- Contents of a file is identified by its SHA-224.
+create table contents (
+  sha224 char(56) not null constraint contents_pkey primary key,
   content bytea
 );
 
@@ -11,9 +11,9 @@ create table files (
 create table versions (
   document_uuid uuid not null,
   date timestamp with time zone not null,
-  file_sha char(56),
+  contents_sha char(56),
   primary key (document_uuid, date),
-  foreign key (file_sha) references files (sha224)
+  foreign key (contents_sha) references contents (sha224)
 );
 
 create index version_by_uuid on versions (document_uuid);

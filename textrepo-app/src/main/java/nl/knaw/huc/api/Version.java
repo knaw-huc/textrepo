@@ -12,7 +12,7 @@ public class Version {
   private LocalDateTime date;
   private String contentsSha;
 
-  @ConstructorProperties({"document_uuid", "date", "file_sha"})
+  @ConstructorProperties({"document_uuid", "date", "contents_sha"})
   public Version(UUID documentUuid, LocalDateTime date, String contentsSha) {
     this.documentUuid = documentUuid;
     this.date = date;

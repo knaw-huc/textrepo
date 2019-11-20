@@ -11,10 +11,10 @@ import java.util.Optional;
 
 public interface ContentsDao {
 
-  @SqlUpdate("insert into files (sha224, content) values (:sha224, :content) on conflict do nothing")
+  @SqlUpdate("insert into contents (sha224, content) values (:sha224, :content) on conflict do nothing")
   void insert(@BindBean TextRepoContents contents);
 
-  @SqlQuery("select sha224, content from files where sha224 = ?")
+  @SqlQuery("select sha224, content from contents where sha224 = ?")
   @RegisterConstructorMapper(value = TextRepoContents.class)
   Optional<TextRepoContents> findBySha224(@Bind String sha224);
 
