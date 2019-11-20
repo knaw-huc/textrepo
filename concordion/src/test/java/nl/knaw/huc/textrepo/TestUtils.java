@@ -50,7 +50,7 @@ public class TestUtils {
       Client client, URL documents, String filename, byte[] content
   ) {
     var contentDisposition = FormDataContentDisposition
-        .name("file")
+        .name("contents")
         .fileName(filename)
         .size(content.length)
         .build();
@@ -79,7 +79,7 @@ public class TestUtils {
       byte[] content
   ) {
     var contentDisposition = FormDataContentDisposition
-        .name("file")
+        .name("contents")
         .fileName(filename)
         .size(content.length)
         .build();

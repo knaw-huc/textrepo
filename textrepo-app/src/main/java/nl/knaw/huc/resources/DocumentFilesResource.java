@@ -53,9 +53,9 @@ public class DocumentFilesResource {
   @ApiResponses(value = {@ApiResponse(code = 200, response = Version.class, message = "OK")})
   public Response updateDocumentFile(
       @PathParam("uuid") @Valid UUID documentId,
-      @FormDataParam("file") InputStream uploadedInputStream,
-      @FormDataParam("file") FormDataContentDisposition fileDetail,
-      @FormDataParam("file") FormDataBodyPart bodyPart
+      @FormDataParam("contents") InputStream uploadedInputStream,
+      @FormDataParam("contents") FormDataContentDisposition fileDetail,
+      @FormDataParam("contents") FormDataBodyPart bodyPart
   ) {
     logger.debug("updateDocumentFile: documentId={}, file={}", documentId, fileDetail.getFileName());
     var resultFile = handleUpdate(

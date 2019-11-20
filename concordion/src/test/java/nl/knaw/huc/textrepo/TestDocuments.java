@@ -16,7 +16,7 @@ public class TestDocuments extends AbstractConcordionTest {
   private static final String DOCUMENTS_URL = HOST + "/documents";
 
   public MultiValueResult upload(String content) {
-    var multiPart = new FormDataMultiPart().field("file", content);
+    var multiPart = new FormDataMultiPart().field("contents", content);
 
     var request = client()
         .register(MultiPartFeature.class)

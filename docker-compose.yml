@@ -60,7 +60,7 @@ services:
               "java", "-jar", "/textrepo-app/textrepo.jar", "server", "config.yml"]
 
   concordion:
-#    image: knawhuc/textrepo-concordion:latest
+    image: knawhuc/textrepo-concordion:latest
     build: ./concordion
     ports:
     - 8080
@@ -71,7 +71,6 @@ services:
       "--timeout=0",
       "--",
        "mvn", "clean", "test"
-#      "tail", "-f", "/dev/null"
     ]
     volumes:
     - concordiondata:/concordion

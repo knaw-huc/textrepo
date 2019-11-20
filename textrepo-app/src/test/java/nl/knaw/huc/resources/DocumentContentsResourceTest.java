@@ -106,7 +106,7 @@ public class DocumentContentsResourceTest {
 
   private void putTestFile(byte[] bytes, String filename) {
     var contentDisposition = FormDataContentDisposition
-        .name("file")
+        .name("contents")
         .fileName(filename)
         .size(bytes.length)
         .build();

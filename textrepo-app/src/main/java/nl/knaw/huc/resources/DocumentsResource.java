@@ -55,9 +55,9 @@ public class DocumentsResource {
       @ApiResponse(code = 201, message = "OK"),
       @ApiResponse(code = 200, response = MultipleLocations.class, message = "OK")})
   public Response addDocument(
-      @FormDataParam("file") InputStream inputStream,
-      @FormDataParam("file") FormDataContentDisposition fileDetail,
-      @FormDataParam("file") FormDataBodyPart bodyPart
+      @FormDataParam("contents") InputStream inputStream,
+      @FormDataParam("contents") FormDataContentDisposition fileDetail,
+      @FormDataParam("contents") FormDataBodyPart bodyPart
   ) {
     logger.debug("addDocument: file={}", fileDetail == null ? "" : fileDetail.getFileName());
     if (isZip(bodyPart, fileDetail)) {
