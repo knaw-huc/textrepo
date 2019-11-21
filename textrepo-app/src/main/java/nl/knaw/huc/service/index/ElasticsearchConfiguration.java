@@ -20,7 +20,7 @@ public class ElasticsearchConfiguration {
   public String index;
 
   /**
-   * Field in which to store document content.
+   * Field in which to store file content.
    */
   @JsonProperty
   public String contentField;

@@ -9,6 +9,8 @@ import org.concordion.api.FullOGNL;
 import org.concordion.integration.junit4.ConcordionRunner;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.Client;
 import java.sql.SQLException;
@@ -28,6 +30,8 @@ import static org.junit.Assert.assertEquals;
 @FullOGNL
 @RunWith(ConcordionRunner.class)
 public abstract class AbstractConcordionTest {
+
+  final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   static Client client() {
     return JerseyClientBuilder.newClient();
@@ -60,7 +64,8 @@ public abstract class AbstractConcordionTest {
   }
 
   private void deleteIndex(String index) {
-    System.out.printf("deleting index [%s]\n", index);
+    logger.info("deleting index [{}]", index);
+
     var get = client()
         .target(index)
         .request().get();
@@ -80,6 +85,8 @@ public abstract class AbstractConcordionTest {
   }
 
   private void emptyTextrepoDatabase() {
+    logger.info("truncate tables owned by [{}]", POSTGRES_USER);
+
     var host = POSTGRES_HOST;
     var db = POSTGRES_DB;
     var user = POSTGRES_USER;
