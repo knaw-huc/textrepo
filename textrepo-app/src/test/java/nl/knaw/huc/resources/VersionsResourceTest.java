@@ -96,7 +96,7 @@ public class VersionsResourceTest {
   private Response getVersions(UUID filename) {
     return resource
         .client()
-        .target("/documents/" + filename.toString() + "/versions")
+        .target("/files/" + filename.toString() + "/versions")
         .request()
         .get();
 

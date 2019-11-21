@@ -17,18 +17,18 @@ public class TestFileHandling extends AbstractConcordionTest {
 
     var request = client()
         .register(MultiPartFeature.class)
-        .target(APP_HOST + "/documents")
+        .target(APP_HOST + "/files")
         .request();
 
     var response = request.post(multiPartEntity(multiPart));
 
     var result = new UploadResult();
     result.status = response.getStatus();
-    var docLocation = response.getHeaderString("Location");
+    var fileLocation = response.getHeaderString("Location");
 
     var requestVersion = client()
         .register(MultiPartFeature.class)
-        .target(docLocation)
+        .target(fileLocation)
         .request()
         .get();
     var versionJson = requestVersion.readEntity(String.class);

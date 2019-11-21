@@ -1,42 +1,42 @@
 # TestMetadata
 
-## [Creating and updating metadata](- 'createDocumentWithMetadata')
+## [Creating and updating metadata](- 'createFileWithMetadata')
 
 When:
 
- - creating a document [`test1.txt`](- "#filename") at [`/documents`](- "#documentEndpoint");
- - and adding metadata [`{"foo":"bar","spam":"eggs"}`](- "#metadata") at [`/documents/{documentId}/metadata`](- "#metadataEndpoint");
+ - creating a file [`test1.txt`](- "#filename") at [`/files`](- "#fileEndpoint");
+ - and adding metadata [`{"foo":"bar","spam":"eggs"}`](- "#metadata") at [`/files/{fileId}/metadata`](- "#metadataEndpoint");
 
-[ ](- "#doc=createDocumentWithMetadata(#filename, #documentEndpoint, #metadata, #metadataEndpoint)")
+[ ](- "#file=createFileWithMetadata(#filename, #fileEndpoint, #metadata, #metadataEndpoint)")
 Then:
 
- - Metadata entry `filename` should have value: [test1.txt](- "?=#doc.filename");
- - Metadata entry `spam` should have value: [eggs](- "?=#doc.spam");
- - Metadata entry `foo` should have value: [bar](- "?=#doc.foo");
+ - Metadata entry `filename` should have value: [test1.txt](- "?=#file.filename");
+ - Metadata entry `spam` should have value: [eggs](- "?=#file.spam");
+ - Metadata entry `foo` should have value: [bar](- "?=#file.foo");
 
 ---
 
 When:
 
- - updating document with 
-   file [test2.txt](- "#newFilename") at [`/documents/{documentId}/contents`](- "#documentFileEndpoint")
-   [ ](- "#doc2=updateDocumentFilename(#documentFileEndpoint, #doc.documentId, #newFilename)")
+ - updating file with 
+   file [test2.txt](- "#newFilename") at [`/files/{fileId}/contents`](- "#fileContentsEndpoint")
+   [ ](- "#file2=updateMetadataNameOfFile(#fileContentsEndpoint, #file.fileId, #newFilename)")
 
 Then:
 
- - Metadata entry `filename` should now have value: [test2.txt](- "?=#doc2.filename");
- - Metadata entry `spam` should still have value: [eggs](- "?=#doc2.spam");
- - Metadata entry `foo` should still have value: [bar](- "?=#doc2.foo");
+ - Metadata entry `filename` should now have value: [test2.txt](- "?=#file2.filename");
+ - Metadata entry `spam` should still have value: [eggs](- "?=#file2.spam");
+ - Metadata entry `foo` should still have value: [bar](- "?=#file2.foo");
 
 When:
 
- - updating document with 
-   metadata-key [`foo`](- "#updatedKey") and -value [`baz`](- "#updatedValue") at [`/documents/{documentId}/metadata/{key}`](- "#documentMetadataEndpoint")
-   [ ](- "#doc3=updateMetadataEntry(#documentMetadataEndpoint, #doc.documentId, #updatedKey, #updatedValue)")
+ - updating file with 
+   metadata-key [`foo`](- "#updatedKey") and -value [`baz`](- "#updatedValue") at [`/files/{fileId}/metadata/{key}`](- "#fileMetadataEndpoint")
+   [ ](- "#file3=updateMetadataEntry(#fileMetadataEndpoint, #file.fileId, #updatedKey, #updatedValue)")
 
 Then:
 
- - Metadata entry `filename` should still have value: [test2.txt](- "?=#doc3.filename");
- - Metadata entry `spam` should still have value: [eggs](- "?=#doc3.spam");
- - Metadata entry `foo` should now have value: [baz](- "?=#doc3.foo");
+ - Metadata entry `filename` should still have value: [test2.txt](- "?=#file3.filename");
+ - Metadata entry `spam` should still have value: [eggs](- "?=#file3.spam");
+ - Metadata entry `foo` should now have value: [baz](- "?=#file3.foo");
  

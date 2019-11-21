@@ -24,8 +24,8 @@ import java.util.UUID;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
-@Api(tags = {"documents", "metadata"})
-@Path("/documents/{uuid}/metadata")
+@Api(tags = {"files", "metadata"})
+@Path("/files/{uuid}/metadata")
 public class MetadataResource {
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -46,7 +46,7 @@ public class MetadataResource {
       @PathParam("uuid") @Valid UUID fileId,
       Map<String, String> metadata
   ) {
-    logger.debug("addMetadata: documentId={}, metadata={}", fileId, metadata);
+    logger.debug("addMetadata: fileId={}, metadata={}", fileId, metadata);
     metadataService.addMetadata(fileId, metadata);
     return Response.ok().build();
   }

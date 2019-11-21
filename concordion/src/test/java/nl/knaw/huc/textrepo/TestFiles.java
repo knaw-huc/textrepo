@@ -11,22 +11,22 @@ import static nl.knaw.huc.textrepo.Config.HTTP_APP_HOST;
 import static nl.knaw.huc.textrepo.TestUtils.getLocation;
 import static nl.knaw.huc.textrepo.TestUtils.getMultiPartEntity;
 
-public class TestDocuments extends AbstractConcordionTest {
+public class TestFiles extends AbstractConcordionTest {
   private static final String HOST = HTTP_APP_HOST;
-  private static final String DOCUMENTS_URL = HOST + "/documents";
+  private static final String FILES_URL = HOST + "/files";
 
   public MultiValueResult upload(String content) {
     var multiPart = new FormDataMultiPart().field("contents", content);
 
     var request = client()
         .register(MultiPartFeature.class)
-        .target(DOCUMENTS_URL)
+        .target(FILES_URL)
         .request();
 
     var response = request.post(getMultiPartEntity(multiPart));
     var locationHeader = getLocation(response);
-    var optionalDocumentId = locationHeader.map(TestUtils::getDocumentId);
-    var documentId = optionalDocumentId.orElse("No document id");
+    var optionalFileId = locationHeader.map(TestUtils::getFileId);
+    var fileId = optionalFileId.orElse("No file id");
 
     return new MultiValueResult()
         .with("status", getStatus(response))
@@ -35,9 +35,9 @@ public class TestDocuments extends AbstractConcordionTest {
             .orElse("Missing Location header")
         )
         .with("location", locationHeader.orElse("No location"))
-        .with("esLocation", "/documents/_doc/" + documentId)
-        .with("documentId", documentId)
-        .with("documentIdIsUUID", optionalDocumentId.map(TestUtils::isValidUUID).orElse("No document id"));
+        .with("esLocation", "/files/_doc/" + fileId)
+        .with("fileId", fileId)
+        .with("fileIdIsUUID", optionalFileId.map(TestUtils::isValidUUID).orElse("No file id"));
   }
 
   public MultiValueResult latest(Object loc) {
@@ -50,8 +50,8 @@ public class TestDocuments extends AbstractConcordionTest {
   }
 
   public MultiValueResult index(Object param) {
-    var documentId = (String) param;
-    var request = client().target(ES_HOST + "/documents/_doc/" + documentId).request();
+    var fileId = (String) param;
+    var request = client().target(ES_HOST + "/files/_doc/" + fileId).request();
     var response = request.get();
     return new MultiValueResult()
         .with("status", getStatus(response))

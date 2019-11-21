@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 import static java.sql.DriverManager.getConnection;
 import static nl.knaw.huc.textrepo.Config.CUSTOM_INDEX;
-import static nl.knaw.huc.textrepo.Config.DOCUMENT_INDEX;
+import static nl.knaw.huc.textrepo.Config.FILE_INDEX;
 import static nl.knaw.huc.textrepo.Config.HTTP_APP_HOST;
 import static nl.knaw.huc.textrepo.Config.HTTP_ES_HOST;
 import static nl.knaw.huc.textrepo.Config.POSTGRES_DB;
@@ -54,7 +54,7 @@ public abstract class AbstractConcordionTest {
 
   private void deleteIndices() {
     var indices = new ArrayList<String>();
-    indices.add(ES_HOST + "/" + DOCUMENT_INDEX);
+    indices.add(ES_HOST + "/" + FILE_INDEX);
     indices.add(ES_HOST + "/" + CUSTOM_INDEX);
     indices.forEach(this::deleteIndex);
   }

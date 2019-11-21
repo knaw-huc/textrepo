@@ -20,8 +20,8 @@ import java.util.UUID;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
-@Api(tags = {"documents", "versions"})
-@Path("/documents/{uuid}/versions")
+@Api(tags = {"files", "versions"})
+@Path("/files/{uuid}/versions")
 public class VersionsResource {
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -35,12 +35,12 @@ public class VersionsResource {
   @GET
   @Timed
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Get all versions of a document")
+  @ApiOperation(value = "Get all versions of a file")
   @ApiResponses(value = {@ApiResponse(code = 200, responseContainer = "Map", response = Version.class, message = "OK")})
   public Response getVersions(
       @PathParam("uuid") @Valid UUID fileId
   ) {
-    logger.debug("getVersions: documentId={}", fileId);
+    logger.debug("getVersions: fileId={}", fileId);
     return Response.ok().entity(versionService.getVersions(fileId)).build();
   }
 

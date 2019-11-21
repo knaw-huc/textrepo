@@ -89,7 +89,7 @@ public class FilesResourceTest {
   public void testPostFile_returns201CreatedWithLocationHeader_whenContentsUploaded() {
     final var response = postTestContents();
     assertThat(response.getStatus()).isEqualTo(201);
-    assertThat(response.getHeaderString("Location")).endsWith("documents/" + uuid);
+    assertThat(response.getHeaderString("Location")).endsWith("files/" + uuid);
   }
 
   @Test
@@ -228,7 +228,7 @@ public class FilesResourceTest {
     final var request = resource
         .client()
         .register(MultiPartFeature.class)
-        .target("/documents")
+        .target("/files")
         .request();
 
     final var entity = Entity.entity(multiPart, multiPart.getMediaType());

@@ -25,16 +25,16 @@ public class TestUtils {
     return IOUtils.toByteArray(TestUtils.class.getClassLoader().getResourceAsStream(resourcePath));
   }
 
-  public static String isValidUUID(String documentId) {
+  public static String isValidUUID(String fileId) {
     try {
-      UUID.fromString(documentId);
+      UUID.fromString(fileId);
       return "valid UUID";
     } catch (Exception e) {
       return "invalid UUID: " + e.getMessage();
     }
   }
 
-  public static String getDocumentId(String location) {
+  public static String getFileId(String location) {
     return location.substring(location.lastIndexOf('/') + 1);
   }
 
@@ -47,7 +47,7 @@ public class TestUtils {
   }
 
   public static Response postFileWithFilename(
-      Client client, URL documents, String filename, byte[] content
+      Client client, URL files, String filename, byte[] content
   ) {
     var contentDisposition = FormDataContentDisposition
         .name("contents")
@@ -64,7 +64,7 @@ public class TestUtils {
 
     final var request = client
         .register(MultiPartFeature.class)
-        .target(documents.toString())
+        .target(files.toString())
         .request();
 
     final var entity = Entity.entity(multiPart, multiPart.getMediaType());
@@ -74,7 +74,7 @@ public class TestUtils {
 
   public static Response putFileWithFilename(
       Client client,
-      String putDocumentFileUrl,
+      String putFileContentsUrl,
       String filename,
       byte[] content
   ) {
@@ -93,7 +93,7 @@ public class TestUtils {
 
     final var request = client
         .register(MultiPartFeature.class)
-        .target(putDocumentFileUrl)
+        .target(putFileContentsUrl)
         .request();
 
     final var entity = Entity.entity(multiPart, multiPart.getMediaType());

@@ -78,7 +78,7 @@ public class MetadataResourceTest {
   private Response putMetadata(UUID fileId, MetadataEntry metadataEntry) {
     return resource
         .client()
-        .target("/documents/" + fileId.toString() + "/metadata/" + metadataEntry.getKey())
+        .target("/files/" + fileId.toString() + "/metadata/" + metadataEntry.getKey())
         .request()
         .put(Entity.json(metadataEntry.getValue()));
 

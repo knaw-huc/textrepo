@@ -11,7 +11,7 @@ import static java.lang.String.format;
 import static javax.ws.rs.client.Entity.entity;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static nl.knaw.huc.textrepo.Config.HTTP_APP_HOST;
-import static nl.knaw.huc.textrepo.TestUtils.getDocumentId;
+import static nl.knaw.huc.textrepo.TestUtils.getFileId;
 import static nl.knaw.huc.textrepo.TestUtils.getLocation;
 import static nl.knaw.huc.textrepo.TestUtils.postFileWithFilename;
 import static nl.knaw.huc.textrepo.TestUtils.putFileWithFilename;
@@ -19,10 +19,8 @@ import static nl.knaw.huc.textrepo.TestUtils.replace;
 
 public class TestMetadata extends AbstractConcordionTest {
 
-  private static final String PUT_DOCUMENT_FILE_URL = HTTP_APP_HOST + "/documents/%s/contents";
-
   public static class TestMetadataResult {
-    public String documentId;
+    public String fileId;
     public int addMetadataStatus;
     public String foo;
     public String spam;
@@ -41,24 +39,24 @@ public class TestMetadata extends AbstractConcordionTest {
     public String filename;
   }
 
-  public TestMetadataResult createDocumentWithMetadata(
+  public TestMetadataResult createFileWithMetadata(
       String filename,
-      String documentEndpoint,
+      String fileEndpoint,
       String metadata,
       String metadataEndpoint
   ) throws MalformedURLException {
     var result = new TestMetadataResult();
 
-    // create document
-    var response = createDocument(filename, documentEndpoint);
-    result.documentId = getDocumentId(getLocation(response).orElse(""));
+    // create file
+    var response = createFile(filename, fileEndpoint);
+    result.fileId = getFileId(getLocation(response).orElse(""));
 
     // add metadata
-    var responseAddMetadata = addMetadata(result.documentId, metadata, metadataEndpoint);
+    var responseAddMetadata = addMetadata(result.fileId, metadata, metadataEndpoint);
     result.addMetadataStatus = responseAddMetadata.getStatus();
 
     // check metadata + filename
-    var getMetadata = getMetadata(result.documentId);
+    var getMetadata = getMetadata(result.fileId);
     var getJson = getMetadata.readEntity(String.class);
     result.foo = JsonPath.parse(getJson).read("$.foo");
     result.spam = JsonPath.parse(getJson).read("$.spam");
@@ -67,14 +65,14 @@ public class TestMetadata extends AbstractConcordionTest {
     return result;
   }
 
-  public TestUpdateFilenameResult updateDocumentFilename(String documentFileEndpoint, String documentId, String newFilename) {
+  public TestUpdateFilenameResult updateMetadataNameOfFile(String fileContentsEndpoint, String fileId, String newFilename) {
     var result = new TestUpdateFilenameResult();
 
     // update filename
-    updateFilename(documentFileEndpoint, newFilename, documentId);
+    updateFilename(fileContentsEndpoint, newFilename, fileId);
 
     // check updated filename
-    var updatedMetadata = getMetadata(documentId);
+    var updatedMetadata = getMetadata(fileId);
     var updatedJson = updatedMetadata.readEntity(String.class);
     var parsed = JsonPath.parse(updatedJson);
     result.foo = parsed.read("$.foo");
@@ -85,15 +83,15 @@ public class TestMetadata extends AbstractConcordionTest {
   }
 
   public TestUpdateFilenameResult updateMetadataEntry(
-      String documentMetadataEndpoint,
-      String documentId,
+      String fileMetadataEndpoint,
+      String fileId,
       String updatedKey,
       String updatedValue
   ) {
     var result = new TestUpdateFilenameResult();
-    putMetadataEntry(documentMetadataEndpoint, documentId, updatedKey, updatedValue);
+    putMetadataEntry(fileMetadataEndpoint, fileId, updatedKey, updatedValue);
 
-    var updatedMetadata = getMetadata(documentId);
+    var updatedMetadata = getMetadata(fileId);
     var updatedJson = updatedMetadata.readEntity(String.class);
     var parsed = JsonPath.parse(updatedJson);
     result.foo = parsed.read("$.foo");
@@ -102,23 +100,23 @@ public class TestMetadata extends AbstractConcordionTest {
     return result;
   }
 
-  private Response createDocument(String filename, String documentsUrl) throws MalformedURLException {
-    return postFileWithFilename(client(), new URL(HTTP_APP_HOST + documentsUrl), filename, "".getBytes());
+  private Response createFile(String filename, String filesUrl) throws MalformedURLException {
+    return postFileWithFilename(client(), new URL(HTTP_APP_HOST + filesUrl), filename, "".getBytes());
   }
 
-  private void updateFilename(String documentFileEndpoint, String newFilename, String documentId) {
-    var url = HTTP_APP_HOST + documentFileEndpoint;
+  private void updateFilename(String fileContentsEndpoint, String newFilename, String fileId) {
+    var url = HTTP_APP_HOST + fileContentsEndpoint;
     putFileWithFilename(
         client(),
-        replace(url, "documentId", documentId),
+        replace(url, "fileId", fileId),
         newFilename,
         "content2".getBytes()
     );
   }
 
-  private Response addMetadata(String documentId, String metadata, String metadataEndpoint) {
+  private Response addMetadata(String fileId, String metadata, String metadataEndpoint) {
     var urlString = HTTP_APP_HOST + metadataEndpoint;
-    var url = replace(urlString, "documentId", documentId);
+    var url = replace(urlString, "fileId", fileId);
     return client()
         .register(MultiPartFeature.class)
         .target(url)
@@ -128,12 +126,12 @@ public class TestMetadata extends AbstractConcordionTest {
 
   private Response putMetadataEntry(
       String metadataEndpoint,
-      String documentId,
+      String fileId,
       String key,
       String value
   ) {
     var urlString = HTTP_APP_HOST + metadataEndpoint;
-    var url = replace(urlString, "documentId", documentId);
+    var url = replace(urlString, "fileId", fileId);
     url = replace(url, "key", key);
 
     return client()
@@ -143,10 +141,10 @@ public class TestMetadata extends AbstractConcordionTest {
         .put(entity(value, APPLICATION_JSON));
   }
 
-  private Response getMetadata(String documentId) {
+  private Response getMetadata(String fileId) {
     return client()
         .register(MultiPartFeature.class)
-        .target(format(HTTP_APP_HOST + "/documents/%s/metadata", documentId))
+        .target(format(HTTP_APP_HOST + "/files/%s/metadata", fileId))
         .request().get();
   }
 }

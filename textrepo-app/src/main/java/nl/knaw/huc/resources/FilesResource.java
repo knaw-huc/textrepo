@@ -34,8 +34,8 @@ import static nl.knaw.huc.resources.ResourceUtils.readContent;
 import static nl.knaw.huc.resources.ZipHandling.handleZipFile;
 import static nl.knaw.huc.resources.ZipHandling.isZip;
 
-@Api(tags = {"documents"})
-@Path("/documents")
+@Api(tags = {"files"})
+@Path("/files")
 public class FilesResource {
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -50,7 +50,7 @@ public class FilesResource {
   @Timed
   @Consumes(MULTIPART_FORM_DATA)
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Create new document by uploading a file or create multiple documents by uploading a zip")
+  @ApiOperation(value = "Create new file by uploading a file or create multiple files by uploading a zip")
   @ApiResponses(value = {
       @ApiResponse(code = 201, message = "OK"),
       @ApiResponse(code = 200, response = MultipleLocations.class, message = "OK")})
@@ -77,10 +77,10 @@ public class FilesResource {
   @Path("/{uuid}")
   @Timed
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Get latest version of document")
+  @ApiOperation(value = "Get latest version of file")
   @ApiResponses(value = {@ApiResponse(code = 200, response = Version.class, message = "OK")})
   public Response getLatestVersionOfFile(@PathParam("uuid") @Valid UUID fileId) {
-    logger.debug("getLatestVersionOfFile: documentId={}", fileId);
+    logger.debug("getLatestVersionOfFile: fileId={}", fileId);
     var version = fileService.getLatestVersion(fileId);
     return Response.ok(version).build();
   }
