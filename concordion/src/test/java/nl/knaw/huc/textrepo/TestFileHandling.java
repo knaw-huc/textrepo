@@ -24,14 +24,16 @@ public class TestFileHandling extends AbstractConcordionTest {
 
     var result = new UploadResult();
     result.status = response.getStatus();
-    var fileLocation = response.getHeaderString("Location");
+    var latestVersionLocation = response.getHeaderString("Location") + "/latest";
 
     var requestVersion = client()
         .register(MultiPartFeature.class)
-        .target(fileLocation)
+        .target(latestVersionLocation)
         .request()
         .get();
     var versionJson = requestVersion.readEntity(String.class);
+    logger.info("fileLocation: " + latestVersionLocation);
+    logger.info("versionJson: " + versionJson);
     result.sha224 = JsonPath.parse(versionJson).read("$.contentsSha");
 
     return result;

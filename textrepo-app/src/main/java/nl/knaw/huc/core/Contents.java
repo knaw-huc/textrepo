@@ -7,6 +7,9 @@ import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import javax.annotation.Nonnull;
 import java.beans.ConstructorProperties;
 
+/**
+ * Content of a file, identified by its sha224-hash
+ */
 public class Contents {
   private static final DigestUtils SHA_224 = new DigestUtils(MessageDigestAlgorithms.SHA_224);
 

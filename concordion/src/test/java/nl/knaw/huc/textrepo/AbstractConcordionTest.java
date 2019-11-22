@@ -96,7 +96,7 @@ public abstract class AbstractConcordionTest {
       var statement = connection.createStatement();
       statement.executeQuery("select truncate_tables_by_owner('" + POSTGRES_USER + "');");
     } catch (SQLException ex) {
-      throw new RuntimeException("Could not empty postgres tables", ex);
+      throw new RuntimeException("Could not truncate tables", ex);
     }
   }
 

@@ -6,6 +6,9 @@ import java.beans.ConstructorProperties;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * A file can contain different versions
+ */
 public class Version {
 
   private UUID fileUuid;

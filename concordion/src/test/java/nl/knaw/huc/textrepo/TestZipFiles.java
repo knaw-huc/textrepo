@@ -86,7 +86,7 @@ public class TestZipFiles extends AbstractConcordionTest {
   }
 
   private String getLatestVersionHash(String fileId) {
-    var url = APP_HOST + "/files/" + fileId;
+    var url = APP_HOST + "/files/" + fileId + "/latest";
     return JsonPath.parse(getByUrl(url)).read("$.contentsSha");
   }
 
