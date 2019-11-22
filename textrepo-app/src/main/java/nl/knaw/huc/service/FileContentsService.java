@@ -1,7 +1,7 @@
 package nl.knaw.huc.service;
 
 import nl.knaw.huc.api.MetadataEntry;
-import nl.knaw.huc.api.TextRepoContents;
+import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.api.Version;
 
 import javax.annotation.Nonnull;
@@ -28,7 +28,7 @@ public class FileContentsService {
     this.metadataService = metadataService;
   }
 
-  public TextRepoContents getLatestFile(UUID fileId) {
+  public Contents getLatestFile(UUID fileId) {
 
     var version = versionService
         .findLatestVersion(fileId)
@@ -39,7 +39,7 @@ public class FileContentsService {
 
   public Version replaceFileContents(
       @Nonnull UUID fileId,
-      @Nonnull TextRepoContents contents,
+      @Nonnull Contents contents,
       String filename
   ) {
     final var currentSha224 = contents.getSha224();

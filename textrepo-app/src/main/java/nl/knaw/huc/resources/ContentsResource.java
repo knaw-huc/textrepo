@@ -1,12 +1,11 @@
 package nl.knaw.huc.resources;
 
 import com.codahale.metrics.annotation.Timed;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import nl.knaw.huc.api.TextRepoContents;
+import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.service.ContentsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +52,7 @@ public class ContentsResource {
                    .build();
   }
 
-  private static URI locationOf(TextRepoContents contents) {
+  private static URI locationOf(Contents contents) {
     return UriBuilder.fromResource(ContentsResource.class)
                      .path("{sha224}")
                      .build(contents.getSha224());

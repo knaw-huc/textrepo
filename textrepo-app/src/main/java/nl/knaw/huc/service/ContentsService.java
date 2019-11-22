@@ -1,6 +1,6 @@
 package nl.knaw.huc.service;
 
-import nl.knaw.huc.api.TextRepoContents;
+import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.service.store.ContentsStorage;
 
 public class ContentsService {
@@ -10,11 +10,11 @@ public class ContentsService {
     this.contentsStorage = contentsStorage;
   }
 
-  public void addContents(TextRepoContents contents) {
+  public void addContents(Contents contents) {
     contentsStorage.storeContents(contents);
   }
 
-  public TextRepoContents getBySha224(String sha224) {
+  public Contents getBySha224(String sha224) {
     return contentsStorage.getBySha224(sha224);
   }
 }

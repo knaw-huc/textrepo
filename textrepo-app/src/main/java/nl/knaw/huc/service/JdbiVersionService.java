@@ -1,6 +1,6 @@
 package nl.knaw.huc.service;
 
-import nl.knaw.huc.api.TextRepoContents;
+import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.api.Version;
 import nl.knaw.huc.db.VersionDao;
 import nl.knaw.huc.service.index.FileIndexer;
@@ -40,7 +40,7 @@ public class JdbiVersionService implements VersionService {
   @Override
   public Version insertNewVersion(
       @Nonnull UUID fileId,
-      @Nonnull TextRepoContents contents,
+      @Nonnull Contents contents,
       @Nonnull String filename,
       @Nonnull LocalDateTime time
   ) {

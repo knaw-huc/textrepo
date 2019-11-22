@@ -30,7 +30,7 @@ import static java.time.LocalDateTime.now;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
-import static nl.knaw.huc.api.TextRepoContents.fromContent;
+import static nl.knaw.huc.core.Contents.fromContent;
 import static nl.knaw.huc.resources.ResourceUtils.readContent;
 
 @Api(tags = {"files", "contents"})

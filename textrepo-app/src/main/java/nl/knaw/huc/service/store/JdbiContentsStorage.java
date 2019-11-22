@@ -1,6 +1,6 @@
 package nl.knaw.huc.service.store;
 
-import nl.knaw.huc.api.TextRepoContents;
+import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.db.ContentsDao;
 import org.jdbi.v3.core.Jdbi;
 import org.slf4j.Logger;
@@ -19,7 +19,7 @@ public class JdbiContentsStorage implements ContentsStorage {
   }
 
   @Override
-  public void storeContents(TextRepoContents contents) {
+  public void storeContents(Contents contents) {
     try {
       getContentsDao().insert(contents);
     } catch (Exception e) {
@@ -29,7 +29,7 @@ public class JdbiContentsStorage implements ContentsStorage {
   }
 
   @Override
-  public TextRepoContents getBySha224(String sha224) {
+  public Contents getBySha224(String sha224) {
     return getContentsDao().findBySha224(sha224).orElseThrow(() -> new NotFoundException("Contents not found"));
   }
 

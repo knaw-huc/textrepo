@@ -1,7 +1,7 @@
 package nl.knaw.huc.service;
 
 import nl.knaw.huc.api.MetadataEntry;
-import nl.knaw.huc.api.TextRepoContents;
+import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.api.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 
 import static java.lang.String.format;
 import static java.time.LocalDateTime.now;
-import static nl.knaw.huc.api.TextRepoContents.fromContent;
+import static nl.knaw.huc.core.Contents.fromContent;
 
 public class FileService {
   private final VersionService versionService;
@@ -40,7 +40,7 @@ public class FileService {
     return addFile(contents, filename);
   }
 
-  private Version addFile(@Nonnull TextRepoContents contents, String filename) {
+  private Version addFile(@Nonnull Contents contents, String filename) {
     var version = versionService.insertNewVersion(fileIdGenerator.get(), contents, filename, now());
     metadataService.insert(version.getFileUuid(), new MetadataEntry("filename", filename));
     return version;

@@ -1,7 +1,7 @@
 package nl.knaw.huc.resources;
 
 import io.dropwizard.testing.junit.ResourceTestRule;
-import nl.knaw.huc.api.TextRepoContents;
+import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.service.ContentsService;
 import nl.knaw.huc.service.store.ContentsStorage;
 import org.apache.commons.io.IOUtils;
@@ -29,7 +29,7 @@ public class ContentsResourceTest {
 
   private final static String sha224 = "55d4c44f5bc05762d8807f75f3f24b4095afa583ef70ac97eaf7afc6";
   private final static String content = "hello test";
-  private final static TextRepoContents TEXT_REPO_CONTENTS = new TextRepoContents(
+  private final static Contents TEXT_REPO_CONTENTS = new Contents(
       sha224,
       content.getBytes()
   );

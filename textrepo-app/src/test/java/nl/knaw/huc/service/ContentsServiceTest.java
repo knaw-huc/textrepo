@@ -1,6 +1,6 @@
 package nl.knaw.huc.service;
 
-import nl.knaw.huc.api.TextRepoContents;
+import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.service.store.ContentsStorage;
 import org.junit.After;
 import org.junit.Test;
@@ -16,7 +16,7 @@ public class ContentsServiceTest {
   private static final ContentsService SERVICE_UNDER_TEST = new ContentsService(STORE);
 
   private static final String SHA224 = "55d4c44f5bc05762d8807f75f3f24b4095afa583ef70ac97eaf7afc6";
-  private static final TextRepoContents FILE = mock(TextRepoContents.class);
+  private static final Contents FILE = mock(Contents.class);
 
   @After
   public void resetMocks() {

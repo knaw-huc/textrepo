@@ -1,6 +1,6 @@
 package nl.knaw.huc.service;
 
-import nl.knaw.huc.api.TextRepoContents;
+import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.db.ContentsDao;
 import nl.knaw.huc.service.store.ContentsStorage;
 import nl.knaw.huc.service.store.JdbiContentsStorage;
@@ -28,7 +28,7 @@ public class JdbiContentsStorageTest {
 
   private static final String sha224 = "55d4c44f5bc05762d8807f75f3f24b4095afa583ef70ac97eaf7afc6";
   private static final String content = "hello test";
-  private static final TextRepoContents TEXT_REPO_CONTENTS = new TextRepoContents(
+  private static final Contents TEXT_REPO_CONTENTS = new Contents(
       sha224,
       content.getBytes()
   );

@@ -1,11 +1,11 @@
 package nl.knaw.huc.service.store;
 
-import nl.knaw.huc.api.TextRepoContents;
+import nl.knaw.huc.core.Contents;
 
 import javax.annotation.Nonnull;
 
 public interface ContentsStorage {
-  void storeContents(@Nonnull TextRepoContents contents);
+  void storeContents(@Nonnull Contents contents);
 
-  TextRepoContents getBySha224(@Nonnull String sha224);
+  Contents getBySha224(@Nonnull String sha224);
 }
