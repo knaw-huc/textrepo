@@ -4,16 +4,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ResultContents {
 
-  private Version version;
+  private ResultVersion version;
   private String filename;
 
-  public ResultContents(String filename, Version version) {
+  public ResultContents(String filename, ResultVersion version) {
     this.version = version;
     this.filename = filename;
   }
 
   @JsonProperty
-  public Version getVersion() {
+  public ResultVersion getVersion() {
     return version;
   }
 

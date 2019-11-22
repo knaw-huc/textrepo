@@ -23,7 +23,7 @@ public class MultipleLocations {
         .stream()
         .collect(Collectors.toMap(
           ResultContents::getFilename,
-          r -> locationOf(r.getVersion())
+          r -> locationOf(r.getVersion().getFileUuid())
         ));
   }
 }

@@ -1,12 +1,11 @@
 package nl.knaw.huc.resources;
 
-import nl.knaw.huc.api.Version;
-
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.UUID;
 
 public class ResourceUtils {
   public static byte[] readContent(InputStream uploadedInputStream) {
@@ -21,10 +20,10 @@ public class ResourceUtils {
     }
   }
 
-  public static URI locationOf(Version version) {
+  public static URI locationOf(UUID uuid) {
     return UriBuilder
         .fromResource(FilesResource.class)
         .path("{uuid}")
-        .build(version.getFileUuid());
+        .build(uuid);
   }
 }

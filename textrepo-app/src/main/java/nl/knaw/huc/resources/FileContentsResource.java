@@ -6,7 +6,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.ResultContents;
-import nl.knaw.huc.api.Version;
+import nl.knaw.huc.api.ResultVersion;
+import nl.knaw.huc.core.Version;
 import nl.knaw.huc.service.FileContentsService;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
@@ -104,6 +105,6 @@ public class FileContentsResource {
       return null;
     }
 
-    return new ResultContents(filename, version);
+    return new ResultContents(filename, new ResultVersion(version));
   }
 }

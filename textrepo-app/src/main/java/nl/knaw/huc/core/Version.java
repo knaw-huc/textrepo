@@ -1,4 +1,4 @@
-package nl.knaw.huc.api;
+package nl.knaw.huc.core;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

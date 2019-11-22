@@ -1,7 +1,7 @@
 package nl.knaw.huc.service;
 
 import nl.knaw.huc.core.Contents;
-import nl.knaw.huc.api.Version;
+import nl.knaw.huc.core.Version;
 import nl.knaw.huc.db.VersionDao;
 import nl.knaw.huc.service.index.FileIndexer;
 import nl.knaw.huc.service.index.ElasticCustomFacetIndexer;

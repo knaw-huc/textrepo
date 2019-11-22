@@ -1,6 +1,6 @@
 package nl.knaw.huc.db;
 
-import nl.knaw.huc.api.Version;
+import nl.knaw.huc.core.Version;
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.customizer.BindBean;

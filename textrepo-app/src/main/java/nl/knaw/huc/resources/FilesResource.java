@@ -8,7 +8,8 @@ import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.FormContents;
 import nl.knaw.huc.api.MultipleLocations;
 import nl.knaw.huc.api.ResultContents;
-import nl.knaw.huc.api.Version;
+import nl.knaw.huc.api.ResultVersion;
+import nl.knaw.huc.core.Version;
 import nl.knaw.huc.service.FileService;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
@@ -70,7 +71,9 @@ public class FilesResource {
         readContent(inputStream)
     ));
 
-    return Response.created(locationOf(resultFile.getVersion())).build();
+    return Response
+        .created(locationOf(resultFile.getVersion().getFileUuid()))
+        .build();
   }
 
   @GET
@@ -90,7 +93,10 @@ public class FilesResource {
         formContents.getContent(),
         formContents.getName()
     );
-    return new ResultContents(formContents.getName(), version);
+    return new ResultContents(
+        formContents.getName(),
+        new ResultVersion(version)
+    );
   }
 
 }

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.dropwizard.testing.junit.ResourceTestRule;
-import nl.knaw.huc.api.Version;
+import nl.knaw.huc.core.Version;
 import nl.knaw.huc.db.VersionDao;
 import nl.knaw.huc.service.ContentsService;
 import nl.knaw.huc.service.JdbiVersionService;

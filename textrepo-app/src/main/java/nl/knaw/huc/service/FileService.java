@@ -2,7 +2,7 @@ package nl.knaw.huc.service;
 
 import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.core.Contents;
-import nl.knaw.huc.api.Version;
+import nl.knaw.huc.core.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

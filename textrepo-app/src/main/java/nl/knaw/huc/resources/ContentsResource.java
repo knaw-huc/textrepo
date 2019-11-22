@@ -47,15 +47,10 @@ public class ContentsResource {
 
     final var contents = contentsService.getBySha224(sha224);
 
-    return Response.ok(contents.getContent(), APPLICATION_OCTET_STREAM)
-                   .header("Content-Disposition", "attachment;")
-                   .build();
-  }
-
-  private static URI locationOf(Contents contents) {
-    return UriBuilder.fromResource(ContentsResource.class)
-                     .path("{sha224}")
-                     .build(contents.getSha224());
+    return Response
+        .ok(contents.getContent(), APPLICATION_OCTET_STREAM)
+        .header("Content-Disposition", "attachment;")
+        .build();
   }
 
 }
