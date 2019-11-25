@@ -76,20 +76,6 @@ public class FilesResource {
         .build();
   }
 
-  // @GET
-  // @Path("/{uuid}")
-  // @Timed
-  // @Produces(APPLICATION_JSON)
-  // @ApiOperation(value = "Get file with its version ids")
-  // @ApiResponses(value = {@ApiResponse(code = 200, response = Version.class, message = "OK")})
-  // public Response getFileAndVersions(@PathParam("uuid") @Valid UUID fileId) {
-  //   logger.debug("getFileAndVersions: fileId={}", fileId);
-  //   // TODO: implement:
-  //   // var file = fileService.getfile(fileId);
-  //   // return Response.ok(new ResultFile(file)).build();
-  //   return Response.ok(null).build();
-  // }
-
   @GET
   @Path("/{uuid}/latest")
   @Timed

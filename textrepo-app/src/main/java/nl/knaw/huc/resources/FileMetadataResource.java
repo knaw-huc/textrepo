@@ -26,13 +26,13 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 @Api(tags = {"files", "metadata"})
 @Path("/files/{uuid}/metadata")
-public class MetadataResource {
+public class FileMetadataResource {
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   private final MetadataService metadataService;
 
-  public MetadataResource(MetadataService metadataService) {
+  public FileMetadataResource(MetadataService metadataService) {
     this.metadataService = metadataService;
   }
 

@@ -35,7 +35,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class VersionsResourceTest {
+public class FileVersionsResourceTest {
   private static final UUID uuid = UUID.fromString("0defaced-cafe-babe-dada-deadbeefc2c6");
 
   private static final Jdbi jdbi = mock(Jdbi.class);
@@ -53,7 +53,7 @@ public class VersionsResourceTest {
   public static final ResourceTestRule resource = ResourceTestRule
       .builder()
       .addProvider(MultiPartFeature.class)
-      .addResource(new VersionsResource(versionService))
+      .addResource(new FileVersionsResource(versionService))
       .build();
 
   @Before

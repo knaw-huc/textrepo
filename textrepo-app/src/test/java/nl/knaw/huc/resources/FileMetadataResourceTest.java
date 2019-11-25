@@ -28,7 +28,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class MetadataResourceTest {
+public class FileMetadataResourceTest {
   private static final UUID fileId = UUID.fromString("adefaced-cafe-babe-0001-added1234567");
 
   private static final Jdbi jdbi = mock(Jdbi.class);
@@ -41,7 +41,7 @@ public class MetadataResourceTest {
   public static final ResourceTestRule resource = ResourceTestRule
       .builder()
       .addProvider(MultiPartFeature.class)
-      .addResource(new MetadataResource(metadataService))
+      .addResource(new FileMetadataResource(metadataService))
       .build();
 
   @Captor

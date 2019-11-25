@@ -22,13 +22,13 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 @Api(tags = {"files", "versions"})
 @Path("/files/{uuid}/versions")
-public class VersionsResource {
+public class FileVersionsResource {
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   private VersionService versionService;
 
-  public VersionsResource(VersionService versionService) {
+  public FileVersionsResource(VersionService versionService) {
     this.versionService = versionService;
   }
 

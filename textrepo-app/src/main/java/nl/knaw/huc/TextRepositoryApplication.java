@@ -10,8 +10,8 @@ import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import nl.knaw.huc.resources.FileContentsResource;
 import nl.knaw.huc.resources.FilesResource;
 import nl.knaw.huc.resources.ContentsResource;
-import nl.knaw.huc.resources.MetadataResource;
-import nl.knaw.huc.resources.VersionsResource;
+import nl.knaw.huc.resources.FileMetadataResource;
+import nl.knaw.huc.resources.FileVersionsResource;
 import nl.knaw.huc.service.FileContentsService;
 import nl.knaw.huc.service.FileService;
 import nl.knaw.huc.service.ContentsService;
@@ -86,8 +86,8 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     var fileService = new FileService(versionService, UUID::randomUUID, metadataService);
     var filesResource = new FilesResource(fileService);
     var fileContentsResource = new FileContentsResource(fileContentsService);
-    var metadataResource = new MetadataResource(metadataService);
-    var versionsResource = new VersionsResource(versionService);
+    var metadataResource = new FileMetadataResource(metadataService);
+    var versionsResource = new FileVersionsResource(versionService);
 
     environment.jersey().register(metadataResource);
     environment.jersey().register(filesResource);
