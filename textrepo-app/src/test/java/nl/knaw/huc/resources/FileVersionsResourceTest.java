@@ -76,20 +76,21 @@ public class FileVersionsResourceTest {
     var sha2 = "d476f2f6e00deaa918dfbec79545412134e02095f870269175b89376";
     var version2 = new Version(uuid, LocalDateTime.now(), sha2);
     versions.add(version2);
-    when(versionDao.findByUuid(any())).thenReturn(versions);
+    when(versionDao.findByFileId(any())).thenReturn(versions);
 
     var response = getVersions(uuid);
 
-    verify(versionDao, times(1)).findByUuid(uuid);
+    verify(versionDao, times(1)).findByFileId(uuid);
     var responseJson = response.readEntity(String.class);
     var mapper = new ObjectMapper();
     // To read date time field:
     mapper.registerModule(new JavaTimeModule());
-    List<Version> actual = mapper.readValue(responseJson, new TypeReference<List<Version>>(){});
+    List<Version> actual = mapper.readValue(responseJson, new TypeReference<List<Version>>() {
+    });
     assertThat(actual.size()).isEqualTo(2);
-    assertThat(actual.get(0).getFileUuid()).isEqualTo(uuid);
+    assertThat(actual.get(0).getFileId()).isEqualTo(uuid);
     assertThat(actual.get(0).getContentsSha()).isEqualTo(sha1);
-    assertThat(actual.get(1).getFileUuid()).isEqualTo(uuid);
+    assertThat(actual.get(1).getFileId()).isEqualTo(uuid);
     assertThat(actual.get(1).getContentsSha()).isEqualTo(sha2);
   }
 

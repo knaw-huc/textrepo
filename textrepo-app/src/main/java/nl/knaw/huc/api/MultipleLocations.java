@@ -22,8 +22,8 @@ public class MultipleLocations {
     locations = resultContentsList
         .stream()
         .collect(Collectors.toMap(
-          ResultContents::getFilename,
-          r -> locationOf(r.getVersion().getFileUuid())
+            ResultContents::getFilename,
+            r -> locationOf(r.getVersion().getFileId())
         ));
   }
 }

@@ -17,24 +17,24 @@ import java.util.UUID;
 
 public interface MetadataDao {
 
-  @SqlUpdate("insert into metadata (file_uuid, key, value) values (:id, :key, :value)")
+  @SqlUpdate("insert into metadata (document_id, key, value) values (:id, :key, :value)")
   void insert(@Bind("id") UUID fileId, @BindBean MetadataEntry metadataEntry);
 
   @Transaction
-  @SqlUpdate("update metadata set value = :value where file_uuid = :id and key = :key ")
+  @SqlUpdate("update metadata set value = :value where document_id = :id and key = :key ")
   void update(@Bind("id") UUID fileId, @BindBean MetadataEntry metadataEntry);
 
   @Transaction
-  @SqlBatch("insert into metadata (file_uuid, key, value) values (:id, :key, :value)")
+  @SqlBatch("insert into metadata (document_id, key, value) values (:id, :key, :value)")
   @BatchChunkSize(1000)
-  void bulkInsert(@Bind("id") UUID fileId, @BindBean Iterator<Map.Entry<String,String>> entries);
+  void bulkInsert(@Bind("id") UUID documentId, @BindBean Iterator<Map.Entry<String, String>> entries);
 
-  @SqlQuery("select file_uuid, key, value from metadata where file_uuid = ? and key = ?")
+  @SqlQuery("select document_id, key, value from metadata where document_id = ? and key = ?")
   @RegisterConstructorMapper(MetadataEntry.class)
-  Optional<MetadataEntry> findByFileUuidAndKey(@Bind UUID fileUuid, @Bind String key);
+  Optional<MetadataEntry> findByDocumentIdAndKey(@Bind UUID documentId, @Bind String key);
 
-  @SqlQuery("select file_uuid, key, value from metadata where file_uuid = ?")
+  @SqlQuery("select document_id, key, value from metadata where document_id = ?")
   @RegisterConstructorMapper(MetadataEntry.class)
-  Iterator<MetadataEntry> findByFileUuid(@Bind UUID fileUuid);
+  Iterator<MetadataEntry> findByDocumentId(@Bind UUID documentId);
 
 }

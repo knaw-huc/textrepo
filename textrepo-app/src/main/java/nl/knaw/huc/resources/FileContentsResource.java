@@ -100,7 +100,7 @@ public class FileContentsResource {
     final var startReplacing = now();
     var version = fileContentsService.replaceFileContents(fileId, contents, filename);
 
-    if (version.getDate().isBefore(startReplacing)) {
+    if (version.getCreatedAt().isBefore(startReplacing)) {
       logger.info("skip existing [{}]", filename);
       return null;
     }

@@ -11,35 +11,35 @@ import java.util.UUID;
  */
 public class Version {
 
-  private UUID fileUuid;
-  private LocalDateTime date;
+  private UUID fileId;
+  private LocalDateTime createdAt;
   private String contentsSha;
 
-  @ConstructorProperties({"file_uuid", "date", "contents_sha"})
-  public Version(UUID fileUuid, LocalDateTime date, String contentsSha) {
-    this.fileUuid = fileUuid;
-    this.date = date;
+  @ConstructorProperties({"file_id", "created_at", "contents_sha"})
+  public Version(UUID fileId, LocalDateTime createdAt, String contentsSha) {
+    this.fileId = fileId;
+    this.createdAt = createdAt;
     this.contentsSha = contentsSha;
   }
 
   @JsonProperty
-  public UUID getFileUuid() {
-    return fileUuid;
+  public UUID getFileId() {
+    return fileId;
   }
 
   @JsonProperty
-  public void setFileUuid(UUID fileUuid) {
-    this.fileUuid = fileUuid;
+  public void setFileId(UUID fileId) {
+    this.fileId = fileId;
   }
 
   @JsonProperty
-  public LocalDateTime getDate() {
-    return date;
+  public LocalDateTime getCreatedAt() {
+    return createdAt;
   }
 
   @JsonProperty
-  public void setDate(LocalDateTime date) {
-    this.date = date;
+  public void setCreatedAt(LocalDateTime createdAt) {
+    this.createdAt = createdAt;
   }
 
   @JsonProperty

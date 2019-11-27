@@ -72,7 +72,7 @@ public class FilesResource {
     ));
 
     return Response
-        .created(locationOf(resultFile.getVersion().getFileUuid()))
+        .created(locationOf(resultFile.getVersion().getFileId()))
         .build();
   }
 

@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.ws.rs.NotFoundException;
-
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -42,7 +41,7 @@ public class FileService {
 
   private Version addFile(@Nonnull Contents contents, String filename) {
     var version = versionService.insertNewVersion(fileIdGenerator.get(), contents, filename, now());
-    metadataService.insert(version.getFileUuid(), new MetadataEntry("filename", filename));
+    metadataService.insert(version.getFileId(), new MetadataEntry("filename", filename));
     return version;
   }
 
