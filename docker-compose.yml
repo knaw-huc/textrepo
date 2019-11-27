@@ -43,7 +43,7 @@ services:
     depends_on:
     - textrepo-app
     volumes:
-    - concordiondata:/concordion:ro
+    - ./concordion:/concordion:ro
     ports:
     - 8080:8080
 
@@ -73,7 +73,7 @@ services:
        "mvn", "clean", "test"
     ]
     volumes:
-    - concordiondata:/concordion
+    - ./concordion:/concordion
     environment:
       ES_HOST: elasticsearch:9200
       APP_HOST: textrepo-app:8080
@@ -89,6 +89,4 @@ networks:
 
 volumes:
   esdata:
-    driver: local
-  concordiondata:
     driver: local
