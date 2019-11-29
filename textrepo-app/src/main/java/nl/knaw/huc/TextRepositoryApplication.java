@@ -33,7 +33,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
 
   public static void main(final String[] args) throws Exception {
     new TextRepositoryApplication().run(args);
-    logger.info("App started");
+    logger.info("TextRepository app started");
   }
 
   @Override

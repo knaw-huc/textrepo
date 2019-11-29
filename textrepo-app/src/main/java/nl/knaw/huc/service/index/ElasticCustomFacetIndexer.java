@@ -17,6 +17,7 @@ import java.util.UUID;
 
 import static javax.ws.rs.client.Entity.entity;
 import static javax.ws.rs.core.MediaType.APPLICATION_XML_TYPE;
+import static javax.ws.rs.core.MediaType.WILDCARD_TYPE;
 import static org.elasticsearch.common.xcontent.XContentType.JSON;
 
 
@@ -64,12 +65,16 @@ public class ElasticCustomFacetIndexer implements FileIndexer, Managed {
     }
   }
 
+  /**
+   * Index file
+   */
   @Override
   public void indexFile(@Nonnull UUID fileId, @NotNull String latestVersionContent) {
     var response = jerseyClient
         .target(config.fields)
         .request()
-        .post(entity(latestVersionContent, APPLICATION_XML_TYPE));
+        // TODO: does WILDCARD_TYPE work?
+        .post(entity(latestVersionContent, WILDCARD_TYPE));
     var esFacets = response
         .readEntity(String.class);
 

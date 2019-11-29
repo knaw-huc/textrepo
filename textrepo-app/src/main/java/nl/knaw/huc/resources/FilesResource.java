@@ -61,9 +61,12 @@ public class FilesResource {
       @FormDataParam("contents") FormDataBodyPart bodyPart
   ) {
     logger.debug("addFile: filename={}", fileDetail == null ? "" : fileDetail.getFileName());
+
     if (isZip(bodyPart, fileDetail)) {
       var resultFiles = handleZipFile(inputStream, this::handleNewFile);
-      return Response.ok(new MultipleLocations(resultFiles)).build();
+      return Response
+          .ok(new MultipleLocations(resultFiles))
+          .build();
     }
 
     var resultFile = handleNewFile(new FormContents(
