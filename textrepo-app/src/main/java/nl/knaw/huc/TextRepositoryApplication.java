@@ -3,19 +3,22 @@ package nl.knaw.huc;
 import io.dropwizard.Application;
 import io.dropwizard.forms.MultiPartBundle;
 import io.dropwizard.jdbi3.JdbiFactory;
+import io.dropwizard.jdbi3.bundles.JdbiExceptionsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.federecio.dropwizard.swagger.SwaggerBundle;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
-import nl.knaw.huc.resources.FileContentsResource;
-import nl.knaw.huc.resources.FilesResource;
 import nl.knaw.huc.resources.ContentsResource;
+import nl.knaw.huc.resources.FileContentsResource;
 import nl.knaw.huc.resources.FileMetadataResource;
 import nl.knaw.huc.resources.FileVersionsResource;
+import nl.knaw.huc.resources.FilesResource;
+import nl.knaw.huc.resources.TypeResource;
+import nl.knaw.huc.service.ContentsService;
 import nl.knaw.huc.service.FileContentsService;
 import nl.knaw.huc.service.FileService;
-import nl.knaw.huc.service.ContentsService;
 import nl.knaw.huc.service.JdbiMetadataService;
+import nl.knaw.huc.service.JdbiTypeService;
 import nl.knaw.huc.service.JdbiVersionService;
 import nl.knaw.huc.service.index.ElasticCustomFacetIndexer;
 import nl.knaw.huc.service.index.ElasticFileIndexer;
@@ -44,11 +47,12 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
   @Override
   public void initialize(final Bootstrap<TextRepositoryConfiguration> bootstrap) {
     bootstrap.addBundle(new MultiPartBundle());
+    bootstrap.addBundle(new JdbiExceptionsBundle());
     bootstrap.addBundle(getSwaggerBundle());
   }
 
   private SwaggerBundle<TextRepositoryConfiguration> getSwaggerBundle() {
-    return new SwaggerBundle<TextRepositoryConfiguration>() {
+    return new SwaggerBundle<>() {
       @Override
       protected SwaggerBundleConfiguration getSwaggerBundleConfiguration(TextRepositoryConfiguration configuration) {
         return configuration.getSwaggerBundleConfiguration();
@@ -60,9 +64,9 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
   public void run(TextRepositoryConfiguration config, Environment environment) {
     var factory = new JdbiFactory();
     var jdbi = factory.build(
-        environment,
-        config.getDataSourceFactory(),
-        "postgresql"
+      environment,
+      config.getDataSourceFactory(),
+      "postgresql"
     );
     jdbi.installPlugin(new SqlObjectPlugin());
 
@@ -82,6 +86,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
 
     var metadataService = new JdbiMetadataService(jdbi);
     var versionService = new JdbiVersionService(jdbi, contentsService, fileIndexService, customIndexers);
+    var typeResource = new TypeResource(new JdbiTypeService(jdbi));
     var fileContentsService = new FileContentsService(contentsService, versionService, metadataService);
     var fileService = new FileService(versionService, UUID::randomUUID, metadataService);
     var filesResource = new FilesResource(fileService);
@@ -89,6 +94,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     var metadataResource = new FileMetadataResource(metadataService);
     var versionsResource = new FileVersionsResource(versionService);
 
+    environment.jersey().register(typeResource);
     environment.jersey().register(metadataResource);
     environment.jersey().register(filesResource);
     environment.jersey().register(fileContentsResource);
