@@ -25,6 +25,7 @@ public class TestFileHandling extends AbstractConcordionTest {
     var result = new UploadResult();
     result.status = response.getStatus();
     var latestVersionLocation = response.getHeaderString("Location") + "/latest";
+    logger.info("fileLocation: " + latestVersionLocation);
 
     var requestVersion = client()
         .register(MultiPartFeature.class)
@@ -32,7 +33,6 @@ public class TestFileHandling extends AbstractConcordionTest {
         .request()
         .get();
     var versionJson = requestVersion.readEntity(String.class);
-    logger.info("fileLocation: " + latestVersionLocation);
     logger.info("versionJson: " + versionJson);
     result.sha224 = JsonPath.parse(versionJson).read("$.contentsSha");
 
