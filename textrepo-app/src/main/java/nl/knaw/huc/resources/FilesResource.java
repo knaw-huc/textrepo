@@ -17,6 +17,7 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -53,27 +54,29 @@ public class FilesResource {
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Create new file by uploading a file or create multiple files by uploading a zip")
   @ApiResponses(value = {
-      @ApiResponse(code = 201, message = "OK"),
-      @ApiResponse(code = 200, response = MultipleLocations.class, message = "OK")})
+    @ApiResponse(code = 201, message = "OK"),
+    @ApiResponse(code = 200, response = MultipleLocations.class, message = "OK")})
   public Response addFile(
-      @FormDataParam("contents") InputStream inputStream,
-      @FormDataParam("contents") FormDataContentDisposition fileDetail,
-      @FormDataParam("contents") FormDataBodyPart bodyPart
+    @Nonnull @FormDataParam("type") String typeName,
+    @FormDataParam("contents") InputStream inputStream,
+    @FormDataParam("contents") FormDataContentDisposition fileDetail,
+    @FormDataParam("contents") FormDataBodyPart bodyPart
   ) {
-    logger.debug("addFile: filename={}", fileDetail == null ? "" : fileDetail.getFileName());
+    logger.debug("addFile: type={}, filename={}", typeName, fileDetail == null ? "" : fileDetail.getFileName());
+
     if (isZip(bodyPart, fileDetail)) {
       var resultFiles = handleZipFile(inputStream, this::handleNewFile);
       return Response.ok(new MultipleLocations(resultFiles)).build();
     }
 
     var resultFile = handleNewFile(new FormContents(
-        fileDetail.getFileName(),
-        readContent(inputStream)
+      fileDetail.getFileName(),
+      readContent(inputStream)
     ));
 
     return Response
-        .created(locationOf(resultFile.getVersion().getFileId()))
-        .build();
+      .created(locationOf(resultFile.getVersion().getFileId()))
+      .build();
   }
 
   @GET
@@ -90,12 +93,12 @@ public class FilesResource {
 
   private ResultContents handleNewFile(FormContents formContents) {
     var version = fileService.createVersionWithFilenameMetadata(
-        formContents.getContent(),
-        formContents.getName()
+      formContents.getContent(),
+      formContents.getName()
     );
     return new ResultContents(
-        formContents.getName(),
-        new ResultVersion(version)
+      formContents.getName(),
+      new ResultVersion(version)
     );
   }
 

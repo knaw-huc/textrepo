@@ -6,8 +6,10 @@ import org.postgresql.util.PSQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import java.util.List;
+import java.util.Optional;
 
 import static javax.ws.rs.core.Response.Status.CONFLICT;
 import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
@@ -50,6 +52,11 @@ public class JdbiTypeService implements TypeService {
     LOGGER.trace("Type '{}' created with id: {}", name, id);
 
     return id;
+  }
+
+  @Override
+  public short get(String name) {
+    return types().find(name).orElseThrow(() -> new NotFoundException("No such type: " + name));
   }
 
   private TypeDao types() {

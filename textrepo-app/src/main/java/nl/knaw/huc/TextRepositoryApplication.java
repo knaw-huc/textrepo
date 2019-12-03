@@ -85,13 +85,20 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     var contentsResource = new ContentsResource(contentsService);
 
     var metadataService = new JdbiMetadataService(jdbi);
+
     var versionService = new JdbiVersionService(jdbi, contentsService, fileIndexService, customIndexers);
-    var typeResource = new TypeResource(new JdbiTypeService(jdbi));
-    var fileContentsService = new FileContentsService(contentsService, versionService, metadataService);
-    var fileService = new FileService(versionService, UUID::randomUUID, metadataService);
+
+    var typeService = new JdbiTypeService(jdbi);
+    var typeResource = new TypeResource(typeService);
+
+    var fileService = new FileService(jdbi, typeService, versionService, metadataService, UUID::randomUUID);
     var filesResource = new FilesResource(fileService);
+
+    var fileContentsService = new FileContentsService(contentsService, versionService, metadataService);
     var fileContentsResource = new FileContentsResource(fileContentsService);
+
     var metadataResource = new FileMetadataResource(metadataService);
+
     var versionsResource = new FileVersionsResource(versionService);
 
     environment.jersey().register(typeResource);

@@ -57,7 +57,7 @@ public class FilesResourceTest {
   private static final VersionService versions = new JdbiVersionService(jdbi, contentsService, fileIndexer, newArrayList(facetIndexer));
   @SuppressWarnings("unchecked")
   private static final Supplier<UUID> idGenerator = mock(Supplier.class);
-  private static final FileService FILE_SERVICE = new FileService(versions, idGenerator, metadataService);
+  private static final FileService FILE_SERVICE = new FileService(, versions, idGenerator, metadataService, );
   private static final VersionDao versionDao = mock(VersionDao.class);
 
   @ClassRule

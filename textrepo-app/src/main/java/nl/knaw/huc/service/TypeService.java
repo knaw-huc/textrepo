@@ -6,4 +6,6 @@ public interface TypeService {
   List<String> list();
 
   short create(String name);
+
+  short get(String name);
 }

@@ -3,6 +3,8 @@ package nl.knaw.huc.service;
 import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.core.Version;
+import nl.knaw.huc.db.FileDao;
+import org.jdbi.v3.core.Jdbi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,24 +18,38 @@ import static java.time.LocalDateTime.now;
 import static nl.knaw.huc.core.Contents.fromContent;
 
 public class FileService {
+  private static final Logger LOGGER = LoggerFactory.getLogger(FileService.class);
+
+  private final Jdbi jdbi;
+  private final TypeService typeService;
   private final VersionService versionService;
   private final Supplier<UUID> fileIdGenerator;
 
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private MetadataService metadataService;
 
   public FileService(
-      VersionService versionService,
-      Supplier<UUID> fileIdGenerator,
-      MetadataService metadataService) {
+    Jdbi jdbi,
+    TypeService typeService,
+    VersionService versionService,
+    MetadataService metadataService, Supplier<UUID> fileIdGenerator) {
+    this.jdbi = jdbi;
+    this.typeService = typeService;
     this.versionService = versionService;
     this.fileIdGenerator = fileIdGenerator;
     this.metadataService = metadataService;
   }
 
+  public UUID createFile(String type) {
+    LOGGER.trace("creating file of type: {}", type);
+    final var fileId = fileIdGenerator.get();
+    final var typeId = typeService.get(type);
+    files().create(fileId, typeId);
+    return fileId;
+  }
+
   public Version createVersionWithFilenameMetadata(
-      byte[] content,
-      String filename
+    byte[] content,
+    String filename
   ) {
     final var contents = fromContent(content);
     return addFile(contents, filename);
@@ -45,11 +61,13 @@ public class FileService {
     return version;
   }
 
-
   public Version getLatestVersion(@Nonnull UUID fileId) {
     return versionService
-        .findLatestVersion(fileId)
-        .orElseThrow(() -> new NotFoundException(format("No such file: %s", fileId)));
+      .findLatestVersion(fileId)
+      .orElseThrow(() -> new NotFoundException(format("No such file: %s", fileId)));
   }
 
+  private FileDao files() {
+    return jdbi.onDemand(FileDao.class);
+  }
 }
