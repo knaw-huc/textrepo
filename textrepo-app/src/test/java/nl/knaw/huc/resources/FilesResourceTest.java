@@ -8,6 +8,7 @@ import nl.knaw.huc.db.FileDao;
 import nl.knaw.huc.db.VersionDao;
 import nl.knaw.huc.service.ContentsService;
 import nl.knaw.huc.service.FileService;
+import nl.knaw.huc.service.JdbiFileService;
 import nl.knaw.huc.service.JdbiVersionService;
 import nl.knaw.huc.service.MetadataService;
 import nl.knaw.huc.service.TypeService;
@@ -62,7 +63,7 @@ public class FilesResourceTest {
   @SuppressWarnings("unchecked")
   private static final Supplier<UUID> idGenerator = mock(Supplier.class);
   private static final FileService FILE_SERVICE =
-      new FileService(jdbi, typeService, versions, metadataService, idGenerator);
+      new JdbiFileService(jdbi, typeService, versions, metadataService, idGenerator);
   private static final VersionDao versionDao = mock(VersionDao.class);
   private static final FileDao fileDao = mock(FileDao.class);
 

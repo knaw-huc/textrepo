@@ -9,6 +9,7 @@ import io.dropwizard.setup.Environment;
 import io.federecio.dropwizard.swagger.SwaggerBundle;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import nl.knaw.huc.resources.ContentsResource;
+import nl.knaw.huc.resources.DocumentsResource;
 import nl.knaw.huc.resources.FileContentsResource;
 import nl.knaw.huc.resources.FileMetadataResource;
 import nl.knaw.huc.resources.FileVersionsResource;
@@ -16,7 +17,8 @@ import nl.knaw.huc.resources.FilesResource;
 import nl.knaw.huc.resources.TypeResource;
 import nl.knaw.huc.service.ContentsService;
 import nl.knaw.huc.service.FileContentsService;
-import nl.knaw.huc.service.FileService;
+import nl.knaw.huc.service.JdbiDocumentService;
+import nl.knaw.huc.service.JdbiFileService;
 import nl.knaw.huc.service.JdbiMetadataService;
 import nl.knaw.huc.service.JdbiTypeService;
 import nl.knaw.huc.service.JdbiVersionService;
@@ -64,9 +66,9 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
   public void run(TextRepositoryConfiguration config, Environment environment) {
     var factory = new JdbiFactory();
     var jdbi = factory.build(
-      environment,
-      config.getDataSourceFactory(),
-      "postgresql"
+        environment,
+        config.getDataSourceFactory(),
+        "postgresql"
     );
     jdbi.installPlugin(new SqlObjectPlugin());
 
@@ -91,7 +93,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     var typeService = new JdbiTypeService(jdbi);
     var typeResource = new TypeResource(typeService);
 
-    var fileService = new FileService(jdbi, typeService, versionService, metadataService, UUID::randomUUID);
+    var fileService = new JdbiFileService(jdbi, typeService, versionService, metadataService, UUID::randomUUID);
     var filesResource = new FilesResource(fileService);
 
     var fileContentsService = new FileContentsService(contentsService, versionService, metadataService);
@@ -101,12 +103,16 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
 
     var versionsResource = new FileVersionsResource(versionService);
 
+    var documentService = new JdbiDocumentService(jdbi, UUID::randomUUID);
+    var documentsResource = new DocumentsResource(documentService, fileService);
+
     environment.jersey().register(typeResource);
     environment.jersey().register(metadataResource);
     environment.jersey().register(filesResource);
     environment.jersey().register(fileContentsResource);
     environment.jersey().register(contentsResource);
     environment.jersey().register(versionsResource);
+    environment.jersey().register(documentsResource);
   }
 
 }
