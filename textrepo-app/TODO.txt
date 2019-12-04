@@ -7,3 +7,4 @@ PUT /documents/docId/type met contents
 Extract interfaces from Service classes.
 When uploading file, if fileDetail has no filename, throw exception instead of using "" as filename
 Scrutinize amount of parameters in constructors in Service classes. Indicates they do too many different things
+POST to "/documents?type=" is a query parameter. Perhaps multipart.field() or genuine FormDataBodyPart is better?
