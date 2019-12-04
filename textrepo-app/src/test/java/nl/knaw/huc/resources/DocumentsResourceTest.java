@@ -54,7 +54,6 @@ public class DocumentsResourceTest {
 
   @Before
   public void setupMocks() {
-    // when(jdbi.onDemand(any())).thenReturn(versionDao);
     MockitoAnnotations.initMocks(this);
   }
 
@@ -87,7 +86,7 @@ public class DocumentsResourceTest {
     when(fileService.createFile(any(String.class))).thenReturn(FILE_ID);
     when(documentService.createDocument(any(UUID.class))).thenReturn(DOC_ID);
 
-    request.post(entity);
+    var response = request.post(entity);
 
     var type = ArgumentCaptor.forClass(String.class);
     verify(fileService).createFile(type.capture());
@@ -96,5 +95,8 @@ public class DocumentsResourceTest {
     var fileId = ArgumentCaptor.forClass(UUID.class);
     verify(documentService).createDocument(fileId.capture());
     assertThat(fileId.getValue()).isEqualTo(FILE_ID);
+
+    assertThat(response.getStatus()).isEqualTo(201);
+    assertThat(response.getHeaderString("Location")).endsWith("documents/" + DOC_ID.toString());
   }
 }
