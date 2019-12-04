@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.api.MultipleLocations;
+import nl.knaw.huc.db.FileDao;
 import nl.knaw.huc.db.VersionDao;
 import nl.knaw.huc.service.ContentsService;
 import nl.knaw.huc.service.FileService;
@@ -63,6 +64,7 @@ public class FilesResourceTest {
   private static final FileService FILE_SERVICE =
       new FileService(jdbi, typeService, versions, metadataService, idGenerator);
   private static final VersionDao versionDao = mock(VersionDao.class);
+  private static final FileDao fileDao = mock(FileDao.class);
 
   @ClassRule
   public static final ResourceTestRule resource = ResourceTestRule
@@ -79,14 +81,15 @@ public class FilesResourceTest {
 
   @Before
   public void setupMocks() {
-    when(jdbi.onDemand(any())).thenReturn(versionDao);
+    when(jdbi.onDemand(FileDao.class)).thenReturn(fileDao);
+    when(jdbi.onDemand(VersionDao.class)).thenReturn(versionDao);
     when(idGenerator.get()).thenReturn(UUID.fromString(uuid));
     MockitoAnnotations.initMocks(this);
   }
 
   @After
   public void resetMocks() {
-    reset(jdbi, versionDao, fileIndexer, metadataService);
+    reset(jdbi, fileDao, versionDao, fileIndexer, metadataService);
   }
 
   @Test

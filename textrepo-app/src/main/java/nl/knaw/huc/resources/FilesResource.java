@@ -54,29 +54,27 @@ public class FilesResource {
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Create new file by uploading a file or create multiple files by uploading a zip")
   @ApiResponses(value = {
-    @ApiResponse(code = 201, message = "OK"),
-    @ApiResponse(code = 200, response = MultipleLocations.class, message = "OK")})
+      @ApiResponse(code = 201, message = "OK"),
+      @ApiResponse(code = 200, response = MultipleLocations.class, message = "OK")})
   public Response addFile(
-    @Nonnull @FormDataParam("type") String typeName,
-    @FormDataParam("contents") InputStream inputStream,
-    @FormDataParam("contents") FormDataContentDisposition fileDetail,
-    @FormDataParam("contents") FormDataBodyPart bodyPart
+      @Nonnull @FormDataParam("type") String typeName,
+      @FormDataParam("contents") InputStream inputStream,
+      @FormDataParam("contents") FormDataContentDisposition fileDetail,
+      @FormDataParam("contents") FormDataBodyPart bodyPart
   ) {
-    logger.debug("addFile: type={}, filename={}", typeName, fileDetail == null ? "" : fileDetail.getFileName());
+    final var fileName = fileDetail == null ? "" : fileDetail.getFileName();
+    logger.debug("addFile: type={}, filename={}", typeName, fileName);
 
     if (isZip(bodyPart, fileDetail)) {
-      var resultFiles = handleZipFile(inputStream, this::handleNewFile);
+      var resultFiles = handleZipFile(inputStream, formContents -> handleNewFile(typeName, formContents));
       return Response.ok(new MultipleLocations(resultFiles)).build();
     }
 
-    var resultFile = handleNewFile(new FormContents(
-      fileDetail.getFileName(),
-      readContent(inputStream)
-    ));
+    var resultFile = handleNewFile(typeName, new FormContents(fileName, readContent(inputStream)));
 
     return Response
-      .created(locationOf(resultFile.getVersion().getFileId()))
-      .build();
+        .created(locationOf(resultFile.getVersion().getFileId()))
+        .build();
   }
 
   @GET
@@ -91,14 +89,16 @@ public class FilesResource {
     return Response.ok(version).build();
   }
 
-  private ResultContents handleNewFile(FormContents formContents) {
+  private ResultContents handleNewFile(String typeName, FormContents formContents) {
+    var fileId = fileService.createFile(typeName);
     var version = fileService.createVersionWithFilenameMetadata(
-      formContents.getContent(),
-      formContents.getName()
+        fileId,
+        formContents.getContent(),
+        formContents.getName()
     );
     return new ResultContents(
-      formContents.getName(),
-      new ResultVersion(version)
+        formContents.getName(),
+        new ResultVersion(version)
     );
   }
 

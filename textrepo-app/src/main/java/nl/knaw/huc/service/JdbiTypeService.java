@@ -2,17 +2,15 @@ package nl.knaw.huc.service;
 
 import nl.knaw.huc.db.TypeDao;
 import org.jdbi.v3.core.Jdbi;
-import org.postgresql.util.PSQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import java.util.List;
-import java.util.Optional;
 
 import static javax.ws.rs.core.Response.Status.CONFLICT;
-import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
 
 public class JdbiTypeService implements TypeService {
   private static final Logger LOGGER = LoggerFactory.getLogger(JdbiTypeService.class);
@@ -29,7 +27,7 @@ public class JdbiTypeService implements TypeService {
   }
 
   @Override
-  public short create(String name) {
+  public short create(@Nonnull String name) {
     if (types().exists(name)) {
       throw new WebApplicationException("Duplicate type name: " + name, CONFLICT);
     }
@@ -55,7 +53,7 @@ public class JdbiTypeService implements TypeService {
   }
 
   @Override
-  public short get(String name) {
+  public short get(@Nonnull String name) {
     return types().find(name).orElseThrow(() -> new NotFoundException("No such type: " + name));
   }
 

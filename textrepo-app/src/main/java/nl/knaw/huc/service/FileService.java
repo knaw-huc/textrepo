@@ -28,10 +28,10 @@ public class FileService {
   private MetadataService metadataService;
 
   public FileService(
-    Jdbi jdbi,
-    TypeService typeService,
-    VersionService versionService,
-    MetadataService metadataService, Supplier<UUID> fileIdGenerator) {
+      Jdbi jdbi,
+      TypeService typeService,
+      VersionService versionService,
+      MetadataService metadataService, Supplier<UUID> fileIdGenerator) {
     this.jdbi = jdbi;
     this.typeService = typeService;
     this.versionService = versionService;
@@ -39,7 +39,7 @@ public class FileService {
     this.metadataService = metadataService;
   }
 
-  public UUID createFile(String type) {
+  public UUID createFile(@Nonnull String type) {
     LOGGER.trace("creating file of type: {}", type);
     final var fileId = fileIdGenerator.get();
     final var typeId = typeService.get(type);
@@ -48,23 +48,24 @@ public class FileService {
   }
 
   public Version createVersionWithFilenameMetadata(
-    byte[] content,
-    String filename
+      UUID fileId,
+      byte[] content,
+      String filename
   ) {
     final var contents = fromContent(content);
-    return addFile(contents, filename);
+    return addFile(contents, fileId, filename);
   }
 
-  private Version addFile(@Nonnull Contents contents, String filename) {
-    var version = versionService.insertNewVersion(fileIdGenerator.get(), contents, filename, now());
+  private Version addFile(@Nonnull Contents contents, UUID fileId, String filename) {
+    var version = versionService.insertNewVersion(fileId, contents, filename, now());
     metadataService.insert(version.getFileId(), new MetadataEntry("filename", filename));
     return version;
   }
 
   public Version getLatestVersion(@Nonnull UUID fileId) {
     return versionService
-      .findLatestVersion(fileId)
-      .orElseThrow(() -> new NotFoundException(format("No such file: %s", fileId)));
+        .findLatestVersion(fileId)
+        .orElseThrow(() -> new NotFoundException(format("No such file: %s", fileId)));
   }
 
   private FileDao files() {

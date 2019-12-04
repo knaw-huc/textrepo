@@ -1,0 +1,4 @@
+POST /documents met type en contents levert docId
+GET /documents/docId levert json met type->fileId mappings
+GET /documents/docId/type levert fileId
+PUT /documents/docId/type met contents
