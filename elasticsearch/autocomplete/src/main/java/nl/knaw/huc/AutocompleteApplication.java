@@ -4,6 +4,7 @@ import io.dropwizard.Application;
 import io.dropwizard.forms.MultiPartBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import nl.knaw.huc.exceptions.IllegalArgumentExceptionMapper;
 import nl.knaw.huc.resources.AutocompleteResource;
 import nl.knaw.huc.service.FieldsService;
 import org.slf4j.Logger;
@@ -33,6 +34,7 @@ public class AutocompleteApplication extends Application<AutocompleteConfigurati
     var contentsService = new FieldsService();
     var contentsResource = new AutocompleteResource(contentsService);
 
+    environment.jersey().register(new IllegalArgumentExceptionMapper());
     environment.jersey().register(contentsResource);
   }
 
