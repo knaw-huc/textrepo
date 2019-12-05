@@ -31,7 +31,7 @@ public class AutocompleteApplication extends Application<AutocompleteConfigurati
 
   @Override
   public void run(AutocompleteConfiguration config, Environment environment) {
-    var contentsService = new FieldsService();
+    var contentsService = new FieldsService(config);
     var contentsResource = new AutocompleteResource(contentsService);
 
     environment.jersey().register(new IllegalArgumentExceptionMapper());

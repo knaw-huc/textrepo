@@ -1,134 +1,72 @@
-<TEI><teiHeader><meta type="corr" value="Gekaapte brieven"/><meta type="id" value="9"/><meta type="date" value="1672-05-15"/><meta type="sender" value="Jelte Pieters"/><meta type="sendergender" value="Vrouw"/><meta type="recipient" value="Andries Volkersen"/><meta type="recipientgender" value="Man"/><meta type="recipientship" value="Zoetendaal"/><meta type="texttypes" value="Onbekend"/><meta type="languages" value="Duits"/><year>1672</year></teiHeader><text><body><pb facs="hca30-223/1/nl-hana_hca30-223_1_0103.jpg"/>Im Nahmen der Heijligen <ne-start type="loc" text="Dreijfaltigkeitt  Amen&#10;Anno Christi"/>Dreijfaltigkeitt  Amen
-  Anno Christi<ne-end/> <ne-start type="loc" text="Ein"/>Ein<ne-end/> tausendt, sechßhundert, zweij undt siebenzig, <ne-start type="misc" text="Indi-"/>Indi-<ne-end/>
-  ctione decimâ, <ne-start type="org" text="Regnante Invictissimo Romanorum Imperatore ac"/>Regnante Invictissimo Romanorum Imperatore ac<ne-end/>
-  <ne-start type="pro" text="Domino, Domino LEOPOLDO"/>Domino, Domino LEOPOLDO<ne-end/>, semper <ne-start type="per" text="Augusto &amp; Caesare"/>Augusto &amp; Caesare<ne-end/> ac <ne-start type="pro" text="Domino&#10;nostro clementissimo, Imperii Maj[esta]tis, Suae Caesarea anno decimo quarto"/>Domino
-  nostro clementissimo, Imperii Maj[esta]tis, Suae Caesarea anno decimo quarto<ne-end/>,
-  <ne-start type="pro" text="Mittwochenß, den fünffzehnden Maij st(ilo) vet. Mittageß"/>Mittwochenß, den fünffzehnden Maij st(ilo) vet. Mittageß<ne-end/>, umb zwolff
-  <ne-start type="misc" text="Uhren"/>Uhren<ne-end/>, sind vor mir <ne-start type="misc" text="Chrostophoro Greven"/>Chrostophoro Greven<ne-end/>, <ne-start type="org" text="Kaijserl(ichen"/>Kaijserl(ichen<ne-end/>) <ne-start type="org" text="Offenbahren"/>Offenbahren<ne-end/>, geschwor-
-  nen, und <ne-start type="loc" text="am"/>am<ne-end/> hochpreißlichen <ne-start type="misc" text="Kaijserl(ichen"/>Kaijserl(ichen<ne-end/>) <ne-start type="misc" text="Cammergericht"/>Cammergericht<ne-end/> approbirten und <ne-start type="misc" text="Imma-"/>Imma-<ne-end/>
-  triculirten <ne-start type="misc" text="Notario"/>Notario<ne-end/> und <ne-start type="misc" text="Bürgern"/>Bürgern<ne-end/> dieser <ne-start type="per" text="Stadt Hamb(urg"/>Stadt Hamb(urg<ne-end/>) alhir in <ne-start type="loc" text="Hamburg"/>Hamburg<ne-end/>, in
-  meinem an der <ne-start type="loc" text="Börse"/>Börse<ne-end/> belegenen <ne-start type="loc" text="Schreib Conthoir"/>Schreib Conthoir<ne-end/> persöhnlich erschienen die
-  <ne-start type="misc" text="Ehrenveste"/>Ehrenveste<ne-end/> und fürnehme <ne-start type="per" text="S(eigneu"/>S(eigneu<ne-end/>)res <ne-start type="per" text="Arnold Beltgens und"/>Arnold Beltgens und<ne-end/> <ne-start type="per" text="Philip Verpoorten"/>Philip Verpoorten<ne-end/>
-  wollbenambte <ne-start type="per" text="Kauffleute"/>Kauffleute<ne-end/> alhir, <ne-start type="misc" text="Befrachtere"/>Befrachtere<ne-end/> an einem: undt der
-  <ne-start type="misc" text="Erbare"/>Erbare<ne-end/> <ne-start type="per" text="Peter Tamm"/>Peter Tamm<ne-end/>, Bürger hieselbsten, undt <ne-start type="per" text="Schiffer"/>Schiffer<ne-end/> negst <ne-start type="per" text="Gott von"/>Gott von<ne-end/> dreij
-  <ne-start type="per" text="Schiffe"/>Schiffe<ne-end/>, genandt die <ne-start type="eve" text="Stadt Hamburg"/>Stadt Hamburg<ne-end/>, groß ungefehr <ne-start type="org" text="Einhundert"/>Einhundert<ne-end/> undt vier-
-  zich <ne-start type="loc" text="Lasten"/>Lasten<ne-end/>, gemontiret mit zwantzig <ne-start type="pro" text="Stücken Geschütz"/>Stücken Geschütz<ne-end/>, anderßtheils, an-
-  zeigende und öffentlich bekennende, mit einander eine <ne-start type="misc" text="Befrachtung"/>Befrachtung<ne-end/> deß
-  itzt  gemelten Schiffes gecontractiret und geschloßen <ne-start type="per" text="zu"/>zu<ne-end/> haben, inmaßen
-  sie auch <ne-start type="loc" text="Krafft"/>Krafft<ne-end/> dieseß contractiren undt schließen wie folget:
-  <ne-start type="per" text="Erstlich"/>Erstlich<ne-end/> verplichtet sich der <ne-start type="per" text="Schiffer Vorgedachtes"/>Schiffer Vorgedachtes<ne-end/> sein neie <ne-start type="per" text="Schiff"/>Schiff<ne-end/> mit dem
-  ersten <ne-start type="per" text="Siegell"/>Siegell<ne-end/> fertig <ne-start type="per" text="zu"/>zu<ne-end/> machen, auch woll <ne-start type="per" text="zu dichten und zu"/>zu dichten und zu<ne-end/> fleijen <ne-start type="per" text="von"/>von<ne-end/> un-
-  ten und oben, auch woll undt gebührlich <ne-start type="per" text="zu"/>zu<ne-end/> versehen mit <ne-start type="misc" text="Masten"/>Masten<ne-end/>, <ne-start type="misc" text="Siegelß"/>Siegelß<ne-end/>, <ne-start type="misc" text="Ankers&#10;Lawen["/>Ankers
-  Lawen[<ne-end/>?], <ne-start type="loc" text="Cabelß"/>Cabelß<ne-end/>, <ne-start type="loc" text="Victualien"/>Victualien<ne-end/>, <ne-start type="loc" text="Munition"/>Munition<ne-end/>, <ne-start type="loc" text="Schiffs-"/>Schiffs-<ne-end/> <ne-start type="loc" text="Volcke"/>Volcke<ne-end/> undt aller andern <ne-start type="loc" text="Zu-"/>Zu-<ne-end/>
-  behoör, alß <ne-start type="per" text="zu"/>zu<ne-end/> nachbeschriebenen <ne-start type="misc" text="Reise"/>Reise<ne-end/> behöret und <ne-start type="per" text="von"/>von<ne-end/> nöthen ist, damit er
-  mit die anderen auff <ne-start type="per" text="Rußlandt von"/>Rußlandt von<ne-end/> seinen befrachtete <ne-start type="org" text="Schiffe"/>Schiffe<ne-end/>, uff bevor-
-  stehende <ne-start type="loc" text="Reise"/>Reise<ne-end/> unverzüglich könne abgehen. ----- Undt geloben die
-  <ne-start type="per" text="Befrachtere Ihn den Schiffer"/>Befrachtere Ihn den Schiffer<ne-end/> biß medio <ne-start type="loc" text="Junij"/>Junij<ne-end/> ohnfehlbarlich abzuladen
-  mit sothanigen <ne-start type="misc" text="Wahren"/>Wahren<ne-end/> undt <ne-start type="misc" text="Kauffmanschaften"/>Kauffmanschaften<ne-end/>, alß ihnen beliebet. <ne-start type="loc" text="Wor-"/>Wor-<ne-end/>
-  mit er der <ne-start type="per" text="Schiffer alßdan"/>Schiffer alßdan<ne-end/> mit guten Wetter undt  <ne-start type="per" text="Winde von"/>Winde von<ne-end/> hinnen soll
-  absiegeln <ne-start type="misc" text="nach Archangel"/>nach Archangel<ne-end/> in <ne-start type="misc" text="Rußlandt"/>Rußlandt<ne-end/>, undt <ne-start type="misc" text="nach geliebtß Gott"/>nach geliebtß Gott<ne-end/> glück-
-  licher <ne-start type="org" text="Ankunfft alda"/>Ankunfft alda<ne-end/> mit seinem <ne-start type="per" text="Schiffe zu Dienste der Befrachtere"/>Schiffe zu Dienste der Befrachtere<ne-end/> lie-
-  gen biß den achtzehenden <ne-start type="per" text="Septembris"/>Septembris<ne-end/>, umb mitler <ne-start type="loc" text="Zeit alda"/>Zeit alda<ne-end/> geloßet
-  undt wieder <ne-start type="per" text="geladen zu"/>geladen zu<ne-end/> werden durch die <ne-start type="org" text="Befrachtere oder Commiss"/>Befrachtere oder Commiss<ne-end/>, oder
-  durch <ne-start type="per" text="andere zu"/>andere zu<ne-end/> ihrem <ne-start type="misc" text="Profite"/>Profite<ne-end/>. Die ubrigen <ne-start type="misc" text="Liggetage nach"/>Liggetage nach<ne-end/> den 18. Septembris
-  sollen die Befrachtere vor jeden <ne-start type="misc" text="Liggetag"/>Liggetag<ne-end/> <ne-start type="per" text="zu"/>zu<ne-end/> bezahlen schüldig sein fünff
-  undt zwantzig <ne-start type="org" text="Reichßthaler"/>Reichßthaler<ne-end/>, doch soll der <ne-start type="per" text="Schiffer"/>Schiffer<ne-end/> nicht mehr alß zehen
-  Tage verobligiret <ne-start type="per" text="sein zu"/>sein zu<ne-end/> warten, sondern alßdan Macht <ne-start type="per" text="haben zu"/>haben zu<ne-end/> siegeln,
-  undt ledig vor voll bezahlet werden:   undt soll der <ne-start type="per" text="Schiffer"/>Schiffer<ne-end/> nicht  bemech-
-  tiget sein <ne-start type="per" text="von"/>von<ne-end/> jemandt anderß ohne daß <ne-start type="misc" text="Commiss"/>Commiss<ne-end/> wißen und willen einige
-  <ne-start type="misc" text="Güter"/>Güter<ne-end/> darin zuladen beij willkührlicher <ne-start type="loc" text="Pöen[Strafe"/>Pöen[Strafe<ne-end/>] <ne-start type="loc" text="Eintausendt Reichßthaler"/>Eintausendt Reichßthaler<ne-end/>,
-  jedoch vorbeheltlich dem <ne-start type="per" text="Schiffer"/>Schiffer<ne-end/> undt seinem <ne-start type="per" text="Volcke"/>Volcke<ne-end/> vier <ne-start type="org" text="Lasten"/>Lasten<ne-end/> ins <ne-start type="org" text="Raumb"/>Raumb<ne-end/>
-  zur <ne-start type="org" text="Führung"/>Führung<ne-end/> vor sich selbsten, undt vor niemandt anderß <ne-start type="per" text="zu"/>zu<ne-end/> laden; <ne-start type="org" text="Eß &#10;sollen auch keine Kauffmansgütere uff dem Uberlauff geführet wer-"/>Eß
-  sollen auch keine Kauffmansgütere uff dem Uberlauff geführet wer-<ne-end/>
-  den, sondern die <ne-start type="loc" text="Ladung"/>Ladung<ne-end/> soll geschehen inß <ne-start type="per" text="Raumb von"/>Raumb von<ne-end/> dem Schiffe mit
-  <ne-start type="misc" text="Gütern"/>Gütern<ne-end/> oder <ne-start type="misc" text="Wahren nach der Kauffleute Belieben"/>Wahren nach der Kauffleute Belieben<ne-end/>, jedoch nicht über
-  zwolff  Lasten schwincken, undt darunter so viell schwer <ne-start type="misc" text="Gutt"/>Gutt<ne-end/>;  <ne-start type="misc" text="Jüfften"/>Jüfften<ne-end/> vor
-  schwer <ne-start type="per" text="Gutt"/>Gutt<ne-end/> gerechnet, daß das <ne-start type="per" text="Schiff"/>Schiff<ne-end/>  waßersteiff genug seij, umb be-
-  quemblich über die <ne-start type="per" text="See zu"/>See zu<ne-end/> gehen, doch solte eß damit nicht steiff ge-
-  nug sein, sollen die <ne-start type="loc" text="Befrachtere"/>Befrachtere<ne-end/> schüldig sein <ne-start type="per" text="Steine zu"/>Steine zu<ne-end/> verschaffen undt<pb facs="hca30-223/1/nl-hana_hca30-223_1_0104.jpg"/>zu bezahlen, aber keine <ne-start type="per" text="Fracht"/>Fracht<ne-end/> dafür geben, auch mit accomodation etlicher
-  halben <ne-start type="misc" text="Packen"/>Packen<ne-end/> zur bequemblichen <ne-start type="misc" text="Stowung"/>Stowung<ne-end/> dem <ne-start type="per" text="Schiffer"/>Schiffer<ne-end/> favorisiren.  Undt
-  werden folgender <ne-start type="org" text="Gestalt"/>Gestalt<ne-end/> die <ne-start type="org" text="Lasten"/>Lasten<ne-end/> gerechnet, nemblich jede <ne-start type="pro" text="Last"/>Last<ne-end/>
-  120.  Pude oder 4000. lb. [Pfund] <ne-start type="loc" text="Lollich"/>Lollich<ne-end/>, <ne-start type="loc" text="Wachß"/>Wachß<ne-end/> undt <ne-start type="loc" text="Caviar brutto"/>Caviar brutto<ne-end/>.
-  3.  <ne-start type="misc" text="Packen Jüfften"/>Packen Jüfften<ne-end/>  jeder <ne-start type="per" text="von"/>von<ne-end/> 66.  Paren
-  150.  <ne-start type="misc" text="Astracanische  Heute"/>Astracanische  Heute<ne-end/>.  [Häute]
-  200. <ne-start type="misc" text="Schwincken"/>Schwincken<ne-end/>, nemblich zweij <ne-start type="misc" text="Packen"/>Packen<ne-end/>, jede <ne-start type="per" text="von"/>von<ne-end/> 100. Stücken, oder da-
-  ferner der <ne-start type="per" text="Schiffer"/>Schiffer<ne-end/> sie loß begehrt  220.  p(e)r <ne-start type="pro" text="Last"/>Last<ne-end/>.
-  14. <ne-start type="pro" text="Tonnen  Salm  und andere schmale Tonnen"/>Tonnen  Salm  und andere schmale Tonnen<ne-end/>.
-  8.  <ne-start type="loc" text="Rußische"/>Rußische<ne-end/>  ordinari  <ne-start type="loc" text="Uxhaubter"/>Uxhaubter<ne-end/>.
-  <ne-start type="loc" text="Undt"/>Undt<ne-end/> alleß andere alß gebreuchlich ist.
-  Zu <ne-start type="per" text="Archangel"/>Archangel<ne-end/>  soll die <ne-start type="loc" text="Ladung"/>Ladung<ne-end/> geschehen binnen oder außerhalb der <ne-start type="per" text="Baar"/>Baar<ne-end/>
-  oder hinter daß <ne-start type="misc" text="Sameijeten Eijlandt, nach der Befrachter oder Commiss&#10;Belieben"/>Sameijeten Eijlandt, nach der Befrachter oder Commiss
-  Belieben<ne-end/>, undt alda <ne-start type="per" text="zu Archangel"/>zu Archangel<ne-end/> soviell <ne-start type="per" text="Lasten"/>Lasten<ne-end/> eingenommen werden, dar-
-  mit daß Schiff bequemlich über <ne-start type="per" text="die Baar"/>die Baar<ne-end/>, oder hinter daß <ne-start type="misc" text="Eijlandt"/>Eijlandt<ne-end/> umbkom-
-  men kan.  <ne-start type="pro" text="Der Schiffer ist verbunden vor seinem Verreisen die Cognosce-&#10;menten von"/>Der Schiffer ist verbunden vor seinem Verreisen die Cognosce-
-  menten von<ne-end/> seinen einhabenden <ne-start type="misc" text="Gütern"/>Gütern<ne-end/> <ne-start type="per" text="zu"/>zu<ne-end/> zeichnen, auch durch sein <ne-start type="misc" text="Schiffs-&#10;Volck"/>Schiffs-
-  Volck<ne-end/> alß gebreuchlich, mit dem <ne-start type="misc" text="Schiffs"/>Schiffs<ne-end/> bote und anderer <ne-start type="per" text="Commodität"/>Commodität<ne-end/> die
-  <ne-start type="per" text="Gütere"/>Gütere<ne-end/> an- und <ne-start type="per" text="von"/>von<ne-end/> dem <ne-start type="misc" text="Lande"/>Lande<ne-end/> ab- und an <ne-start type="pro" text="Schiffsbohrt"/>Schiffsbohrt<ne-end/> führen undt brin-
-  <ne-start type="per" text="gen zu"/>gen zu<ne-end/> laßen, dieselbe <ne-start type="per" text="zu"/>zu<ne-end/> loßen undt laden,  so offtmahlß  solcheß die <ne-start type="misc" text="Not-"/>Not-<ne-end/>
-  turfft erfo(r)dert und die <ne-start type="misc" text="Commissen"/>Commissen<ne-end/> begehren werden;  <ne-start type="org" text="Undt"/>Undt<ne-end/> soll der <ne-start type="per" text="Schiffer"/>Schiffer<ne-end/>
-  verbunden sein, wan er 130.  Lasten eingeladen hat<ne-start type="per" text=", den Befrachteren"/>, den Befrachteren<ne-end/>
-  oder <ne-start type="per" text="Commiss zu"/>Commiss zu<ne-end/> sagen, wie viell <ne-start type="per" text="Lasten"/>Lasten<ne-end/> er noch laden kan, waß er alß-
-  dan mehr fo(r)dert, und nicht ladet, soll <ne-start type="org" text="Er  für jede"/>Er  für jede<ne-end/> <ne-start type="pro" text="Last"/>Last<ne-end/> fünffzig <ne-start type="pro" text="Reichßth(ale)r&#10;Pöen"/>Reichßth(ale)r
-  Pöen<ne-end/> <ne-start type="per" text="zu"/>zu<ne-end/> bezahlen schüldig sein, auch in zeit der <ne-start type="misc" text="Noth"/>Noth<ne-end/> und Brandt, so <ne-start type="per" text="Gott"/>Gott<ne-end/>
-  gnedig verhüte, alle mögliche <ne-start type="per" text="Hülffe zu"/>Hülffe zu<ne-end/> thunde, umb der <ne-start type="misc" text="Befrachter Gü-"/>Befrachter Gü-<ne-end/>
-  ter <ne-start type="per" text="zu"/>zu<ne-end/>  salviren. --Undt gelobet der <ne-start type="per" text="Schiffer"/>Schiffer<ne-end/> im stawende und abladende,
-  auch sonsten guter <ne-start type="pro" text="Auffsicht der Befrachter Bestes"/>Auffsicht der Befrachter Bestes<ne-end/> <ne-start type="misc" text="nach"/>nach<ne-end/> allen <ne-start type="misc" text="Vermügen"/>Vermügen<ne-end/> <ne-start type="per" text="zu"/>zu<ne-end/>
-  wißen <ne-start type="per" text="und zu"/>und zu<ne-end/> befederen;  auch sobald er geladen ist, mit guten Wetter
-  undt <ne-start type="loc" text="Winde"/>Winde<ne-end/> ohnverzuglich abzusiegeln <ne-start type="per" text="recht zu"/>recht zu<ne-end/> <ne-start type="misc" text="nach Livorno"/>nach Livorno<ne-end/>, und <ne-start type="per" text="Müyn&#10;Scalieren"/>Müyn
-  Scalieren<ne-end/>, wor eß  der <ne-start type="per" text="Schiffer und"/>Schiffer und<ne-end/> seine <ne-start type="misc" text="Haubt- Officizers"/>Haubt- Officizers<ne-end/> vor gutt befin-
-  den,  undt <ne-start type="misc" text="nach geliebtß Gott"/>nach geliebtß Gott<ne-end/> glücklichem arriviment daselbst seine einha-
-  bende <ne-start type="per" text="Ladung zu"/>Ladung zu<ne-end/> lieffern an der befrachtere <ne-start type="misc" text="Commissen"/>Commissen<ne-end/>, vermüge der Cogno-
-  scementen, welche gehalten sein sollen <ne-start type="per" text="von"/>von<ne-end/> dato deß  arriviments, innerhalb
-  den negsten dreijen <ne-start type="misc" text="Wochen"/>Wochen<ne-end/>, lauffenden <ne-start type="misc" text="Werckelltagen"/>Werckelltagen<ne-end/>,  <ne-start type="per" text="Ihn zu"/>Ihn zu<ne-end/> laßen,
-  undt <ne-start type="misc" text="nach gethaner behörlichen  guten Liefferung Ihme"/>nach gethaner behörlichen  guten Liefferung Ihme<ne-end/> ohnverzuglich <ne-start type="per" text="zu"/>zu<ne-end/>
-  bezahlen <ne-start type="per" text="zu Fracht"/>zu Fracht<ne-end/> vor solcher gantzen <ne-start type="misc" text="Reise"/>Reise<ne-end/> in allem fünffzig <ne-start type="per" text="Stück von"/>Stück von<ne-end/>
-  achten, in platte doble, <ne-start type="pro" text="Seuillanse"/>Seuillanse<ne-end/> und <ne-start type="pro" text="Mexicanse Stück von 8. tens vor jede&#10;obengespecificirte vermüge der Cognoscementen"/>Mexicanse Stück von 8. tens vor jede
-  obengespecificirte vermüge der Cognoscementen<ne-end/> <ne-start type="per" text="zu Archangel"/>zu Archangel<ne-end/> einge-
-  nommene <ne-start type="pro" text="Rußische Last"/>Rußische Last<ne-end/>, biß zur vollen <ne-start type="misc" text="Ladung"/>Ladung<ne-end/>, geladen oder unge-
-  laden wesende, beneben ein halb <ne-start type="misc" text="Stück"/>Stück<ne-end/> <ne-start type="per" text="von"/>von<ne-end/> achten avaria ordinaria,
-  und ein halb <ne-start type="misc" text="Stück"/>Stück<ne-end/> <ne-start type="per" text="von"/>von<ne-end/> achten vor dem <ne-start type="per" text="Schiffer"/>Schiffer<ne-end/> zum <ne-start type="misc" text="Kapplaken"/>Kapplaken<ne-end/> p(e)r <ne-start type="pro" text="Last"/>Last<ne-end/>,
-  sambt einer newen <ne-start type="misc" text="Flaggen Vorß"/>Flaggen Vorß<ne-end/>. <ne-start type="loc" text="Schiff"/>Schiff<ne-end/> alhier. ---Undt ist zur <ne-start type="misc" text="Arch-"/>Arch-<ne-end/>
-  angel daß <ne-start type="misc" text="Schiff nach Costumbe"/>Schiff nach Costumbe<ne-end/>  <ne-start type="pro" text="von Pilotage"/>von Pilotage<ne-end/> undt anquerage in undt
-  auß freij, sonsten aber soll eß mit der andern <ne-start type="pro" text="Pilotage undt avaria&#10;gehalten werden"/>Pilotage undt avaria
-  gehalten werden<ne-end/> <ne-start type="misc" text="nach Usance,"/>nach Usance,<ne-end/> und costumbe <ne-start type="per" text="von der See"/>von der See<ne-end/>.  Waß auch<pb facs="hca30-223/1/nl-hana_hca30-223_1_0105.jpg"/>der <ne-start type="per" text="Schiffer zu"/>Schiffer zu<ne-end/> livorno durch die <ne-start type="org" text="Commissen mit der Loßung"/>Commissen mit der Loßung<ne-end/> lenger
-  alß dreij <ne-start type="loc" text="Wochen"/>Wochen<ne-end/> werckelltage uffgehalten wird, soll er vor jeg-
-  lichen  <ne-start type="misc" text="Werckelltag"/>Werckelltag<ne-end/> gleichfalß fünff undt zwantzig <ne-start type="misc" text="Reichsthler"/>Reichsthler<ne-end/>
-  zugewiesen <ne-start type="per" text="und zu"/>und zu<ne-end/> empfangen haben.  Eß ist aber außtrücklich
-  auch dabeij verabredet, daß der <ne-start type="per" text="Schiffer in der Hinreise"/>Schiffer in der Hinreise<ne-end/> hinter daß
-  <ne-start type="per" text="Eijlandt  Caldin zu"/>Eijlandt  Caldin zu<ne-end/> scalieren soll schüldig sein, undt alda einnehmen,
-  waß <ne-start type="org" text="alda für"/>alda für<ne-end/> die <ne-start type="org" text="Befrachtere oder Commiss"/>Befrachtere oder Commiss<ne-end/> <ne-start type="per" text="zu"/>zu<ne-end/> laden solt.
-  Undt dieseß alleß also gebührlich <ne-start type="per" text="zu"/>zu<ne-end/> vollbringen, verbinden die <ne-start type="misc" text="Con-"/>Con-<ne-end/>
-  trahenten respective ihre <ne-start type="misc" text="Persohnen"/>Persohnen<ne-end/>, <ne-start type="misc" text="Habe"/>Habe<ne-end/> und <ne-start type="misc" text="Güter"/>Güter<ne-end/>, in specie die
-  <ne-start type="org" text="Befrachtere ihre Ladung"/>Befrachtere ihre Ladung<ne-end/>, undt der <ne-start type="per" text="Schiffer"/>Schiffer<ne-end/> sein <ne-start type="per" text="Schiff"/>Schiff<ne-end/>, <ne-start type="misc" text="Fracht"/>Fracht<ne-end/> undt al-
-  le <ne-start type="misc" text="Gerechtschaffen"/>Gerechtschaffen<ne-end/> deßelbigen,  <ne-start type="pro" text="Solcheß alleß submittirende untern&#10;Bezwang und paraten Execution"/>Solcheß alleß submittirende untern
-  Bezwang und paraten Execution<ne-end/> aller <ne-start type="misc" text="Rechten"/>Rechten<ne-end/> und <ne-start type="misc" text="Gerichten"/>Gerichten<ne-end/>, renun-
-  ciirende alle und jeden <ne-start type="loc" text="Exceptionen"/>Exceptionen<ne-end/> außtrücklich undt <ne-start type="misc" text="Begnadungen"/>Begnadungen<ne-end/>
-  geist- und weltlichen <ne-start type="misc" text="Gerichteß"/>Gerichteß<ne-end/> und <ne-start type="misc" text="Rechtens"/>Rechtens<ne-end/>, auch der reget  sagen=
-  de;  daß die gemeine <ne-start type="loc" text="Verzicht"/>Verzicht<ne-end/> nicht gültig seij;  wo nicht die sonder-
-  bahre außtrücklichen <ne-start type="misc" text="Verhergehe"/>Verhergehe<ne-end/>.  <ne-start type="misc" text="Ohne List"/>Ohne List<ne-end/> undt <ne-start type="misc" text="Gefehrde"/>Gefehrde<ne-end/>.
-  In  <ne-start type="loc" text="Uhrkundt  der Wahrheit"/>Uhrkundt  der Wahrheit<ne-end/> undt steter <ne-start type="per" text="Festerhaltung alleß  deßen"/>Festerhaltung alleß  deßen<ne-end/>
-  so obsteht, haben beiderseitß <ne-start type="misc" text="Contrahenten"/>Contrahenten<ne-end/> diese <ne-start type="misc" text="Certeparteij"/>Certeparteij<ne-end/>  in
-  meinem haltenden <ne-start type="misc" text="Notariat-"/>Notariat-<ne-end/> protocoll  eigenhendig unterschrieben,
-  und mich <ne-start type="loc" text="Notarium"/>Notarium<ne-end/>  gebeten   ihnen darauß  dieß  zzdocumentum in con-
-  sneta  forma darüber <ne-start type="per" text="zu"/>zu<ne-end/> ertheilen.  <ne-start type="per" text="Actum"/>Actum<ne-end/> hamburg  ut  supra   p.
+    Op Heeden Den 30:' Augustus 1784
+    Compareerde voor de ondergeschr: Heeren gelom„
+    „mitteerde scheepenen Jan Reinier Coortsen
+    en Hlevander Agerbeek gad Jungeerd met
+    den Gesw: Cerca Terans Hakker
+    Louis Wijbrand van Schellebeek geswore
+    Cleregter Seeretarij van haar Hoog Edelheedens
+    Dewelke ter Requisitie vain den Heer Bailluw
+    Jan Hendrik Wiegerman Rult: off: gehoord
+    zijnde verklaade
+    Dat na gussing ruijm drie maanden geleden
+    op ’t versoek van den Engelsche Capitain Charle„
+    Borlage met den Boekhouder Kolot en metgem
+    Capitain verseld sig hebben begeeven na de
+    thuijn van den geweesen bootsman op de werffe
+    Heenbergen
+    Dat zij aldaar gekomen zijnde, hij deel=t op toesoek
+    van gerepte Capiterin aan hem Steenbergen heftt
+    afgeeijscht, de betaaling van E0=e Dertien Duij„
+    „dent Spruijtende, Jso hij op gaff uut een parthij Com„
+    „phioen die hij Steenbergen van hem soude hebben
+    gekogt ’t welk ook door steenbergen gadvoueerd
+    wierd, en dat Heenbergen hier op ten antwoordgof„
+    het geld heeds aan een Jongete hebben afgegeeven
+    die een staart in ’t hauir droeg
+    Dat hij deel=t hiad op hem onder Hoog bragt
+    de
 
-  Ist  unterzeichnet
 
-  <ne-start type="per" text="Arnoldt   Bettgens                                E"/>Arnoldt   Bettgens                                E<ne-end/>  <ne-start type="per" text="Philip"/>Philip<ne-end/>  verpoorten
-  <ne-start type="per" text="Inv"/>Inv<ne-end/>:
-  ==   <ne-start type="per" text="Pieter Tamm"/>Pieter Tamm<ne-end/>:
 
-  [zegel /Petschaft  rund  mit
-  <ne-start type="misc" text="Lorbeerkranz"/>Lorbeerkranz<ne-end/> auf <ne-start type="misc" text="Empore"/>Empore<ne-end/>:
-  1654    FACIES  <ne-start type="per" text="ANNO"/>ANNO<ne-end/>   SI  <ne-start type="per" text="RECTE"/>RECTE<ne-end/> ]
 
-  In majorem a <ne-start type="loc" text="fidem ac"/>fidem ac<ne-end/> testimonium omnium <ne-start type="loc" text="Dimissorum"/>Dimissorum<ne-end/> de super
-  <ne-start type="loc" text="Instrumentum"/>Instrumentum<ne-end/>  hocce  confeci,  scripsi , subscripsi,  &amp;  consueto <ne-start type="misc" text="No-"/>No-<ne-end/>
-  tariatús  publico  signo,  &amp;  privato  sigillo  communivi.  <ne-start type="per" text="Ad"/>Ad<ne-end/>  hac
-  oia  legitime  &amp;  debito  modo  pro officii fide requisitus  &amp;  rogatus
 
-  <ne-start type="per" text="Christophorus            Greve&#10;                                Sacr"/>Christophorus            Greve
-  Sacr<ne-end/>. a  <ne-start type="per" text="Imp.i  Auth"/>Imp.i  Auth<ne-end/>.  <ne-start type="per" text="Publ"/>Publ<ne-end/>.  &amp;  in <ne-start type="loc" text="Aug.a  Rom"/>Aug.a  Rom<ne-end/>.  <ne-start type="loc" text="Impii&#10;                                Cam.a  Immatric"/>Impii
-  Cam.a  Immatric<ne-end/>. tus  <ne-start type="per" text="Notar  &amp;  Civ"/>Notar  &amp;  Civ<ne-end/>.  <ne-start type="per" text="Hamb."/>Hamb.<ne-end/>
+    de onvoorsigtigheid om geld sonder bewijs af te geve„
+    Heenbergen hier op andwoorde, de wijl de Capi„
+    „tain een diergelijke vertrouwen op hem had gesteld
+    hij ook geen swarigheid had gemaakt, om het geld
+    sonder bewijs af te geven, voegende teffens daar bij
+    dat men van diergelijke saaken niet ligt briefge
+    verleende
+    Dat hier op de Engelsche Capitain gantoch nit
+    te vreden was, en hem door haar namentlijk den
+    dell=t en Holot diet seggen dat hij dan wel ande„
+    „re middelen soude imploijeeren dog dat Heen„
+    „bergen hier tegen advanleerde alsgij met dierge„
+    „lijke dreigementen op de capen komt, dan Weel
+    ik niet van het geheele geval en gij kan doen Wat
+    j wilt
+    Lacotelijk dat hij niet heeft geweeten dat hetged
+    ’twelk den Capitain te preetendeeren had unt den
+    koop van Amphioen Sproot, alstoen sij met Elkan„
+    „deren in de thuijn bij de gemelde Heenbergen quan:
+    2:
+    en ook dat hem onberist is geweest dat men in een
+    diergelijke geval den offilier van Justitie kennie met
+    geven
+    Niatsverder verklaarende betuigde den del: zijn
+    gedestareerde te behelben de suijvere waarheid onder
+    prasenatie van rede.
+    Aldus gepasseerd op Batavia In ’t Stadk:t datan
+    nt supra ter preesentie van Heeren gecommitteerde
+    scheepen
 
-  =================  #  ==============</body></text></TEI>
+
+    Scheepenen als in den hoofde gemelt
+    Die de minute dese nevens den deele en mij
+    gesw: Clereg hebben onderteekend / onderstond,/ Guod
+    Allertor / was geteekend / J: Hakker Cj
+    Aecordeer
+    mee
+    G
+    Banenge
+    GG

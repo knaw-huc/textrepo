@@ -5,6 +5,7 @@ import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.joining;
 
 public enum SupportedType {
+
   XML("application/xml"),
   TXT("text/plain");
 

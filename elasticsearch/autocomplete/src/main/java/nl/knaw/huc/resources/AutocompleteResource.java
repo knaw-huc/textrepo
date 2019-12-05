@@ -19,10 +19,11 @@ import java.io.InputStream;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
 
-// TODO: pass type to indexer
-// TODO: extract text when xml
 // TODO: create mapping for keyword search
-// TODO: convert text to fields json answer
+// TODO: return mapping
+// TODO: add health check
+// TODO: test in combination with textrepo
+// TODO: create concordion test
 @Path("/autocomplete")
 public class AutocompleteResource {
 
@@ -53,8 +54,10 @@ public class AutocompleteResource {
   ) {
     return Response
         .status(200)
-        .entity(fieldsService.createFieldsForType(inputStream, SupportedType.fromString(mimetype)))
-        .build();
+        .entity(fieldsService.createFieldsForType(
+            inputStream,
+            SupportedType.fromString(mimetype)
+        )).build();
   }
 
 
