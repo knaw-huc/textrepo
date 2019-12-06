@@ -11,8 +11,6 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Response;
@@ -28,8 +26,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class AutocompleteResourceTest {
 
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
   @ClassRule
   public static DropwizardAppRule<AutocompleteConfiguration> RULE =
       new DropwizardAppRule<>(AutocompleteApplication.class, System.getProperty("user.dir") + "/config.yml");
@@ -43,7 +39,19 @@ public class AutocompleteResourceTest {
   private Client client;
 
   @Test
-  public void testFields_returnsCompletionSuggesterInput_whenTxt() throws IOException {
+  public void testMapping_returnsMapping() throws IOException {
+    var response = client
+        .target(getTestUrl("/mapping"))
+        .request().get();
+
+    assertThat(response.getStatus()).isEqualTo(200);
+    var fields = response.readEntity(String.class);
+    var suggestionType = JsonPath.parse(fields).read("$.mappings.properties.suggest.type");
+    assertThat(suggestionType).isEqualTo("completion");
+  }
+
+  @Test
+  public void testFields_returnsCompletionSuggesterInputSortedByWeight_whenTxt() throws IOException {
     var fileContents = getResourceAsBytes("file.txt");
     var response = postTestContents(fileContents, "text/plain");
     assertThat(response.getStatus()).isEqualTo(200);
@@ -88,15 +96,20 @@ public class AutocompleteResourceTest {
     var multiPart = new FormDataMultiPart()
         .bodyPart(new FormDataBodyPart(contentDisposition, bytes, APPLICATION_OCTET_STREAM_TYPE));
 
-    var port = RULE.getLocalPort();
     var request = client
-        .target(format("http://localhost:%d/autocomplete/fields", port))
+        .target(getTestUrl("/fields"))
         .queryParam("mimetype", URLEncoder.encode(mimetype, UTF_8))
         .request();
 
     var entity = entity(multiPart, multiPart.getMediaType());
 
     return request.post(entity);
+  }
+
+  private String getTestUrl(String endpoint) {
+    var port = RULE.getLocalPort();
+    var host = "http://localhost";
+    return format("%s:%d/autocomplete%s", host, port, endpoint);
   }
 
 }

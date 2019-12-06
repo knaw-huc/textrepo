@@ -3,9 +3,8 @@ package nl.knaw.huc.resources;
 import com.codahale.metrics.annotation.Timed;
 import nl.knaw.huc.core.SupportedType;
 import nl.knaw.huc.service.FieldsService;
+import nl.knaw.huc.service.MappingService;
 import org.glassfish.jersey.media.multipart.FormDataParam;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -27,11 +26,15 @@ import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
 @Path("/autocomplete")
 public class AutocompleteResource {
 
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final FieldsService fieldsService;
+  private final MappingService mappingService;
 
-  public AutocompleteResource(FieldsService fieldsService) {
+  public AutocompleteResource(
+      FieldsService fieldsService,
+      MappingService mappingService
+  ) {
     this.fieldsService = fieldsService;
+    this.mappingService = mappingService;
   }
 
   @GET
@@ -39,8 +42,10 @@ public class AutocompleteResource {
   @Timed
   @Produces(APPLICATION_JSON)
   public Response mapping() {
-    // TODO: implement
-    return null;
+    return Response
+        .status(200)
+        .entity(mappingService.getMapping())
+        .build();
   }
 
   @POST
@@ -59,6 +64,5 @@ public class AutocompleteResource {
             SupportedType.fromString(mimetype)
         )).build();
   }
-
 
 }

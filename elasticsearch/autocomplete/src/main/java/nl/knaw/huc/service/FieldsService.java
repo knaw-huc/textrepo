@@ -31,7 +31,6 @@ import static org.apache.commons.io.IOUtils.copy;
 
 public class FieldsService {
 
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final String keywordDelimiters;
   private final int minKeywordLength;
 
@@ -39,7 +38,6 @@ public class FieldsService {
     minKeywordLength = config.getMinKeywordLength();
     keywordDelimiters = config.getKeywordDelimiters();
   }
-
 
   public Fields createFieldsForType(
       @NotNull InputStream inputStream,
