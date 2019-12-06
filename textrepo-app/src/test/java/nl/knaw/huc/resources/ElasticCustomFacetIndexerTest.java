@@ -160,6 +160,7 @@ public class ElasticCustomFacetIndexerTest {
     config.elasticsearch.index = "test-index";
     config.fields = mockFieldsUrl;
     config.mapping = mockMappingUrl;
+    config.mimetypes = newArrayList("application/xml");
     return config;
   }
 }

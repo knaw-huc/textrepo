@@ -2,6 +2,8 @@ package nl.knaw.huc.service.index;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.List;
+
 public class CustomFacetIndexerConfiguration {
 
   /**
@@ -15,6 +17,12 @@ public class CustomFacetIndexerConfiguration {
    */
   @JsonProperty
   public String fields;
+
+  /**
+   * List of mimetypes that should be indexed
+   */
+  @JsonProperty
+  public List<String> mimetypes;
 
   /**
    * Location of elasticsearch nodes
