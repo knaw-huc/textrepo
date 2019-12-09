@@ -1,6 +1,7 @@
 package nl.knaw.huc.core;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.MoreObjects;
 
 import java.beans.ConstructorProperties;
 import java.time.LocalDateTime;
@@ -50,5 +51,14 @@ public class Version {
   @JsonProperty
   public void setContentsSha(String contentsSha) {
     this.contentsSha = contentsSha;
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this)
+                      .add("fileId", fileId)
+                      .add("createdAt", createdAt)
+                      .add("contentsSha", contentsSha)
+                      .toString();
   }
 }

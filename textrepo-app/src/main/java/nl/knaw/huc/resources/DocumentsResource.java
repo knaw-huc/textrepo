@@ -3,6 +3,7 @@ package nl.knaw.huc.resources;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import nl.knaw.huc.core.Version;
 import nl.knaw.huc.service.FileService;
 import nl.knaw.huc.service.JdbiDocumentService;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
@@ -12,9 +13,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
@@ -42,26 +46,51 @@ public class DocumentsResource {
   @Consumes(MULTIPART_FORM_DATA)
   @Produces(APPLICATION_JSON)
   @POST
-  @ApiOperation(value = "Create a new document by uploading contents for one of the its file types")
+  @ApiOperation(value = "Create a new document by uploading contents for one of its file types")
   @ApiResponses(value = {@ApiResponse(code = 201, message = "CREATED")})
   public Response addDocument(
-      @QueryParam("type") @Nonnull String type,
-      @FormDataParam("contents") InputStream uploadedInputStream,
-      @FormDataParam("contents") FormDataContentDisposition fileDetail,
-      @FormDataParam("contents") FormDataBodyPart bodyPart
+    @QueryParam("type") @Nonnull String type,
+    @FormDataParam("contents") InputStream uploadedInputStream,
+    @FormDataParam("contents") FormDataContentDisposition fileDetail,
+    @FormDataParam("contents") FormDataBodyPart bodyPart
   ) {
     final var newFileId = fileService.createFile(type);
     LOG.debug("New file created with fileId={}", newFileId);
 
     fileService.createVersionWithFilenameMetadata(
-        newFileId,
-        readContent(uploadedInputStream),
-        fileDetail.getFileName());
+      newFileId,
+      readContent(uploadedInputStream),
+      fileDetail.getFileName());
     LOG.debug("New version of {} created for content", newFileId);
 
     final var docId = documentService.createDocument(newFileId);
 
     return Response.created(locationOf(docId)).build();
+  }
+
+  @Consumes(MULTIPART_FORM_DATA)
+  @Produces(APPLICATION_JSON)
+  @PUT
+  @Path("/{uuid}/{type}")
+  public Response updateDocumentByType(
+    @PathParam("uuid") @Valid UUID docId,
+    @PathParam("type") @Nonnull String type,
+    @FormDataParam("contents") InputStream uploadedInputStream,
+    @FormDataParam("contents") FormDataContentDisposition fileDetail,
+    @FormDataParam("contents") FormDataBodyPart bodyPart
+  ) {
+    LOG.debug("Updating {} contents of document: {}", type, docId);
+
+    final var fileId = documentService.findFileForType(docId, type);
+    LOG.debug(" -> updating file: {}", fileId);
+
+    final var version = fileService.createVersionWithFilenameMetadata(
+      fileId,
+      readContent(uploadedInputStream),
+      fileDetail.getFileName());
+    LOG.debug(" -> new version created: {}", version);
+
+    return Response.ok().build();
   }
 
   private URI locationOf(UUID docId) {
