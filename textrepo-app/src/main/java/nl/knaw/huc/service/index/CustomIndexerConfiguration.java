@@ -4,16 +4,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-public class CustomFacetIndexerConfiguration {
+public class CustomIndexerConfiguration {
 
   /**
-   * GET Endpoint to request es7 index mapping that is used to create custom index
+   * GET Endpoint to request es index mapping that is used to create custom index
    */
   @JsonProperty
   public String mapping;
 
   /**
-   * POST Endpoint to convert doc to json doc that matches es7 mapping
+   * POST Endpoint to convert doc to json doc that matches es mapping
    */
   @JsonProperty
   public String fields;

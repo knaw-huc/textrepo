@@ -17,7 +17,8 @@ import nl.knaw.huc.service.FileService;
 import nl.knaw.huc.service.ContentsService;
 import nl.knaw.huc.service.JdbiMetadataService;
 import nl.knaw.huc.service.JdbiVersionService;
-import nl.knaw.huc.service.index.ElasticCustomFacetIndexer;
+import nl.knaw.huc.service.index.CustomIndexerException;
+import nl.knaw.huc.service.index.ElasticCustomIndexer;
 import nl.knaw.huc.service.index.ElasticFileIndexer;
 import nl.knaw.huc.service.store.JdbiContentsStorage;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
@@ -69,13 +70,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     var fileIndexService = new ElasticFileIndexer(config.getElasticsearch());
     environment.lifecycle().manage(fileIndexService);
 
-    var customIndexers = new ArrayList<ElasticCustomFacetIndexer>();
-    for (var customIndexerConfig : config.getCustomFacetIndexers()) {
-      var customFacetIndexer = new ElasticCustomFacetIndexer(customIndexerConfig);
-      environment.lifecycle().manage(customFacetIndexer);
-      customIndexers.add(customFacetIndexer);
-    }
-
+    var customIndexers = createElasticCustomFacetIndexers(config, environment);
     var contentsStoreService = new JdbiContentsStorage(jdbi);
     var contentsService = new ContentsService(contentsStoreService);
     var contentsResource = new ContentsResource(contentsService);
@@ -94,6 +89,23 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     environment.jersey().register(fileContentsResource);
     environment.jersey().register(contentsResource);
     environment.jersey().register(versionsResource);
+  }
+
+  private ArrayList<ElasticCustomIndexer> createElasticCustomFacetIndexers(
+      TextRepositoryConfiguration config,
+      Environment environment
+  ) {
+    var customIndexers = new ArrayList<ElasticCustomIndexer>();
+    for (var customIndexerConfig : config.getCustomFacetIndexers()) {
+      try {
+        var customFacetIndexer = new ElasticCustomIndexer(customIndexerConfig);
+        environment.lifecycle().manage(customFacetIndexer);
+        customIndexers.add(customFacetIndexer);
+      } catch (CustomIndexerException ex) {
+        logger.error("Could not create indexer [{}]", customIndexerConfig.elasticsearch.index, ex);
+      }
+    }
+    return customIndexers;
   }
 
 }

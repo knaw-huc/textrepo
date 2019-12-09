@@ -47,6 +47,18 @@ services:
     ports:
     - 8080:8080
 
+  autocomplete-indexer:
+    image: knawhuc/textrepo-autocomplete-indexer:latest
+    build: ./elasticsearch/autocomplete
+    ports:
+      - 8080
+    networks:
+      - textrepo_network
+    command: ["/utils/wait-for-it.sh", "elasticsearch:9200",
+              "--timeout=0",
+              "--",
+              "java", "-jar", "/indexer/autocomplete.jar", "server", "config.yml"]
+
   textrepo-app:
     image: knawhuc/textrepo-app:latest
     build: ./textrepo-app
@@ -54,22 +66,12 @@ services:
     - 8080
     networks:
     - textrepo_network
-    command: ["/utils/wait-for-it.sh", "elasticsearch:9200",
+    command: ["/utils/wait-for-it.sh", "autocomplete-indexer:8080",
               "--timeout=0",
               "--",
-              "java", "-jar", "/textrepo-app/textrepo.jar", "server", "config.yml"]
-
-  autocomplete-indexer:
-    image: knawhuc/textrepo-autocomplete-indexer:latest
-    build: ./elasticsearch/autocomplete
-    ports:
-    - 8080
-    networks:
-    - textrepo_network
-    command: ["/utils/wait-for-it.sh", "elasticsearch:9200",
-              "--timeout=0",
-              "--",
-              "java", "-jar", "/indexer/autocomplete.jar", "server", "config.yml"]
+              "tail", "-f", "/dev/null"
+#              "java", "-jar", "/textrepo-app/textrepo.jar", "server", "config.yml"
+    ]
 
   concordion:
     image: knawhuc/textrepo-concordion:latest

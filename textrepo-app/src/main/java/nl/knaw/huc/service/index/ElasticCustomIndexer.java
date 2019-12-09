@@ -1,7 +1,6 @@
 package nl.knaw.huc.service.index;
 
 import io.dropwizard.lifecycle.Managed;
-import org.apache.commons.io.IOUtils;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.RequestOptions;
@@ -11,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Response;
 import javax.xml.parsers.DocumentBuilder;
@@ -19,6 +19,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.UUID;
 
+import static java.lang.String.format;
 import static java.lang.String.join;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static javax.ws.rs.client.Entity.entity;
@@ -27,15 +28,15 @@ import static org.apache.commons.io.IOUtils.toInputStream;
 import static org.elasticsearch.common.xcontent.XContentType.JSON;
 
 
-public class ElasticCustomFacetIndexer implements FileIndexer, Managed {
+public class ElasticCustomIndexer implements FileIndexer, Managed {
 
-  private final CustomFacetIndexerConfiguration config;
+  private final CustomIndexerConfiguration config;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final ElasticFileIndexer indexer;
   private final Client jerseyClient = JerseyClientBuilder.newClient();
   private final DocumentBuilder documentBuilder;
 
-  public ElasticCustomFacetIndexer(CustomFacetIndexerConfiguration config) {
+  public ElasticCustomIndexer(CustomIndexerConfiguration config) throws CustomIndexerException {
     this.config = config;
     indexer = new ElasticFileIndexer(config.elasticsearch);
     createIndex(config);
@@ -46,14 +47,9 @@ public class ElasticCustomFacetIndexer implements FileIndexer, Managed {
     }
   }
 
-  private void createIndex(CustomFacetIndexerConfiguration config) {
-    var response = jerseyClient
-        .target(config.mapping)
-        .request()
-        .get();
-
-    var mappingResult = response
-        .readEntity(String.class);
+  private void createIndex(CustomIndexerConfiguration config) throws CustomIndexerException {
+    var response = getMapping(config);
+    var mappingResult = response.readEntity(String.class);
 
     if (response.getStatus() != 200) {
       logger.error("Could not get mapping: {} - {}", response.getStatus(), mappingResult);
@@ -73,6 +69,19 @@ public class ElasticCustomFacetIndexer implements FileIndexer, Managed {
       logger.warn("Could not create index [{}], already exists", config.elasticsearch.index);
     } catch (IOException ex) {
       logger.error("Could not create index [{}]", config.elasticsearch.index, ex);
+    }
+  }
+
+  private Response getMapping(CustomIndexerConfiguration config) throws CustomIndexerException {
+    Response response;
+    try {
+      response = jerseyClient
+          .target(config.mapping)
+          .request()
+          .get();
+      return response;
+    } catch (ProcessingException ex) {
+      throw new CustomIndexerException(format("Could not fetch mapping from %s", config.mapping),  ex);
     }
   }
 

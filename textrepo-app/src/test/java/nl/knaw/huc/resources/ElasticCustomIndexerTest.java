@@ -1,7 +1,8 @@
 package nl.knaw.huc.resources;
 
-import nl.knaw.huc.service.index.CustomFacetIndexerConfiguration;
-import nl.knaw.huc.service.index.ElasticCustomFacetIndexer;
+import nl.knaw.huc.service.index.CustomIndexerConfiguration;
+import nl.knaw.huc.service.index.CustomIndexerException;
+import nl.knaw.huc.service.index.ElasticCustomIndexer;
 import nl.knaw.huc.service.index.ElasticsearchConfiguration;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -22,7 +23,7 @@ import static org.mockserver.model.HttpResponse.response;
 import static org.mockserver.model.JsonSchemaBody.jsonSchema;
 import static org.mockserver.verify.VerificationTimes.once;
 
-public class ElasticCustomFacetIndexerTest {
+public class ElasticCustomIndexerTest {
 
   private static ClientAndServer mockServer;
   private static final int mockPort = 1080;
@@ -51,7 +52,7 @@ public class ElasticCustomFacetIndexerTest {
   }
 
   @Test
-  public void testInstantiationElasticCustomFacetIndexer_requestsMapping() throws IOException {
+  public void testInstantiationElasticCustomFacetIndexer_requestsMapping() throws IOException, CustomIndexerException {
     var config = createCustomFacetIndexerConfiguration();
     var getMappingRequest = request()
         .withMethod("GET")
@@ -64,18 +65,18 @@ public class ElasticCustomFacetIndexerTest {
         .withBody(jsonSchema(getResourceAsString("mapping/test.schema.json")));
     mockCreatingIndexResponse(config.elasticsearch.index, putIndexRequest);
 
-    new ElasticCustomFacetIndexer(config);
+    new ElasticCustomIndexer(config);
 
     mockServer.verify(getMappingRequest, once());
     mockIndexServer.verify(putIndexRequest, once());
   }
 
   @Test
-  public void testIndexFile_requestsFields() throws IOException {
+  public void testIndexFile_requestsFields() throws IOException, CustomIndexerException {
     var config = createCustomFacetIndexerConfiguration();
     mockMappingResponse();
     mockCreatingIndexResponse(config);
-    var indexer = new ElasticCustomFacetIndexer(config);
+    var indexer = new ElasticCustomIndexer(config);
     var fileId = UUID.randomUUID();
     var postDoc2FieldsRequest = request()
         .withMethod("POST")
@@ -129,7 +130,7 @@ public class ElasticCustomFacetIndexerTest {
     );
   }
 
-  private void mockCreatingIndexResponse(CustomFacetIndexerConfiguration config) throws IOException {
+  private void mockCreatingIndexResponse(CustomIndexerConfiguration config) throws IOException {
     var putIndexRequest = request()
         .withMethod("PUT")
         .withPath("/" + config.elasticsearch.index)
@@ -149,11 +150,11 @@ public class ElasticCustomFacetIndexerTest {
 
   }
 
-  private CustomFacetIndexerConfiguration createCustomFacetIndexerConfiguration() {
+  private CustomIndexerConfiguration createCustomFacetIndexerConfiguration() {
     var mockMappingUrl = "http://localhost:" + mockPort + mockMappingEndpoint;
     var mockFieldsUrl = "http://localhost:" + mockPort + mockFieldsEndpoint;
     var mockEsUrl = "localhost:" + mockIndexPort;
-    var config = new CustomFacetIndexerConfiguration();
+    var config = new CustomIndexerConfiguration();
     config.elasticsearch = new ElasticsearchConfiguration();
     config.elasticsearch.contentField = "does-not-matter";
     config.elasticsearch.hosts = newArrayList(mockEsUrl);
