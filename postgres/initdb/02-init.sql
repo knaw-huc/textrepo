@@ -17,6 +17,8 @@ create table files (
   foreign key (type_id) references types (id)
 );
 
+create index files_by_type_id on files (type_id);
+
 -- A version is the contents of a file at a specific time.
 create table versions (
   file_id uuid not null,
@@ -39,6 +41,8 @@ create table document_files (
   file_id uuid not null,
   foreign key (file_id) references files (id)
 );
+
+create index document_files_by_document_id on document_files (document_id);
 
 -- Document metadata items. Each item is a key-value pair linked to a
 -- file.
