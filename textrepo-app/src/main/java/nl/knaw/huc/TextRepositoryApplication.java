@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 public class TextRepositoryApplication extends Application<TextRepositoryConfiguration> {
 
@@ -82,6 +83,8 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
       customIndexers.add(customFacetIndexer);
     }
 
+    final Supplier<UUID> uuidGenerator = UUID::randomUUID;
+
     var contentsStoreService = new JdbiContentsStorage(jdbi);
     var contentsService = new ContentsService(contentsStoreService);
     var contentsResource = new ContentsResource(contentsService);
@@ -93,7 +96,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     var typeService = new JdbiTypeService(jdbi);
     var typeResource = new TypeResource(typeService);
 
-    var fileService = new JdbiFileService(jdbi, typeService, versionService, metadataService, UUID::randomUUID);
+    var fileService = new JdbiFileService(jdbi, typeService, versionService, metadataService, uuidGenerator);
     var filesResource = new FilesResource(fileService);
 
     var fileContentsService = new FileContentsService(contentsService, versionService, metadataService);
@@ -103,7 +106,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
 
     var versionsResource = new FileVersionsResource(versionService);
 
-    var documentService = new JdbiDocumentService(jdbi, UUID::randomUUID);
+    var documentService = new JdbiDocumentService(jdbi, uuidGenerator);
     var documentsResource = new DocumentsResource(documentService, fileService);
 
     environment.jersey().register(typeResource);
