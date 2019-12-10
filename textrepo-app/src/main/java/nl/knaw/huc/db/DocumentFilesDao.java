@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public interface DocumentFilesDao {
   @SqlUpdate("insert into documents_files (document_id, file_id) values (:docId, :fileId)")
-  void insert(@Bind("docId") UUID docId, UUID fileId);
+  void insert(@Bind("docId") UUID docId, @Bind("fileId") UUID fileId);
 
   @SqlQuery("SELECT f.id FROM files f, documents_files df, types t " +
       "WHERE df.document_id = :docId " +
