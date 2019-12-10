@@ -8,13 +8,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface DocumentFilesDao {
-  @SqlUpdate("insert into document_files (document_id, file_id) values (:docId, :fileId)")
+  @SqlUpdate("insert into documents_files (document_id, file_id) values (:docId, :fileId)")
   void insert(@Bind("docId") UUID docId, UUID fileId);
 
-  @SqlQuery("SELECT f.id FROM files f, document_files df, types t " +
-    "WHERE df.document_id = :docId " +
-    "AND t.name = :typeName " +
-    "AND f.id = df.file_id " +
-    "AND t.id = f.type_id")
+  @SqlQuery("SELECT f.id FROM files f, documents_files df, types t " +
+      "WHERE df.document_id = :docId " +
+      "AND t.name = :typeName " +
+      "AND f.id = df.file_id " +
+      "AND t.id = f.type_id")
   Optional<UUID> findFile(@Bind("docId") UUID docId, @Bind("typeName") String typeName);
 }

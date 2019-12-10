@@ -36,13 +36,14 @@ create index version_by_file_id on versions (file_id);
   --id uuid primary key
 --);
 
-create table document_files (
+create table documents_files (
   document_id uuid not null,
-  file_id uuid not null,
-  foreign key (file_id) references files (id)
+  file_id uuid not null references files (id),
+  primary key (document_id, file_id)		-- force unique index on pair
 );
 
-create index document_files_by_document_id on document_files (document_id);
+-- assist FK lookups: add compound index for PK fields in reverse order
+create unique index doc_files_by_file_id on documents_files (file_id, document_id);
 
 -- Document metadata items. Each item is a key-value pair linked to a
 -- file.
