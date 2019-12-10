@@ -3,8 +3,8 @@ package nl.knaw.huc.resources;
 import ch.qos.logback.classic.Level;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.testing.junit.ResourceTestRule;
+import nl.knaw.huc.service.DocumentService;
 import nl.knaw.huc.service.FileService;
-import nl.knaw.huc.service.JdbiDocumentService;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
@@ -36,7 +36,7 @@ public class DocumentsResourceTest {
   private static final UUID DOC_ID = UUID.randomUUID();
 
   private static final Jdbi jdbi = mock(Jdbi.class);
-  private static final JdbiDocumentService documentService = mock(JdbiDocumentService.class);
+  private static final DocumentService documentService = mock(DocumentService.class);
   private static final FileService fileService = mock(FileService.class);
 
   // https://stackoverflow.com/questions/31730571/how-to-turn-on-tracing-in-a-unit-test-using-a-resourcetestrule

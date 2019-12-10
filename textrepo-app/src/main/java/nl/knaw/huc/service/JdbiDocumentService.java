@@ -7,7 +7,7 @@ import javax.ws.rs.NotFoundException;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-public class JdbiDocumentService {
+public class JdbiDocumentService implements DocumentService {
   private final Jdbi jdbi;
   private final Supplier<UUID> idGenerator;
 
@@ -25,7 +25,7 @@ public class JdbiDocumentService {
   public UUID findFileForType(UUID docId, String fileType) {
     return documentFiles().findFile(docId, fileType)
                           .orElseThrow(() -> new NotFoundException(
-                            String.format("No %s file found for document %s", fileType, docId)));
+                              String.format("No %s file found for document %s", fileType, docId)));
   }
 
   private DocumentFilesDao documentFiles() {

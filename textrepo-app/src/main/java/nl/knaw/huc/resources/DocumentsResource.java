@@ -4,8 +4,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.core.Version;
+import nl.knaw.huc.service.DocumentService;
 import nl.knaw.huc.service.FileService;
-import nl.knaw.huc.service.JdbiDocumentService;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -36,10 +36,10 @@ import static nl.knaw.huc.resources.ResourceUtils.readContent;
 public class DocumentsResource {
   private static final Logger LOG = LoggerFactory.getLogger(DocumentsResource.class);
 
-  private final JdbiDocumentService documentService;
+  private final DocumentService documentService;
   private final FileService fileService;
 
-  public DocumentsResource(JdbiDocumentService documentService, FileService fileService) {
+  public DocumentsResource(DocumentService documentService, FileService fileService) {
     this.documentService = documentService;
     this.fileService = fileService;
   }
