@@ -41,7 +41,7 @@ public class JdbiMetadataService implements MetadataService {
 
   @Override
   public Iterator<MetadataEntry> find(@Nonnull UUID fileId) {
-    return getMetadataDao().findByDocumentId(fileId);
+    return getMetadataDao().findByFileId(fileId);
   }
 
   private MetadataDao getMetadataDao() {
