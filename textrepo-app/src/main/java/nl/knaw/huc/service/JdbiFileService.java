@@ -53,7 +53,7 @@ public class JdbiFileService implements FileService {
   }
 
   public Version addFile(@Nonnull Contents contents, UUID fileId, String filename) {
-    var version = versionService.insertNewVersion(fileId, contents, filename, now());
+    var version = versionService.insertNewVersion(fileId, contents, now());
     metadataService.insert(version.getFileId(), new MetadataEntry("filename", filename));
     return version;
   }

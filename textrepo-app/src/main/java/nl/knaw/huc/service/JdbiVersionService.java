@@ -41,7 +41,6 @@ public class JdbiVersionService implements VersionService {
   public Version insertNewVersion(
       @Nonnull UUID fileId,
       @Nonnull Contents contents,
-      @Nonnull String filename,
       @Nonnull LocalDateTime time
   ) {
     contentsService.addContents(contents);
