@@ -89,7 +89,7 @@ public class AutocompleteResourceTest {
 
   private Response postTestContents(byte[] bytes, String mimetype) {
     var contentDisposition = FormDataContentDisposition
-        .name("contents")
+        .name("file")
         .size(bytes.length)
         .build();
 

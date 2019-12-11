@@ -55,7 +55,7 @@ public class AutocompleteResource {
   @Produces(APPLICATION_JSON)
   public Response fields(
       @QueryParam("mimetype") String mimetype,
-      @FormDataParam("contents") InputStream inputStream
+      @FormDataParam("file") InputStream inputStream
   ) {
     return Response
         .status(200)

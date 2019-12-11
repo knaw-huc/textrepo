@@ -69,8 +69,7 @@ services:
     command: ["/utils/wait-for-it.sh", "autocomplete-indexer:8080",
               "--timeout=0",
               "--",
-              "tail", "-f", "/dev/null"
-#              "java", "-jar", "/textrepo-app/textrepo.jar", "server", "config.yml"
+              "java", "-jar", "/textrepo-app/textrepo.jar", "server", "config.yml"
     ]
 
   concordion:

@@ -16,7 +16,7 @@ public class CustomIndexerConfiguration {
    * POST Endpoint to convert doc to json doc that matches es mapping
    */
   @JsonProperty
-  public String fields;
+  public FieldsConfiguration fields;
 
   /**
    * List of mimetypes that should be indexed

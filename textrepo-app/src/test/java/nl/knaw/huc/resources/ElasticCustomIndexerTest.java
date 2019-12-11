@@ -4,6 +4,7 @@ import nl.knaw.huc.service.index.CustomIndexerConfiguration;
 import nl.knaw.huc.service.index.CustomIndexerException;
 import nl.knaw.huc.service.index.ElasticCustomIndexer;
 import nl.knaw.huc.service.index.ElasticsearchConfiguration;
+import nl.knaw.huc.service.index.FieldsConfiguration;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -53,7 +54,7 @@ public class ElasticCustomIndexerTest {
 
   @Test
   public void testInstantiationElasticCustomFacetIndexer_requestsMapping() throws IOException, CustomIndexerException {
-    var config = createCustomFacetIndexerConfiguration();
+    var config = createCustomFacetIndexerConfiguration("urlencoded");
     var getMappingRequest = request()
         .withMethod("GET")
         .withPath(mockMappingEndpoint);
@@ -73,7 +74,7 @@ public class ElasticCustomIndexerTest {
 
   @Test
   public void testIndexFile_requestsFields() throws IOException, CustomIndexerException {
-    var config = createCustomFacetIndexerConfiguration();
+    var config = createCustomFacetIndexerConfiguration("urlencoded");
     mockMappingResponse();
     mockCreatingIndexResponse(config);
     var indexer = new ElasticCustomIndexer(config);
@@ -93,6 +94,34 @@ public class ElasticCustomIndexerTest {
 
     mockServer.verify(postDoc2FieldsRequest, once());
     mockIndexServer.verify(putFileRequest, once());
+  }
+
+  @Test
+  public void testInstantiationElasticCustomFacetIndexer_requestsFieldUsingMultipart_whenTypeIsMultipart() throws IOException, CustomIndexerException {
+    var expectedContentTypeHeader = "multipart/form-data;boundary=.*";
+    var config = createCustomFacetIndexerConfiguration("multipart");
+    var fileId = UUID.randomUUID();
+    mockPuttingFileResponse(config, fileId);
+    mockCreatingIndexResponse(config);
+    mockMappingResponse();
+    var indexer = new ElasticCustomIndexer(config);
+    var postDocToFieldsRequest = request()
+        .withMethod("POST")
+        .withPath(mockFieldsEndpoint)
+        .withHeader("Content-Type", expectedContentTypeHeader);
+    mockDoc2FieldsResponse(postDocToFieldsRequest);
+
+    indexer.indexFile(fileId, getResourceAsString("fields/file.xml"));
+
+    mockServer.verify(postDocToFieldsRequest, once());
+  }
+
+  private void mockPuttingFileResponse(CustomIndexerConfiguration config, UUID fileId) throws IOException {
+    var putFileRequest = request()
+        .withMethod("PUT")
+        .withPath(format("/%s/_doc/%s", config.elasticsearch.index, fileId))
+        .withBody(jsonSchema(getResourceAsString("fields/fields.schema.json")));
+    mockIndexFieldsResponse(putFileRequest);
   }
 
   private void mockDoc2FieldsResponse(HttpRequest request) throws IOException {
@@ -150,7 +179,7 @@ public class ElasticCustomIndexerTest {
 
   }
 
-  private CustomIndexerConfiguration createCustomFacetIndexerConfiguration() {
+  private CustomIndexerConfiguration createCustomFacetIndexerConfiguration(String type) {
     var mockMappingUrl = "http://localhost:" + mockPort + mockMappingEndpoint;
     var mockFieldsUrl = "http://localhost:" + mockPort + mockFieldsEndpoint;
     var mockEsUrl = "localhost:" + mockIndexPort;
@@ -159,7 +188,7 @@ public class ElasticCustomIndexerTest {
     config.elasticsearch.contentField = "does-not-matter";
     config.elasticsearch.hosts = newArrayList(mockEsUrl);
     config.elasticsearch.index = "test-index";
-    config.fields = mockFieldsUrl;
+    config.fields = FieldsConfiguration.build(type, mockFieldsUrl);
     config.mapping = mockMappingUrl;
     config.mimetypes = newArrayList("application/xml");
     return config;
