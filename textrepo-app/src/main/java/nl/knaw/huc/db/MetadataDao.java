@@ -18,7 +18,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface MetadataDao {
+  // Document metadata
+  @SqlUpdate("insert into documents_metadata (document_id, key, value) values (:id, :key, :value")
+  void insertDocumentMetadata(@Bind("id") UUID docId, @BindBean MetadataEntry metadataEntry);
 
+  // File Metadata
   @SqlUpdate("insert into files_metadata (file_id, key, value) values (:id, :key, :value)")
   void insert(@Bind("id") UUID fileId, @BindBean MetadataEntry metadataEntry);
 
