@@ -31,9 +31,9 @@ public interface MetadataDao {
 
   @SqlQuery("select key, value from files_metadata where file_id = ? and key = ?")
   @RegisterConstructorMapper(MetadataEntry.class)
-  Optional<MetadataEntry> findByFileIdAndKey(@Bind UUID documentId, @Bind String key);
+  Optional<MetadataEntry> findByFileIdAndKey(@Bind UUID fileId, @Bind String key);
 
   @SqlQuery("select key, value from files_metadata where file_id = ?")
   @RegisterConstructorMapper(MetadataEntry.class)
-  Iterator<MetadataEntry> findByFileId(@Bind UUID documentId);
+  Iterator<MetadataEntry> findByFileId(@Bind UUID fileId);
 }
