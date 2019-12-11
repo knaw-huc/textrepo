@@ -45,11 +45,18 @@ create table documents_files (
 -- assist FK lookups: add compound index for PK fields in reverse order
 create unique index doc_files_by_file_id on documents_files (file_id, document_id);
 
--- Document metadata items. Each item is a key-value pair linked to a
--- file.
+-- Document metadata items. Each item is a key-value pair linked to a document.
 create table documents_metadata (
   document_id uuid not null,
   key varchar not null,
   value text,
   primary key (document_id, key)
+);
+
+-- File metadata items (e.g., filename). Key-value pairs linked to file.
+create table files_metadata (
+  file_id uuid not null,
+  key varchar not null,
+  value text,
+  primary key (file_id, key)
 );
