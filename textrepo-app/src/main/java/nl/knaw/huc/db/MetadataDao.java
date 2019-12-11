@@ -29,11 +29,11 @@ public interface MetadataDao {
   @BatchChunkSize(1000)
   void bulkInsert(@Bind("id") UUID fileId, @BindBean Iterator<Map.Entry<String, String>> entries);
 
-  @SqlQuery("select file_id, key, value from files_metadata where file_id = ? and key = ?")
+  @SqlQuery("select key, value from files_metadata where file_id = ? and key = ?")
   @RegisterConstructorMapper(MetadataEntry.class)
   Optional<MetadataEntry> findByFileIdAndKey(@Bind UUID documentId, @Bind String key);
 
-  @SqlQuery("select file_id, key, value from files_metadata where file_id = ?")
+  @SqlQuery("select key, value from files_metadata where file_id = ?")
   @RegisterConstructorMapper(MetadataEntry.class)
   Iterator<MetadataEntry> findByFileId(@Bind UUID documentId);
 }
