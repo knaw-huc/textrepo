@@ -47,7 +47,7 @@ create unique index doc_files_by_file_id on documents_files (file_id, document_i
 
 -- Document metadata items. Each item is a key-value pair linked to a
 -- file.
-create table document_metadata (
+create table documents_metadata (
   document_id uuid not null,
   key varchar not null,
   value text,
