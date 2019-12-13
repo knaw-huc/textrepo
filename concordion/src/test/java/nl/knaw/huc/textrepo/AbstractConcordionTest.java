@@ -13,10 +13,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Entity;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.List;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static java.sql.DriverManager.getConnection;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
+import static nl.knaw.huc.textrepo.Config.AUTOCOMPLETE_INDEX;
 import static nl.knaw.huc.textrepo.Config.CUSTOM_INDEX;
 import static nl.knaw.huc.textrepo.Config.FILE_INDEX;
 import static nl.knaw.huc.textrepo.Config.HTTP_APP_HOST;
@@ -25,7 +31,7 @@ import static nl.knaw.huc.textrepo.Config.POSTGRES_DB;
 import static nl.knaw.huc.textrepo.Config.POSTGRES_HOST;
 import static nl.knaw.huc.textrepo.Config.POSTGRES_PASSWORD;
 import static nl.knaw.huc.textrepo.Config.POSTGRES_USER;
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @FullOGNL
 @RunWith(ConcordionRunner.class)
@@ -36,6 +42,13 @@ public abstract class AbstractConcordionTest {
   static Client client() {
     return JerseyClientBuilder.newClient();
   }
+
+  private final List<String> indices = newArrayList(
+      ES_HOST + "/" + FILE_INDEX,
+      ES_HOST + "/" + CUSTOM_INDEX,
+      ES_HOST + "/" + AUTOCOMPLETE_INDEX
+  );
+
 
   final static String APP_HOST = HTTP_APP_HOST;
   final static String ES_HOST = HTTP_ES_HOST;
@@ -52,36 +65,55 @@ public abstract class AbstractConcordionTest {
 
   @BeforeSpecification
   public void setUp() {
-    deleteIndices();
+    emptyIndices();
     emptyTextrepoDatabase();
   }
 
-  private void deleteIndices() {
-    var indices = new ArrayList<String>();
-    indices.add(ES_HOST + "/" + FILE_INDEX);
-    indices.add(ES_HOST + "/" + CUSTOM_INDEX);
-    indices.forEach(this::deleteIndex);
-  }
+  private void emptyIndices() {
 
-  private void deleteIndex(String index) {
-    logger.info("deleting index [{}]", index);
-
-    var get = client()
-        .target(index)
-        .request().get();
-    if (get.getStatus() == 404) {
-      return;
+    // wait for docs to be indexed:
+    try {
+      SECONDS.sleep(1);
+    } catch (InterruptedException ex) {
+      logger.error("Could not sleep", ex);
     }
 
-    var delete = client()
-        .target(index)
-        .request().delete();
-    assertEquals(delete.getStatus(), 200);
+    indices.forEach(this::emptyIndex);
 
-    get = client()
+    // wait for docs to be deleted:
+    try {
+      SECONDS.sleep(1);
+    } catch (InterruptedException ex) {
+      logger.error("Could not sleep", ex);
+    }
+
+    indices.forEach(this::checkNoDocs);
+  }
+
+  private void emptyIndex(String index) {
+    logger.info("emptying index [{}]", index);
+
+    var indexExists = client()
         .target(index)
+        .request()
+        .get();
+
+    assertThat(indexExists.getStatus()).isNotEqualTo(404);
+
+    var delete = client()
+        .target(index + "/_delete_by_query?conflicts=proceed")
+        .request()
+        .post(Entity.entity("{\"query\": {\"match_all\": {}}}", APPLICATION_JSON_TYPE));
+    assertThat(delete.getStatus()).isEqualTo(200);
+  }
+
+  private void checkNoDocs(String index) {
+    var countRequest = client()
+        .target(index + "/_count")
         .request().get();
-    assertEquals(get.getStatus(), 404);
+    var json = countRequest.readEntity(String.class);
+    int count = jsonPath.parse(json).read("$.count");
+    assertThat(count).isEqualTo(0);
   }
 
   private void emptyTextrepoDatabase() {

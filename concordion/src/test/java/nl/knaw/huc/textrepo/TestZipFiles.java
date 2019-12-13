@@ -61,12 +61,12 @@ public class TestZipFiles extends AbstractConcordionTest {
     result.filename1 = "een.txt";
     result.location1 = locations.get(result.filename1);
     result.fileId1 = TestUtils.getFileId(result.location1);
-    result.fileIdIsUUID1 = TestUtils.isValidUUID(result.fileId1);
+    result.fileIdIsUUID1 = TestUtils.isValidUuidMsg(result.fileId1);
 
     result.filename2 = "twee.txt";
     result.location2 = locations.get(result.filename2);
     result.fileId2 = TestUtils.getFileId(result.location2);
-    result.fileIdIsUUID2 = TestUtils.isValidUUID(result.fileId2);
+    result.fileIdIsUUID2 = TestUtils.isValidUuidMsg(result.fileId2);
 
     return result;
   }

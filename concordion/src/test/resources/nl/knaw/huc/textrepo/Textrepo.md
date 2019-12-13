@@ -5,3 +5,4 @@
  - [Metadata](./TestMetadata.md "c:run")
  - [Versions](./TestVersions.md "c:run")
  - [Zip files](./TestZipFiles.md "c:run")
+ - [Custom indexer](./TestCustomIndexer.md "c:run")

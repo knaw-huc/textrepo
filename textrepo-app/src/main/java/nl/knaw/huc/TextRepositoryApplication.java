@@ -49,7 +49,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
   }
 
   private SwaggerBundle<TextRepositoryConfiguration> getSwaggerBundle() {
-    return new SwaggerBundle<TextRepositoryConfiguration>() {
+    return new SwaggerBundle<>() {
       @Override
       protected SwaggerBundleConfiguration getSwaggerBundleConfiguration(TextRepositoryConfiguration configuration) {
         return configuration.getSwaggerBundleConfiguration();
@@ -98,6 +98,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     var customIndexers = new ArrayList<ElasticCustomIndexer>();
     for (var customIndexerConfig : config.getCustomFacetIndexers()) {
       try {
+        logger.info("Creating indexer [{}]", customIndexerConfig.elasticsearch.index);
         var customFacetIndexer = new ElasticCustomIndexer(customIndexerConfig);
         environment.lifecycle().manage(customFacetIndexer);
         customIndexers.add(customFacetIndexer);

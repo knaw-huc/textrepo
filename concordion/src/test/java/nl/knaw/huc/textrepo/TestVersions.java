@@ -57,7 +57,12 @@ public class TestVersions extends AbstractConcordionTest {
   }
 
   private Response postFile(String filesEndpoint, String content) throws MalformedURLException {
-    return TestUtils.postFileWithFilename(client(), new URL(HTTP_APP_HOST + filesEndpoint), "test.txt", content.getBytes());
+    return TestUtils.postFileWithFilename(
+        client(),
+        new URL(HTTP_APP_HOST + filesEndpoint),
+        "test.txt",
+        content.getBytes()
+    );
   }
 
   private String getVersions(String fileId) {

@@ -57,6 +57,7 @@ public class ElasticCustomIndexer implements FileIndexer, Managed {
   }
 
   private void createIndex(CustomIndexerConfiguration config) throws CustomIndexerException {
+    logger.info("Creating es index [{}]", config.elasticsearch.index);
     var response = getMapping(config);
     var mappingResult = response.readEntity(String.class);
 

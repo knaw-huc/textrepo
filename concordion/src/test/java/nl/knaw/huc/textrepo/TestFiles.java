@@ -7,13 +7,11 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
 import javax.ws.rs.core.Response;
 
-import static nl.knaw.huc.textrepo.Config.HTTP_APP_HOST;
+import static nl.knaw.huc.textrepo.Config.FILES_URL;
 import static nl.knaw.huc.textrepo.TestUtils.getLocation;
 import static nl.knaw.huc.textrepo.TestUtils.getMultiPartEntity;
 
 public class TestFiles extends AbstractConcordionTest {
-  private static final String HOST = HTTP_APP_HOST;
-  private static final String FILES_URL = HOST + "/files";
 
   public MultiValueResult upload(String content) {
     var multiPart = new FormDataMultiPart().field("contents", content);
@@ -37,7 +35,7 @@ public class TestFiles extends AbstractConcordionTest {
         .with("location", locationHeader.orElse("No location"))
         .with("esLocation", "/files/_doc/" + fileId)
         .with("fileId", fileId)
-        .with("fileIdIsUUID", optionalFileId.map(TestUtils::isValidUUID).orElse("No file id"));
+        .with("fileIdIsUUID", optionalFileId.map(TestUtils::isValidUuidMsg).orElse("No file id"));
   }
 
   public MultiValueResult latest(Object loc) {

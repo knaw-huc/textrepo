@@ -34,6 +34,7 @@ import static nl.knaw.huc.resources.ResourceUtils.locationOf;
 import static nl.knaw.huc.resources.ResourceUtils.readContent;
 import static nl.knaw.huc.resources.ZipHandling.handleZipFile;
 import static nl.knaw.huc.resources.ZipHandling.isZip;
+import static org.eclipse.jetty.util.StringUtil.isBlank;
 
 @Api(tags = {"files"})
 @Path("/files")
@@ -60,7 +61,11 @@ public class FilesResource {
       @FormDataParam("contents") FormDataContentDisposition fileDetail,
       @FormDataParam("contents") FormDataBodyPart bodyPart
   ) {
-    logger.debug("addFile: filename={}", fileDetail == null ? "" : fileDetail.getFileName());
+    if (isBlank(fileDetail.getFileName())) {
+      throw new IllegalStateException("No filename");
+    }
+
+    logger.debug("addFile: filename={}", fileDetail.getFileName());
 
     if (isZip(bodyPart, fileDetail)) {
       var resultFiles = handleZipFile(inputStream, this::handleNewFile);

@@ -83,7 +83,7 @@ services:
       "/utils/wait-for-it.sh", "textrepo-app:8080",
       "--timeout=0",
       "--",
-       "mvn", "clean", "test"
+       "tail", "-f", "/dev/null"
     ]
     volumes:
     - concordiondata:/concordion
@@ -96,6 +96,7 @@ services:
       POSTGRES_HOST: ${POSTGRES_HOST}
       FILE_INDEX: ${FILE_INDEX}
       CUSTOM_INDEX: ${CUSTOM_INDEX}
+      AUTOCOMPLETE_INDEX: ${AUTOCOMPLETE_INDEX}
 
 networks:
   textrepo_network:

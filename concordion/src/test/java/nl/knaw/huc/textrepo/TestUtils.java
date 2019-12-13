@@ -6,6 +6,8 @@ import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
@@ -16,7 +18,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
 
 public class TestUtils {
@@ -25,12 +26,23 @@ public class TestUtils {
     return IOUtils.toByteArray(TestUtils.class.getClassLoader().getResourceAsStream(resourcePath));
   }
 
-  public static String isValidUUID(String fileId) {
+  static final Logger logger = LoggerFactory.getLogger(TestUtils.class);
+
+  public static String isValidUuidMsg(String fileId) {
     try {
       UUID.fromString(fileId);
       return "valid UUID";
     } catch (Exception e) {
       return "invalid UUID: " + e.getMessage();
+    }
+  }
+
+  public static boolean isValidUuid(String fileId) {
+    try {
+      UUID.fromString(fileId);
+      return true;
+    } catch (Exception e) {
+      return false;
     }
   }
 
@@ -47,8 +59,9 @@ public class TestUtils {
   }
 
   public static Response postFileWithFilename(
-      Client client, URL files, String filename, byte[] content
+      Client client, URL filesEndpoint, String filename, byte[] content
   ) {
+    logger.info("Posting file [{}] to [{}]", filename, filesEndpoint);
     var contentDisposition = FormDataContentDisposition
         .name("contents")
         .fileName(filename)
@@ -64,7 +77,7 @@ public class TestUtils {
 
     final var request = client
         .register(MultiPartFeature.class)
-        .target(files.toString())
+        .target(filesEndpoint.toString())
         .request();
 
     final var entity = Entity.entity(multiPart, multiPart.getMediaType());

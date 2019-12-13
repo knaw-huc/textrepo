@@ -14,6 +14,10 @@ public class Config {
   public static final String POSTGRES_HOST = requireNonBlank(getenv("POSTGRES_HOST"));
   public static final String FILE_INDEX = requireNonBlank(getenv("FILE_INDEX"));
   public static final String CUSTOM_INDEX = requireNonBlank(getenv("CUSTOM_INDEX"));
+  public static final String AUTOCOMPLETE_INDEX = requireNonBlank(getenv("AUTOCOMPLETE_INDEX"));
+
+  public static final String HOST = HTTP_APP_HOST;
+  public static final String FILES_URL = HOST + "/files";
 
   private static String requireNonBlank(String field) {
     if (isBlank(field)) {
