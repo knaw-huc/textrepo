@@ -25,7 +25,7 @@ public interface MetadataDao {
   @SqlQuery("select key, value from documents_metadata where document_id = ?")
   @KeyColumn("key")
   @ValueColumn("value")
-  Map<String, String> getAllByDocumentId(@Bind UUID docId);
+  Map<String, String> getMetadataByDocumentId(@Bind UUID docId);
 
   @SqlUpdate("update documents_metadata set value = :value where document_id = :id and key = :key")
   boolean updateDocumentMetadata(@Bind("id") UUID docId, @BindBean MetadataEntry metadataEntry);
@@ -33,11 +33,11 @@ public interface MetadataDao {
 
   // File Metadata
   @SqlUpdate("insert into files_metadata (file_id, key, value) values (:id, :key, :value)")
-  void insert(@Bind("id") UUID fileId, @BindBean MetadataEntry metadataEntry);
+  void insertFileMetadata(@Bind("id") UUID fileId, @BindBean MetadataEntry metadataEntry);
 
   @Transaction
   @SqlUpdate("update files_metadata set value = :value where file_id = :id and key = :key ")
-  void update(@Bind("id") UUID fileId, @BindBean MetadataEntry metadataEntry);
+  void updateFileMetadata(@Bind("id") UUID fileId, @BindBean MetadataEntry metadataEntry);
 
   @Transaction
   @SqlBatch("insert into files_metadata (file_id, key, value) values (:id, :key, :value)")
@@ -51,5 +51,5 @@ public interface MetadataDao {
   @SqlQuery("select key, value from files_metadata where file_id = ?")
   @KeyColumn("key")
   @ValueColumn("value")
-  Map<String, String> getAllByFileId(@Bind UUID fileId);
+  Map<String, String> getMetadataByFileId(@Bind UUID fileId);
 }

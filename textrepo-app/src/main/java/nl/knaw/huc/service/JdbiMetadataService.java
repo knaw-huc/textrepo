@@ -17,7 +17,7 @@ public class JdbiMetadataService implements MetadataService {
 
   @Override
   public Map<String, String> getMetadata(UUID fileId) {
-    return getMetadataDao().getAllByFileId(fileId);
+    return getMetadataDao().getMetadataByFileId(fileId);
   }
 
   @Override
@@ -27,12 +27,12 @@ public class JdbiMetadataService implements MetadataService {
 
   @Override
   public void insert(@Nonnull UUID fileId, @Nonnull MetadataEntry entry) {
-    getMetadataDao().insert(fileId, entry);
+    getMetadataDao().insertFileMetadata(fileId, entry);
   }
 
   @Override
   public void update(@Nonnull UUID fileId, MetadataEntry entry) {
-    getMetadataDao().update(fileId, entry);
+    getMetadataDao().updateFileMetadata(fileId, entry);
   }
 
   private MetadataDao getMetadataDao() {

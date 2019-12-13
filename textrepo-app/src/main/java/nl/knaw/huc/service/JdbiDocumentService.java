@@ -32,7 +32,7 @@ public class JdbiDocumentService implements DocumentService {
   }
 
   public Map<String, String> getMetadata(UUID docId) {
-    return jdbi.onDemand(MetadataDao.class).getAllByDocumentId(docId);
+    return jdbi.onDemand(MetadataDao.class).getMetadataByDocumentId(docId);
   }
 
   public boolean updateMetadata(UUID docId, MetadataEntry entry) {
