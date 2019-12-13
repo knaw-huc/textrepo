@@ -26,6 +26,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Map;
 import java.util.UUID;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -111,6 +112,13 @@ public class DocumentsResource {
     LOG.debug(" -> new version created: {}", version);
 
     return Response.ok().build();
+  }
+
+  @GET
+  @Path("/{docId}/metadata")
+  @Produces(APPLICATION_JSON)
+  public Map<String, String> getDocumentMetadata(@PathParam("docId") @Valid UUID docId) {
+    return documentService.getMetadata(docId);
   }
 
   private URI locationOf(UUID docId) {

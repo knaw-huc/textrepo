@@ -22,6 +22,11 @@ public interface MetadataDao {
   @SqlUpdate("insert into documents_metadata (document_id, key, value) values (:id, :key, :value")
   void insertDocumentMetadata(@Bind("id") UUID docId, @BindBean MetadataEntry metadataEntry);
 
+  @SqlQuery("select key, value from documents_metadata where document_id = ?")
+  @KeyColumn("key")
+  @ValueColumn("value")
+  Map<String, String> getAllByDocumentId(@Bind UUID docId);
+
   // File Metadata
   @SqlUpdate("insert into files_metadata (file_id, key, value) values (:id, :key, :value)")
   void insert(@Bind("id") UUID fileId, @BindBean MetadataEntry metadataEntry);
