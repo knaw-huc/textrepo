@@ -30,6 +30,7 @@ import javax.ws.rs.core.UriBuilder;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -56,20 +57,25 @@ public class DocumentsResource {
   @ApiResponses(value = {@ApiResponse(code = 201, message = "CREATED")})
   public Response addDocument(
       @QueryParam("type") @Nonnull String type,
+      @QueryParam("byFile") @Nonnull Boolean byFile,
       @FormDataParam("contents") InputStream uploadedInputStream,
       @FormDataParam("contents") FormDataContentDisposition fileDetail,
       @FormDataParam("contents") FormDataBodyPart bodyPart
   ) {
+    final String filename = fileDetail.getFileName();
     final var newFileId = fileService.createFile(type);
     LOG.debug("New file created with fileId={}", newFileId);
 
     fileService.createVersionWithFilenameMetadata(
         newFileId,
         readContent(uploadedInputStream),
-        fileDetail.getFileName());
+        filename);
     LOG.debug("New version of {} created for content", newFileId);
 
-    final var docId = documentService.createDocument(newFileId);
+    final Optional<UUID> existingDocId = byFile ? documentService.findDocumentByFilename(filename) : Optional.empty();
+    LOG.debug("Type: {}, filename: {}, existingDocId: {}", type, filename, existingDocId);
+
+    final var docId = existingDocId.orElseGet(() -> documentService.createDocument(newFileId));
 
     return Response.created(locationOf(docId)).build();
   }

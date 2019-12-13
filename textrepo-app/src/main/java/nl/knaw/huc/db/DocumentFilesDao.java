@@ -17,4 +17,10 @@ public interface DocumentFilesDao {
       "AND f.id = df.file_id " +
       "AND t.id = f.type_id")
   Optional<UUID> findFile(@Bind("docId") UUID docId, @Bind("typeName") String typeName);
+
+  @SqlQuery("SELECT df.document_id FROM files_metadata fm, documents_files df " +
+      "WHERE fm.key = 'filename' " +
+      "AND fm.value = :filename " +
+      "AND fm.file_id = df.file_id")
+  Optional<UUID> findDocumentByFilename(@Bind("filename") String filename);
 }

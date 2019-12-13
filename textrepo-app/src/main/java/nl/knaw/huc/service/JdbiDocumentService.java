@@ -7,6 +7,7 @@ import org.jdbi.v3.core.Jdbi;
 
 import javax.ws.rs.NotFoundException;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -37,6 +38,10 @@ public class JdbiDocumentService implements DocumentService {
 
   public boolean updateMetadata(UUID docId, MetadataEntry entry) {
     return jdbi.onDemand(MetadataDao.class).updateDocumentMetadata(docId, entry);
+  }
+
+  public Optional<UUID> findDocumentByFilename(String filename) {
+    return documentFiles().findDocumentByFilename(filename);
   }
 
   private DocumentFilesDao documentFiles() {
