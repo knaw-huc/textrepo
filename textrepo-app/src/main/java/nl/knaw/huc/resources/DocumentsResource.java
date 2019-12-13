@@ -1,8 +1,10 @@
 package nl.knaw.huc.resources;
 
+import com.codahale.metrics.annotation.Timed;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.core.Version;
 import nl.knaw.huc.service.DocumentService;
 import nl.knaw.huc.service.FileService;
@@ -16,6 +18,7 @@ import javax.annotation.Nonnull;
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -119,6 +122,25 @@ public class DocumentsResource {
   @Produces(APPLICATION_JSON)
   public Map<String, String> getDocumentMetadata(@PathParam("docId") @Valid UUID docId) {
     return documentService.getMetadata(docId);
+  }
+
+  @PUT
+  @Path("/{docId}/metadata/{key}")
+  @Timed
+  @Consumes(APPLICATION_JSON)
+  @Produces(APPLICATION_JSON)
+  @ApiOperation(value = "Update value of a document metadata entry")
+  @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
+  public Response updateMetadataEntry(
+      @PathParam("docId") @Valid UUID docId,
+      @PathParam("key") @Valid String key,
+      String value
+  ) {
+    LOG.debug("updateMetadata: docId={}, key={}, value={}", docId, key, value);
+    if (!documentService.updateMetadata(docId, new MetadataEntry(key, value))) {
+      throw new NotFoundException("No metadatafield '" + key + "' found for document: " + docId);
+    }
+    return Response.ok().build();
   }
 
   private URI locationOf(UUID docId) {

@@ -27,6 +27,10 @@ public interface MetadataDao {
   @ValueColumn("value")
   Map<String, String> getAllByDocumentId(@Bind UUID docId);
 
+  @SqlUpdate("update documents_metadata set value = :value where document_id = :id and key = :key")
+  boolean updateDocumentMetadata(@Bind("id") UUID docId, @BindBean MetadataEntry metadataEntry);
+
+
   // File Metadata
   @SqlUpdate("insert into files_metadata (file_id, key, value) values (:id, :key, :value)")
   void insert(@Bind("id") UUID fileId, @BindBean MetadataEntry metadataEntry);

@@ -1,5 +1,6 @@
 package nl.knaw.huc.service;
 
+import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.db.DocumentFilesDao;
 import nl.knaw.huc.db.MetadataDao;
 import org.jdbi.v3.core.Jdbi;
@@ -32,6 +33,10 @@ public class JdbiDocumentService implements DocumentService {
 
   public Map<String, String> getMetadata(UUID docId) {
     return jdbi.onDemand(MetadataDao.class).getAllByDocumentId(docId);
+  }
+
+  public boolean updateMetadata(UUID docId, MetadataEntry entry) {
+    return jdbi.onDemand(MetadataDao.class).updateDocumentMetadata(docId, entry);
   }
 
   private DocumentFilesDao documentFiles() {
