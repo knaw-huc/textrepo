@@ -5,8 +5,8 @@ Testing the autocomplete indexer
 ## [Uploading files](- 'upload')
 
 When files with contents 
-"[hello tesseract](- "#text1")", 
-"[hello testament](- "#text2")" and 
+"[hello Tesseract](- "#text1")", 
+"[hello teStament](- "#text2")" and 
 "[hello testosterone](- "#text3")" 
 are [```POST```ed](- "#file=upload(#text1, #text2, #text3)"),
 then we should have three [valid UUIDs](- "?=#file.validUuids"):
@@ -21,6 +21,6 @@ When "[tes](- "#pre")"
 is [searched for](- "#suggestions=searchAutocomplete(#pre)") in the autocomplete index, 
 we get three suggestions: 
 
-  - [tesseract](- "?=#suggestions.suggestion1") 
-  - [testament](- "?=#suggestions.suggestion2") 
+  - [Tesseract](- "?=#suggestions.suggestion1") 
+  - [teStament](- "?=#suggestions.suggestion2") 
   - [testosterone](- "?=#suggestions.suggestion3") 

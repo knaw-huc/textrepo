@@ -5,6 +5,12 @@ import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
 import javax.ws.rs.client.Entity;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.UUID;
+
+import static nl.knaw.huc.textrepo.Config.FILES_URL;
+import static nl.knaw.huc.textrepo.TestUtils.postFileWithFilename;
 
 public class TestFileHandling extends AbstractConcordionTest {
 
@@ -12,15 +18,10 @@ public class TestFileHandling extends AbstractConcordionTest {
     return Entity.entity(multiPart, multiPart.getMediaType());
   }
 
-  public UploadResult upload(String content) {
-    var multiPart = new FormDataMultiPart().field("contents", content);
-
-    var request = client()
-        .register(MultiPartFeature.class)
-        .target(APP_HOST + "/files")
-        .request();
-
-    var response = request.post(multiPartEntity(multiPart));
+  public UploadResult upload(String content) throws MalformedURLException {
+    var filename = "test-" + UUID.randomUUID() + ".txt";
+    var endpoint = new URL(FILES_URL);
+    var response = postFileWithFilename(client(), endpoint, filename, content.getBytes());
 
     var result = new UploadResult();
     result.status = response.getStatus();
@@ -32,8 +33,6 @@ public class TestFileHandling extends AbstractConcordionTest {
         .request()
         .get();
     var versionJson = requestVersion.readEntity(String.class);
-    logger.info("fileLocation: " + latestVersionLocation);
-    logger.info("versionJson: " + versionJson);
     result.sha224 = JsonPath.parse(versionJson).read("$.contentsSha");
 
     return result;

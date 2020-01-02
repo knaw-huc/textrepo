@@ -2,10 +2,12 @@ package nl.knaw.huc.textrepo;
 
 import com.jayway.jsonpath.JsonPath;
 import org.concordion.api.MultiValueResult;
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
 import javax.ws.rs.client.Client;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.UUID;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static javax.ws.rs.client.Entity.entity;
@@ -13,8 +15,8 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
 import static nl.knaw.huc.textrepo.Config.AUTOCOMPLETE_INDEX;
 import static nl.knaw.huc.textrepo.Config.FILES_URL;
 import static nl.knaw.huc.textrepo.TestUtils.getLocation;
-import static nl.knaw.huc.textrepo.TestUtils.getMultiPartEntity;
 import static nl.knaw.huc.textrepo.TestUtils.isValidUuid;
+import static nl.knaw.huc.textrepo.TestUtils.postFileWithFilename;
 
 public class TestCustomIndexer extends AbstractConcordionTest {
 
@@ -25,7 +27,7 @@ public class TestCustomIndexer extends AbstractConcordionTest {
     public String validUuids;
   }
 
-  public UploadResult upload(String content1, String content2, String content3) {
+  public UploadResult upload(String content1, String content2, String content3) throws MalformedURLException {
     var result = new UploadResult();
     result.validUuid1 = uploadFile(content1, client());
     result.validUuid2 = uploadFile(content2, client());
@@ -78,15 +80,11 @@ public class TestCustomIndexer extends AbstractConcordionTest {
         .with("suggestion3", suggestion3);
   }
 
-  public static String uploadFile(String content, Client client) {
-    var multiPart = new FormDataMultiPart().field("contents", content);
+  public static String uploadFile(String content, Client client) throws MalformedURLException {
+    var filename = "test-" + UUID.randomUUID() + ".txt";
+    var endpoint = new URL(FILES_URL);
+    var response = postFileWithFilename(client, endpoint, filename, content.getBytes());
 
-    var request = client
-        .register(MultiPartFeature.class)
-        .target(FILES_URL)
-        .request();
-
-    var response = request.post(getMultiPartEntity(multiPart));
     var locationHeader = getLocation(response);
     var fileId = locationHeader
         .map(TestUtils::getFileId)

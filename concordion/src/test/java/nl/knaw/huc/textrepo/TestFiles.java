@@ -2,26 +2,23 @@ package nl.knaw.huc.textrepo;
 
 import com.jayway.jsonpath.JsonPath;
 import org.concordion.api.MultiValueResult;
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
-import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
 import javax.ws.rs.core.Response;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.UUID;
 
 import static nl.knaw.huc.textrepo.Config.FILES_URL;
 import static nl.knaw.huc.textrepo.TestUtils.getLocation;
-import static nl.knaw.huc.textrepo.TestUtils.getMultiPartEntity;
+import static nl.knaw.huc.textrepo.TestUtils.postFileWithFilename;
 
 public class TestFiles extends AbstractConcordionTest {
 
-  public MultiValueResult upload(String content) {
-    var multiPart = new FormDataMultiPart().field("contents", content);
+  public MultiValueResult upload(String content) throws MalformedURLException {
+    var filename = "test-" + UUID.randomUUID() + ".txt";
+    var endpoint = new URL(FILES_URL);
+    var response = postFileWithFilename(client(), endpoint, filename, content.getBytes());
 
-    var request = client()
-        .register(MultiPartFeature.class)
-        .target(FILES_URL)
-        .request();
-
-    var response = request.post(getMultiPartEntity(multiPart));
     var locationHeader = getLocation(response);
     var optionalFileId = locationHeader.map(TestUtils::getFileId);
     var fileId = optionalFileId.orElse("No file id");
