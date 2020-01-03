@@ -2,7 +2,6 @@ package nl.knaw.huc.textrepo;
 
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.ParseContext;
 import org.concordion.api.BeforeSpecification;
 import org.concordion.api.FullOGNL;
@@ -13,53 +12,37 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.Entity;
 import java.sql.SQLException;
-import java.util.List;
 
-import static com.google.common.collect.Lists.newArrayList;
+import static com.jayway.jsonpath.Option.DEFAULT_PATH_LEAF_TO_NULL;
+import static com.jayway.jsonpath.Option.SUPPRESS_EXCEPTIONS;
 import static java.sql.DriverManager.getConnection;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
-import static nl.knaw.huc.textrepo.Config.AUTOCOMPLETE_INDEX;
-import static nl.knaw.huc.textrepo.Config.CUSTOM_INDEX;
-import static nl.knaw.huc.textrepo.Config.FILE_INDEX;
 import static nl.knaw.huc.textrepo.Config.HTTP_APP_HOST;
 import static nl.knaw.huc.textrepo.Config.HTTP_ES_HOST;
 import static nl.knaw.huc.textrepo.Config.POSTGRES_DB;
 import static nl.knaw.huc.textrepo.Config.POSTGRES_HOST;
 import static nl.knaw.huc.textrepo.Config.POSTGRES_PASSWORD;
 import static nl.knaw.huc.textrepo.Config.POSTGRES_USER;
-import static nl.knaw.huc.textrepo.TestUtils.indexToUrl;
-import static nl.knaw.huc.textrepo.TestUtils.refreshIndex;
-import static nl.knaw.huc.textrepo.TestUtils.sleepMs;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static nl.knaw.huc.textrepo.util.IndexUtils.emptyIndices;
 
 @FullOGNL
 @RunWith(ConcordionRunner.class)
 public abstract class AbstractConcordionTest {
 
   final Logger logger = LoggerFactory.getLogger(this.getClass());
+  final static Client client = JerseyClientBuilder.newClient();
 
   static Client client() {
-    return JerseyClientBuilder.newClient();
+    return client;
   }
-
-  private final List<String> indices = newArrayList(
-      FILE_INDEX,
-      CUSTOM_INDEX,
-      AUTOCOMPLETE_INDEX
-  );
-
 
   final static String APP_HOST = HTTP_APP_HOST;
   final static String ES_HOST = HTTP_ES_HOST;
 
   private final static Configuration jsonPathConf = Configuration
       .defaultConfiguration()
-      .addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL)
-      .addOptions(Option.SUPPRESS_EXCEPTIONS);
+      .addOptions(DEFAULT_PATH_LEAF_TO_NULL)
+      .addOptions(SUPPRESS_EXCEPTIONS);
 
   /**
    * Do not throw an exception but return null when node doesn't exist
@@ -70,43 +53,6 @@ public abstract class AbstractConcordionTest {
   public void setUp() {
     emptyIndices();
     emptyTextrepoDatabase();
-  }
-
-  private void emptyIndices() {
-    indices.forEach(this::emptyIndex);
-  }
-
-  private void emptyIndex(String index) {
-    var indexExists = client()
-        .target(indexToUrl(index).toString())
-        .request()
-        .get();
-
-    if(indexExists.getStatus() == 404) {
-      logger.info("Not clearing index [{}] because it does not exist", index);
-      return;
-    }
-
-    logger.info("Clearing index [{}]", index);
-
-    refreshIndex(client(), index);
-    var delete = client()
-        .target(indexToUrl(index) + "/_delete_by_query")
-        .request()
-        .post(Entity.entity("{\"query\": {\"match_all\": {}}}", APPLICATION_JSON_TYPE));
-    assertThat(delete.getStatus()).isEqualTo(200);
-
-    refreshIndex(client(), index);
-    this.checkNoDocs(index);
-  }
-
-  private void checkNoDocs(String index) {
-    var countRequest = client()
-        .target(indexToUrl(index) + "/_count")
-        .request().get();
-    var json = countRequest.readEntity(String.class);
-    int count = jsonPath.parse(json).read("$.count");
-    assertThat(count).isEqualTo(0);
   }
 
   private void emptyTextrepoDatabase() {

@@ -1,6 +1,7 @@
 package nl.knaw.huc.textrepo;
 
 import com.jayway.jsonpath.JsonPath;
+import nl.knaw.huc.textrepo.util.TestUtils;
 import org.concordion.api.MultiValueResult;
 
 import javax.ws.rs.core.Response;
@@ -9,8 +10,8 @@ import java.net.URL;
 import java.util.UUID;
 
 import static nl.knaw.huc.textrepo.Config.FILES_URL;
-import static nl.knaw.huc.textrepo.TestUtils.getLocation;
-import static nl.knaw.huc.textrepo.TestUtils.postFileWithFilename;
+import static nl.knaw.huc.textrepo.util.TestUtils.getLocation;
+import static nl.knaw.huc.textrepo.util.TestUtils.postFileWithFilename;
 
 public class TestFiles extends AbstractConcordionTest {
 

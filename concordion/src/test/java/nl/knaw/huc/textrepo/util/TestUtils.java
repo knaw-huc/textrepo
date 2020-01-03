@@ -1,4 +1,4 @@
-package nl.knaw.huc.textrepo;
+package nl.knaw.huc.textrepo.util;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.StringSubstitutor;
@@ -11,10 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 import java.util.Optional;
@@ -23,9 +21,7 @@ import java.util.UUID;
 import static java.lang.String.format;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static javax.ws.rs.client.Entity.entity;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
-import static nl.knaw.huc.textrepo.AbstractConcordionTest.ES_HOST;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class TestUtils {
@@ -125,26 +121,6 @@ public class TestUtils {
   public static String replace(String url, String placeholder, String value) {
     var toReplace = Map.of(placeholder, value);
     return StringSubstitutor.replace(url, toReplace, "{", "}");
-  }
-
-  public static URL indexToUrl(String index) {
-    try {
-      return new URL(ES_HOST + "/" + index);
-    } catch (MalformedURLException e) {
-      throw new IllegalArgumentException(format("Could not create url from index [%s]", index));
-    }
-  }
-
-  public static void refreshIndex(Client client, String index) {
-    var uri = indexToUrl(index) + "/_refresh";
-    var refreshRequest = client
-        .register(MultiPartFeature.class)
-        .target(uri)
-        .request()
-        .post(entity("", APPLICATION_JSON_TYPE));
-    assertThat(refreshRequest.getStatus()).isEqualTo(200);
-    // wait a bit until refreshed:
-    sleepMs(100);
   }
 
   public static void sleepMs(int timeout) {

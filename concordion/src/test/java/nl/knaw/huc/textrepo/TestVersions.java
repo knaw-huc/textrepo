@@ -1,16 +1,17 @@
 package nl.knaw.huc.textrepo;
 
 import com.jayway.jsonpath.JsonPath;
+import nl.knaw.huc.textrepo.util.TestUtils;
 
 import javax.ws.rs.core.Response;
 import java.net.MalformedURLException;
 import java.net.URL;
 
 import static nl.knaw.huc.textrepo.Config.HTTP_APP_HOST;
-import static nl.knaw.huc.textrepo.TestUtils.getFileId;
-import static nl.knaw.huc.textrepo.TestUtils.getLocation;
-import static nl.knaw.huc.textrepo.TestUtils.putFileWithFilename;
-import static nl.knaw.huc.textrepo.TestUtils.replace;
+import static nl.knaw.huc.textrepo.util.TestUtils.getFileId;
+import static nl.knaw.huc.textrepo.util.TestUtils.getLocation;
+import static nl.knaw.huc.textrepo.util.TestUtils.putFileWithFilename;
+import static nl.knaw.huc.textrepo.util.TestUtils.replace;
 
 public class TestVersions extends AbstractConcordionTest {
 

@@ -10,7 +10,7 @@ import java.net.URL;
 import java.util.UUID;
 
 import static nl.knaw.huc.textrepo.Config.FILES_URL;
-import static nl.knaw.huc.textrepo.TestUtils.postFileWithFilename;
+import static nl.knaw.huc.textrepo.util.TestUtils.postFileWithFilename;
 
 public class TestFileHandling extends AbstractConcordionTest {
 

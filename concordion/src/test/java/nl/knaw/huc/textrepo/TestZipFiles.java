@@ -3,6 +3,7 @@ package nl.knaw.huc.textrepo;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
+import nl.knaw.huc.textrepo.util.TestUtils;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
@@ -15,8 +16,8 @@ import java.util.Map;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
 import static nl.knaw.huc.textrepo.Config.FILE_INDEX;
-import static nl.knaw.huc.textrepo.TestUtils.getResourceFileBits;
-import static nl.knaw.huc.textrepo.TestUtils.indexToUrl;
+import static nl.knaw.huc.textrepo.util.IndexUtils.indexToUrl;
+import static nl.knaw.huc.textrepo.util.TestUtils.getResourceFileBits;
 
 public class TestZipFiles extends AbstractConcordionTest {
 

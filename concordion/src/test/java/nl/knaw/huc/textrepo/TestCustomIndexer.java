@@ -1,6 +1,7 @@
 package nl.knaw.huc.textrepo;
 
 import com.jayway.jsonpath.JsonPath;
+import nl.knaw.huc.textrepo.util.TestUtils;
 import org.concordion.api.MultiValueResult;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
@@ -9,16 +10,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.UUID;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
 import static javax.ws.rs.client.Entity.entity;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
 import static nl.knaw.huc.textrepo.Config.AUTOCOMPLETE_INDEX;
 import static nl.knaw.huc.textrepo.Config.FILES_URL;
-import static nl.knaw.huc.textrepo.TestUtils.getLocation;
-import static nl.knaw.huc.textrepo.TestUtils.indexToUrl;
-import static nl.knaw.huc.textrepo.TestUtils.isValidUuid;
-import static nl.knaw.huc.textrepo.TestUtils.postFileWithFilename;
-import static nl.knaw.huc.textrepo.TestUtils.refreshIndex;
+import static nl.knaw.huc.textrepo.util.IndexUtils.indexToUrl;
+import static nl.knaw.huc.textrepo.util.IndexUtils.refreshIndex;
+import static nl.knaw.huc.textrepo.util.TestUtils.getLocation;
+import static nl.knaw.huc.textrepo.util.TestUtils.isValidUuid;
+import static nl.knaw.huc.textrepo.util.TestUtils.postFileWithFilename;
 
 public class TestCustomIndexer extends AbstractConcordionTest {
 
@@ -36,8 +36,8 @@ public class TestCustomIndexer extends AbstractConcordionTest {
     result.validUuid3 = uploadFile(content3, client());
     result.validUuids =
         isValidUuid(result.validUuid1) && isValidUuid(result.validUuid2) && isValidUuid(result.validUuid3)
-                ? "valid UUIDs"
-                : "one or more invalid UUIDs";
+            ? "valid UUIDs"
+            : "one or more invalid UUIDs";
     return result;
   }
 
