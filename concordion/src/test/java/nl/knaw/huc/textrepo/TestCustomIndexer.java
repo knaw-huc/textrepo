@@ -18,6 +18,7 @@ import static nl.knaw.huc.textrepo.TestUtils.getLocation;
 import static nl.knaw.huc.textrepo.TestUtils.indexToUrl;
 import static nl.knaw.huc.textrepo.TestUtils.isValidUuid;
 import static nl.knaw.huc.textrepo.TestUtils.postFileWithFilename;
+import static nl.knaw.huc.textrepo.TestUtils.refreshIndex;
 
 public class TestCustomIndexer extends AbstractConcordionTest {
 
@@ -41,12 +42,7 @@ public class TestCustomIndexer extends AbstractConcordionTest {
   }
 
   public MultiValueResult searchAutocomplete(String pre) {
-    // wait for docs to be indexed:
-    try {
-      SECONDS.sleep(1);
-    } catch (InterruptedException e) {
-      logger.error("Could not wait");
-    }
+    refreshIndex(client(), AUTOCOMPLETE_INDEX);
 
     var query = "{" +
         "  \"suggest\": {" +

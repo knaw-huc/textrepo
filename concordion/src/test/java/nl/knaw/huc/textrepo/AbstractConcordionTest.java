@@ -32,6 +32,8 @@ import static nl.knaw.huc.textrepo.Config.POSTGRES_HOST;
 import static nl.knaw.huc.textrepo.Config.POSTGRES_PASSWORD;
 import static nl.knaw.huc.textrepo.Config.POSTGRES_USER;
 import static nl.knaw.huc.textrepo.TestUtils.indexToUrl;
+import static nl.knaw.huc.textrepo.TestUtils.refreshIndex;
+import static nl.knaw.huc.textrepo.TestUtils.sleepMs;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @FullOGNL
@@ -71,14 +73,6 @@ public abstract class AbstractConcordionTest {
   }
 
   private void emptyIndices() {
-
-    // wait for docs to be indexed:
-    try {
-      SECONDS.sleep(1);
-    } catch (InterruptedException ex) {
-      logger.error("Could not sleep", ex);
-    }
-
     indices.forEach(this::emptyIndex);
   }
 
@@ -94,19 +88,15 @@ public abstract class AbstractConcordionTest {
     }
 
     logger.info("Clearing index [{}]", index);
+
+    refreshIndex(client(), index);
     var delete = client()
-        .target(indexToUrl(index) + "/_delete_by_query?conflicts=proceed")
+        .target(indexToUrl(index) + "/_delete_by_query")
         .request()
         .post(Entity.entity("{\"query\": {\"match_all\": {}}}", APPLICATION_JSON_TYPE));
     assertThat(delete.getStatus()).isEqualTo(200);
 
-    // wait for docs to be deleted:
-    try {
-      SECONDS.sleep(1);
-    } catch (InterruptedException ex) {
-      logger.error("Could not sleep", ex);
-    }
-
+    refreshIndex(client(), index);
     this.checkNoDocs(index);
   }
 

@@ -21,6 +21,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static java.lang.String.format;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static javax.ws.rs.client.Entity.entity;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
 import static nl.knaw.huc.textrepo.AbstractConcordionTest.ES_HOST;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -56,7 +59,7 @@ public class TestUtils {
   }
 
   public static Entity<FormDataMultiPart> getMultiPartEntity(FormDataMultiPart multiPart) {
-    return Entity.entity(multiPart, multiPart.getMediaType());
+    return entity(multiPart, multiPart.getMediaType());
   }
 
   public static Optional<String> getLocation(Response response) {
@@ -85,7 +88,7 @@ public class TestUtils {
         .target(filesEndpoint.toString())
         .request();
 
-    final var entity = Entity.entity(multiPart, multiPart.getMediaType());
+    final var entity = entity(multiPart, multiPart.getMediaType());
 
     return request.post(entity);
   }
@@ -114,7 +117,7 @@ public class TestUtils {
         .target(putFileContentsUrl)
         .request();
 
-    final var entity = Entity.entity(multiPart, multiPart.getMediaType());
+    final var entity = entity(multiPart, multiPart.getMediaType());
 
     return request.put(entity);
   }
@@ -129,6 +132,26 @@ public class TestUtils {
       return new URL(ES_HOST + "/" + index);
     } catch (MalformedURLException e) {
       throw new IllegalArgumentException(format("Could not create url from index [%s]", index));
+    }
+  }
+
+  public static void refreshIndex(Client client, String index) {
+    var uri = indexToUrl(index) + "/_refresh";
+    var refreshRequest = client
+        .register(MultiPartFeature.class)
+        .target(uri)
+        .request()
+        .post(entity("", APPLICATION_JSON_TYPE));
+    assertThat(refreshRequest.getStatus()).isEqualTo(200);
+    // wait a bit until refreshed:
+    sleepMs(100);
+  }
+
+  public static void sleepMs(int timeout) {
+    try {
+      MILLISECONDS.sleep(timeout);
+    } catch (InterruptedException ex) {
+      throw new RuntimeException("Could not sleep", ex);
     }
   }
 
