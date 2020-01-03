@@ -15,7 +15,10 @@ import java.net.URL;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import static java.lang.String.format;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
 
@@ -35,7 +38,12 @@ public class TestUtils {
   }
 
   public static String getFileId(String location) {
-    return location.substring(location.lastIndexOf('/') + 1);
+    var pattern = Pattern.compile(".*\\/files\\/(.*)\\/latest");
+    var matcher = pattern.matcher(location);
+    if (matcher.matches()) {
+      return matcher.group(1);
+    }
+    throw new IllegalStateException(format("No file id in location [%s]", location));
   }
 
   public static Entity<FormDataMultiPart> getMultiPartEntity(FormDataMultiPart multiPart) {

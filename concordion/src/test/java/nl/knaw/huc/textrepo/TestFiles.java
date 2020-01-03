@@ -5,6 +5,7 @@ import org.concordion.api.MultiValueResult;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
+import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Response;
 
 import static nl.knaw.huc.textrepo.Config.HTTP_APP_HOST;
@@ -28,21 +29,23 @@ public class TestFiles extends AbstractConcordionTest {
     var optionalFileId = locationHeader.map(TestUtils::getFileId);
     var fileId = optionalFileId.orElse("No file id");
 
+    String location = locationHeader.orElse("No location");
     return new MultiValueResult()
         .with("status", getStatus(response))
         .with("hasLocationHeader", locationHeader
             .map(l -> "has a Location header")
             .orElse("Missing Location header")
         )
-        .with("location", locationHeader.orElse("No location"))
+        .with("location", location)
+        .with("contentsLocation", location.replace("/latest", "/contents"))
         .with("esLocation", "/files/_doc/" + fileId)
         .with("fileId", fileId)
         .with("fileIdIsUUID", optionalFileId.map(TestUtils::isValidUUID).orElse("No file id"));
   }
 
   public MultiValueResult latest(Object loc) {
-    var location = (String) loc;
-    var request = client().target(location + "/contents").request();
+    var contentsLocation = (String) loc;
+    var request = client().target(contentsLocation).request();
     var response = request.get();
     return new MultiValueResult()
         .with("status", getStatus(response))

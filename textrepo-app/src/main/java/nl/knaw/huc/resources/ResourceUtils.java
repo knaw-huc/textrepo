@@ -23,7 +23,7 @@ public class ResourceUtils {
   public static URI locationOf(UUID uuid) {
     return UriBuilder
         .fromResource(FilesResource.class)
-        .path("{uuid}")
+        .path("{uuid}/latest")
         .build(uuid);
   }
 }

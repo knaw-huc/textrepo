@@ -89,7 +89,7 @@ public class FilesResourceTest {
   public void testPostFile_returns201CreatedWithLocationHeader_whenContentsUploaded() {
     final var response = postTestContents();
     assertThat(response.getStatus()).isEqualTo(201);
-    assertThat(response.getHeaderString("Location")).endsWith("files/" + uuid);
+    assertThat(response.getHeaderString("Location")).endsWith("files/" + uuid + "/latest");
   }
 
   @Test

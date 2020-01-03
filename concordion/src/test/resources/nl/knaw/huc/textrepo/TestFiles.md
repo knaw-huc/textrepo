@@ -14,9 +14,9 @@ When a file with contents "[hello test](- "#text")" is [```POST```ed](- "#file=u
 
 Assuming our "[hello test](- "#text")" file [was assigned](- "#file=upload(#text)") ID [ ](- "c:echo=#file.fileId"), we can issue
 
-  ```GET``` [ ](- "c:echo=#file.location")```/contents```
+  ```GET``` [ ](- "c:echo=#file.contentsLocation")
 
-to [get the latest version](- "#result = latest(#file.location)") and
+to [get the latest version](- "#result = latest(#file.contentsLocation)") and
 
  - The HTTP reponse code should be [200 OK](- "?=#result.status")
  - The result entity should be [hello test](- "?=#result.entity")
