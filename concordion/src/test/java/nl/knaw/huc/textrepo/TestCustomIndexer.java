@@ -15,6 +15,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
 import static nl.knaw.huc.textrepo.Config.AUTOCOMPLETE_INDEX;
 import static nl.knaw.huc.textrepo.Config.FILES_URL;
 import static nl.knaw.huc.textrepo.TestUtils.getLocation;
+import static nl.knaw.huc.textrepo.TestUtils.indexToUrl;
 import static nl.knaw.huc.textrepo.TestUtils.isValidUuid;
 import static nl.knaw.huc.textrepo.TestUtils.postFileWithFilename;
 
@@ -63,7 +64,7 @@ public class TestCustomIndexer extends AbstractConcordionTest {
 
     var request = client()
         .register(MultiPartFeature.class)
-        .target(ES_HOST + "/" + AUTOCOMPLETE_INDEX + "/_search")
+        .target(indexToUrl(AUTOCOMPLETE_INDEX) + "/_search")
         .request()
         .post(entity(query, APPLICATION_JSON_TYPE));
 
@@ -80,7 +81,7 @@ public class TestCustomIndexer extends AbstractConcordionTest {
         .with("suggestion3", suggestion3);
   }
 
-  public static String uploadFile(String content, Client client) throws MalformedURLException {
+  private static String uploadFile(String content, Client client) throws MalformedURLException {
     var filename = "test-" + UUID.randomUUID() + ".txt";
     var endpoint = new URL(FILES_URL);
     var response = postFileWithFilename(client, endpoint, filename, content.getBytes());

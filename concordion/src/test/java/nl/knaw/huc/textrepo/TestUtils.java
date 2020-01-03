@@ -11,14 +11,19 @@ import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import static java.lang.String.format;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
+import static nl.knaw.huc.textrepo.AbstractConcordionTest.ES_HOST;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class TestUtils {
 
@@ -119,5 +124,12 @@ public class TestUtils {
     return StringSubstitutor.replace(url, toReplace, "{", "}");
   }
 
+  public static URL indexToUrl(String index) {
+    try {
+      return new URL(ES_HOST + "/" + index);
+    } catch (MalformedURLException e) {
+      throw new IllegalArgumentException(format("Could not create url from index [%s]", index));
+    }
+  }
 
 }

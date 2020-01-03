@@ -14,7 +14,9 @@ import java.io.IOException;
 import java.util.Map;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
+import static nl.knaw.huc.textrepo.Config.FILE_INDEX;
 import static nl.knaw.huc.textrepo.TestUtils.getResourceFileBits;
+import static nl.knaw.huc.textrepo.TestUtils.indexToUrl;
 
 public class TestZipFiles extends AbstractConcordionTest {
 
@@ -91,7 +93,7 @@ public class TestZipFiles extends AbstractConcordionTest {
   }
 
   private String getIndexedFile(String fileId) {
-    var url = ES_HOST + "/files/_doc/" + fileId;
+    var url = indexToUrl(FILE_INDEX) + "/_doc/" + fileId;
     return JsonPath.parse(getByUrl(url)).read("$._source.content");
   }
 

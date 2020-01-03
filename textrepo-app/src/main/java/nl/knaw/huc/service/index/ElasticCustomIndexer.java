@@ -62,7 +62,7 @@ public class ElasticCustomIndexer implements FileIndexer, Managed {
     var mappingResult = response.readEntity(String.class);
 
     if (response.getStatus() != 200) {
-      logger.error("Could not get mapping: {} - {}", response.getStatus(), mappingResult);
+      logger.error("Could not get mapping from [{}]: {} - {}", config.mapping, response.getStatus(), mappingResult);
       return;
     }
 

@@ -31,6 +31,7 @@ import static nl.knaw.huc.textrepo.Config.POSTGRES_DB;
 import static nl.knaw.huc.textrepo.Config.POSTGRES_HOST;
 import static nl.knaw.huc.textrepo.Config.POSTGRES_PASSWORD;
 import static nl.knaw.huc.textrepo.Config.POSTGRES_USER;
+import static nl.knaw.huc.textrepo.TestUtils.indexToUrl;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @FullOGNL
@@ -44,9 +45,9 @@ public abstract class AbstractConcordionTest {
   }
 
   private final List<String> indices = newArrayList(
-      ES_HOST + "/" + FILE_INDEX,
-      ES_HOST + "/" + CUSTOM_INDEX,
-      ES_HOST + "/" + AUTOCOMPLETE_INDEX
+      FILE_INDEX,
+      CUSTOM_INDEX,
+      AUTOCOMPLETE_INDEX
   );
 
 
@@ -82,20 +83,19 @@ public abstract class AbstractConcordionTest {
   }
 
   private void emptyIndex(String index) {
-
     var indexExists = client()
-        .target(index)
+        .target(indexToUrl(index).toString())
         .request()
         .get();
 
     if(indexExists.getStatus() == 404) {
-      logger.info("Not clearing index [{}] because it does not (yet) exist", index);
+      logger.info("Not clearing index [{}] because it does not exist", index);
       return;
     }
 
     logger.info("Clearing index [{}]", index);
     var delete = client()
-        .target(index + "/_delete_by_query?conflicts=proceed")
+        .target(indexToUrl(index) + "/_delete_by_query?conflicts=proceed")
         .request()
         .post(Entity.entity("{\"query\": {\"match_all\": {}}}", APPLICATION_JSON_TYPE));
     assertThat(delete.getStatus()).isEqualTo(200);
@@ -112,7 +112,7 @@ public abstract class AbstractConcordionTest {
 
   private void checkNoDocs(String index) {
     var countRequest = client()
-        .target(index + "/_count")
+        .target(indexToUrl(index) + "/_count")
         .request().get();
     var json = countRequest.readEntity(String.class);
     int count = jsonPath.parse(json).read("$.count");
