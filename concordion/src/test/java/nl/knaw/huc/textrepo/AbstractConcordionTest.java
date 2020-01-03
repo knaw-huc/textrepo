@@ -79,6 +79,26 @@ public abstract class AbstractConcordionTest {
     }
 
     indices.forEach(this::emptyIndex);
+  }
+
+  private void emptyIndex(String index) {
+
+    var indexExists = client()
+        .target(index)
+        .request()
+        .get();
+
+    if(indexExists.getStatus() == 404) {
+      logger.info("Not clearing index [{}] because it does not (yet) exist", index);
+      return;
+    }
+
+    logger.info("Clearing index [{}]", index);
+    var delete = client()
+        .target(index + "/_delete_by_query?conflicts=proceed")
+        .request()
+        .post(Entity.entity("{\"query\": {\"match_all\": {}}}", APPLICATION_JSON_TYPE));
+    assertThat(delete.getStatus()).isEqualTo(200);
 
     // wait for docs to be deleted:
     try {
@@ -87,24 +107,7 @@ public abstract class AbstractConcordionTest {
       logger.error("Could not sleep", ex);
     }
 
-    indices.forEach(this::checkNoDocs);
-  }
-
-  private void emptyIndex(String index) {
-    logger.info("emptying index [{}]", index);
-
-    var indexExists = client()
-        .target(index)
-        .request()
-        .get();
-
-    assertThat(indexExists.getStatus()).isNotEqualTo(404);
-
-    var delete = client()
-        .target(index + "/_delete_by_query?conflicts=proceed")
-        .request()
-        .post(Entity.entity("{\"query\": {\"match_all\": {}}}", APPLICATION_JSON_TYPE));
-    assertThat(delete.getStatus()).isEqualTo(200);
+    this.checkNoDocs(index);
   }
 
   private void checkNoDocs(String index) {
