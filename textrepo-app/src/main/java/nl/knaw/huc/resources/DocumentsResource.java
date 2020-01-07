@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
@@ -57,7 +58,7 @@ public class DocumentsResource {
   @ApiResponses(value = {@ApiResponse(code = 201, message = "CREATED")})
   public Response addDocument(
       @QueryParam("type") @Nonnull String type,
-      @QueryParam("byFile") @Nonnull Boolean byFile,
+      @QueryParam("byFile") @Nonnull @DefaultValue("false") Boolean byFile,
       @FormDataParam("contents") InputStream uploadedInputStream,
       @FormDataParam("contents") FormDataContentDisposition fileDetail,
       @FormDataParam("contents") FormDataBodyPart bodyPart
