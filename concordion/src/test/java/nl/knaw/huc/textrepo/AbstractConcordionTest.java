@@ -19,6 +19,7 @@ import static com.jayway.jsonpath.Option.DEFAULT_PATH_LEAF_TO_NULL;
 import static com.jayway.jsonpath.Option.SUPPRESS_EXCEPTIONS;
 import static java.sql.DriverManager.getConnection;
 import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
+import static nl.knaw.huc.textrepo.Config.FILE_TYPE;
 import static nl.knaw.huc.textrepo.Config.HTTP_APP_HOST;
 import static nl.knaw.huc.textrepo.Config.HTTP_ES_HOST;
 import static nl.knaw.huc.textrepo.Config.POSTGRES_DB;
@@ -60,7 +61,7 @@ public abstract class AbstractConcordionTest {
   }
 
   private void initTypes() {
-    client.target(TYPES_URL).request().post(Entity.entity("text", TEXT_PLAIN));
+    client.target(TYPES_URL).request().post(Entity.entity(FILE_TYPE, TEXT_PLAIN));
   }
 
   private void emptyTextrepoDatabase() {

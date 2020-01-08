@@ -28,6 +28,7 @@ public class Config {
       CUSTOM_INDEX,
       AUTOCOMPLETE_INDEX
   );
+  public static final String FILE_TYPE = "text";
 
   private static String requireNonBlank(String field) {
     if (isBlank(field)) {
