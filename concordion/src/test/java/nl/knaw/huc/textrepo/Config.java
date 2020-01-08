@@ -21,14 +21,13 @@ public class Config {
 
   public static final String HOST = HTTP_APP_HOST;
   public static final String FILES_URL = HOST + "/files";
+  public static final String TYPES_URL = HOST + "/types";
 
   public static final List<String> INDICES = newArrayList(
       FILE_INDEX,
       CUSTOM_INDEX,
       AUTOCOMPLETE_INDEX
   );
-
-
 
   private static String requireNonBlank(String field) {
     if (isBlank(field)) {
