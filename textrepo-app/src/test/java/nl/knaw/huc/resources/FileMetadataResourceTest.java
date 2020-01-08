@@ -69,7 +69,7 @@ public class FileMetadataResourceTest {
     var response = putMetadata(fileId, metadata);
 
     assertThat(response.getStatus()).isEqualTo(200);
-    verify(metadataDao, times(1)).update(fileIdCaptor.capture(), metadataCaptor.capture());
+    verify(metadataDao, times(1)).updateFileMetadata(fileIdCaptor.capture(), metadataCaptor.capture());
     assertThat(fileIdCaptor.getValue()).isEqualTo(fileId);
     assertThat(metadataCaptor.getValue().getKey()).isEqualTo(key);
     assertThat(metadataCaptor.getValue().getValue()).isEqualTo(value);

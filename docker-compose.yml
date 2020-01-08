@@ -43,7 +43,7 @@ services:
     depends_on:
     - textrepo-app
     volumes:
-    - concordiondata:/concordion:ro
+    - ./concordion:/concordion:ro
     ports:
     - 8080:8080
 
@@ -59,36 +59,34 @@ services:
               "--",
               "java", "-jar", "/textrepo-app/textrepo.jar", "server", "config.yml"]
 
-  concordion:
-    image: knawhuc/textrepo-concordion:latest
-    build: ./concordion
-    ports:
-    - 8080
-    networks:
-    - textrepo_network
-    command: [
-      "/utils/wait-for-it.sh", "textrepo-app:8080",
-      "--timeout=0",
-      "--",
-       "mvn", "clean", "test"
-    ]
-    volumes:
-    - concordiondata:/concordion
-    environment:
-      ES_HOST: elasticsearch:9200
-      APP_HOST: textrepo-app:8080
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_HOST: ${POSTGRES_HOST}
-      FILE_INDEX: ${FILE_INDEX}
-      CUSTOM_INDEX: ${CUSTOM_INDEX}
+#  concordion:
+#    image: knawhuc/textrepo-concordion:latest
+#    build: ./concordion
+#    ports:
+#    - 8080
+#    networks:
+#    - textrepo_network
+#    command: [
+#      "/utils/wait-for-it.sh", "textrepo-app:8080",
+#      "--timeout=0",
+#      "--",
+#       "mvn", "clean", "test"
+#    ]
+#    volumes:
+#    - ./concordion:/concordion
+#    environment:
+#      ES_HOST: elasticsearch:9200
+#      APP_HOST: textrepo-app:8080
+#      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+#      POSTGRES_DB: ${POSTGRES_DB}
+#      POSTGRES_USER: ${POSTGRES_USER}
+#      POSTGRES_HOST: ${POSTGRES_HOST}
+#      FILE_INDEX: ${FILE_INDEX}
+#      CUSTOM_INDEX: ${CUSTOM_INDEX}
 
 networks:
   textrepo_network:
 
 volumes:
   esdata:
-    driver: local
-  concordiondata:
     driver: local

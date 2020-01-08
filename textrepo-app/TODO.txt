@@ -1,0 +1,15 @@
+POST /documents met type en contents levert docId
+GET /documents/docId levert json met type->fileId mappings
+GET /documents/docId/type levert fileId
+PUT /documents/docId/type met contents
+
+
+! Fix support for both file and document metadata (rename MetadataDao -> FileMetadataDao and add DocMetadataDao?
+  or fold everything that has to do with metadata into MetadataDao with appropriately named methods)
+
+- Extract interfaces from Service classes.
+- When uploading file, if fileDetail has no filename, throw exception instead of using "" as filename
+- Scrutinize amount of parameters in constructors in Service classes. Indicates they do too many different things
+- POST to "/documents?type=" is a query parameter. Perhaps multipart.field() or genuine FormDataBodyPart is better?
+- In DocumentsResource: is @FormDataParam("contents") FormDataBodyPart bodyPart still needed?
+- Must use 'upsert' pattern in File and Document "update metadata" endpoints. Now update only works on existing key

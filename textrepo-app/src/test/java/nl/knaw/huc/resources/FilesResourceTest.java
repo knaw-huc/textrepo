@@ -4,11 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.api.MultipleLocations;
+import nl.knaw.huc.db.FileDao;
 import nl.knaw.huc.db.VersionDao;
-import nl.knaw.huc.service.FileService;
 import nl.knaw.huc.service.ContentsService;
+import nl.knaw.huc.service.FileService;
+import nl.knaw.huc.service.JdbiFileService;
 import nl.knaw.huc.service.JdbiVersionService;
 import nl.knaw.huc.service.MetadataService;
+import nl.knaw.huc.service.TypeService;
 import nl.knaw.huc.service.VersionService;
 import nl.knaw.huc.service.index.ElasticCustomFacetIndexer;
 import nl.knaw.huc.service.index.ElasticFileIndexer;
@@ -53,12 +56,16 @@ public class FilesResourceTest {
   private static final Jdbi jdbi = mock(Jdbi.class);
   private static final ElasticFileIndexer fileIndexer = mock(ElasticFileIndexer.class);
   private static final MetadataService metadataService = mock(MetadataService.class);
+  private static final TypeService typeService = mock(TypeService.class);
   private static final ElasticCustomFacetIndexer facetIndexer = mock(ElasticCustomFacetIndexer.class);
-  private static final VersionService versions = new JdbiVersionService(jdbi, contentsService, fileIndexer, newArrayList(facetIndexer));
+  private static final VersionService versions =
+      new JdbiVersionService(jdbi, contentsService, fileIndexer, newArrayList(facetIndexer));
   @SuppressWarnings("unchecked")
   private static final Supplier<UUID> idGenerator = mock(Supplier.class);
-  private static final FileService FILE_SERVICE = new FileService(versions, idGenerator, metadataService);
+  private static final FileService FILE_SERVICE =
+      new JdbiFileService(jdbi, typeService, versions, metadataService, idGenerator);
   private static final VersionDao versionDao = mock(VersionDao.class);
+  private static final FileDao fileDao = mock(FileDao.class);
 
   @ClassRule
   public static final ResourceTestRule resource = ResourceTestRule
@@ -75,14 +82,15 @@ public class FilesResourceTest {
 
   @Before
   public void setupMocks() {
-    when(jdbi.onDemand(any())).thenReturn(versionDao);
+    when(jdbi.onDemand(FileDao.class)).thenReturn(fileDao);
+    when(jdbi.onDemand(VersionDao.class)).thenReturn(versionDao);
     when(idGenerator.get()).thenReturn(UUID.fromString(uuid));
     MockitoAnnotations.initMocks(this);
   }
 
   @After
   public void resetMocks() {
-    reset(jdbi, versionDao, fileIndexer, metadataService);
+    reset(jdbi, fileDao, versionDao, fileIndexer, metadataService);
   }
 
   @Test
@@ -177,7 +185,7 @@ public class FilesResourceTest {
   }
 
   @Test
-  public void testAddFile_addsFilenameMetadata() throws IOException {
+  public void testAddFile_addsFilenameMetadata() {
     postTestContents();
 
     verify(metadataService, times(1)).insert(

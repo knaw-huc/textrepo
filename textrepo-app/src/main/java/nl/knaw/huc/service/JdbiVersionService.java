@@ -3,8 +3,8 @@ package nl.knaw.huc.service;
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.core.Version;
 import nl.knaw.huc.db.VersionDao;
-import nl.knaw.huc.service.index.FileIndexer;
 import nl.knaw.huc.service.index.ElasticCustomFacetIndexer;
+import nl.knaw.huc.service.index.FileIndexer;
 import org.jdbi.v3.core.Jdbi;
 
 import javax.annotation.Nonnull;
@@ -34,14 +34,13 @@ public class JdbiVersionService implements VersionService {
 
   @Override
   public Optional<Version> findLatestVersion(@Nonnull UUID fileId) {
-    return getVersionDao().findLatestByFileUuid(fileId);
+    return getVersionDao().findLatestByFileId(fileId);
   }
 
   @Override
   public Version insertNewVersion(
       @Nonnull UUID fileId,
       @Nonnull Contents contents,
-      @Nonnull String filename,
       @Nonnull LocalDateTime time
   ) {
     contentsService.addContents(contents);
@@ -57,7 +56,7 @@ public class JdbiVersionService implements VersionService {
 
   @Override
   public List<Version> getVersions(UUID fileId) {
-    return getVersionDao().findByUuid(fileId);
+    return getVersionDao().findByFileId(fileId);
   }
 
   private VersionDao getVersionDao() {

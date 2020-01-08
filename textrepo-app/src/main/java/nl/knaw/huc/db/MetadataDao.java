@@ -1,7 +1,9 @@
 package nl.knaw.huc.db;
 
 import nl.knaw.huc.api.MetadataEntry;
+import org.jdbi.v3.sqlobject.config.KeyColumn;
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
+import org.jdbi.v3.sqlobject.config.ValueColumn;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.customizer.BindBean;
 import org.jdbi.v3.sqlobject.statement.BatchChunkSize;
@@ -16,25 +18,38 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface MetadataDao {
+  // Document metadata
+  @SqlUpdate("insert into documents_metadata (document_id, key, value) values (:id, :key, :value")
+  void insertDocumentMetadata(@Bind("id") UUID docId, @BindBean MetadataEntry metadataEntry);
 
-  @SqlUpdate("insert into metadata (file_uuid, key, value) values (:id, :key, :value)")
-  void insert(@Bind("id") UUID fileId, @BindBean MetadataEntry metadataEntry);
+  @SqlQuery("select key, value from documents_metadata where document_id = ?")
+  @KeyColumn("key")
+  @ValueColumn("value")
+  Map<String, String> getMetadataByDocumentId(@Bind UUID docId);
+
+  @SqlUpdate("update documents_metadata set value = :value where document_id = :id and key = :key")
+  boolean updateDocumentMetadata(@Bind("id") UUID docId, @BindBean MetadataEntry metadataEntry);
+
+
+  // File Metadata
+  @SqlUpdate("insert into files_metadata (file_id, key, value) values (:id, :key, :value)")
+  void insertFileMetadata(@Bind("id") UUID fileId, @BindBean MetadataEntry metadataEntry);
 
   @Transaction
-  @SqlUpdate("update metadata set value = :value where file_uuid = :id and key = :key ")
-  void update(@Bind("id") UUID fileId, @BindBean MetadataEntry metadataEntry);
+  @SqlUpdate("update files_metadata set value = :value where file_id = :id and key = :key ")
+  void updateFileMetadata(@Bind("id") UUID fileId, @BindBean MetadataEntry metadataEntry);
 
   @Transaction
-  @SqlBatch("insert into metadata (file_uuid, key, value) values (:id, :key, :value)")
+  @SqlBatch("insert into files_metadata (file_id, key, value) values (:id, :key, :value)")
   @BatchChunkSize(1000)
-  void bulkInsert(@Bind("id") UUID fileId, @BindBean Iterator<Map.Entry<String,String>> entries);
+  void bulkInsert(@Bind("id") UUID fileId, @BindBean Iterator<Map.Entry<String, String>> entries);
 
-  @SqlQuery("select file_uuid, key, value from metadata where file_uuid = ? and key = ?")
+  @SqlQuery("select key, value from files_metadata where file_id = ? and key = ?")
   @RegisterConstructorMapper(MetadataEntry.class)
-  Optional<MetadataEntry> findByFileUuidAndKey(@Bind UUID fileUuid, @Bind String key);
+  Optional<MetadataEntry> findByFileIdAndKey(@Bind UUID fileId, @Bind String key);
 
-  @SqlQuery("select file_uuid, key, value from metadata where file_uuid = ?")
-  @RegisterConstructorMapper(MetadataEntry.class)
-  Iterator<MetadataEntry> findByFileUuid(@Bind UUID fileUuid);
-
+  @SqlQuery("select key, value from files_metadata where file_id = ?")
+  @KeyColumn("key")
+  @ValueColumn("value")
+  Map<String, String> getMetadataByFileId(@Bind UUID fileId);
 }

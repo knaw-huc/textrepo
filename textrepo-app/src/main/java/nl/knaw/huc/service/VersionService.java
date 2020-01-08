@@ -16,7 +16,6 @@ public interface VersionService {
   Version insertNewVersion(
       @Nonnull UUID fileId,
       @Nonnull Contents contents,
-      @Nonnull String filename,
       @Nonnull LocalDateTime time
   );
 

@@ -6,7 +6,6 @@ import nl.knaw.huc.core.Version;
 
 import javax.annotation.Nonnull;
 import javax.ws.rs.NotFoundException;
-
 import java.util.UUID;
 
 import static java.lang.String.format;
@@ -47,7 +46,7 @@ public class FileContentsService {
     var version = versionService
         .findLatestVersion(fileId)
         .filter(v -> v.getContentsSha().equals(currentSha224)) // already the current file for this file
-        .orElseGet(() -> versionService.insertNewVersion(fileId, contents, filename, now()));
+        .orElseGet(() -> versionService.insertNewVersion(fileId, contents, now()));
 
     metadataService.update(fileId, new MetadataEntry("filename", filename));
 

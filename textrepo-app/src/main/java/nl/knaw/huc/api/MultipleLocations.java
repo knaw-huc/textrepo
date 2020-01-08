@@ -20,10 +20,10 @@ public class MultipleLocations {
 
   public MultipleLocations(List<ResultContents> resultContentsList) {
     locations = resultContentsList
-        .stream()
-        .collect(Collectors.toMap(
-          ResultContents::getFilename,
-          r -> locationOf(r.getVersion().getFileUuid())
-        ));
+      .stream()
+      .collect(Collectors.toMap(
+        ResultContents::getFilename,
+        r -> locationOf(r.getVersion().getFileId())
+      ));
   }
 }

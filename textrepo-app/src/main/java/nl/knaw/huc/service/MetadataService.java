@@ -15,6 +15,4 @@ public interface MetadataService {
   void insert(@Nonnull UUID fileId, @Nonnull MetadataEntry entry);
 
   void update(@Nonnull UUID fileId, MetadataEntry entry);
-
-  Iterator<MetadataEntry> find(@Nonnull UUID fileId);
 }

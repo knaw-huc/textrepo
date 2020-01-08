@@ -17,6 +17,7 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -56,23 +57,23 @@ public class FilesResource {
       @ApiResponse(code = 201, message = "OK"),
       @ApiResponse(code = 200, response = MultipleLocations.class, message = "OK")})
   public Response addFile(
+      @Nonnull @FormDataParam("type") String typeName,
       @FormDataParam("contents") InputStream inputStream,
       @FormDataParam("contents") FormDataContentDisposition fileDetail,
       @FormDataParam("contents") FormDataBodyPart bodyPart
   ) {
-    logger.debug("addFile: filename={}", fileDetail == null ? "" : fileDetail.getFileName());
+    final var fileName = fileDetail == null ? "" : fileDetail.getFileName();
+    logger.debug("addFile: type={}, filename={}", typeName, fileName);
+
     if (isZip(bodyPart, fileDetail)) {
-      var resultFiles = handleZipFile(inputStream, this::handleNewFile);
+      var resultFiles = handleZipFile(inputStream, formContents -> handleNewFile(typeName, formContents));
       return Response.ok(new MultipleLocations(resultFiles)).build();
     }
 
-    var resultFile = handleNewFile(new FormContents(
-        fileDetail.getFileName(),
-        readContent(inputStream)
-    ));
+    var resultFile = handleNewFile(typeName, new FormContents(fileName, readContent(inputStream)));
 
     return Response
-        .created(locationOf(resultFile.getVersion().getFileUuid()))
+        .created(locationOf(resultFile.getVersion().getFileId()))
         .build();
   }
 
@@ -88,8 +89,10 @@ public class FilesResource {
     return Response.ok(version).build();
   }
 
-  private ResultContents handleNewFile(FormContents formContents) {
+  private ResultContents handleNewFile(String typeName, FormContents formContents) {
+    var fileId = fileService.createFile(typeName);
     var version = fileService.createVersionWithFilenameMetadata(
+        fileId,
         formContents.getContent(),
         formContents.getName()
     );
