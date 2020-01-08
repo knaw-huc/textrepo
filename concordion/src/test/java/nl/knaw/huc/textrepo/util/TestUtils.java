@@ -17,15 +17,13 @@ import java.net.URL;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static java.lang.String.format;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static javax.ws.rs.client.Entity.entity;
-import static java.lang.String.format;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
+import static nl.knaw.huc.textrepo.Config.FILE_TYPE;
 
 public class TestUtils {
 
@@ -81,6 +79,7 @@ public class TestUtils {
         .build();
 
     final var multiPart = new FormDataMultiPart()
+        .field("type", FILE_TYPE)
         .bodyPart(new FormDataBodyPart(
             contentDisposition,
             content,
