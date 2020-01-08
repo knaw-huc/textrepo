@@ -9,7 +9,7 @@ import nl.knaw.huc.db.VersionDao;
 import nl.knaw.huc.service.ContentsService;
 import nl.knaw.huc.service.JdbiVersionService;
 import nl.knaw.huc.service.VersionService;
-import nl.knaw.huc.service.index.ElasticCustomFacetIndexer;
+import nl.knaw.huc.service.index.ElasticCustomIndexer;
 import nl.knaw.huc.service.index.ElasticFileIndexer;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.jdbi.v3.core.Jdbi;
@@ -44,7 +44,7 @@ public class FileVersionsResourceTest {
       jdbi,
       mock(ContentsService.class),
       mock(ElasticFileIndexer.class),
-      newArrayList(mock(ElasticCustomFacetIndexer.class))
+      newArrayList(mock(ElasticCustomIndexer.class))
   );
 
   private static final VersionDao versionDao = mock(VersionDao.class);

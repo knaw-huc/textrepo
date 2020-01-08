@@ -35,6 +35,7 @@ import static nl.knaw.huc.resources.ResourceUtils.locationOf;
 import static nl.knaw.huc.resources.ResourceUtils.readContent;
 import static nl.knaw.huc.resources.ZipHandling.handleZipFile;
 import static nl.knaw.huc.resources.ZipHandling.isZip;
+import static org.eclipse.jetty.util.StringUtil.isBlank;
 
 @Api(tags = {"files"})
 @Path("/files")
@@ -62,15 +63,25 @@ public class FilesResource {
       @FormDataParam("contents") FormDataContentDisposition fileDetail,
       @FormDataParam("contents") FormDataBodyPart bodyPart
   ) {
-    final var fileName = fileDetail == null ? "" : fileDetail.getFileName();
-    logger.debug("addFile: type={}, filename={}", typeName, fileName);
+    if (isBlank(fileDetail.getFileName())) {
+      throw new IllegalStateException("No filename");
+    }
+
+    logger.debug("addFile: type={}, filename={}", typeName, fileDetail.getFileName());
 
     if (isZip(bodyPart, fileDetail)) {
       var resultFiles = handleZipFile(inputStream, formContents -> handleNewFile(typeName, formContents));
-      return Response.ok(new MultipleLocations(resultFiles)).build();
+      return Response
+          .ok(new MultipleLocations(resultFiles))
+          .build();
     }
 
-    var resultFile = handleNewFile(typeName, new FormContents(fileName, readContent(inputStream)));
+    var resultFile = handleNewFile(
+        typeName,
+        new FormContents(
+            fileDetail.getFileName(),
+            readContent(inputStream)
+        ));
 
     return Response
         .created(locationOf(resultFile.getVersion().getFileId()))

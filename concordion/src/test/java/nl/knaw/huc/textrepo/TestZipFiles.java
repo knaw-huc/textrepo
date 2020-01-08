@@ -3,6 +3,7 @@ package nl.knaw.huc.textrepo;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
+import nl.knaw.huc.textrepo.util.TestUtils;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
@@ -14,7 +15,9 @@ import java.io.IOException;
 import java.util.Map;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
-import static nl.knaw.huc.textrepo.TestUtils.getResourceFileBits;
+import static nl.knaw.huc.textrepo.Config.FILE_INDEX;
+import static nl.knaw.huc.textrepo.util.IndexUtils.indexToUrl;
+import static nl.knaw.huc.textrepo.util.TestUtils.getResourceFileBits;
 
 public class TestZipFiles extends AbstractConcordionTest {
 
@@ -61,12 +64,12 @@ public class TestZipFiles extends AbstractConcordionTest {
     result.filename1 = "een.txt";
     result.location1 = locations.get(result.filename1);
     result.fileId1 = TestUtils.getFileId(result.location1);
-    result.fileIdIsUUID1 = TestUtils.isValidUUID(result.fileId1);
+    result.fileIdIsUUID1 = TestUtils.isValidUuidMsg(result.fileId1);
 
     result.filename2 = "twee.txt";
     result.location2 = locations.get(result.filename2);
     result.fileId2 = TestUtils.getFileId(result.location2);
-    result.fileIdIsUUID2 = TestUtils.isValidUUID(result.fileId2);
+    result.fileIdIsUUID2 = TestUtils.isValidUuidMsg(result.fileId2);
 
     return result;
   }
@@ -91,7 +94,7 @@ public class TestZipFiles extends AbstractConcordionTest {
   }
 
   private String getIndexedFile(String fileId) {
-    var url = ES_HOST + "/files/_doc/" + fileId;
+    var url = indexToUrl(FILE_INDEX) + "/_doc/" + fileId;
     return JsonPath.parse(getByUrl(url)).read("$._source.content");
   }
 

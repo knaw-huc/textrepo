@@ -1,0 +1,7 @@
+logging:
+  level: INFO
+  loggers:
+    nl.knaw.huc: DEBUG
+    org.hibernate: ERROR
+minKeywordLength: 5
+keywordDelimiters: " \t\n\r\f,.:;?![]'="

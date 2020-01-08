@@ -11,11 +11,11 @@ import static java.lang.String.format;
 import static javax.ws.rs.client.Entity.entity;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static nl.knaw.huc.textrepo.Config.HTTP_APP_HOST;
-import static nl.knaw.huc.textrepo.TestUtils.getFileId;
-import static nl.knaw.huc.textrepo.TestUtils.getLocation;
-import static nl.knaw.huc.textrepo.TestUtils.postFileWithFilename;
-import static nl.knaw.huc.textrepo.TestUtils.putFileWithFilename;
-import static nl.knaw.huc.textrepo.TestUtils.replace;
+import static nl.knaw.huc.textrepo.util.TestUtils.getFileId;
+import static nl.knaw.huc.textrepo.util.TestUtils.getLocation;
+import static nl.knaw.huc.textrepo.util.TestUtils.postFileWithFilename;
+import static nl.knaw.huc.textrepo.util.TestUtils.putFileWithFilename;
+import static nl.knaw.huc.textrepo.util.TestUtils.replace;
 
 public class TestMetadata extends AbstractConcordionTest {
 

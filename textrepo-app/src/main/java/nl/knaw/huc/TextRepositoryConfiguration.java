@@ -5,7 +5,7 @@ import io.dropwizard.Configuration;
 import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.db.DataSourceFactory;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
-import nl.knaw.huc.service.index.CustomFacetIndexerConfiguration;
+import nl.knaw.huc.service.index.CustomIndexerConfiguration;
 import nl.knaw.huc.service.index.ElasticsearchConfiguration;
 
 import javax.validation.Valid;
@@ -33,7 +33,7 @@ public class TextRepositoryConfiguration extends Configuration {
 
   @Valid
   @NotNull
-  private List<CustomFacetIndexerConfiguration> customFacetIndexers = new ArrayList<>();
+  private List<CustomIndexerConfiguration> customFacetIndexers = new ArrayList<>();
 
   @JsonProperty("jerseyClient")
   public JerseyClientConfiguration getJerseyClientConfiguration() {
@@ -77,12 +77,12 @@ public class TextRepositoryConfiguration extends Configuration {
   }
 
   @JsonProperty("customFacetIndexers")
-  public List<CustomFacetIndexerConfiguration> getCustomFacetIndexers() {
+  public List<CustomIndexerConfiguration> getCustomFacetIndexers() {
     return customFacetIndexers;
   }
 
   @JsonProperty("customFacetIndexers")
-  public void setCustomFacetIndexers(List<CustomFacetIndexerConfiguration> customFacetIndexers) {
+  public void setCustomFacetIndexers(List<CustomIndexerConfiguration> customFacetIndexers) {
     this.customFacetIndexers = customFacetIndexers;
   }
 }

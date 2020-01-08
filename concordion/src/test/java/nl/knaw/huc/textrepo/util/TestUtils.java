@@ -1,4 +1,4 @@
-package nl.knaw.huc.textrepo;
+package nl.knaw.huc.textrepo.util;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.StringSubstitutor;
@@ -6,6 +6,8 @@ import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
@@ -19,6 +21,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static java.lang.String.format;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static javax.ws.rs.client.Entity.entity;
+import static java.lang.String.format;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
 
@@ -28,12 +33,23 @@ public class TestUtils {
     return IOUtils.toByteArray(TestUtils.class.getClassLoader().getResourceAsStream(resourcePath));
   }
 
-  public static String isValidUUID(String fileId) {
+  static final Logger logger = LoggerFactory.getLogger(TestUtils.class);
+
+  public static String isValidUuidMsg(String fileId) {
     try {
       UUID.fromString(fileId);
       return "valid UUID";
     } catch (Exception e) {
       return "invalid UUID: " + e.getMessage();
+    }
+  }
+
+  public static boolean isValidUuid(String fileId) {
+    try {
+      UUID.fromString(fileId);
+      return true;
+    } catch (Exception e) {
+      return false;
     }
   }
 
@@ -47,7 +63,7 @@ public class TestUtils {
   }
 
   public static Entity<FormDataMultiPart> getMultiPartEntity(FormDataMultiPart multiPart) {
-    return Entity.entity(multiPart, multiPart.getMediaType());
+    return entity(multiPart, multiPart.getMediaType());
   }
 
   public static Optional<String> getLocation(Response response) {
@@ -55,8 +71,9 @@ public class TestUtils {
   }
 
   public static Response postFileWithFilename(
-      Client client, URL files, String filename, byte[] content
+      Client client, URL filesEndpoint, String filename, byte[] content
   ) {
+    logger.info("Posting file [{}] to [{}]", filename, filesEndpoint);
     var contentDisposition = FormDataContentDisposition
         .name("contents")
         .fileName(filename)
@@ -72,10 +89,10 @@ public class TestUtils {
 
     final var request = client
         .register(MultiPartFeature.class)
-        .target(files.toString())
+        .target(filesEndpoint.toString())
         .request();
 
-    final var entity = Entity.entity(multiPart, multiPart.getMediaType());
+    final var entity = entity(multiPart, multiPart.getMediaType());
 
     return request.post(entity);
   }
@@ -104,7 +121,7 @@ public class TestUtils {
         .target(putFileContentsUrl)
         .request();
 
-    final var entity = Entity.entity(multiPart, multiPart.getMediaType());
+    final var entity = entity(multiPart, multiPart.getMediaType());
 
     return request.put(entity);
   }
@@ -114,5 +131,12 @@ public class TestUtils {
     return StringSubstitutor.replace(url, toReplace, "{", "}");
   }
 
+  public static void sleepMs(int timeout) {
+    try {
+      MILLISECONDS.sleep(timeout);
+    } catch (InterruptedException ex) {
+      throw new RuntimeException("Could not sleep", ex);
+    }
+  }
 
 }

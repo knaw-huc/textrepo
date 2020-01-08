@@ -28,9 +28,25 @@ elasticsearch:
 
 customFacetIndexers:
 - mapping: https://demo.gekaaptebrieven.diginfra.net/api/projects/gekaaptebrieven/mapping
-  fields: https://demo.gekaaptebrieven.diginfra.net/api/projects/gekaaptebrieven/documents/x/fields
+  fields:
+    url: https://demo.gekaaptebrieven.diginfra.net/api/projects/gekaaptebrieven/documents/x/fields
+    type: urlencoded
+  mimetypes:
+    - application/xml
   elasticsearch:
     index: custom-facet
+    contentField: content
+    hosts:
+      - elasticsearch:9200
+- mapping: http://autocomplete-indexer:8080/autocomplete/mapping
+  fields:
+    url: http://autocomplete-indexer:8080/autocomplete/fields
+    type: multipart
+  mimetypes:
+    - application/xml
+    - text/plain
+  elasticsearch:
+    index: autocomplete
     contentField: content
     hosts:
       - elasticsearch:9200

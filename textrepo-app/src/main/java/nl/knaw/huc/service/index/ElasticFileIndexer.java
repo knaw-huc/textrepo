@@ -2,14 +2,18 @@ package nl.knaw.huc.service.index;
 
 import io.dropwizard.lifecycle.Managed;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.RequestOptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.UUID;
 
 public class ElasticFileIndexer implements FileIndexer, Managed {
+
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   private TextRepoElasticClient client;
   private final ElasticsearchConfiguration config;
@@ -19,16 +23,17 @@ public class ElasticFileIndexer implements FileIndexer, Managed {
     client = new TextRepoElasticClient(config);
   }
 
-  public void indexFile(@Nonnull UUID fileId, @NotNull String latestVersionContent) {
+  public void indexFile(@Nonnull UUID fileId, @Nonnull String latestVersionContent) {
+    logger.info("Add file [{}] to index [{}]", fileId, config.index);
     var indexRequest = new IndexRequest(config.index)
         .id(fileId.toString())
         .source(config.contentField, latestVersionContent);
     indexRequest(indexRequest);
   }
 
-  void indexRequest(IndexRequest indexRequest) {
+  IndexResponse indexRequest(IndexRequest indexRequest) {
     try {
-      client.getClient().index(indexRequest, RequestOptions.DEFAULT);
+      return client.getClient().index(indexRequest, RequestOptions.DEFAULT);
     } catch (IOException ex) {
       throw new RuntimeException("Could not index in Elasticsearch", ex);
     }
