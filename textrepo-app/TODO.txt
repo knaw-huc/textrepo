@@ -9,5 +9,6 @@
 - POST to "/documents?type=" is a query parameter. Perhaps multipart.field() or genuine FormDataBodyPart is better?
 - In DocumentsResource: is @FormDataParam("contents") FormDataBodyPart bodyPart still needed?
 - Must use 'upsert' pattern in File and Document "update metadata" endpoints. Now update only works on existing key
+- TypesResource: fix @Nonnull to @NotNull in POST (and fix related tests)
 
 textrepo-app_1          | WARN  [2020-01-08 14:00:34,639] nl.knaw.huc.service.index.ElasticCustomIndexer: Could not create index [custom-facet], already exists
