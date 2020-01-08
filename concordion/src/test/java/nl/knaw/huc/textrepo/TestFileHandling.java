@@ -25,7 +25,7 @@ public class TestFileHandling extends AbstractConcordionTest {
 
     var result = new UploadResult();
     result.status = response.getStatus();
-    var latestVersionLocation = response.getHeaderString("Location") + "/latest";
+    var latestVersionLocation = response.getHeaderString("Location");
     logger.info("fileLocation: " + latestVersionLocation);
 
     var requestVersion = client()
