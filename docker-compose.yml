@@ -89,8 +89,11 @@ services:
       "/utils/wait-for-it.sh", "textrepo-app:8080",
       "--timeout=0",
       "--",
-      "mvn", "clean", "test"
+      # run tests and keep container up:
+      "/bin/bash", "-c", "mvn clean test && tail -f /dev/null"
     ]
+    tty: true
+    stdin_open: true
     volumes:
     - concordiondata:/concordion
     environment:
