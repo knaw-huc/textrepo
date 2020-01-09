@@ -17,8 +17,8 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -58,7 +58,7 @@ public class FilesResource {
       @ApiResponse(code = 201, message = "OK"),
       @ApiResponse(code = 200, response = MultipleLocations.class, message = "OK")})
   public Response addFile(
-      @Nonnull @FormDataParam("type") String typeName,
+      @NotNull @FormDataParam("type") String typeName,
       @FormDataParam("contents") InputStream inputStream,
       @FormDataParam("contents") FormDataContentDisposition fileDetail,
       @FormDataParam("contents") FormDataBodyPart bodyPart

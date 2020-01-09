@@ -58,7 +58,8 @@ public class FilesResourceTest {
   private static final MetadataService metadataService = mock(MetadataService.class);
   private static final TypeService typeService = mock(TypeService.class);
   private static final ElasticCustomIndexer facetIndexer = mock(ElasticCustomIndexer.class);
-  private static final VersionService versions = new JdbiVersionService(jdbi, contentsService, fileIndexer, newArrayList(facetIndexer));
+  private static final VersionService versions =
+      new JdbiVersionService(jdbi, contentsService, fileIndexer, newArrayList(facetIndexer));
   @SuppressWarnings("unchecked")
   private static final Supplier<UUID> idGenerator = mock(Supplier.class);
   private static final FileService FILE_SERVICE =
@@ -230,6 +231,7 @@ public class FilesResourceTest {
         .build();
 
     final var multiPart = new FormDataMultiPart()
+        .field("type", "text")
         .bodyPart(new FormDataBodyPart(contentDisposition, bytes, APPLICATION_OCTET_STREAM_TYPE));
 
     final var request = resource

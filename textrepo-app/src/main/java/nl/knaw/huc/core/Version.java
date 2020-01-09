@@ -55,10 +55,11 @@ public class Version {
 
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper(this)
-                      .add("fileId", fileId)
-                      .add("createdAt", createdAt)
-                      .add("contentsSha", contentsSha)
-                      .toString();
+    return MoreObjects
+        .toStringHelper(this)
+        .add("fileId", fileId)
+        .add("createdAt", createdAt)
+        .add("contentsSha", contentsSha)
+        .toString();
   }
 }
