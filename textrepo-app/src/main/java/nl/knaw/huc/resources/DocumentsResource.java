@@ -60,8 +60,7 @@ public class DocumentsResource {
       @QueryParam("type") @Nonnull String type,
       @QueryParam("byFile") @Nonnull @DefaultValue("false") Boolean byFile,
       @FormDataParam("contents") InputStream uploadedInputStream,
-      @FormDataParam("contents") FormDataContentDisposition fileDetail,
-      @FormDataParam("contents") FormDataBodyPart bodyPart
+      @FormDataParam("contents") FormDataContentDisposition fileDetail
   ) {
     final String filename = fileDetail.getFileName();
     final var newFileId = fileService.createFile(type);
