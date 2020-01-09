@@ -2,6 +2,7 @@ version: '3'
 
 services:
   postgres:
+    container_name: tr_postgres
     image: knawhuc/textrepo-postgres:latest
     build: ./postgres
     networks:
@@ -16,6 +17,7 @@ services:
       POSTGRES_PORT: ${POSTGRES_PORT}
 
   elasticsearch:
+    container_name: tr_elasticsearch
     image: docker.elastic.co/elasticsearch/elasticsearch:7.3.0
     environment:
     - node.name=es01
@@ -36,6 +38,7 @@ services:
     - textrepo_network
 
   nginx:
+    container_name: tr_nginx
     image: knawhuc/textrepo-nginx:latest
     build: ./nginx
     networks:
@@ -48,6 +51,7 @@ services:
     - 8080:8080
 
   autocomplete-indexer:
+    container_name: tr_autocomplete
     image: knawhuc/textrepo-autocomplete-indexer:latest
     build: ./elasticsearch/autocomplete
     ports:
@@ -60,6 +64,7 @@ services:
               "java", "-jar", "/indexer/autocomplete.jar", "server", "config.yml"]
 
   textrepo-app:
+    container_name: tr_textrepo
     image: knawhuc/textrepo-app:latest
     build: ./textrepo-app
     ports:
@@ -73,6 +78,7 @@ services:
     ]
 
   concordion:
+    container_name: tr_concordion
     image: knawhuc/textrepo-concordion:latest
     build: ./concordion
     ports:
