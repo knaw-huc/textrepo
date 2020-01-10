@@ -7,7 +7,8 @@ create table contents (
 -- Types of files in use (e.g., FoLia, Alto, PageXML, TEI, ...)
 create table types (
   id smallserial primary key,
-  name varchar (16) not null unique
+  name varchar (16) not null unique,
+  mimetype varchar (100) not null DEFAULT 'text/plain'
 );
 
 -- A file has a type and versioned contents
