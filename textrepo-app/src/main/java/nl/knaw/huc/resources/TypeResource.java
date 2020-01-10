@@ -2,6 +2,7 @@ package nl.knaw.huc.resources;
 
 import io.swagger.annotations.Api;
 import nl.knaw.huc.service.TypeService;
+import org.hibernate.validator.constraints.NotBlank;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +32,9 @@ public class TypeResource {
   }
 
   @POST
-  public void addType(String name) {
+  public void addType(
+      @NotBlank String name
+  ) {
     logger.debug("addType: name=[{}]", name);
     typeService.create(name);
   }

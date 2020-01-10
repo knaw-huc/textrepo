@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
@@ -75,7 +76,9 @@ public class FileContentsResource {
   @Produces(APPLICATION_OCTET_STREAM)
   @ApiOperation(value = "Download latest file contents")
   @ApiResponses(value = {@ApiResponse(code = 200, response = byte[].class, message = "OK")})
-  public Response getContents(@PathParam("uuid") @Valid UUID fileId) {
+  public Response getContents(
+      @PathParam("uuid") @NotNull @Valid UUID fileId
+  ) {
     logger.debug("getContents: fileId={}", fileId);
     var contents = fileContentsService.getLatestFile(fileId);
     return Response

@@ -7,10 +7,12 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.service.MetadataService;
+import org.hibernate.validator.constraints.NotBlank;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -43,8 +45,8 @@ public class FileMetadataResource {
   @ApiOperation(value = "Create metadata for a file")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
   public Response addMetadata(
-      @PathParam("uuid") @Valid UUID fileId,
-      Map<String, String> metadata
+      @PathParam("uuid") @NotNull @Valid UUID fileId,
+      @NotNull Map<String, String> metadata
   ) {
     logger.debug("addMetadata: fileId={}, metadata={}", fileId, metadata);
     metadataService.addMetadata(fileId, metadata);
@@ -60,8 +62,8 @@ public class FileMetadataResource {
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
   public Response updateMetadataEntry(
       @PathParam("uuid") @Valid UUID fileId,
-      @PathParam("key") @Valid String key,
-      String value
+      @PathParam("key") @NotNull String key,
+      @NotBlank String value
   ) {
     logger.debug("updateMetadata: fileId={}, key={}, value={}", fileId, key, value);
     metadataService.update(fileId, new MetadataEntry(key, value));
@@ -73,7 +75,9 @@ public class FileMetadataResource {
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Get all metadata of a file")
   @ApiResponses(value = {@ApiResponse(code = 200, responseContainer = "Map", response = String.class, message = "OK")})
-  public Response getMetadata(@PathParam("uuid") @Valid UUID fileId) {
+  public Response getMetadata(
+      @PathParam("uuid") @NotNull @Valid UUID fileId
+  ) {
     logger.debug("getMetadata: fileId={}", fileId);
     return Response.ok(metadataService.getMetadata(fileId)).build();
   }

@@ -94,7 +94,9 @@ public class FilesResource {
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Get latest version of file")
   @ApiResponses(value = {@ApiResponse(code = 200, response = Version.class, message = "OK")})
-  public Response getLatestVersionOfFile(@PathParam("uuid") @Valid UUID fileId) {
+  public Response getLatestVersionOfFile(
+      @PathParam("uuid") @NotNull @Valid UUID fileId
+  ) {
     logger.debug("getLatestVersionOfFile: fileId={}", fileId);
     var version = fileService.getLatestVersion(fileId);
     return Response.ok(version).build();

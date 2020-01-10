@@ -11,10 +11,10 @@ import nl.knaw.huc.service.FileService;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
+import org.hibernate.validator.constraints.NotBlank;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -58,12 +58,12 @@ public class DocumentsResource {
   @ApiOperation(value = "Create a new document by uploading contents for one of its file types")
   @ApiResponses(value = {@ApiResponse(code = 201, message = "CREATED")})
   public Response addDocument(
-      @NotNull @QueryParam("type") String type,
-      @QueryParam("byFile") @Nonnull @DefaultValue("false") Boolean byFile,
+      @QueryParam("type") @NotBlank String type,
+      @QueryParam("byFile") @NotNull @DefaultValue("false") Boolean byFile,
       @FormDataParam("contents") InputStream uploadedInputStream,
       @FormDataParam("contents") FormDataContentDisposition fileDetail
   ) {
-    final String filename = fileDetail.getFileName();
+    final var filename = fileDetail.getFileName();
     final var newFileId = fileService.createFile(type);
     logger.debug("New file created with fileId={}", newFileId);
 
@@ -104,8 +104,8 @@ public class DocumentsResource {
   @Consumes(MULTIPART_FORM_DATA)
   @Produces(APPLICATION_JSON)
   public Response updateDocumentByType(
-      @PathParam("uuid") @Valid UUID docId,
-      @PathParam("type") @NotNull String type,
+      @PathParam("uuid") @NotNull @Valid UUID docId,
+      @PathParam("type") @NotBlank String type,
       @FormDataParam("contents") InputStream uploadedInputStream,
       @FormDataParam("contents") FormDataContentDisposition fileDetail,
       @FormDataParam("contents") FormDataBodyPart bodyPart
@@ -128,7 +128,7 @@ public class DocumentsResource {
   @Path("/{docId}/metadata")
   @Produces(APPLICATION_JSON)
   public Map<String, String> getDocumentMetadata(
-      @PathParam("docId") @Valid UUID docId
+      @PathParam("docId") @NotNull @Valid UUID docId
   ) {
     return documentService.getMetadata(docId);
   }
@@ -141,8 +141,8 @@ public class DocumentsResource {
   @ApiOperation(value = "Update value of a document metadata entry")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
   public Response updateMetadataEntry(
-      @PathParam("docId") @Valid UUID docId,
-      @PathParam("key") @Valid String key,
+      @PathParam("docId") @NotNull @Valid UUID docId,
+      @PathParam("key") @NotBlank String key,
       String value
   ) {
     logger.debug("updateMetadata: docId={}, key={}, value={}", docId, key, value);

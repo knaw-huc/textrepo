@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.service.ContentsService;
+import org.hibernate.validator.constraints.NotBlank;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +36,9 @@ public class ContentsResource {
   @Produces(APPLICATION_OCTET_STREAM)
   @ApiOperation(value = "Download contents by sha224")
   @ApiResponses(value = {@ApiResponse(code = 200, response = byte[].class, message = "OK")})
-  public Response getContentsBySha224(@PathParam("sha224") String sha224) {
+  public Response getContentsBySha224(
+      @PathParam("sha224") @NotBlank String sha224
+  ) {
     logger.debug("getContentsBySha224: sha224={}", sha224);
     if (sha224.length() != 56) {
       logger.warn("bad length in sha224 ({}): {}", sha224.length(), sha224);
