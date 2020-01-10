@@ -18,7 +18,7 @@ public interface DocumentFilesDao {
       "AND t.id = f.type_id")
   Optional<UUID> findFile(@Bind("docId") UUID docId, @Bind("typeName") String typeName);
 
-  @SqlQuery("SELECT df.document_id FROM files_metadata fm, documents_files df " +
+  @SqlQuery("SELECT DISTINCT df.document_id FROM files_metadata fm, documents_files df " +
       "WHERE fm.key = 'filename' " +
       "AND fm.value = :filename " +
       "AND fm.file_id = df.file_id")
