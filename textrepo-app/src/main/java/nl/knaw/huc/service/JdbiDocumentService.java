@@ -26,6 +26,10 @@ public class JdbiDocumentService implements DocumentService {
     return docId;
   }
 
+  public void addFileToDocument(UUID docId, UUID fileId) {
+    documentFiles().insert(docId, fileId);
+  }
+
   public UUID findFileForType(UUID docId, String fileType) {
     return documentFiles().findFile(docId, fileType)
                           .orElseThrow(() -> new NotFoundException(

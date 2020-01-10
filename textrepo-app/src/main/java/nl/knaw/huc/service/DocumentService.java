@@ -9,6 +9,8 @@ import java.util.UUID;
 public interface DocumentService {
   UUID createDocument(UUID fileId);
 
+  void addFileToDocument(UUID docId, UUID fileId);
+
   UUID findFileForType(UUID docId, String fileType);
 
   Map<String, String> getMetadata(UUID docId);

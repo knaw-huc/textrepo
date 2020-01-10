@@ -32,7 +32,6 @@ import javax.ws.rs.core.UriBuilder;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 import static java.lang.String.format;
@@ -73,10 +72,17 @@ public class DocumentsResource {
         filename);
     logger.debug("New version of {} created for content", newFileId);
 
-    final Optional<UUID> existingDocId = byFile ? documentService.findDocumentByFilename(filename) : Optional.empty();
-    logger.debug("Type: {}, filename: {}, existingDocId: {}", type, filename, existingDocId);
-
-    final var docId = existingDocId.orElseGet(() -> documentService.createDocument(newFileId));
+    final UUID docId;
+    if (byFile) {
+      logger.debug("Finding existing document for filename: {}", filename);
+      docId = documentService.findDocumentByFilename(filename)
+                             .orElseThrow(() -> new NotFoundException("No document for file: " + filename));
+      logger.debug("Adding file {} to existing document {}", docId, newFileId);
+      documentService.addFileToDocument(docId, newFileId);
+    } else {
+      docId = documentService.createDocument(newFileId);
+      logger.debug("Created new document {} for file {}", docId, newFileId);
+    }
 
     return Response.created(locationOf(docId)).build();
   }
