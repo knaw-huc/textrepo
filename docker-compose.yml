@@ -90,10 +90,8 @@ services:
       "--timeout=0",
       "--",
       # run tests and keep container up:
-      "/bin/bash", "-c", "mvn clean test && tail -f /dev/null"
+      "/bin/bash", "-c", "mvn clean test ; tail -f /dev/null"
     ]
-    tty: true
-    stdin_open: true
     volumes:
     - concordiondata:/concordion
     environment:
