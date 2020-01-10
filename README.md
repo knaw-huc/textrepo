@@ -68,3 +68,5 @@ Search for latest document version of in elasticsearch index:
 ```
 curl 'localhost:8080/index/documents/_search?q=content:{term}'
 ```
+
+
