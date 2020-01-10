@@ -3,6 +3,7 @@ package nl.knaw.huc.textrepo;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ParseContext;
+import org.concordion.api.AfterSpecification;
 import org.concordion.api.BeforeSpecification;
 import org.concordion.api.FullOGNL;
 import org.concordion.integration.junit4.ConcordionRunner;
@@ -56,10 +57,14 @@ public abstract class AbstractConcordionTest {
   final static ParseContext jsonPath = JsonPath.using(jsonPathConf);
 
   @BeforeSpecification
-  public void setUp() {
+  public void init() {
+    initTypes();
+  }
+
+  @AfterSpecification
+  public void cleanUp() {
     emptyIndices();
     emptyTextrepoDatabase();
-    initTypes();
   }
 
   private void initTypes() {

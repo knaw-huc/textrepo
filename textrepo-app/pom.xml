@@ -15,8 +15,6 @@
 
   <properties>
     <java.version>11</java.version>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
 
@@ -28,10 +26,8 @@
 
     <checkstyle.config.location>https://raw.githubusercontent.com/knaw-huc/checkstyle/master/checkstyle_config.xml</checkstyle.config.location>
 
-    <dropwizard.version>1.3.13</dropwizard.version>
+    <dropwizard.version>1.3.16</dropwizard.version>
     <dropwizard-swagger.version>1.3.12-1</dropwizard-swagger.version>
-    <jaxb.api.version>${json-path.version}-b180725.0427</jaxb.api.version>
-    <jaxb.runtime.version>2.4.0-b180725.0644</jaxb.runtime.version>
     <jdbi3-sqlobject.version>3.9.1</jdbi3-sqlobject.version>
     <json-path.version>2.4.0</json-path.version>
     <mockito-core.version>3.0.0</mockito-core.version>
@@ -124,6 +120,12 @@
       <version>${json-path.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>com.sun.xml.bind</groupId>
+      <artifactId>jaxb-impl</artifactId>
+      <version>2.3.2</version>
+      <scope>test</scope>
+    </dependency>
 
     <!-- mock server -->
     <dependency>
@@ -144,18 +146,6 @@
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
       <version>2.6</version>
-    </dependency>
-
-    <!-- Add missing Java 11 modules: -->
-    <dependency>
-      <groupId>javax.xml.bind</groupId>
-      <artifactId>jaxb-api</artifactId>
-      <version>${jaxb.api.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.glassfish.jaxb</groupId>
-      <artifactId>jaxb-runtime</artifactId>
-      <version>${jaxb.runtime.version}</version>
     </dependency>
 
   </dependencies>
