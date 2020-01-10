@@ -25,7 +25,7 @@ public class TestFiles extends AbstractConcordionTest {
     var optionalFileId = locationHeader.map(TestUtils::getFileId);
     var fileId = optionalFileId.orElse("No file id");
 
-    String location = locationHeader.orElse("No location");
+    var location = locationHeader.orElse("No location");
     return new MultiValueResult()
         .with("status", getStatus(response))
         .with("hasLocationHeader", locationHeader

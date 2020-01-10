@@ -1,5 +1,6 @@
 package nl.knaw.huc.service;
 
+import nl.knaw.huc.core.Type;
 import nl.knaw.huc.db.TypeDao;
 import org.jdbi.v3.core.Jdbi;
 import org.slf4j.Logger;
@@ -27,9 +28,9 @@ public class JdbiTypeService implements TypeService {
   }
 
   @Override
-  public short create(@Nonnull String name) {
-    if (types().exists(name)) {
-      throw new WebApplicationException("Duplicate type name: " + name, CONFLICT);
+  public short create(@Nonnull Type type) {
+    if (types().exists(type.getName())) {
+      throw new WebApplicationException("Duplicate type name: " + type.getName(), CONFLICT);
     }
     // Perhaps add exception mapper to generically catch this like so:
     // try {
@@ -46,8 +47,8 @@ public class JdbiTypeService implements TypeService {
     //   throw new WebApplicationException(e.getMessage(), INTERNAL_SERVER_ERROR);
     // }
 
-    final var id = types().create(name);
-    LOGGER.trace("Type '{}' created with id: {}", name, id);
+    final var id = types().create(type);
+    LOGGER.trace("Type '{}' created with id: {}", type.getName(), id);
 
     return id;
   }

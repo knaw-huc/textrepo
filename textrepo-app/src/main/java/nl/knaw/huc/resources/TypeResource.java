@@ -1,11 +1,16 @@
 package nl.knaw.huc.resources;
 
 import io.swagger.annotations.Api;
+import nl.knaw.huc.api.FormType;
+import nl.knaw.huc.core.Type;
 import nl.knaw.huc.service.TypeService;
 import org.hibernate.validator.constraints.NotBlank;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -32,10 +37,13 @@ public class TypeResource {
   }
 
   @POST
+  @Consumes(APPLICATION_JSON)
+  @Produces(APPLICATION_JSON)
   public void addType(
-      @NotBlank String name
+      @NotNull @Valid FormType form
   ) {
-    logger.debug("addType: name=[{}]", name);
-    typeService.create(name);
+    var type = new Type(form.getName(), form.getMimetype());
+    logger.debug("addType: type={}", type);
+    typeService.create(type);
   }
 }
