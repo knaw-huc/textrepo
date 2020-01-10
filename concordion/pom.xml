@@ -37,7 +37,6 @@
     <mockito-core.version>3.0.0</mockito-core.version>
     <postgresql.version>42.2.6</postgresql.version>
     <commons-text.version>1.7</commons-text.version>
-    <guava.version>28.1-jre</guava.version>
   </properties>
 
   <dependencies>
