@@ -1,6 +1,8 @@
 package nl.knaw.huc.service.index;
 
 import io.dropwizard.lifecycle.Managed;
+import nl.knaw.huc.core.TextrepoFile;
+import nl.knaw.huc.db.TypeDao;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.RequestOptions;
@@ -10,6 +12,7 @@ import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.jdbi.v3.core.Jdbi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,9 +20,6 @@ import javax.annotation.Nonnull;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Response;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.UUID;
@@ -30,27 +30,24 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static javax.ws.rs.client.Entity.entity;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA_TYPE;
-import static org.apache.commons.io.IOUtils.toInputStream;
 import static org.elasticsearch.common.xcontent.XContentType.JSON;
 
-
+/**
+ * Custom indexers are configured in config.yml
+ */
 public class ElasticCustomIndexer implements FileIndexer, Managed {
 
   private final CustomIndexerConfiguration config;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final ElasticFileIndexer indexer;
   private final Client requestClient = JerseyClientBuilder.newClient();
-  private final DocumentBuilder documentBuilder;
+  private Jdbi jdbi;
 
-  public ElasticCustomIndexer(CustomIndexerConfiguration config) throws CustomIndexerException {
+  public ElasticCustomIndexer(Jdbi jdbi, CustomIndexerConfiguration config) throws CustomIndexerException {
     this.config = config;
     indexer = new ElasticFileIndexer(config.elasticsearch);
+    this.jdbi = jdbi;
     createIndex(config);
-    try {
-      documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-    } catch (ParserConfigurationException e) {
-      throw new RuntimeException("Could not create documentBuilder");
-    }
     if (config.fields.type.equals("multipart")) {
       requestClient.register(MultiPartFeature.class);
     }
@@ -62,7 +59,10 @@ public class ElasticCustomIndexer implements FileIndexer, Managed {
     var mappingResult = response.readEntity(String.class);
 
     if (response.getStatus() != 200) {
-      logger.error("Could not get mapping from [{}]: {} - {}", config.mapping, response.getStatus(), mappingResult);
+      logger.error(
+          "Could not get mapping from [{}]: {} - {}",
+          config.mapping, response.getStatus(), mappingResult
+      );
       return;
     }
 
@@ -82,29 +82,15 @@ public class ElasticCustomIndexer implements FileIndexer, Managed {
     }
   }
 
-  private Response getMapping(CustomIndexerConfiguration config) throws CustomIndexerException {
-    Response response;
-    try {
-      response = requestClient
-          .target(config.mapping)
-          .request()
-          .get();
-      return response;
-    } catch (ProcessingException ex) {
-      throw new CustomIndexerException(format("Could not fetch mapping from %s", config.mapping), ex);
-    }
-  }
-
   /**
    * Index file
    */
   @Override
   public void indexFile(
-      @Nonnull UUID fileId,
+      @Nonnull TextrepoFile file,
       @Nonnull String latestVersionContent
   ) {
-    // TODO: use file.type
-    var mimetype = getMimetype(latestVersionContent);
+    var mimetype = getMimetype(file.getTypeId());
 
     if (!mimetypeSupported(mimetype)) {
       return;
@@ -117,7 +103,29 @@ public class ElasticCustomIndexer implements FileIndexer, Managed {
       return;
     }
 
-    index(fileId, esFacets);
+    index(file.getId(), esFacets);
+  }
+
+  private String getMimetype(Short typeId) {
+    return getTypeDao()
+        .get(typeId)
+        .orElseThrow(() -> new RuntimeException(format(
+            "Could not find type for type id [%s]",
+            typeId
+        ))).getMimetype();
+  }
+
+  private Response getMapping(CustomIndexerConfiguration config) throws CustomIndexerException {
+    Response response;
+    try {
+      response = requestClient
+          .target(config.mapping)
+          .request()
+          .get();
+      return response;
+    } catch (ProcessingException ex) {
+      throw new CustomIndexerException(format("Could not fetch mapping from %s", config.mapping), ex);
+    }
   }
 
   private Response getFields(@Nonnull String latestVersionContent, String mimetype) {
@@ -196,32 +204,15 @@ public class ElasticCustomIndexer implements FileIndexer, Managed {
     var status = response.status().getStatus();
     if (status == 201) {
       logger.debug(
-          "Succesfully added file {} to index {}",
+          "Succesfully added file [{}] to index [{}]",
           fileId, config.elasticsearch.index
       );
-
     } else {
       logger.error(
           "Response of adding file {} to index {} was: {} - {}",
           fileId, config.elasticsearch.index, status, response.toString()
       );
     }
-  }
-
-  /**
-   * Tries to detect xml, or else content is text
-   * TODO: remove when file.type available
-   */
-  private String getMimetype(@Nonnull String latestVersionContent) {
-    String mimetype;
-    try {
-      documentBuilder
-          .parse(toInputStream(latestVersionContent, UTF_8));
-      mimetype = "application/xml";
-    } catch (Exception ex) {
-      mimetype = "text/plain";
-    }
-    return mimetype;
   }
 
   @Override
@@ -231,6 +222,10 @@ public class ElasticCustomIndexer implements FileIndexer, Managed {
   @Override
   public void stop() throws Exception {
     indexer.stop();
+  }
+
+  private TypeDao getTypeDao() {
+    return jdbi.onDemand(TypeDao.class);
   }
 
 }

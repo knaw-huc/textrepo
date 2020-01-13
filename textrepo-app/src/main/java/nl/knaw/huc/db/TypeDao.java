@@ -1,6 +1,7 @@
 package nl.knaw.huc.db;
 
 import nl.knaw.huc.core.Type;
+import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
 import org.jdbi.v3.sqlobject.customizer.BindBean;
 import org.jdbi.v3.sqlobject.statement.GetGeneratedKeys;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
@@ -17,6 +18,10 @@ public interface TypeDao {
 
   @SqlQuery("select id from types where name = ?")
   Optional<Short> find(String name);
+
+  @SqlQuery("select name, mimetype from types where id = ?")
+  @RegisterConstructorMapper(value = Type.class)
+  Optional<Type> get(Short id);
 
   @SqlQuery("select name from types")
   List<String> list();

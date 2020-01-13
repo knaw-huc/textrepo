@@ -2,8 +2,10 @@ package nl.knaw.huc.resources;
 
 import io.dropwizard.testing.junit.ResourceTestRule;
 import nl.knaw.huc.api.MetadataEntry;
+import nl.knaw.huc.core.TextrepoFile;
+import nl.knaw.huc.db.FileDao;
 import nl.knaw.huc.db.VersionDao;
-import nl.knaw.huc.service.FileContentsService;
+import nl.knaw.huc.service.JdbiFileContentsService;
 import nl.knaw.huc.service.ContentsService;
 import nl.knaw.huc.service.JdbiVersionService;
 import nl.knaw.huc.service.MetadataService;
@@ -40,6 +42,7 @@ import static org.mockito.Mockito.when;
 public class FileContentsResourceTest {
   private static final String content = "hello test";
   private String filename = "just-a-filename.txt";
+  private String fileId = "b59c2b24-cafe-babe-9bb3-deadbeefc2c6";
 
   private static final Jdbi jdbi = mock(Jdbi.class);
   private static final ContentsService CONTENTS_SERVICE = new ContentsService(mock(ContentsStorage.class));
@@ -53,13 +56,15 @@ public class FileContentsResourceTest {
       newArrayList(customFacetIndexer)
   );
 
-  private static final FileContentsService FILE_CONTENTS_SERVICE = new FileContentsService(
+  private static final JdbiFileContentsService FILE_CONTENTS_SERVICE = new JdbiFileContentsService(
+      jdbi,
       CONTENTS_SERVICE,
       versionService,
       metadataService
   );
 
   private static final VersionDao versionDao = mock(VersionDao.class);
+  private static final FileDao fileDao = mock(FileDao.class);
 
   @ClassRule
   public static final ResourceTestRule resource = ResourceTestRule
@@ -76,17 +81,22 @@ public class FileContentsResourceTest {
 
   @Before
   public void setupMocks() {
-    when(jdbi.onDemand(any())).thenReturn(versionDao);
     MockitoAnnotations.initMocks(this);
+    when(jdbi.onDemand(VersionDao.class)).thenReturn(versionDao);
+    when(jdbi.onDemand(FileDao.class)).thenReturn(fileDao);
   }
 
   @After
   public void resetMocks() {
-    reset(jdbi, versionDao, fileIndexer, metadataService);
+    reset(jdbi, versionDao, fileIndexer, metadataService, versionDao, fileDao);
   }
 
   @Test
   public void testUpdateFileContents_addsFilenameMetadata() {
+    var fileUuid = UUID.fromString(fileId);
+    when(fileDao.find(any()))
+        .thenReturn(new TextrepoFile(fileUuid, (short) 1));
+
     putTestFile();
 
     verify(metadataService, times(1)).update(
@@ -101,10 +111,10 @@ public class FileContentsResourceTest {
 
   private void putTestFile() {
     var bytes = content.getBytes();
-    putTestFile(bytes, filename);
+    putTestFile(bytes, filename, fileId);
   }
 
-  private void putTestFile(byte[] bytes, String filename) {
+  private void putTestFile(byte[] bytes, String filename, String fileId) {
     var contentDisposition = FormDataContentDisposition
         .name("contents")
         .fileName(filename)
@@ -117,7 +127,7 @@ public class FileContentsResourceTest {
     final var request = resource
         .client()
         .register(MultiPartFeature.class)
-        .target("/files/b59c2b24-cafe-babe-9bb3-deadbeefc2c6/contents")
+        .target("/files/" + fileId + "/contents")
         .request();
 
     final var entity = Entity.entity(multiPart, multiPart.getMediaType());

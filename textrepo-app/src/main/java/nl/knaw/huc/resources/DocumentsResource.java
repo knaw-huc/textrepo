@@ -1,6 +1,7 @@
 package nl.knaw.huc.resources;
 
 import com.codahale.metrics.annotation.Timed;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -40,6 +41,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
 import static nl.knaw.huc.resources.ResourceUtils.readContent;
 
+@Api(tags = {"documents"})
 @Path("/documents")
 public class DocumentsResource {
 
@@ -64,19 +66,19 @@ public class DocumentsResource {
       @FormDataParam("contents") FormDataContentDisposition fileDetail
   ) {
     final var filename = fileDetail.getFileName();
-    final var newFileId = fileService.createFile(type);
-    logger.debug("New file created with fileId={}", newFileId);
+    final var newFile = fileService.createFile(type);
+    logger.debug("New file created with fileId={}", newFile);
 
     fileService.createVersionWithFilenameMetadata(
-        newFileId,
+        newFile,
         readContent(uploadedInputStream),
         filename);
-    logger.debug("New version of {} created for content", newFileId);
+    logger.debug("New version of {} created for content", newFile);
 
     final Optional<UUID> existingDocId = byFile ? documentService.findDocumentByFilename(filename) : Optional.empty();
     logger.debug("Type: {}, filename: {}, existingDocId: {}", type, filename, existingDocId);
 
-    final var docId = existingDocId.orElseGet(() -> documentService.createDocument(newFileId));
+    final var docId = existingDocId.orElseGet(() -> documentService.createDocument(newFile.getId()));
 
     return Response.created(locationOf(docId)).build();
   }
@@ -91,10 +93,10 @@ public class DocumentsResource {
       @NotNull @PathParam("type") String typeName
   ) {
     logger.debug("getLatestVersionByType: docId={}, typeName={}", docId, typeName);
-    final var fileId = documentService.findFileForType(docId, typeName);
+    final var file = documentService.findFileForType(docId, typeName);
 
-    logger.debug(" -> getting latest version of file: {}", fileId);
-    var version = fileService.getLatestVersion(fileId);
+    logger.debug(" -> getting latest version of file: {}", file);
+    var version = fileService.getLatestVersion(file.getId());
 
     return Response.ok(version).build();
   }
@@ -112,11 +114,11 @@ public class DocumentsResource {
   ) {
     logger.debug("Updating {} contents of document: {}", type, docId);
 
-    final var fileId = documentService.findFileForType(docId, type);
-    logger.debug(" -> updating file: {}", fileId);
+    final var file = documentService.findFileForType(docId, type);
+    logger.debug(" -> updating file: {}", file);
 
     final var version = fileService.createVersionWithFilenameMetadata(
-        fileId,
+        file,
         readContent(uploadedInputStream),
         fileDetail.getFileName()
     );

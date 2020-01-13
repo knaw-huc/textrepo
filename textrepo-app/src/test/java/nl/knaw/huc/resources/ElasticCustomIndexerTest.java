@@ -1,24 +1,35 @@
 package nl.knaw.huc.resources;
 
+import nl.knaw.huc.core.TextrepoFile;
+import nl.knaw.huc.core.Type;
+import nl.knaw.huc.db.TypeDao;
 import nl.knaw.huc.service.index.CustomIndexerConfiguration;
 import nl.knaw.huc.service.index.CustomIndexerException;
 import nl.knaw.huc.service.index.ElasticCustomIndexer;
 import nl.knaw.huc.service.index.ElasticsearchConfiguration;
 import nl.knaw.huc.service.index.FieldsConfiguration;
+import org.jdbi.v3.core.Jdbi;
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.MockitoAnnotations;
 import org.mockserver.integration.ClientAndServer;
 import org.mockserver.matchers.Times;
 import org.mockserver.model.HttpRequest;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.UUID;
 
 import static java.lang.String.format;
 import static nl.knaw.huc.resources.TestUtils.getResourceAsString;
 import static org.assertj.core.util.Lists.newArrayList;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.when;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 import static org.mockserver.model.JsonSchemaBody.jsonSchema;
@@ -33,6 +44,9 @@ public class ElasticCustomIndexerTest {
 
   private static ClientAndServer mockIndexServer;
   private static final int mockIndexPort = 1081;
+  private static final Jdbi jdbi = mock(Jdbi.class);
+  private static final TypeDao typeDao = mock(TypeDao.class);
+  private Type testType = new Type("test-type", "test/mimetype");
 
   @BeforeClass
   public static void setUpClass() {
@@ -41,9 +55,17 @@ public class ElasticCustomIndexerTest {
   }
 
   @Before
-  public void reset() {
+  public void before() {
     mockServer.reset();
     mockIndexServer.reset();
+    MockitoAnnotations.initMocks(this);
+    when(jdbi.onDemand(TypeDao.class)).thenReturn(typeDao);
+    when(typeDao.get(any())).thenReturn(Optional.of(testType));
+  }
+
+  @After
+  public void resetMocks() {
+    reset(jdbi, typeDao);
   }
 
   @AfterClass
@@ -54,7 +76,7 @@ public class ElasticCustomIndexerTest {
 
   @Test
   public void testInstantiationElasticCustomFacetIndexer_requestsMapping() throws IOException, CustomIndexerException {
-    var config = createCustomFacetIndexerConfiguration("urlencoded");
+    var config = createCustomFacetIndexerConfiguration("urlencoded", testType.getMimetype());
     var getMappingRequest = request()
         .withMethod("GET")
         .withPath(mockMappingEndpoint);
@@ -66,7 +88,7 @@ public class ElasticCustomIndexerTest {
         .withBody(jsonSchema(getResourceAsString("mapping/test.schema.json")));
     mockCreatingIndexResponse(config.elasticsearch.index, putIndexRequest);
 
-    new ElasticCustomIndexer(config);
+    new ElasticCustomIndexer(jdbi, config);
 
     mockServer.verify(getMappingRequest, once());
     mockIndexServer.verify(putIndexRequest, once());
@@ -74,11 +96,11 @@ public class ElasticCustomIndexerTest {
 
   @Test
   public void testIndexFile_requestsFields() throws IOException, CustomIndexerException {
-    var config = createCustomFacetIndexerConfiguration("urlencoded");
+    var config = createCustomFacetIndexerConfiguration("urlencoded", testType.getMimetype());
     mockMappingResponse();
     mockCreatingIndexResponse(config);
-    var indexer = new ElasticCustomIndexer(config);
-    var fileId = UUID.randomUUID();
+    var indexer = new ElasticCustomIndexer(jdbi, config);
+    var file = new TextrepoFile(UUID.randomUUID(), (short) 43);
     var postDoc2FieldsRequest = request()
         .withMethod("POST")
         .withPath(mockFieldsEndpoint)
@@ -86,32 +108,32 @@ public class ElasticCustomIndexerTest {
     mockDoc2FieldsResponse(postDoc2FieldsRequest);
     var putFileRequest = request()
         .withMethod("PUT")
-        .withPath(format("/%s/_doc/%s", config.elasticsearch.index, fileId))
+        .withPath(format("/%s/_doc/%s", config.elasticsearch.index, file.getId()))
         .withBody(jsonSchema(getResourceAsString("fields/fields.schema.json")));
     mockIndexFieldsResponse(putFileRequest);
 
-    indexer.indexFile(fileId, getResourceAsString("fields/file.xml"));
+    indexer.indexFile(file, getResourceAsString("fields/file.xml"));
 
     mockServer.verify(postDoc2FieldsRequest, once());
     mockIndexServer.verify(putFileRequest, once());
   }
 
   @Test
-  public void testInstantiationElasticCustomFacetIndexer_requestsFieldUsingMultipart_whenTypeIsMultipart() throws IOException, CustomIndexerException {
+  public void testInstantiatingElasticCustomFacetIndexer_requestsFieldUsingMultipart_whenTypeIsMultipart() throws IOException, CustomIndexerException {
     var expectedContentTypeHeader = "multipart/form-data;boundary=.*";
-    var config = createCustomFacetIndexerConfiguration("multipart");
+    var config = createCustomFacetIndexerConfiguration("multipart", testType.getMimetype());
     var fileId = UUID.randomUUID();
     mockPuttingFileResponse(config, fileId);
     mockCreatingIndexResponse(config);
     mockMappingResponse();
-    var indexer = new ElasticCustomIndexer(config);
+    var indexer = new ElasticCustomIndexer(jdbi, config);
     var postDocToFieldsRequest = request()
         .withMethod("POST")
         .withPath(mockFieldsEndpoint)
         .withHeader("Content-Type", expectedContentTypeHeader);
     mockDoc2FieldsResponse(postDocToFieldsRequest);
 
-    indexer.indexFile(fileId, getResourceAsString("fields/file.xml"));
+    indexer.indexFile(new TextrepoFile(fileId, (short) 43), getResourceAsString("fields/file.xml"));
 
     mockServer.verify(postDocToFieldsRequest, once());
   }
@@ -179,7 +201,7 @@ public class ElasticCustomIndexerTest {
 
   }
 
-  private CustomIndexerConfiguration createCustomFacetIndexerConfiguration(String type) {
+  private CustomIndexerConfiguration createCustomFacetIndexerConfiguration(String type, String mimetype) {
     var mockMappingUrl = "http://localhost:" + mockPort + mockMappingEndpoint;
     var mockFieldsUrl = "http://localhost:" + mockPort + mockFieldsEndpoint;
     var mockEsUrl = "localhost:" + mockIndexPort;
@@ -190,7 +212,7 @@ public class ElasticCustomIndexerTest {
     config.elasticsearch.index = "test-index";
     config.fields = FieldsConfiguration.build(type, mockFieldsUrl);
     config.mapping = mockMappingUrl;
-    config.mimetypes = newArrayList("application/xml");
+    config.mimetypes = newArrayList(mimetype);
     return config;
   }
 }

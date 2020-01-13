@@ -32,24 +32,8 @@ public class JdbiTypeService implements TypeService {
     if (types().exists(type.getName())) {
       throw new WebApplicationException("Duplicate type name: " + type.getName(), CONFLICT);
     }
-    // Perhaps add exception mapper to generically catch this like so:
-    // try {
-    //   return types().create(name);
-    // } catch (Exception e) {
-    //   if (e.getCause() instanceof PSQLException) {
-    //     final var cause = (PSQLException) e.getCause();
-    //     final var sqlState = cause.getSQLState();
-    //     LOGGER.debug("Exception during type creation, sqlState={}", sqlState);
-    //     if (sqlState.equals("23505")) {
-    //       throw new WebApplicationException("Duplicate type name: " + name, CONFLICT);
-    //     }
-    //   }
-    //   throw new WebApplicationException(e.getMessage(), INTERNAL_SERVER_ERROR);
-    // }
-
     final var id = types().create(type);
     LOGGER.trace("Type '{}' created with id: {}", type.getName(), id);
-
     return id;
   }
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.api.MultipleLocations;
+import nl.knaw.huc.core.TextrepoFile;
 import nl.knaw.huc.db.FileDao;
 import nl.knaw.huc.db.VersionDao;
 import nl.knaw.huc.service.ContentsService;
@@ -103,10 +104,10 @@ public class FilesResourceTest {
   @Test
   public void testAddFile_addsContentsWithFileIdToIndex() {
     postTestContents();
-    var fileId = ArgumentCaptor.forClass(UUID.class);
+    var file = ArgumentCaptor.forClass(TextrepoFile.class);
     var latestVersionContent = ArgumentCaptor.forClass(String.class);
-    verify(fileIndexer).indexFile(fileId.capture(), latestVersionContent.capture());
-    assertThat(fileId.getValue()).isOfAnyClassIn(UUID.class);
+    verify(fileIndexer).indexFile(file.capture(), latestVersionContent.capture());
+    assertThat(file.getValue()).isOfAnyClassIn(TextrepoFile.class);
     assertThat(latestVersionContent.getValue()).isEqualTo(content);
   }
 
@@ -118,7 +119,7 @@ public class FilesResourceTest {
     postTestContents(zipFile, zipFilename);
 
     var zippedFile = ArgumentCaptor.forClass(String.class);
-    verify(fileIndexer).indexFile(ArgumentCaptor.forClass(UUID.class).capture(), zippedFile.capture());
+    verify(fileIndexer).indexFile(ArgumentCaptor.forClass(TextrepoFile.class).capture(), zippedFile.capture());
     assertThat(zippedFile.getValue()).isEqualToIgnoringWhitespace(content);
   }
 
@@ -129,7 +130,7 @@ public class FilesResourceTest {
 
     postTestContents(zipFile, zipFilename);
 
-    verify(fileIndexer, times(2)).indexFile(any(UUID.class), any(String.class));
+    verify(fileIndexer, times(2)).indexFile(any(TextrepoFile.class), any(String.class));
   }
 
   @Test
@@ -162,7 +163,7 @@ public class FilesResourceTest {
 
     var zippedFile = ArgumentCaptor.forClass(String.class);
     verify(fileIndexer, times(1)).indexFile(
-        ArgumentCaptor.forClass(UUID.class).capture(),
+        ArgumentCaptor.forClass(TextrepoFile.class).capture(),
         zippedFile.capture()
     );
     assertThat(zippedFile.getValue()).isEqualToIgnoringWhitespace(content);
@@ -178,7 +179,7 @@ public class FilesResourceTest {
     var zippedContentsCaptor = ArgumentCaptor.forClass(String.class);
     var zippedContent = getResourceAsString("zip/mac-archive-content.xml");
     verify(fileIndexer, times(1)).indexFile(
-        ArgumentCaptor.forClass(UUID.class).capture(),
+        ArgumentCaptor.forClass(TextrepoFile.class).capture(),
         zippedContentsCaptor.capture()
     );
     assertThat(zippedContentsCaptor.getValue()).isEqualToIgnoringWhitespace(zippedContent);

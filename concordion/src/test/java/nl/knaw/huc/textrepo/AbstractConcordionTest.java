@@ -18,6 +18,7 @@ import java.sql.SQLException;
 
 import static com.jayway.jsonpath.Option.DEFAULT_PATH_LEAF_TO_NULL;
 import static com.jayway.jsonpath.Option.SUPPRESS_EXCEPTIONS;
+import static java.lang.String.format;
 import static java.sql.DriverManager.getConnection;
 import static javax.ws.rs.client.Entity.json;
 import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
@@ -71,10 +72,7 @@ public abstract class AbstractConcordionTest {
     client
         .target(TYPES_URL)
         .request()
-        .post(json("{" +
-            "\"name\": \"" + FILE_TYPE + "\"," +
-            "\"mimetype\": \"" + MIMETYPE + "\"" +
-        "}"));
+        .post(json(format("{\"name\": \"%s\",\"mimetype\": \"%s\"}", FILE_TYPE, MIMETYPE)));
   }
 
   private void emptyTextrepoDatabase() {

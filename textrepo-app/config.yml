@@ -17,6 +17,7 @@ logging:
   level: INFO
   loggers:
     nl.knaw.huc: DEBUG
+    org.apache.http.wire: WARN
 
 elasticsearch:
   # Hosts must be a list of hosts in the Elasticsearch cluster.

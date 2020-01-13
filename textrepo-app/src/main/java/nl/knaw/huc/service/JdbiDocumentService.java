@@ -1,6 +1,7 @@
 package nl.knaw.huc.service;
 
 import nl.knaw.huc.api.MetadataEntry;
+import nl.knaw.huc.core.TextrepoFile;
 import nl.knaw.huc.db.DocumentFilesDao;
 import nl.knaw.huc.db.MetadataDao;
 import org.jdbi.v3.core.Jdbi;
@@ -10,6 +11,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
+
+import static java.lang.String.format;
 
 public class JdbiDocumentService implements DocumentService {
   private final Jdbi jdbi;
@@ -26,10 +29,12 @@ public class JdbiDocumentService implements DocumentService {
     return docId;
   }
 
-  public UUID findFileForType(UUID docId, String fileType) {
-    return documentFiles().findFile(docId, fileType)
-                          .orElseThrow(() -> new NotFoundException(
-                              String.format("No %s file found for document %s", fileType, docId)));
+  public TextrepoFile findFileForType(UUID docId, String fileType) {
+    return documentFiles()
+        .findFile(docId, fileType)
+        .orElseThrow(() -> new NotFoundException(format(
+            "No %s file found for document %s", fileType, docId
+        )));
   }
 
   public Map<String, String> getMetadata(UUID docId) {

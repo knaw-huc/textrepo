@@ -1,6 +1,7 @@
 package nl.knaw.huc.service;
 
 import nl.knaw.huc.core.Contents;
+import nl.knaw.huc.core.TextrepoFile;
 import nl.knaw.huc.core.Version;
 import nl.knaw.huc.db.VersionDao;
 import nl.knaw.huc.service.index.FileIndexer;
@@ -39,17 +40,17 @@ public class JdbiVersionService implements VersionService {
 
   @Override
   public Version insertNewVersion(
-      @Nonnull UUID fileId,
+      @Nonnull TextrepoFile file,
       @Nonnull Contents contents,
       @Nonnull LocalDateTime time
   ) {
     contentsService.addContents(contents);
 
     var latestVersionContent = new String(contents.getContent(), UTF_8);
-    fileIndexService.indexFile(fileId, latestVersionContent);
-    customFacetIndexers.forEach(indexer -> indexer.indexFile(fileId, latestVersionContent));
+    fileIndexService.indexFile(file, latestVersionContent);
+    customFacetIndexers.forEach(indexer -> indexer.indexFile(file, latestVersionContent));
 
-    var newVersion = new Version(fileId, time, contents.getSha224());
+    var newVersion = new Version(file.getId(), time, contents.getSha224());
     getVersionDao().insert(newVersion);
     return newVersion;
   }

@@ -3,6 +3,7 @@ package nl.knaw.huc.resources;
 import ch.qos.logback.classic.Level;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.testing.junit.ResourceTestRule;
+import nl.knaw.huc.core.TextrepoFile;
 import nl.knaw.huc.service.DocumentService;
 import nl.knaw.huc.service.FileService;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
@@ -83,7 +84,7 @@ public class DocumentsResourceTest {
 
     final var entity = Entity.entity(multiPart, multiPart.getMediaType());
 
-    when(fileService.createFile(any(String.class))).thenReturn(FILE_ID);
+    when(fileService.createFile(any(String.class))).thenReturn(new TextrepoFile(FILE_ID, (short) 42));
     when(documentService.createDocument(any(UUID.class))).thenReturn(DOC_ID);
 
     var response = request.post(entity);

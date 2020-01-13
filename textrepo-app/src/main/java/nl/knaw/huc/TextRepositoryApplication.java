@@ -16,7 +16,7 @@ import nl.knaw.huc.resources.FileVersionsResource;
 import nl.knaw.huc.resources.FilesResource;
 import nl.knaw.huc.resources.TypeResource;
 import nl.knaw.huc.service.ContentsService;
-import nl.knaw.huc.service.FileContentsService;
+import nl.knaw.huc.service.JdbiFileContentsService;
 import nl.knaw.huc.service.JdbiDocumentService;
 import nl.knaw.huc.service.JdbiFileService;
 import nl.knaw.huc.service.JdbiMetadataService;
@@ -26,6 +26,7 @@ import nl.knaw.huc.service.index.CustomIndexerException;
 import nl.knaw.huc.service.index.ElasticCustomIndexer;
 import nl.knaw.huc.service.index.ElasticFileIndexer;
 import nl.knaw.huc.service.store.JdbiContentsStorage;
+import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,7 +78,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     var fileIndexService = new ElasticFileIndexer(config.getElasticsearch());
     environment.lifecycle().manage(fileIndexService);
 
-    var customIndexers = createElasticCustomFacetIndexers(config, environment);
+    var customIndexers = createElasticCustomFacetIndexers(config, environment, jdbi);
     Supplier<UUID> uuidGenerator = UUID::randomUUID;
     var contentsStoreService = new JdbiContentsStorage(jdbi);
     var contentsService = new ContentsService(contentsStoreService);
@@ -93,7 +94,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     var fileService = new JdbiFileService(jdbi, typeService, versionService, metadataService, uuidGenerator);
     var filesResource = new FilesResource(fileService);
 
-    var fileContentsService = new FileContentsService(contentsService, versionService, metadataService);
+    var fileContentsService = new JdbiFileContentsService(jdbi, contentsService, versionService, metadataService);
     var fileContentsResource = new FileContentsResource(fileContentsService);
 
     var metadataResource = new FileMetadataResource(metadataService);
@@ -114,14 +115,15 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
 
   private ArrayList<ElasticCustomIndexer> createElasticCustomFacetIndexers(
       TextRepositoryConfiguration config,
-      Environment environment
+      Environment environment,
+      Jdbi jdbi
   ) {
     var customIndexers = new ArrayList<ElasticCustomIndexer>();
 
     for (var customIndexerConfig : config.getCustomFacetIndexers()) {
       try {
         logger.info("Creating indexer [{}]", customIndexerConfig.elasticsearch.index);
-        var customFacetIndexer = new ElasticCustomIndexer(customIndexerConfig);
+        var customFacetIndexer = new ElasticCustomIndexer(jdbi, customIndexerConfig);
         environment.lifecycle().manage(customFacetIndexer);
         customIndexers.add(customFacetIndexer);
       } catch (CustomIndexerException ex) {

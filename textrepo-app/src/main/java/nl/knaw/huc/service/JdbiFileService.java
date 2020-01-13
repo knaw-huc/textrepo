@@ -2,6 +2,7 @@ package nl.knaw.huc.service;
 
 import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.core.Contents;
+import nl.knaw.huc.core.TextrepoFile;
 import nl.knaw.huc.core.Version;
 import nl.knaw.huc.db.FileDao;
 import org.jdbi.v3.core.Jdbi;
@@ -39,21 +40,21 @@ public class JdbiFileService implements FileService {
     this.metadataService = metadataService;
   }
 
-  public UUID createFile(@Nonnull String type) {
+  public TextrepoFile createFile(@Nonnull String type) {
     JdbiFileService.LOGGER.trace("creating file of type: {}", type);
     final var fileId = fileIdGenerator.get();
     final var typeId = typeService.get(type);
     files().create(fileId, typeId);
-    return fileId;
+    return new TextrepoFile(fileId, typeId);
   }
 
-  public Version createVersionWithFilenameMetadata(UUID fileId, byte[] content, String filename) {
+  public Version createVersionWithFilenameMetadata(TextrepoFile file, byte[] content, String filename) {
     final var contents = fromContent(content);
-    return addFile(contents, fileId, filename);
+    return addFile(contents, file, filename);
   }
 
-  public Version addFile(@Nonnull Contents contents, UUID fileId, String filename) {
-    var version = versionService.insertNewVersion(fileId, contents, now());
+  public Version addFile(@Nonnull Contents contents, TextrepoFile file, String filename) {
+    var version = versionService.insertNewVersion(file, contents, now());
     metadataService.insert(version.getFileId(), new MetadataEntry("filename", filename));
     return version;
   }
