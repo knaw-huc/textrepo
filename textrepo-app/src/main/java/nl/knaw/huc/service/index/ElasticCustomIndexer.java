@@ -28,7 +28,6 @@ import static java.lang.String.format;
 import static java.lang.String.join;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static javax.ws.rs.client.Entity.entity;
-import static javax.ws.rs.core.MediaType.APPLICATION_XML;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA_TYPE;
 import static org.elasticsearch.common.xcontent.XContentType.JSON;
 
