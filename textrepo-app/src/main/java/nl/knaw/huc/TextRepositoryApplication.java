@@ -68,41 +68,24 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
 
   @Override
   public void run(TextRepositoryConfiguration config, Environment environment) {
-    var factory = new JdbiFactory();
-    var jdbi = factory.build(
-        environment,
-        config.getDataSourceFactory(),
-        "postgresql"
-    );
-    jdbi.installPlugin(new SqlObjectPlugin());
-
-    var fileIndexService = new ElasticFileIndexer(config.getElasticsearch());
-    environment.lifecycle().manage(fileIndexService);
-
     Supplier<UUID> uuidGenerator = UUID::randomUUID;
+
+    var jdbi = createJdbi(config, environment);
     var contentsStoreService = new JdbiContentsStorage(jdbi);
     var contentsService = new ContentsService(contentsStoreService);
     var contentsResource = new ContentsResource(contentsService);
-
     var metadataService = new JdbiMetadataService(jdbi);
-
     var typeService = new JdbiTypeService(jdbi);
     var typeResource = new TypeResource(typeService);
-
-    var customIndexers = createElasticCustomFacetIndexers(config, environment, typeService);
-
+    var fileIndexService = new ElasticFileIndexer(config.getElasticsearch());
+    var customIndexers = createElasticCustomFacetIndexers(config, typeService);
     var versionService = new JdbiVersionService(jdbi, contentsService, fileIndexService, customIndexers);
-
     var fileService = new JdbiFileService(jdbi, typeService, versionService, metadataService, uuidGenerator);
     var filesResource = new FilesResource(fileService);
-
     var fileContentsService = new JdbiFileContentsService(jdbi, contentsService, versionService, metadataService);
     var fileContentsResource = new FileContentsResource(fileContentsService);
-
     var metadataResource = new FileMetadataResource(metadataService);
-
     var versionsResource = new FileVersionsResource(versionService);
-
     var documentService = new JdbiDocumentService(jdbi, uuidGenerator);
     var documentsResource = new DocumentsResource(documentService, fileService);
 
@@ -113,11 +96,24 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     environment.jersey().register(contentsResource);
     environment.jersey().register(versionsResource);
     environment.jersey().register(documentsResource);
+
+    environment.lifecycle().manage(fileIndexService);
+    customIndexers.forEach(ci -> environment.lifecycle().manage(ci));
+  }
+
+  private Jdbi createJdbi(TextRepositoryConfiguration config, Environment environment) {
+    var factory = new JdbiFactory();
+    var jdbi = factory.build(
+        environment,
+        config.getDataSourceFactory(),
+        "postgresql"
+    );
+    jdbi.installPlugin(new SqlObjectPlugin());
+    return jdbi;
   }
 
   private ArrayList<ElasticCustomIndexer> createElasticCustomFacetIndexers(
       TextRepositoryConfiguration config,
-      Environment environment,
       TypeService typeService
   ) {
     var customIndexers = new ArrayList<ElasticCustomIndexer>();
@@ -126,7 +122,6 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
       try {
         logger.info("Creating indexer [{}]", customIndexerConfig.elasticsearch.index);
         var customFacetIndexer = new ElasticCustomIndexer(customIndexerConfig, typeService);
-        environment.lifecycle().manage(customFacetIndexer);
         customIndexers.add(customFacetIndexer);
       } catch (CustomIndexerException ex) {
         logger.error("Could not create indexer [{}]", customIndexerConfig.elasticsearch.index, ex);
