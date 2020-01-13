@@ -13,7 +13,7 @@ import java.util.UUID;
 import static java.lang.String.format;
 import static java.time.LocalDateTime.now;
 
-public class JdbiFileContentsService {
+public class JdbiFileContentsService implements FileContentsService {
 
   private final ContentsService contentsService;
   private final VersionService versionService;
@@ -31,7 +31,8 @@ public class JdbiFileContentsService {
     this.jdbi = jdbi;
   }
 
-  public Contents getLatestFile(UUID fileId) {
+  @Override
+  public Contents getLatestFileContents(UUID fileId) {
 
     var version = versionService
         .findLatestVersion(fileId)
@@ -40,10 +41,11 @@ public class JdbiFileContentsService {
     return contentsService.getBySha224(version.getContentsSha());
   }
 
+  @Override
   public Version replaceFileContents(
       @Nonnull UUID fileId,
       @Nonnull Contents contents,
-      String filename
+      @Nonnull String filename
   ) {
     final var currentSha224 = contents.getSha224();
     var file = getFileDao().find(fileId);

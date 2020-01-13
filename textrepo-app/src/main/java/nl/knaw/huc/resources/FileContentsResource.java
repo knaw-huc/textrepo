@@ -8,7 +8,7 @@ import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.ResultContents;
 import nl.knaw.huc.api.ResultVersion;
 import nl.knaw.huc.core.Version;
-import nl.knaw.huc.service.JdbiFileContentsService;
+import nl.knaw.huc.service.FileContentsService;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -41,10 +41,10 @@ public class FileContentsResource {
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-  private final JdbiFileContentsService jdbiFileContentsService;
+  private final FileContentsService fileContentsService;
 
-  public FileContentsResource(JdbiFileContentsService jdbiFileContentsService) {
-    this.jdbiFileContentsService = jdbiFileContentsService;
+  public FileContentsResource(FileContentsService fileContentsService) {
+    this.fileContentsService = fileContentsService;
   }
 
   @PUT
@@ -80,7 +80,7 @@ public class FileContentsResource {
       @PathParam("uuid") @NotNull @Valid UUID fileId
   ) {
     logger.debug("getContents: fileId={}", fileId);
-    var contents = jdbiFileContentsService.getLatestFile(fileId);
+    var contents = fileContentsService.getLatestFileContents(fileId);
     return Response
         .ok(contents.getContent(), APPLICATION_OCTET_STREAM)
         .header("Content-Disposition", "attachment;")
@@ -101,7 +101,7 @@ public class FileContentsResource {
     var contents = fromContent(content);
 
     final var startReplacing = now();
-    var version = jdbiFileContentsService.replaceFileContents(fileId, contents, filename);
+    var version = fileContentsService.replaceFileContents(fileId, contents, filename);
 
     if (version.getCreatedAt().isBefore(startReplacing)) {
       logger.info("skip existing [{}]", filename);
