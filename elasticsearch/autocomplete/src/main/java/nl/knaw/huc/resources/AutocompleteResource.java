@@ -1,13 +1,17 @@
 package nl.knaw.huc.resources;
 
 import com.codahale.metrics.annotation.Timed;
+import nl.knaw.huc.api.Fields;
 import nl.knaw.huc.core.SupportedType;
 import nl.knaw.huc.service.FieldsService;
 import nl.knaw.huc.service.MappingService;
+import org.glassfish.jersey.media.multipart.BodyPart;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -57,12 +61,15 @@ public class AutocompleteResource {
       @QueryParam("mimetype") String mimetype,
       @FormDataParam("file") InputStream inputStream
   ) {
+
+    var fields = fieldsService.createFieldsForType(
+        inputStream,
+        SupportedType.fromString(mimetype)
+    );
+
     return Response
         .status(200)
-        .entity(fieldsService.createFieldsForType(
-            inputStream,
-            SupportedType.fromString(mimetype)
-        )).build();
+        .entity(fields).build();
   }
 
 }
