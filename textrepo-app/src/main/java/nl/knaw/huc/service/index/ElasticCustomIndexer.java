@@ -28,7 +28,7 @@ import static java.lang.String.format;
 import static java.lang.String.join;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static javax.ws.rs.client.Entity.entity;
-import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
+import static javax.ws.rs.core.MediaType.APPLICATION_XML;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA_TYPE;
 import static org.elasticsearch.common.xcontent.XContentType.JSON;
 
@@ -146,9 +146,8 @@ public class ElasticCustomIndexer implements FileIndexer, Managed {
   private Response getFieldsUrlencoded(@Nonnull String latestVersionContent, String mimetype) {
     return requestClient
         .target(config.fields.url)
-        .queryParam("mimetype", mimetype)
         .request()
-        .post(entity(latestVersionContent, MULTIPART_FORM_DATA));
+        .post(entity(latestVersionContent, mimetype));
   }
 
   private Response getFieldsMultiparted(@Nonnull String latestVersionContent, String mimetype) {
