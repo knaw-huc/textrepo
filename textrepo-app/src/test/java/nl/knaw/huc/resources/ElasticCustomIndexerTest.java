@@ -2,7 +2,7 @@ package nl.knaw.huc.resources;
 
 import nl.knaw.huc.core.TextrepoFile;
 import nl.knaw.huc.core.Type;
-import nl.knaw.huc.db.TypeDao;
+import nl.knaw.huc.service.TypeService;
 import nl.knaw.huc.service.index.CustomIndexerConfiguration;
 import nl.knaw.huc.service.index.CustomIndexerException;
 import nl.knaw.huc.service.index.ElasticCustomIndexer;
@@ -20,7 +20,6 @@ import org.mockserver.matchers.Times;
 import org.mockserver.model.HttpRequest;
 
 import java.io.IOException;
-import java.util.Optional;
 import java.util.UUID;
 
 import static java.lang.String.format;
@@ -44,9 +43,8 @@ public class ElasticCustomIndexerTest {
 
   private static ClientAndServer mockIndexServer;
   private static final int mockIndexPort = 1081;
-  private static final Jdbi jdbi = mock(Jdbi.class);
-  private static final TypeDao typeDao = mock(TypeDao.class);
   private Type testType = new Type("test-type", "test/mimetype");
+  private TypeService typeServiceMock = mock(TypeService.class);
 
   @BeforeClass
   public static void setUpClass() {
@@ -59,13 +57,11 @@ public class ElasticCustomIndexerTest {
     mockServer.reset();
     mockIndexServer.reset();
     MockitoAnnotations.initMocks(this);
-    when(jdbi.onDemand(TypeDao.class)).thenReturn(typeDao);
-    when(typeDao.get(any())).thenReturn(Optional.of(testType));
+    when(typeServiceMock.getType(any())).thenReturn(testType);
   }
-
   @After
   public void resetMocks() {
-    reset(jdbi, typeDao);
+    reset(typeServiceMock);
   }
 
   @AfterClass
@@ -88,7 +84,7 @@ public class ElasticCustomIndexerTest {
         .withBody(jsonSchema(getResourceAsString("mapping/test.schema.json")));
     mockCreatingIndexResponse(config.elasticsearch.index, putIndexRequest);
 
-    new ElasticCustomIndexer(jdbi, config);
+    new ElasticCustomIndexer(config, typeServiceMock);
 
     mockServer.verify(getMappingRequest, once());
     mockIndexServer.verify(putIndexRequest, once());
@@ -99,7 +95,7 @@ public class ElasticCustomIndexerTest {
     var config = createCustomFacetIndexerConfiguration("urlencoded", testType.getMimetype());
     mockMappingResponse();
     mockCreatingIndexResponse(config);
-    var indexer = new ElasticCustomIndexer(jdbi, config);
+    var indexer = new ElasticCustomIndexer(config, typeServiceMock);
     var file = new TextrepoFile(UUID.randomUUID(), (short) 43);
     var postDoc2FieldsRequest = request()
         .withMethod("POST")
@@ -126,7 +122,7 @@ public class ElasticCustomIndexerTest {
     mockPuttingFileResponse(config, fileId);
     mockCreatingIndexResponse(config);
     mockMappingResponse();
-    var indexer = new ElasticCustomIndexer(jdbi, config);
+    var indexer = new ElasticCustomIndexer(config, typeServiceMock);
     var postDocToFieldsRequest = request()
         .withMethod("POST")
         .withPath(mockFieldsEndpoint)

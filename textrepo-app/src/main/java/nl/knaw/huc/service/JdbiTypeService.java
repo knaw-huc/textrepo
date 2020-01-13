@@ -11,6 +11,7 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import java.util.List;
 
+import static java.lang.String.format;
 import static javax.ws.rs.core.Response.Status.CONFLICT;
 
 public class JdbiTypeService implements TypeService {
@@ -38,8 +39,18 @@ public class JdbiTypeService implements TypeService {
   }
 
   @Override
-  public short get(@Nonnull String name) {
+  public short getId(@Nonnull String name) {
     return types().find(name).orElseThrow(() -> new NotFoundException("No such type: " + name));
+  }
+
+  @Override
+  public Type getType(Short typeId) {
+    return types()
+        .get(typeId)
+        .orElseThrow(() -> new RuntimeException(format(
+            "Could not find type for type id [%s]",
+            typeId
+        )));
   }
 
   private TypeDao types() {

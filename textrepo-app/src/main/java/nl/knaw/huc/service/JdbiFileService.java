@@ -43,7 +43,7 @@ public class JdbiFileService implements FileService {
   public TextrepoFile createFile(@Nonnull String type) {
     JdbiFileService.LOGGER.trace("creating file of type: {}", type);
     final var fileId = fileIdGenerator.get();
-    final var typeId = typeService.get(type);
+    final var typeId = typeService.getId(type);
     files().create(fileId, typeId);
     return new TextrepoFile(fileId, typeId);
   }

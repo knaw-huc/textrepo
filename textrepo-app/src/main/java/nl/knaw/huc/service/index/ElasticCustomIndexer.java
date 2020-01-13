@@ -2,7 +2,7 @@ package nl.knaw.huc.service.index;
 
 import io.dropwizard.lifecycle.Managed;
 import nl.knaw.huc.core.TextrepoFile;
-import nl.knaw.huc.db.TypeDao;
+import nl.knaw.huc.service.TypeService;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.RequestOptions;
@@ -22,14 +22,11 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.UUID;
 
 import static java.lang.String.format;
 import static java.lang.String.join;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static javax.ws.rs.client.Entity.entity;
-import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA_TYPE;
 import static org.elasticsearch.common.xcontent.XContentType.JSON;
 
 /**
@@ -41,12 +38,15 @@ public class ElasticCustomIndexer implements FileIndexer, Managed {
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final ElasticFileIndexer indexer;
   private final Client requestClient = JerseyClientBuilder.newClient();
-  private Jdbi jdbi;
+  private final TypeService typeService;
 
-  public ElasticCustomIndexer(Jdbi jdbi, CustomIndexerConfiguration config) throws CustomIndexerException {
+  public ElasticCustomIndexer(
+      CustomIndexerConfiguration config,
+      TypeService typeService
+  ) throws CustomIndexerException {
     this.config = config;
     indexer = new ElasticFileIndexer(config.elasticsearch);
-    this.jdbi = jdbi;
+    this.typeService = typeService;
     createIndex(config);
     if (config.fields.type.equals("multipart")) {
       requestClient.register(MultiPartFeature.class);
@@ -90,7 +90,9 @@ public class ElasticCustomIndexer implements FileIndexer, Managed {
       @Nonnull TextrepoFile file,
       @Nonnull String latestVersionContent
   ) {
-    var mimetype = getMimetype(file.getTypeId());
+    var mimetype = typeService
+        .getType(file.getTypeId())
+        .getMimetype();
 
     if (!mimetypeSupported(mimetype)) {
       return;
@@ -104,15 +106,6 @@ public class ElasticCustomIndexer implements FileIndexer, Managed {
     }
 
     index(file.getId(), esFacets);
-  }
-
-  private String getMimetype(Short typeId) {
-    return getTypeDao()
-        .get(typeId)
-        .orElseThrow(() -> new RuntimeException(format(
-            "Could not find type for type id [%s]",
-            typeId
-        ))).getMimetype();
   }
 
   private Response getMapping(CustomIndexerConfiguration config) throws CustomIndexerException {
@@ -220,10 +213,6 @@ public class ElasticCustomIndexer implements FileIndexer, Managed {
   @Override
   public void stop() throws Exception {
     indexer.stop();
-  }
-
-  private TypeDao getTypeDao() {
-    return jdbi.onDemand(TypeDao.class);
   }
 
 }

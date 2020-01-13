@@ -10,5 +10,7 @@ public interface TypeService {
 
   short create(@Nonnull Type type);
 
-  short get(String name);
+  short getId(String name);
+
+  Type getType(Short typeId);
 }
