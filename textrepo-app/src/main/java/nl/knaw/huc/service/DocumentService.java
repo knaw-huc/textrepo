@@ -10,6 +10,8 @@ import java.util.UUID;
 public interface DocumentService {
   UUID createDocument(UUID fileId);
 
+  void addFileToDocument(UUID docId, UUID fileId);
+
   TextrepoFile findFileForType(UUID docId, String fileType);
 
   Map<String, String> getMetadata(UUID docId);

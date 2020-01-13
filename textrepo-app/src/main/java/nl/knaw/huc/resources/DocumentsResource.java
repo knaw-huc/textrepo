@@ -75,10 +75,17 @@ public class DocumentsResource {
         filename);
     logger.debug("New version of {} created for content", newFile);
 
-    final Optional<UUID> existingDocId = byFile ? documentService.findDocumentByFilename(filename) : Optional.empty();
-    logger.debug("Type: {}, filename: {}, existingDocId: {}", type, filename, existingDocId);
-
-    final var docId = existingDocId.orElseGet(() -> documentService.createDocument(newFile.getId()));
+    final UUID docId;
+    if (byFile) {
+      logger.debug("Finding existing document for filename: {}", filename);
+      docId = documentService.findDocumentByFilename(filename)
+                             .orElseThrow(() -> new NotFoundException("No document for file: " + filename));
+      logger.debug("Adding file {} to existing document {}", docId, newFile.getId());
+      documentService.addFileToDocument(docId, newFile.getId());
+    } else {
+      docId = documentService.createDocument(newFile.getId());
+      logger.debug("Created new document {} for file {}", docId, newFile.getId());
+    }
 
     return Response.created(locationOf(docId)).build();
   }
