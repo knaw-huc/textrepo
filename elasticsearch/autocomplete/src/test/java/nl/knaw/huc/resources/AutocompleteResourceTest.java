@@ -13,14 +13,12 @@ import org.junit.ClassRule;
 import org.junit.Test;
 
 import javax.ws.rs.client.Client;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.net.URLEncoder;
 
 import static java.lang.String.format;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static javax.ws.rs.client.Entity.entity;
-import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
 import static nl.knaw.huc.TestUtils.getResourceAsBytes;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -93,12 +91,12 @@ public class AutocompleteResourceTest {
         .size(bytes.length)
         .build();
 
+    var bodyPart = new FormDataBodyPart(contentDisposition, bytes, MediaType.valueOf(mimetype));
     var multiPart = new FormDataMultiPart()
-        .bodyPart(new FormDataBodyPart(contentDisposition, bytes, APPLICATION_OCTET_STREAM_TYPE));
+        .bodyPart(bodyPart);
 
     var request = client
         .target(getTestUrl("/fields"))
-        .queryParam("mimetype", URLEncoder.encode(mimetype, UTF_8))
         .request();
 
     var entity = entity(multiPart, multiPart.getMediaType());

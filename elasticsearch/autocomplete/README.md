@@ -1,11 +1,13 @@
 # Autocomplete indexer
 
-# Development
-
 Run: see `../README.md`
 
-Generate es indexing fields from file:
+Get elasticsearch mapping:
 ```
-url '{host}/autocomplete/fields?mimetype={mimetype}' -F file=@{file}
+url '{host}/autocomplete/mapping'
 ```
 
+Convert file into es autocomplete fields:
+```
+url '{host}/autocomplete/fields' -F 'file=@{file};type={mimetype}'
+```

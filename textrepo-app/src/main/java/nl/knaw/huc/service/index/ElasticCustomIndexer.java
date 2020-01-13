@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -160,11 +161,10 @@ public class ElasticCustomIndexer implements FileIndexer, Managed {
         .build();
 
     var multiPart = new FormDataMultiPart()
-        .bodyPart(new FormDataBodyPart(contentDisposition, bytes, MULTIPART_FORM_DATA_TYPE));
+        .bodyPart(new FormDataBodyPart(contentDisposition, bytes, MediaType.valueOf(mimetype)));
 
     var request = requestClient
         .target(config.fields.url)
-        .queryParam("mimetype", URLEncoder.encode(mimetype, UTF_8))
         .request();
 
     var entity = entity(multiPart, multiPart.getMediaType());
