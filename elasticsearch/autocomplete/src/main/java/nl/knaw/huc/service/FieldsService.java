@@ -94,7 +94,7 @@ public class FieldsService {
   }
 
   private String extractText(InputStream xml) {
-    var handler = new BodyContentHandler();
+    var handler = new BodyContentHandler(-1);
     var metadata = new Metadata();
     var parseContext = new ParseContext();
 
