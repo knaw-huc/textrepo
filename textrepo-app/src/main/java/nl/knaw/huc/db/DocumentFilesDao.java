@@ -1,6 +1,7 @@
 package nl.knaw.huc.db;
 
 import nl.knaw.huc.core.TextrepoFile;
+import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
@@ -17,6 +18,7 @@ public interface DocumentFilesDao {
       "AND t.name = :typeName " +
       "AND f.id = df.file_id " +
       "AND t.id = f.type_id")
+  @RegisterConstructorMapper(value = TextrepoFile.class)
   Optional<TextrepoFile> findFile(@Bind("docId") UUID docId, @Bind("typeName") String typeName);
 
   @SqlQuery("SELECT DISTINCT df.document_id FROM files_metadata fm, documents_files df " +
