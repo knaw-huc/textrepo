@@ -73,13 +73,13 @@ public class DocumentsResourceTest {
         .build();
 
     final var multiPart = new FormDataMultiPart()
+        .field("type", TEST_TYPE)
         .bodyPart(new FormDataBodyPart(contentDisposition, bytes, APPLICATION_OCTET_STREAM_TYPE));
 
     final var request = resource
         .client()
         .register(MultiPartFeature.class)
         .target("/documents")
-        .queryParam("type", TEST_TYPE)
         .request();
 
     final var entity = Entity.entity(multiPart, multiPart.getMediaType());

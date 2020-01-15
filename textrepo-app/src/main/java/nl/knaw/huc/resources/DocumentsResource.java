@@ -60,14 +60,16 @@ public class DocumentsResource {
   @ApiOperation(value = "Create a new document by uploading contents for one of its file types")
   @ApiResponses(value = {@ApiResponse(code = 201, message = "CREATED")})
   public Response addDocument(
-      @QueryParam("type") @NotBlank String type,
-      @QueryParam("byFile") @NotNull @DefaultValue("false") Boolean byFile,
+      @NotBlank @FormDataParam("type") String type,
+      @NotNull @DefaultValue("false") @FormDataParam("byFile") Boolean byFile,
       @FormDataParam("contents") InputStream uploadedInputStream,
       @FormDataParam("contents") FormDataContentDisposition fileDetail
   ) {
+    logger.debug("addDocument: type={}, byFile={}, filename={}", type, byFile, fileDetail.getFileName());
+
     final var filename = fileDetail.getFileName();
     final var newFile = fileService.createFile(type);
-    logger.debug("New file created with fileId={}", newFile);
+    logger.debug("Created: {}", newFile);
 
     fileService.createVersionWithFilenameMetadata(
         newFile,
