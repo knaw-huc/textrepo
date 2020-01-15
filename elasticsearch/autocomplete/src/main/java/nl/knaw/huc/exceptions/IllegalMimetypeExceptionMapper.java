@@ -7,13 +7,13 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 
-public class IllegalArgumentExceptionMapper implements ExceptionMapper<IllegalArgumentException> {
+public class IllegalMimetypeExceptionMapper implements ExceptionMapper<IllegalMimetypeException> {
 
-  private static final Logger logger = LoggerFactory.getLogger(AutocompleteApplication.class);
+  private static final Logger logger = LoggerFactory.getLogger(IllegalMimetypeExceptionMapper.class);
 
   @Override
-  public Response toResponse(IllegalArgumentException exception) {
-    exception.printStackTrace();
+  public Response toResponse(IllegalMimetypeException exception) {
+    logger.error(exception.getMessage());
     return Response
         .status(422)
         .entity(exception.getMessage())

@@ -1,5 +1,7 @@
 package nl.knaw.huc.core;
 
+import nl.knaw.huc.exceptions.IllegalMimetypeException;
+
 import static java.lang.String.format;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.joining;
@@ -25,7 +27,7 @@ public enum SupportedType {
         return supportedType;
       }
     }
-    throw new IllegalArgumentException(format(
+    throw new IllegalMimetypeException(format(
         "Unexpected mimetype: got [%s] but should be one of [%s]",
         mimetype, stream(values()).map(v -> "" + v.getMimetype()).collect(joining(", ")))
     );
