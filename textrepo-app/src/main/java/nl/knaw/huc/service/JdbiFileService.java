@@ -19,7 +19,8 @@ import static java.time.LocalDateTime.now;
 import static nl.knaw.huc.core.Contents.fromContent;
 
 public class JdbiFileService implements FileService {
-  private static final Logger LOGGER = LoggerFactory.getLogger(JdbiFileService.class);
+
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   private final Jdbi jdbi;
   private final TypeService typeService;
@@ -41,7 +42,7 @@ public class JdbiFileService implements FileService {
   }
 
   public TextrepoFile createFile(@Nonnull String type) {
-    JdbiFileService.LOGGER.trace("creating file of type: {}", type);
+    logger.trace("creating file of type: {}", type);
     final var fileId = fileIdGenerator.get();
     final var typeId = typeService.getId(type);
     files().create(fileId, typeId);

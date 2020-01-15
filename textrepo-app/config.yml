@@ -53,3 +53,4 @@ customFacetIndexers:
 
 swagger:
   resourcePackage: nl.knaw.huc.resources
+  contextRoot: /textrepo
