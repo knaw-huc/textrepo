@@ -4,7 +4,8 @@ import io.dropwizard.Application;
 import io.dropwizard.forms.MultiPartBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import nl.knaw.huc.exceptions.IllegalArgumentExceptionMapper;
+import nl.knaw.huc.exceptions.IllegalMimetypeExceptionMapper;
+import nl.knaw.huc.health.MappingFileHealthCheck;
 import nl.knaw.huc.resources.AutocompleteResource;
 import nl.knaw.huc.service.FieldsService;
 import nl.knaw.huc.service.MappingService;
@@ -33,11 +34,13 @@ public class AutocompleteApplication extends Application<AutocompleteConfigurati
   @Override
   public void run(AutocompleteConfiguration config, Environment environment) {
     var contentsService = new FieldsService(config);
-    var mappingService = new MappingService();
+    var mappingService = new MappingService(config);
     var contentsResource = new AutocompleteResource(contentsService, mappingService);
 
-    environment.jersey().register(new IllegalArgumentExceptionMapper());
+    environment.jersey().register(new IllegalMimetypeExceptionMapper());
     environment.jersey().register(contentsResource);
+
+    environment.healthChecks().register("mapping file", new MappingFileHealthCheck(config));
   }
 
 }

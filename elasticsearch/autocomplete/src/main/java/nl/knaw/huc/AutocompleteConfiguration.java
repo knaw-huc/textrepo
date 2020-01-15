@@ -16,6 +16,9 @@ public class AutocompleteConfiguration extends Configuration {
   @NotNull
   private String keywordDelimiters;
 
+  @Valid
+  @NotNull
+  private String mappingFile;
 
   @JsonProperty("minKeywordLength")
   public int getMinKeywordLength() {
@@ -35,6 +38,16 @@ public class AutocompleteConfiguration extends Configuration {
   @JsonProperty("keywordDelimiters")
   public void setKeywordDelimiters(String keywordDelimiters) {
     this.keywordDelimiters = keywordDelimiters;
+  }
+
+  @JsonProperty("mappingFile")
+  public String getMappingFile() {
+    return mappingFile;
+  }
+
+  @JsonProperty("mappingFile")
+  public void setMappingFile(String mappingFile) {
+    this.mappingFile = mappingFile;
   }
 
 }

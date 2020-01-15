@@ -5,3 +5,4 @@ logging:
     org.hibernate: ERROR
 minKeywordLength: 5
 keywordDelimiters: " \t\n\r\f,.:;?![]'="
+mappingFile: ./autocomplete-mapping.json

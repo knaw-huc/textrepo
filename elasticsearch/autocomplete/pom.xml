@@ -32,7 +32,6 @@
     <jdbi3-sqlobject.version>3.9.1</jdbi3-sqlobject.version>
     <json-path.version>2.4.0</json-path.version>
     <mockito-core.version>3.0.0</mockito-core.version>
-    <mockserver.version>5.4.1</mockserver.version>
     <postgresql.version>42.2.6</postgresql.version>
   </properties>
 
