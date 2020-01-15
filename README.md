@@ -62,9 +62,11 @@ Create document from file:
 curl -v 'localhost:8080/textrepo/files' -F contents=@{file}
 ```
 Get file id from `Location` header or json response.
-For other use cases, see Swagger documentation.
 
 Search for latest document version of in elasticsearch index:
+
 ```
-curl 'localhost:8080/index/documents/_search?q=content:{term}'
+curl 'localhost:8080/index/files/_search?q=content:{term}'
 ```
+
+For other use cases, see Swagger documentation or Concordion test results.
