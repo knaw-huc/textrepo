@@ -17,6 +17,8 @@ logging:
   level: INFO
   loggers:
     nl.knaw.huc: DEBUG
+    # Filter out flood of warnings when Swagger tries to load classes through reflection:
+    org.reflections.Reflections: ERROR
 
 elasticsearch:
   # Hosts must be a list of hosts in the Elasticsearch cluster.
