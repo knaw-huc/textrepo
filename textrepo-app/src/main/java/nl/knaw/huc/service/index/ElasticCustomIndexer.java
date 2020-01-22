@@ -76,7 +76,7 @@ public class ElasticCustomIndexer implements FileIndexer, Managed {
           .indices()
           .create(request, RequestOptions.DEFAULT);
     } catch (ElasticsearchStatusException ex) {
-      logger.warn("Could not create index [{}], already exists", config.elasticsearch.index);
+      logger.info("Could not create index [{}], already exists", config.elasticsearch.index);
     } catch (IOException ex) {
       logger.error("Could not create index [{}]", config.elasticsearch.index, ex);
     }
