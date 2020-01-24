@@ -98,6 +98,6 @@ public class DocumentsResourceTest {
     assertThat(fileId.getValue()).isEqualTo(FILE_ID);
 
     assertThat(response.getStatus()).isEqualTo(201);
-    assertThat(response.getHeaderString("Location")).endsWith("documents/" + DOC_ID.toString());
+    assertThat(response.getHeaderString("Location")).endsWith("documents/" + DOC_ID.toString() + "/" + TEST_TYPE);
   }
 }

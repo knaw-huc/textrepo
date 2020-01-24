@@ -27,13 +27,11 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 import static java.lang.String.format;
@@ -74,7 +72,8 @@ public class DocumentsResource {
     fileService.createVersionWithFilenameMetadata(
         newFile,
         readContent(uploadedInputStream),
-        filename);
+        filename
+    );
     logger.debug("New version of {} created for content", newFile);
 
     final UUID docId;
@@ -89,7 +88,7 @@ public class DocumentsResource {
       logger.debug("Created new document {} for file {}", docId, newFile.getId());
     }
 
-    return Response.created(locationOf(docId)).build();
+    return Response.created(locationOf(docId, type)).build();
   }
 
   @GET
@@ -163,8 +162,8 @@ public class DocumentsResource {
     return Response.ok().build();
   }
 
-  private URI locationOf(UUID docId) {
-    return UriBuilder.fromResource(DocumentsResource.class).path("{uuid}").build(docId);
+  private URI locationOf(UUID docId, String type) {
+    return UriBuilder.fromResource(DocumentsResource.class).path("{uuid}/{type}").build(docId, type);
   }
 
 }
