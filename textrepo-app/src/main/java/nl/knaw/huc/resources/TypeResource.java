@@ -4,7 +4,6 @@ import io.swagger.annotations.Api;
 import nl.knaw.huc.api.FormType;
 import nl.knaw.huc.core.Type;
 import nl.knaw.huc.service.TypeService;
-import org.hibernate.validator.constraints.NotBlank;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
