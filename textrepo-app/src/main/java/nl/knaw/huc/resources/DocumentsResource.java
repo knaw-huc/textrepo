@@ -10,14 +10,13 @@ import nl.knaw.huc.api.ResultDocument;
 import nl.knaw.huc.core.Version;
 import nl.knaw.huc.service.DocumentService;
 import nl.knaw.huc.service.FileService;
-import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
-import org.hibernate.validator.constraints.NotBlank;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
@@ -134,8 +133,7 @@ public class DocumentsResource {
       @PathParam("uuid") @NotNull @Valid UUID docId,
       @PathParam("type") @NotBlank String type,
       @FormDataParam("contents") InputStream uploadedInputStream,
-      @FormDataParam("contents") FormDataContentDisposition fileDetail,
-      @FormDataParam("contents") FormDataBodyPart bodyPart
+      @FormDataParam("contents") FormDataContentDisposition fileDetail
   ) {
     logger.debug("Updating {} contents of document: {}", type, docId);
 

@@ -9,7 +9,6 @@ import nl.knaw.huc.api.ResultContents;
 import nl.knaw.huc.api.ResultVersion;
 import nl.knaw.huc.core.Version;
 import nl.knaw.huc.service.FileContentsService;
-import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
@@ -56,8 +55,7 @@ public class FileContentsResource {
   public Response updateFileContents(
       @PathParam("uuid") @Valid UUID fileId,
       @FormDataParam("contents") InputStream uploadedInputStream,
-      @FormDataParam("contents") FormDataContentDisposition fileDetail,
-      @FormDataParam("contents") FormDataBodyPart bodyPart
+      @FormDataParam("contents") FormDataContentDisposition fileDetail
   ) {
     logger.debug("updateFileContents: fileId={}, file={}", fileId, fileDetail.getFileName());
     var resultFile = handleUpdate(
