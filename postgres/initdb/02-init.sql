@@ -32,15 +32,20 @@ create table versions (
 
 create index version_by_file_id on versions (file_id);
 
--- A document is currently implicit. Can have file(s) and metadata
---create table documents (
-  --id uuid primary key
---);
+-- A document has an external id
+create table documents(
+  id uuid primary key,
+  external_id varchar not null
+);
+
+-- assist FK lookups: add compound index for PK fields in reverse order
+create unique index doc_id_by_external_id on documents (external_id, id);
 
 create table documents_files (
   document_id uuid not null,
   file_id uuid not null references files (id),
-  primary key (document_id, file_id)		-- force unique index on pair
+  primary key (document_id, file_id),		-- force unique index on pair
+  foreign key (document_id) references documents (id)
 );
 
 -- assist FK lookups: add compound index for PK fields in reverse order
@@ -51,7 +56,8 @@ create table documents_metadata (
   document_id uuid not null,
   key varchar not null,
   value text,
-  primary key (document_id, key)
+  primary key (document_id, key),
+  foreign key (document_id) references documents (id)
 );
 
 -- File metadata items (e.g., filename). Key-value pairs linked to file.
