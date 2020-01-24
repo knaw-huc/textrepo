@@ -1,8 +1,10 @@
 package nl.knaw.huc.resources;
 
 import ch.qos.logback.classic.Level;
+import com.jayway.jsonpath.JsonPath;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.testing.junit.ResourceTestRule;
+import nl.knaw.huc.core.Document;
 import nl.knaw.huc.core.TextrepoFile;
 import nl.knaw.huc.service.DocumentService;
 import nl.knaw.huc.service.FileService;
@@ -113,6 +115,21 @@ public class DocumentsResourceTest {
     assertThat(response.getHeaderString("Location")).endsWith("documents/" + TEST_DOC_ID.toString() + "/" + TEST_TYPE);
   }
 
+  @Test
+  public void getDocument_shouldAlsoReturnExternalId() {
+    var docId = UUID.randomUUID();
+    when(documentService.get(docId)).thenReturn(new Document(docId, TEST_EXTERNAL_ID));
+    var response = resource
+        .client()
+        .register(MultiPartFeature.class)
+        .target("/documents/" + docId)
+        .request().get();
+    assertThat(response.getStatus()).isEqualTo(200);
+    var body = response.readEntity(String.class);
+    String externalId = JsonPath.parse(body).read("$.externalId");
+    assertThat(externalId).isEqualTo(TEST_EXTERNAL_ID);
+  }
+
   private Response postTestFile(String byExternalId) {
     final var bytes = TEST_CONTENT.getBytes();
     final var contentDisposition = FormDataContentDisposition
@@ -135,4 +152,5 @@ public class DocumentsResourceTest {
     final var entity = Entity.entity(multiPart, multiPart.getMediaType());
     return request.post(entity);
   }
+
 }

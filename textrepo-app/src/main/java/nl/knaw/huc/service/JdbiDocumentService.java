@@ -26,6 +26,11 @@ public class JdbiDocumentService implements DocumentService {
   }
 
   @Override
+  public Document get(UUID id) {
+    return documents().get(id);
+  }
+
+  @Override
   public UUID createDocument(UUID fileId, String externalId) {
     final var docId = idGenerator.get();
     documents().insert(new Document(docId, externalId));

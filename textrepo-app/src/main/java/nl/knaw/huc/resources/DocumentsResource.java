@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.MetadataEntry;
+import nl.knaw.huc.api.ResultDocument;
 import nl.knaw.huc.core.Version;
 import nl.knaw.huc.service.DocumentService;
 import nl.knaw.huc.service.FileService;
@@ -27,6 +28,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import java.io.InputStream;
@@ -91,6 +93,19 @@ public class DocumentsResource {
     }
 
     return Response.created(locationOf(docId, type)).build();
+  }
+
+  @GET
+  @Path("/{id}")
+  @Produces(APPLICATION_JSON)
+  @ApiOperation(value = "Get document by id")
+  @ApiResponses(value = {@ApiResponse(code = 200, response = ResultDocument.class, message = "OK")})
+  public Response getDocument(
+      @PathParam("id") @Valid UUID id
+  ) {
+    logger.debug("getDocument: id={}", id);
+    final var doc = documentService.get(id);
+    return Response.ok(new ResultDocument(doc)).build();
   }
 
   @GET

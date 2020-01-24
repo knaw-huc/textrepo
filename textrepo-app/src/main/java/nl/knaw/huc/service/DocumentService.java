@@ -1,6 +1,7 @@
 package nl.knaw.huc.service;
 
 import nl.knaw.huc.api.MetadataEntry;
+import nl.knaw.huc.core.Document;
 import nl.knaw.huc.core.TextrepoFile;
 
 import java.util.Map;
@@ -8,6 +9,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface DocumentService {
+  Document get(UUID doc);
+
   UUID createDocument(UUID fileId, String externalId);
 
   void addFileToDocument(UUID docId, UUID fileId);
