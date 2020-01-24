@@ -9,7 +9,6 @@ import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.core.Version;
 import nl.knaw.huc.service.DocumentService;
 import nl.knaw.huc.service.FileService;
-import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
@@ -117,8 +116,7 @@ public class DocumentsResource {
       @PathParam("uuid") @NotNull @Valid UUID docId,
       @PathParam("type") @NotBlank String type,
       @FormDataParam("contents") InputStream uploadedInputStream,
-      @FormDataParam("contents") FormDataContentDisposition fileDetail,
-      @FormDataParam("contents") FormDataBodyPart bodyPart
+      @FormDataParam("contents") FormDataContentDisposition fileDetail
   ) {
     logger.debug("Updating {} contents of document: {}", type, docId);
 
