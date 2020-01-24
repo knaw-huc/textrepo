@@ -24,6 +24,7 @@ import java.util.UUID;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -33,6 +34,7 @@ public class DocumentsResourceTest {
   private static final String TEST_CONTENT = "hello test";
   private static final String TEST_FILENAME = "just-a-filename.txt";
   private static final String TEST_TYPE = "test-type";
+  private static final String TEST_EXTERNAL_ID = "test-external-id";
   private static final UUID FILE_ID = UUID.randomUUID();
   private static final UUID DOC_ID = UUID.randomUUID();
 
@@ -74,6 +76,7 @@ public class DocumentsResourceTest {
 
     final var multiPart = new FormDataMultiPart()
         .field("type", TEST_TYPE)
+        .field("externalId", TEST_EXTERNAL_ID)
         .bodyPart(new FormDataBodyPart(contentDisposition, bytes, APPLICATION_OCTET_STREAM_TYPE));
 
     final var request = resource
@@ -85,7 +88,7 @@ public class DocumentsResourceTest {
     final var entity = Entity.entity(multiPart, multiPart.getMediaType());
 
     when(fileService.createFile(any(String.class))).thenReturn(new TextrepoFile(FILE_ID, (short) 42));
-    when(documentService.createDocument(any(UUID.class))).thenReturn(DOC_ID);
+    when(documentService.createDocument(any(UUID.class), anyString())).thenReturn(DOC_ID);
 
     var response = request.post(entity);
 
@@ -94,8 +97,10 @@ public class DocumentsResourceTest {
     assertThat(type.getValue()).isEqualTo(TEST_TYPE);
 
     var fileId = ArgumentCaptor.forClass(UUID.class);
-    verify(documentService).createDocument(fileId.capture());
+    var externalId = ArgumentCaptor.forClass(String.class);
+    verify(documentService).createDocument(fileId.capture(), externalId.capture());
     assertThat(fileId.getValue()).isEqualTo(FILE_ID);
+    assertThat(externalId.getValue()).isEqualTo(TEST_EXTERNAL_ID);
 
     assertThat(response.getStatus()).isEqualTo(201);
     assertThat(response.getHeaderString("Location")).endsWith("documents/" + DOC_ID.toString() + "/" + TEST_TYPE);

@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface DocumentService {
-  UUID createDocument(UUID fileId);
+  UUID createDocument(UUID fileId, String externalId);
 
   void addFileToDocument(UUID docId, UUID fileId);
 

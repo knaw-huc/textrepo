@@ -1,8 +1,10 @@
 package nl.knaw.huc.service;
 
 import nl.knaw.huc.api.MetadataEntry;
+import nl.knaw.huc.core.Document;
 import nl.knaw.huc.core.TextrepoFile;
 import nl.knaw.huc.db.DocumentFilesDao;
+import nl.knaw.huc.db.DocumentsDao;
 import nl.knaw.huc.db.MetadataDao;
 import org.jdbi.v3.core.Jdbi;
 
@@ -23,16 +25,20 @@ public class JdbiDocumentService implements DocumentService {
     this.idGenerator = idGenerator;
   }
 
-  public UUID createDocument(UUID fileId) {
+  @Override
+  public UUID createDocument(UUID fileId, String externalId) {
     final var docId = idGenerator.get();
+    documents().insert(new Document(docId, externalId));
     documentFiles().insert(docId, fileId);
     return docId;
   }
 
+  @Override
   public void addFileToDocument(UUID docId, UUID fileId) {
     documentFiles().insert(docId, fileId);
   }
 
+  @Override
   public TextrepoFile findFileForType(UUID docId, String fileType) {
     return documentFiles()
         .findFile(docId, fileType)
@@ -41,16 +47,23 @@ public class JdbiDocumentService implements DocumentService {
         )));
   }
 
+  @Override
   public Map<String, String> getMetadata(UUID docId) {
     return jdbi.onDemand(MetadataDao.class).getMetadataByDocumentId(docId);
   }
 
+  @Override
   public boolean updateMetadata(UUID docId, MetadataEntry entry) {
     return jdbi.onDemand(MetadataDao.class).updateDocumentMetadata(docId, entry);
   }
 
+  @Override
   public Optional<UUID> findDocumentByFilename(String filename) {
     return documentFiles().findDocumentByFilename(filename);
+  }
+
+  private DocumentsDao documents() {
+    return jdbi.onDemand(DocumentsDao.class);
   }
 
   private DocumentFilesDao documentFiles() {

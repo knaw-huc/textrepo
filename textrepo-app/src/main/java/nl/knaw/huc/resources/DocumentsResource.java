@@ -59,6 +59,7 @@ public class DocumentsResource {
   @ApiResponses(value = {@ApiResponse(code = 201, message = "CREATED")})
   public Response addDocument(
       @NotBlank @FormDataParam("type") String type,
+      @NotBlank @FormDataParam("externalId") String externalId,
       @NotNull @DefaultValue("false") @FormDataParam("byFile") Boolean byFile,
       @FormDataParam("contents") InputStream uploadedInputStream,
       @FormDataParam("contents") FormDataContentDisposition fileDetail
@@ -84,7 +85,7 @@ public class DocumentsResource {
       logger.debug("Adding file {} to existing document {}", docId, newFile.getId());
       documentService.addFileToDocument(docId, newFile.getId());
     } else {
-      docId = documentService.createDocument(newFile.getId());
+      docId = documentService.createDocument(newFile.getId(), externalId);
       logger.debug("Created new document {} for file {}", docId, newFile.getId());
     }
 

@@ -16,8 +16,9 @@ curl "$HOST/types" -H 'Content-Type:application/json' -d '{"name": "xml", "mimet
 # Add text and xml file to same document:
 curl -sv "$HOST/documents" \
   -F "contents=@$TXT;filename=example.file" \
-  -F type=text
+  -F type=text \
+  -F externalId=exampleFile
 curl -sv "$HOST/documents" \
   -F "contents=@$XML;filename=example.file" \
   -F type=xml \
-  -F byFile=true
+  -F externalId=exampleFile
