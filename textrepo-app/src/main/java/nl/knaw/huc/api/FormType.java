@@ -2,9 +2,8 @@ package nl.knaw.huc.api;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.hibernate.validator.constraints.NotBlank;
 
-import java.beans.ConstructorProperties;
+import javax.validation.constraints.NotBlank;
 
 public class FormType {
 
