@@ -19,6 +19,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.MockitoAnnotations;
 
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Response;
+import java.util.Optional;
 import java.util.UUID;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
@@ -35,8 +37,8 @@ public class DocumentsResourceTest {
   private static final String TEST_FILENAME = "just-a-filename.txt";
   private static final String TEST_TYPE = "test-type";
   private static final String TEST_EXTERNAL_ID = "test-external-id";
-  private static final UUID FILE_ID = UUID.randomUUID();
-  private static final UUID DOC_ID = UUID.randomUUID();
+  private static final UUID TEST_FILE_ID = UUID.randomUUID();
+  private static final UUID TEST_DOC_ID = UUID.randomUUID();
 
   private static final Jdbi jdbi = mock(Jdbi.class);
   private static final DocumentService documentService = mock(DocumentService.class);
@@ -67,6 +69,51 @@ public class DocumentsResourceTest {
 
   @Test
   public void postTestDocument() {
+    when(fileService.createFile(any(String.class))).thenReturn(new TextrepoFile(TEST_FILE_ID, (short) 42));
+    when(documentService.createDocument(any(UUID.class), anyString())).thenReturn(TEST_DOC_ID);
+
+    var byExternalId = "false";
+    var response = postTestFile(byExternalId);
+
+    var type = ArgumentCaptor.forClass(String.class);
+    verify(fileService).createFile(type.capture());
+    assertThat(type.getValue()).isEqualTo(TEST_TYPE);
+
+    var fileId = ArgumentCaptor.forClass(UUID.class);
+    var externalId = ArgumentCaptor.forClass(String.class);
+    verify(documentService).createDocument(fileId.capture(), externalId.capture());
+    assertThat(fileId.getValue()).isEqualTo(TEST_FILE_ID);
+    assertThat(externalId.getValue()).isEqualTo(TEST_EXTERNAL_ID);
+
+    assertThat(response.getStatus()).isEqualTo(201);
+    assertThat(response.getHeaderString("Location")).endsWith("documents/" + TEST_DOC_ID.toString() + "/" + TEST_TYPE);
+  }
+
+  @Test
+  public void addDocument_shouldUseExternalId_whenByExternalIdIsTrue() {
+    when(fileService.createFile(any(String.class)))
+        .thenReturn(new TextrepoFile(TEST_FILE_ID, (short) 42));
+    when(documentService.findDocumentByExternalId(TEST_EXTERNAL_ID))
+        .thenReturn(Optional.of(TEST_DOC_ID));
+
+    var byExternalId = "true";
+    var response = postTestFile(byExternalId);
+
+    var type = ArgumentCaptor.forClass(String.class);
+    verify(fileService).createFile(type.capture());
+    assertThat(type.getValue()).isEqualTo(TEST_TYPE);
+
+    var docId = ArgumentCaptor.forClass(UUID.class);
+    var fileId = ArgumentCaptor.forClass(UUID.class);
+    verify(documentService).addFileToDocument(docId.capture(), fileId.capture());
+    assertThat(docId.getValue()).isEqualTo(TEST_DOC_ID);
+    assertThat(fileId.getValue()).isEqualTo(TEST_FILE_ID);
+
+    assertThat(response.getStatus()).isEqualTo(201);
+    assertThat(response.getHeaderString("Location")).endsWith("documents/" + TEST_DOC_ID.toString() + "/" + TEST_TYPE);
+  }
+
+  private Response postTestFile(String byExternalId) {
     final var bytes = TEST_CONTENT.getBytes();
     final var contentDisposition = FormDataContentDisposition
         .name("contents")
@@ -76,6 +123,7 @@ public class DocumentsResourceTest {
 
     final var multiPart = new FormDataMultiPart()
         .field("type", TEST_TYPE)
+        .field("byExternalId", byExternalId)
         .field("externalId", TEST_EXTERNAL_ID)
         .bodyPart(new FormDataBodyPart(contentDisposition, bytes, APPLICATION_OCTET_STREAM_TYPE));
 
@@ -84,25 +132,7 @@ public class DocumentsResourceTest {
         .register(MultiPartFeature.class)
         .target("/documents")
         .request();
-
     final var entity = Entity.entity(multiPart, multiPart.getMediaType());
-
-    when(fileService.createFile(any(String.class))).thenReturn(new TextrepoFile(FILE_ID, (short) 42));
-    when(documentService.createDocument(any(UUID.class), anyString())).thenReturn(DOC_ID);
-
-    var response = request.post(entity);
-
-    var type = ArgumentCaptor.forClass(String.class);
-    verify(fileService).createFile(type.capture());
-    assertThat(type.getValue()).isEqualTo(TEST_TYPE);
-
-    var fileId = ArgumentCaptor.forClass(UUID.class);
-    var externalId = ArgumentCaptor.forClass(String.class);
-    verify(documentService).createDocument(fileId.capture(), externalId.capture());
-    assertThat(fileId.getValue()).isEqualTo(FILE_ID);
-    assertThat(externalId.getValue()).isEqualTo(TEST_EXTERNAL_ID);
-
-    assertThat(response.getStatus()).isEqualTo(201);
-    assertThat(response.getHeaderString("Location")).endsWith("documents/" + DOC_ID.toString() + "/" + TEST_TYPE);
+    return request.post(entity);
   }
 }

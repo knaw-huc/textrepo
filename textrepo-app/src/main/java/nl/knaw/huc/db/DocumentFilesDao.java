@@ -21,9 +21,6 @@ public interface DocumentFilesDao {
   @RegisterConstructorMapper(value = TextrepoFile.class)
   Optional<TextrepoFile> findFile(@Bind("docId") UUID docId, @Bind("typeName") String typeName);
 
-  @SqlQuery("SELECT DISTINCT df.document_id FROM files_metadata fm, documents_files df " +
-      "WHERE fm.key = 'filename' " +
-      "AND fm.value = :filename " +
-      "AND fm.file_id = df.file_id")
-  Optional<UUID> findDocumentByFilename(@Bind("filename") String filename);
+  @SqlQuery("SELECT DISTINCT id FROM documents WHERE document.external_id = :externalId")
+  Optional<UUID> findDocumentByExternalId(@Bind("externalId") String externalId);
 }

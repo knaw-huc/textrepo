@@ -58,8 +58,8 @@ public class JdbiDocumentService implements DocumentService {
   }
 
   @Override
-  public Optional<UUID> findDocumentByFilename(String filename) {
-    return documentFiles().findDocumentByFilename(filename);
+  public Optional<UUID> findDocumentByExternalId(String externalId) {
+    return documentFiles().findDocumentByExternalId(externalId);
   }
 
   private DocumentsDao documents() {

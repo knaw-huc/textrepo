@@ -60,11 +60,11 @@ public class DocumentsResource {
   public Response addDocument(
       @NotBlank @FormDataParam("type") String type,
       @NotBlank @FormDataParam("externalId") String externalId,
-      @NotNull @DefaultValue("false") @FormDataParam("byFile") Boolean byFile,
+      @NotNull @DefaultValue("false") @FormDataParam("byExternalId") Boolean byExternalId,
       @FormDataParam("contents") InputStream uploadedInputStream,
       @FormDataParam("contents") FormDataContentDisposition fileDetail
   ) {
-    logger.debug("addDocument: type={}, byFile={}, filename={}", type, byFile, fileDetail.getFileName());
+    logger.debug("addDocument: type={}, byExternalId={}, filename={}", type, byExternalId, fileDetail.getFileName());
 
     final var filename = fileDetail.getFileName();
     final var newFile = fileService.createFile(type);
@@ -78,10 +78,11 @@ public class DocumentsResource {
     logger.debug("New version of {} created for content", newFile);
 
     final UUID docId;
-    if (byFile) {
-      logger.debug("Finding existing document for filename: {}", filename);
-      docId = documentService.findDocumentByFilename(filename)
-                             .orElseThrow(() -> new NotFoundException("No document for file: " + filename));
+    if (byExternalId) {
+      logger.debug("Finding existing document for external id: {}", externalId);
+      docId = documentService
+          .findDocumentByExternalId(externalId)
+          .orElseThrow(() -> new NotFoundException("No document for external id: " + externalId));
       logger.debug("Adding file {} to existing document {}", docId, newFile.getId());
       documentService.addFileToDocument(docId, newFile.getId());
     } else {
