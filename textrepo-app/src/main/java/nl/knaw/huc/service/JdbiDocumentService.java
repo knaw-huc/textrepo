@@ -34,14 +34,13 @@ public class JdbiDocumentService implements DocumentService {
   }
 
   @Override
-  public UUID createDocumentByExternalId(UUID fileId, String externalId) {
+  public UUID createDocument(String externalId) {
     final var docId = idGenerator.get();
     try {
       documents().insert(new Document(docId, externalId));
     } catch (JdbiException ex) {
       handleDocExists(externalId, ex);
     }
-    documentFiles().insert(docId, fileId);
     return docId;
   }
 

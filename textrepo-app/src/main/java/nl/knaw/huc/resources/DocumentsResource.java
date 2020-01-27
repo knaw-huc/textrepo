@@ -80,20 +80,21 @@ public class DocumentsResource {
         filename
     );
     logger.debug("New version of {} created for content", newFile);
-    final UUID docId;
+    final UUID newDocId;
     if (addFileToExistingDocByExternalId) {
       logger.debug("Finding existing document for external id: {}", externalId);
-      docId = documentService
+      newDocId = documentService
           .findDocumentByExternalId(externalId)
           .orElseThrow(() -> new NotFoundException("No document for external id: " + externalId));
-      logger.debug("Adding file {} to existing document {}", docId, newFile.getId());
-      documentService.addFileToDocument(docId, newFile.getId());
+      logger.debug("Adding file {} to existing document {}", newDocId, newFile.getId());
+      documentService.addFileToDocument(newDocId, newFile.getId());
     } else {
-      docId = documentService.createDocumentByExternalId(newFile.getId(), externalId);
-      logger.debug("Created new document {} for file {}", docId, newFile.getId());
+      newDocId = documentService.createDocument(externalId);
+      documentService.addFileToDocument(newDocId, newFile.getId());
+      logger.debug("Created new document {} for file {}", newDocId, newFile.getId());
     }
 
-    return Response.created(locationOf(docId, type)).build();
+    return Response.created(locationOf(newDocId, type)).build();
   }
 
   @GET
