@@ -16,11 +16,11 @@ public interface DocumentService {
    * Create a new document with a unique external ID
    * @throws BadRequestException when external ID already exists
    */
-  UUID createDocumentByExternalId(UUID fileId, String externalId);
+  UUID createDocument(String externalId);
 
   void addFileToDocument(UUID docId, UUID fileId);
 
-  TextrepoFile findFileForType(UUID docId, String fileType);
+  TextrepoFile findFileByTypeAndDocId(String fileType, UUID docId);
 
   Map<String, String> getMetadata(UUID docId);
 

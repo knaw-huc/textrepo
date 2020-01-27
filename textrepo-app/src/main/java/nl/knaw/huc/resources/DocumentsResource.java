@@ -80,20 +80,21 @@ public class DocumentsResource {
         filename
     );
     logger.debug("New version of {} created for content", newFile);
-    final UUID docId;
+    final UUID newDocId;
     if (addFileToExistingDocByExternalId) {
       logger.debug("Finding existing document for external id: {}", externalId);
-      docId = documentService
+      newDocId = documentService
           .findDocumentByExternalId(externalId)
           .orElseThrow(() -> new NotFoundException("No document for external id: " + externalId));
-      logger.debug("Adding file {} to existing document {}", docId, newFile.getId());
-      documentService.addFileToDocument(docId, newFile.getId());
+      logger.debug("Adding file {} to existing document {}", newDocId, newFile.getId());
+      documentService.addFileToDocument(newDocId, newFile.getId());
     } else {
-      docId = documentService.createDocumentByExternalId(newFile.getId(), externalId);
-      logger.debug("Created new document {} for file {}", docId, newFile.getId());
+      newDocId = documentService.createDocument(externalId);
+      documentService.addFileToDocument(newDocId, newFile.getId());
+      logger.debug("Created new document {} for file {}", newDocId, newFile.getId());
     }
 
-    return Response.created(locationOf(docId, type)).build();
+    return Response.created(locationOf(newDocId, type)).build();
   }
 
   @GET
@@ -119,7 +120,7 @@ public class DocumentsResource {
       @NotNull @PathParam("type") String typeName
   ) {
     logger.debug("getLatestVersionByType: docId={}, typeName={}", docId, typeName);
-    final var file = documentService.findFileForType(docId, typeName);
+    final var file = documentService.findFileByTypeAndDocId(typeName, docId);
 
     logger.debug(" -> getting latest version of file: {}", file);
     var version = fileService.getLatestVersion(file.getId());
@@ -139,7 +140,7 @@ public class DocumentsResource {
   ) {
     logger.debug("Updating {} contents of document: {}", type, docId);
 
-    return updateDocumentByTypeAndDocId(docId, type, uploadedInputStream, fileDetail);
+    return updateFileByTypeAndDocId(type, docId, uploadedInputStream, fileDetail);
   }
 
   @PUT
@@ -156,7 +157,7 @@ public class DocumentsResource {
     var docId = documentService.findDocumentByExternalId(externalId).orElseThrow(() ->
         new NotFoundException(format("Document with external id [%s] could not be found", externalId))
     );
-    return updateDocumentByTypeAndDocId(docId, type, uploadedInputStream, fileDetail);
+    return updateFileByTypeAndDocId(type, docId, uploadedInputStream, fileDetail);
   }
 
   @GET
@@ -191,13 +192,13 @@ public class DocumentsResource {
     return UriBuilder.fromResource(DocumentsResource.class).path("{uuid}/{type}").build(docId, type);
   }
 
-  private Response updateDocumentByTypeAndDocId(
-      UUID docId,
+  private Response updateFileByTypeAndDocId(
       String type,
+      UUID docId,
       InputStream uploadedInputStream,
       FormDataContentDisposition fileDetail
   ) {
-    final var file = documentService.findFileForType(docId, type);
+    final var file = documentService.findFileByTypeAndDocId(type, docId);
     logger.debug(" -> updating file: {}", file);
 
     final var version = fileService.createVersionWithFilenameMetadata(
