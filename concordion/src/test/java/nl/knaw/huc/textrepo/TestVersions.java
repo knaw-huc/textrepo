@@ -48,10 +48,11 @@ public class TestVersions extends AbstractConcordionTest {
     return result;
   }
 
-  private int updateFile(String fileContentsEndpoint, String newContent, TestVersionsResult result) {
+  private int updateFile(String fileContentsEndpoint, String newContent, TestVersionsResult result)
+      throws MalformedURLException {
     return putFileWithFilename(
         client(),
-        replace(HTTP_APP_HOST + fileContentsEndpoint, "fileId", result.fileId),
+        new URL(replace(HTTP_APP_HOST + fileContentsEndpoint, "fileId", result.fileId)),
         "test.txt",
         newContent.getBytes()
     ).getStatus();

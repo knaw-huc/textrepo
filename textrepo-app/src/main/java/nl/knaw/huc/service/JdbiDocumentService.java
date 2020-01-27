@@ -7,7 +7,10 @@ import nl.knaw.huc.db.DocumentFilesDao;
 import nl.knaw.huc.db.DocumentsDao;
 import nl.knaw.huc.db.MetadataDao;
 import org.jdbi.v3.core.Jdbi;
+import org.jdbi.v3.core.JdbiException;
+import org.postgresql.util.PSQLException;
 
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import java.util.Map;
 import java.util.Optional;
@@ -31,11 +34,26 @@ public class JdbiDocumentService implements DocumentService {
   }
 
   @Override
-  public UUID createDocument(UUID fileId, String externalId) {
+  public UUID createDocumentByExternalId(UUID fileId, String externalId) {
     final var docId = idGenerator.get();
-    documents().insert(new Document(docId, externalId));
+    try {
+      documents().insert(new Document(docId, externalId));
+    } catch (JdbiException ex) {
+      handleDocExists(externalId, ex);
+    }
     documentFiles().insert(docId, fileId);
     return docId;
+  }
+
+  private void handleDocExists(String externalId, JdbiException ex) {
+    if (ex.getCause() instanceof PSQLException) {
+      var cause = (PSQLException) ex.getCause();
+      if (cause.getSQLState().equals("23505") &&
+          cause.getServerErrorMessage().getConstraint().equals("documents_external_id_key")) {
+        throw new BadRequestException(format("Document with external id [%s] already exists", externalId));
+      }
+    }
+    throw ex;
   }
 
   @Override

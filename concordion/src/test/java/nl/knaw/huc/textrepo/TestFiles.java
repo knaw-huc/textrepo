@@ -12,6 +12,7 @@ import java.util.UUID;
 
 import static nl.knaw.huc.textrepo.Config.FILES_URL;
 import static nl.knaw.huc.textrepo.util.TestUtils.getLocation;
+import static nl.knaw.huc.textrepo.util.TestUtils.getStatus;
 import static nl.knaw.huc.textrepo.util.TestUtils.postFileWithFilename;
 
 public class TestFiles extends AbstractConcordionTest {
@@ -55,10 +56,6 @@ public class TestFiles extends AbstractConcordionTest {
     return new MultiValueResult()
         .with("status", getStatus(response))
         .with("entity", JsonPath.parse(response.readEntity(String.class)).read("$._source.content"));
-  }
-
-  private static String getStatus(Response response) {
-    return response.getStatus() + " " + response.getStatusInfo();
   }
 
 }

@@ -65,7 +65,8 @@ public class TestMetadata extends AbstractConcordionTest {
     return result;
   }
 
-  public TestUpdateFilenameResult updateMetadataNameOfFile(String fileContentsEndpoint, String fileId, String newFilename) {
+  public TestUpdateFilenameResult updateMetadataNameOfFile(String fileContentsEndpoint, String fileId, String newFilename)
+      throws MalformedURLException {
     var result = new TestUpdateFilenameResult();
 
     // update filename
@@ -104,11 +105,12 @@ public class TestMetadata extends AbstractConcordionTest {
     return postFileWithFilename(client(), new URL(HTTP_APP_HOST + filesUrl), filename, "".getBytes());
   }
 
-  private void updateFilename(String fileContentsEndpoint, String newFilename, String fileId) {
+  private void updateFilename(String fileContentsEndpoint, String newFilename, String fileId)
+      throws MalformedURLException {
     var url = HTTP_APP_HOST + fileContentsEndpoint;
     putFileWithFilename(
         client(),
-        replace(url, "fileId", fileId),
+        new URL(replace(url, "fileId", fileId)),
         newFilename,
         "content2".getBytes()
     );

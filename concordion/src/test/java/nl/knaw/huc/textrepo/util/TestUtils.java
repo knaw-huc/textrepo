@@ -53,6 +53,15 @@ public class TestUtils {
 
   public static String getFileId(String location) {
     var pattern = Pattern.compile(".*\\/files\\/(.*)\\/latest");
+    return getId(location, pattern);
+  }
+
+  public static String getDocumentId(String location, String type) {
+    var pattern = Pattern.compile(".*\\/documents\\/(.*)\\/" + type);
+    return getId(location, pattern);
+  }
+
+  private static String getId(String location, Pattern pattern) {
     var matcher = pattern.matcher(location);
     if (matcher.matches()) {
       return matcher.group(1);
@@ -96,9 +105,37 @@ public class TestUtils {
     return request.post(entity);
   }
 
+  public static Response postDocumentWithExternalIdAndType(
+      Client client, URL filesEndpoint, String externalId, String fileType, byte[] content
+  ) {
+    logger.info("Posting document with external id [{}] to [{}]", externalId, filesEndpoint);
+    var contentDisposition = FormDataContentDisposition
+        .name("contents")
+        .size(content.length)
+        .build();
+
+    final var multiPart = new FormDataMultiPart()
+        .field("type", fileType)
+        .field("externalId", externalId)
+        .bodyPart(new FormDataBodyPart(
+            contentDisposition,
+            content,
+            APPLICATION_OCTET_STREAM_TYPE)
+        );
+
+    final var request = client
+        .register(MultiPartFeature.class)
+        .target(filesEndpoint.toString())
+        .request();
+
+    final var entity = entity(multiPart, multiPart.getMediaType());
+
+    return request.post(entity);
+  }
+
   public static Response putFileWithFilename(
       Client client,
-      String putFileContentsUrl,
+      URL url,
       String filename,
       byte[] content
   ) {
@@ -117,7 +154,7 @@ public class TestUtils {
 
     final var request = client
         .register(MultiPartFeature.class)
-        .target(putFileContentsUrl)
+        .target(url.toString())
         .request();
 
     final var entity = entity(multiPart, multiPart.getMediaType());
@@ -136,6 +173,10 @@ public class TestUtils {
     } catch (InterruptedException ex) {
       throw new RuntimeException("Could not sleep", ex);
     }
+  }
+
+  public static String getStatus(Response response) {
+    return response.getStatus() + " " + response.getStatusInfo();
   }
 
 }

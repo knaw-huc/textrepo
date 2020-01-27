@@ -72,7 +72,7 @@ public class DocumentsResourceTest {
   @Test
   public void postTestDocument() {
     when(fileService.createFile(any(String.class))).thenReturn(new TextrepoFile(TEST_FILE_ID, (short) 42));
-    when(documentService.createDocument(any(UUID.class), anyString())).thenReturn(TEST_DOC_ID);
+    when(documentService.createDocumentByExternalId(any(UUID.class), anyString())).thenReturn(TEST_DOC_ID);
 
     var byExternalId = "false";
     var response = postTestFile(byExternalId);
@@ -83,7 +83,7 @@ public class DocumentsResourceTest {
 
     var fileId = ArgumentCaptor.forClass(UUID.class);
     var externalId = ArgumentCaptor.forClass(String.class);
-    verify(documentService).createDocument(fileId.capture(), externalId.capture());
+    verify(documentService).createDocumentByExternalId(fileId.capture(), externalId.capture());
     assertThat(fileId.getValue()).isEqualTo(TEST_FILE_ID);
     assertThat(externalId.getValue()).isEqualTo(TEST_EXTERNAL_ID);
 

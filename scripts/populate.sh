@@ -21,4 +21,5 @@ curl -sv "$HOST/documents" \
 curl -sv "$HOST/documents" \
   -F "contents=@$XML;filename=example.file" \
   -F type=xml \
-  -F externalId=exampleFile
+  -F externalId=exampleFile \
+  -F byExternalId=true

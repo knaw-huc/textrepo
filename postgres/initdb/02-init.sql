@@ -35,7 +35,7 @@ create index version_by_file_id on versions (file_id);
 -- A document has an external id
 create table documents(
   id uuid primary key,
-  external_id varchar not null
+  external_id varchar not null unique
 );
 
 -- assist FK lookups: add compound index for PK fields in reverse order
