@@ -19,4 +19,8 @@ public interface DocumentsDao {
   @SqlQuery("select id, external_id from documents where id = :id")
   @RegisterConstructorMapper(value = Document.class)
   Document get(UUID id);
+
+  @SqlQuery("select id, external_id from documents where external_id = :externalId")
+  @RegisterConstructorMapper(value = Document.class)
+  Optional<Document> getByExternalId(String externalId);
 }
