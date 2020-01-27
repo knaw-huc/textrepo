@@ -20,7 +20,7 @@ public interface DocumentService {
 
   void addFileToDocument(UUID docId, UUID fileId);
 
-  TextrepoFile findFileForType(UUID docId, String fileType);
+  TextrepoFile findFileByTypeAndDocId(String fileType, UUID docId);
 
   Map<String, String> getMetadata(UUID docId);
 

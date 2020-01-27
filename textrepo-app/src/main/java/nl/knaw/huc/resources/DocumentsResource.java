@@ -120,7 +120,7 @@ public class DocumentsResource {
       @NotNull @PathParam("type") String typeName
   ) {
     logger.debug("getLatestVersionByType: docId={}, typeName={}", docId, typeName);
-    final var file = documentService.findFileForType(docId, typeName);
+    final var file = documentService.findFileByTypeAndDocId(typeName, docId);
 
     logger.debug(" -> getting latest version of file: {}", file);
     var version = fileService.getLatestVersion(file.getId());
@@ -140,7 +140,7 @@ public class DocumentsResource {
   ) {
     logger.debug("Updating {} contents of document: {}", type, docId);
 
-    return updateDocumentByTypeAndDocId(docId, type, uploadedInputStream, fileDetail);
+    return updateFileByTypeAndDocId(type, docId, uploadedInputStream, fileDetail);
   }
 
   @PUT
@@ -157,7 +157,7 @@ public class DocumentsResource {
     var docId = documentService.findDocumentByExternalId(externalId).orElseThrow(() ->
         new NotFoundException(format("Document with external id [%s] could not be found", externalId))
     );
-    return updateDocumentByTypeAndDocId(docId, type, uploadedInputStream, fileDetail);
+    return updateFileByTypeAndDocId(type, docId, uploadedInputStream, fileDetail);
   }
 
   @GET
@@ -192,13 +192,13 @@ public class DocumentsResource {
     return UriBuilder.fromResource(DocumentsResource.class).path("{uuid}/{type}").build(docId, type);
   }
 
-  private Response updateDocumentByTypeAndDocId(
-      UUID docId,
+  private Response updateFileByTypeAndDocId(
       String type,
+      UUID docId,
       InputStream uploadedInputStream,
       FormDataContentDisposition fileDetail
   ) {
-    final var file = documentService.findFileForType(docId, type);
+    final var file = documentService.findFileByTypeAndDocId(type, docId);
     logger.debug(" -> updating file: {}", file);
 
     final var version = fileService.createVersionWithFilenameMetadata(

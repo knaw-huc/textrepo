@@ -61,7 +61,7 @@ public class JdbiDocumentService implements DocumentService {
   }
 
   @Override
-  public TextrepoFile findFileForType(UUID docId, String fileType) {
+  public TextrepoFile findFileByTypeAndDocId(String fileType, UUID docId) {
     return documentFiles()
         .findFile(docId, fileType)
         .orElseThrow(() -> new NotFoundException(format(
