@@ -21,5 +21,5 @@ public interface DocumentService {
 
   boolean updateMetadata(UUID docId, MetadataEntry metadataEntry);
 
-  Optional<UUID> findDocumentByExternalId(String filename);
+  Optional<UUID> findDocumentByExternalId(String externalId);
 }

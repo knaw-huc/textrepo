@@ -27,7 +27,6 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import java.io.InputStream;
@@ -137,16 +136,24 @@ public class DocumentsResource {
   ) {
     logger.debug("Updating {} contents of document: {}", type, docId);
 
-    final var file = documentService.findFileForType(docId, type);
-    logger.debug(" -> updating file: {}", file);
+    return updateDocumentByTypeAndDocId(docId, type, uploadedInputStream, fileDetail);
+  }
 
-    final var version = fileService.createVersionWithFilenameMetadata(
-        file,
-        readContent(uploadedInputStream),
-        fileDetail.getFileName()
+  @PUT
+  @Path("/external-id/{externalId}/{type}")
+  @Consumes(MULTIPART_FORM_DATA)
+  @Produces(APPLICATION_JSON)
+  public Response updateDocumentByExternalIdAndType(
+      @PathParam("externalId") @NotBlank String externalId,
+      @PathParam("type") @NotBlank String type,
+      @FormDataParam("contents") InputStream uploadedInputStream,
+      @FormDataParam("contents") FormDataContentDisposition fileDetail
+  ) {
+    logger.debug("Updating {} contents of document with external id: {}", type, externalId);
+    var docId = documentService.findDocumentByExternalId(externalId).orElseThrow(() ->
+        new NotFoundException(format("Document with external id [%s] could not be found", externalId))
     );
-    logger.debug("Document [{}] has new version: {}", docId, version);
-    return Response.ok().build();
+    return updateDocumentByTypeAndDocId(docId, type, uploadedInputStream, fileDetail);
   }
 
   @GET
@@ -181,4 +188,21 @@ public class DocumentsResource {
     return UriBuilder.fromResource(DocumentsResource.class).path("{uuid}/{type}").build(docId, type);
   }
 
+  private Response updateDocumentByTypeAndDocId(
+      UUID docId,
+      String type,
+      InputStream uploadedInputStream,
+      FormDataContentDisposition fileDetail
+  ) {
+    final var file = documentService.findFileForType(docId, type);
+    logger.debug(" -> updating file: {}", file);
+
+    final var version = fileService.createVersionWithFilenameMetadata(
+        file,
+        readContent(uploadedInputStream),
+        fileDetail.getFileName()
+    );
+    logger.debug("Document [{}] has new version: {}", docId, version);
+    return Response.ok().build();
+  }
 }
