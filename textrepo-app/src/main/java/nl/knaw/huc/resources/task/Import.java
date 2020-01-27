@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -40,17 +41,21 @@ public class Import {
   public Response importDocumentContentsForFileWithType(
     @NotBlank @PathParam("externalId") String externalId,
     @NotBlank @PathParam("type") String type,
-    @FormDataParam("contents") InputStream uploadedInputStream,
-    @FormDataParam("contents") FormDataContentDisposition fileDetail
+    @NotNull @FormDataParam("contents") InputStream uploadedInputStream,
+    @NotNull @FormDataParam("contents") FormDataContentDisposition fileDetail
   ) {
     LOG.debug("importDocumentContentsForFileWithType: externalId={}, type={}", externalId, type);
-    final var importTask = factory.getDocumentImportBuilder()
-                                  .forExternalId(externalId)
+    final var builder = factory.getDocumentImportBuilder();
+
+    final var importTask = builder.forExternalId(externalId)
                                   .withType(type)
                                   .forFilename(fileDetail.getName())
                                   .withContents(uploadedInputStream)
                                   .build();
+
+    // TODO: what would be a good (generic) return value for a task?
     importTask.run();
+
     return Response.ok().build();
   }
 }
