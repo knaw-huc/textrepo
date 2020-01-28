@@ -1,4 +1,4 @@
-package nl.knaw.huc.resources.task;
+package nl.knaw.huc.resources.task.jdbi;
 
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.db.DocumentsDao;
@@ -19,7 +19,8 @@ class GetOrCreateDocument implements Function<String, Document> {
 
   @Override
   public Document apply(String externalId) {
-    return docs().getByExternalId(externalId).orElseGet(() -> createDocument(externalId));
+    return docs().getByExternalId(externalId)
+                 .orElseGet(() -> createDocument(externalId));
   }
 
   private Document createDocument(String externalId) {

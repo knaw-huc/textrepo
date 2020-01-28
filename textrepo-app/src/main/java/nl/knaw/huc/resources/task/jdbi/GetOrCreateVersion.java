@@ -1,4 +1,4 @@
-package nl.knaw.huc.resources.task;
+package nl.knaw.huc.resources.task.jdbi;
 
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.core.TextrepoFile;

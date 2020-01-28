@@ -1,5 +1,7 @@
-package nl.knaw.huc.resources.task;
+package nl.knaw.huc.resources.task.jdbi;
 
+import nl.knaw.huc.resources.task.ImportFileTaskBuilder;
+import nl.knaw.huc.resources.task.TaskBuilderFactory;
 import org.jdbi.v3.core.Jdbi;
 
 import java.util.UUID;
@@ -15,8 +17,8 @@ public class JdbiTaskFactory implements TaskBuilderFactory {
   }
 
   @Override
-  public TaskBuilder getDocumentImportBuilder() {
-    return new JdbiDocumentImportBuilder(jdbi, idGenerator);
+  public ImportFileTaskBuilder getDocumentImportBuilder() {
+    return new JdbiImportFileTaskBuilder(jdbi, idGenerator);
   }
 
 }

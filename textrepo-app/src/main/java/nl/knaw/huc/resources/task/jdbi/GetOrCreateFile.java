@@ -1,4 +1,4 @@
-package nl.knaw.huc.resources.task;
+package nl.knaw.huc.resources.task.jdbi;
 
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.core.TextrepoFile;
@@ -23,7 +23,8 @@ class GetOrCreateFile implements Function<Document, TextrepoFile> {
 
   @Override
   public TextrepoFile apply(Document doc) {
-    return df().findFile(doc.getId(), typeId).orElseGet(() -> createFile(typeId));
+    return df().findFile(doc.getId(), typeId)
+               .orElseGet(() -> createFile(typeId));
   }
 
   private TextrepoFile createFile(short typeId) {

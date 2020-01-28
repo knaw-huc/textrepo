@@ -1,8 +1,10 @@
-package nl.knaw.huc.resources.task;
+package nl.knaw.huc.resources.task.jdbi;
 
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.core.Version;
 import nl.knaw.huc.db.TypeDao;
+import nl.knaw.huc.resources.task.ImportFileTaskBuilder;
+import nl.knaw.huc.resources.task.Task;
 import org.jdbi.v3.core.Jdbi;
 
 import javax.ws.rs.NotFoundException;
@@ -13,7 +15,7 @@ import java.util.function.Supplier;
 
 import static nl.knaw.huc.resources.ResourceUtils.readContent;
 
-class JdbiDocumentImportBuilder implements TaskBuilder {
+class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
   private final Jdbi jdbi;
   private final Supplier<UUID> documentIdGenerator;
   private final Supplier<UUID> fileIdGenerator;
@@ -23,32 +25,32 @@ class JdbiDocumentImportBuilder implements TaskBuilder {
   private String filename;
   private InputStream inputStream;
 
-  public JdbiDocumentImportBuilder(Jdbi jdbi, Supplier<UUID> idGenerator) {
+  public JdbiImportFileTaskBuilder(Jdbi jdbi, Supplier<UUID> idGenerator) {
     this.jdbi = jdbi;
     this.documentIdGenerator = idGenerator;
     this.fileIdGenerator = idGenerator;
   }
 
   @Override
-  public TaskBuilder forExternalId(String externalId) {
+  public ImportFileTaskBuilder forExternalId(String externalId) {
     this.externalId = externalId;
     return this;
   }
 
   @Override
-  public TaskBuilder withType(String typeName) {
+  public ImportFileTaskBuilder withType(String typeName) {
     this.typeName = typeName;
     return this;
   }
 
   @Override
-  public TaskBuilder forFilename(String name) {
+  public ImportFileTaskBuilder forFilename(String name) {
     this.filename = name;
     return this;
   }
 
   @Override
-  public TaskBuilder withContents(InputStream inputStream) {
+  public ImportFileTaskBuilder withContents(InputStream inputStream) {
     this.inputStream = inputStream;
     return this;
   }
