@@ -86,7 +86,7 @@ class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
     public JdbiImportDocumentTask(String externalId, short typeId, String filename, Contents contents) {
       this.externalId = externalId;
       this.task = new GetOrCreateDocument(jdbi, documentIdGenerator)
-          .andThen(new GetOrCreateFile(jdbi, fileIdGenerator, typeId))
+          .andThen(new HaveFileForDocumentByType(jdbi, fileIdGenerator, typeId))
           .andThen(new UpdateFilename(jdbi, filename))
           .andThen(new SetCurrentFileContents(jdbi, contents));
     }

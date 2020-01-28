@@ -11,12 +11,12 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-class GetOrCreateFile implements Function<Document, TextrepoFile> {
+class HaveFileForDocumentByType implements Function<Document, TextrepoFile> {
   private final Jdbi jdbi;
   private final Supplier<UUID> idGenerator;
   private final short typeId;
 
-  GetOrCreateFile(Jdbi jdbi, Supplier<UUID> idGenerator, short typeId) {
+  HaveFileForDocumentByType(Jdbi jdbi, Supplier<UUID> idGenerator, short typeId) {
     this.jdbi = jdbi;
     this.idGenerator = idGenerator;
     this.typeId = typeId;
