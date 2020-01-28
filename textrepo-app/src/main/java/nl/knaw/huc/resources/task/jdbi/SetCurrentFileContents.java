@@ -8,14 +8,16 @@ import nl.knaw.huc.db.VersionDao;
 import org.jdbi.v3.core.Jdbi;
 
 import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import static java.time.LocalDateTime.now;
 
-class GetOrCreateVersion implements Function<TextrepoFile, Version> {
+class SetCurrentFileContents implements Function<TextrepoFile, Version> {
   private final Jdbi jdbi;
   private final Contents contents;
 
-  GetOrCreateVersion(Jdbi jdbi, Contents contents) {
+  SetCurrentFileContents(Jdbi jdbi, Contents contents) {
     this.jdbi = jdbi;
     this.contents = contents;
   }
@@ -23,13 +25,19 @@ class GetOrCreateVersion implements Function<TextrepoFile, Version> {
   @Override
   public Version apply(TextrepoFile file) {
     return versions().findLatestByFileId(file.getId())
-                     .filter(v -> v.getContentsSha().equals(contents.getSha224()))
-                     .orElseGet(() -> createVersion(file));
+                     .filter(hasIdenticalContents())
+                     .orElseGet(createNewVersionWithContents(file));
   }
 
-  private Version createVersion(TextrepoFile file) {
-    contents().insert(contents);
-    return new Version(file.getId(), now(), contents.getSha224());
+  private Predicate<Version> hasIdenticalContents() {
+    return candidate -> candidate.getContentsSha().equals(contents.getSha224());
+  }
+
+  private Supplier<Version> createNewVersionWithContents(TextrepoFile file) {
+    return () -> {
+      contents().insert(contents);
+      return new Version(file.getId(), now(), contents.getSha224());
+    };
   }
 
   private VersionDao versions() {
