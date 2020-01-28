@@ -1,17 +1,8 @@
 package nl.knaw.huc.resources.task;
 
-import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.core.Contents;
-import nl.knaw.huc.core.Document;
-import nl.knaw.huc.core.TextrepoFile;
 import nl.knaw.huc.core.Version;
-import nl.knaw.huc.db.ContentsDao;
-import nl.knaw.huc.db.DocumentFilesDao;
-import nl.knaw.huc.db.DocumentsDao;
-import nl.knaw.huc.db.FileDao;
-import nl.knaw.huc.db.MetadataDao;
 import nl.knaw.huc.db.TypeDao;
-import nl.knaw.huc.db.VersionDao;
 import org.jdbi.v3.core.Jdbi;
 
 import javax.ws.rs.NotFoundException;
@@ -20,12 +11,12 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static java.time.LocalDateTime.now;
 import static nl.knaw.huc.resources.ResourceUtils.readContent;
 
 class JdbiDocumentImportBuilder implements TaskBuilder {
   private final Jdbi jdbi;
-  private final Supplier<UUID> idGenerator;
+  private final Supplier<UUID> documentIdGenerator;
+  private final Supplier<UUID> fileIdGenerator;
 
   private String externalId;
   private String typeName;
@@ -34,7 +25,8 @@ class JdbiDocumentImportBuilder implements TaskBuilder {
 
   public JdbiDocumentImportBuilder(Jdbi jdbi, Supplier<UUID> idGenerator) {
     this.jdbi = jdbi;
-    this.idGenerator = idGenerator;
+    this.documentIdGenerator = idGenerator;
+    this.fileIdGenerator = idGenerator;
   }
 
   @Override
@@ -64,22 +56,17 @@ class JdbiDocumentImportBuilder implements TaskBuilder {
   @Override
   public Task build() {
     final var typeId = getTypeId();
-    final var contents = Contents.fromContent(readContent(inputStream));
+    final var contents = getContents();
 
-    final var getDocument = new GetOrCreateDocument(jdbi, idGenerator);
-    final var getDocumentFileByType = new GetOrCreateFile(jdbi, idGenerator, typeId);
-    final var updateFilename = new UpdateFilename(jdbi, filename);
-    final var getVersion = new GetOrCreateVersion(jdbi, contents);
-
-    var task = getDocument.andThen(getDocumentFileByType)
-                          .andThen(updateFilename)
-                          .andThen(getVersion);
-
-    return new JdbiImportDocumentTask(task, externalId);
+    return new JdbiImportDocumentTask(externalId, typeId, filename, contents);
   }
 
   private short getTypeId() {
     return types().find(typeName).orElseThrow(typeNotFound(typeName));
+  }
+
+  private Contents getContents() {
+    return Contents.fromContent(readContent(inputStream));
   }
 
   private TypeDao types() {
@@ -90,110 +77,21 @@ class JdbiDocumentImportBuilder implements TaskBuilder {
     return () -> new NotFoundException(String.format("No type found with name: %s", name));
   }
 
-  private static class UpdateFilename implements Function<TextrepoFile, TextrepoFile> {
-    private final Jdbi jdbi;
-    private final String filename;
+  private class JdbiImportDocumentTask implements Task {
+    private final String externalId;
+    private final Function<String, Version> task;
 
-    private UpdateFilename(Jdbi jdbi, String filename) {
-      this.jdbi = jdbi;
-      this.filename = filename;
+    public JdbiImportDocumentTask(String externalId, short typeId, String filename, Contents contents) {
+      this.externalId = externalId;
+      this.task = new GetOrCreateDocument(jdbi, documentIdGenerator)
+          .andThen(new GetOrCreateFile(jdbi, fileIdGenerator, typeId))
+          .andThen(new UpdateFilename(jdbi, filename))
+          .andThen(new GetOrCreateVersion(jdbi, contents));
     }
 
     @Override
-    public TextrepoFile apply(TextrepoFile file) {
-      metadata().updateFileMetadata(file.getId(), new MetadataEntry("filename", filename));
-      return file;
-    }
-
-    private MetadataDao metadata() {
-      return jdbi.onDemand(MetadataDao.class);
+    public void run() {
+      task.apply(externalId);
     }
   }
-
-  private static class GetOrCreateVersion implements Function<TextrepoFile, Version> {
-    private final Jdbi jdbi;
-    private final Contents contents;
-
-    private GetOrCreateVersion(Jdbi jdbi, Contents contents) {
-      this.jdbi = jdbi;
-      this.contents = contents;
-    }
-
-    @Override
-    public Version apply(TextrepoFile file) {
-      return versions().findLatestByFileId(file.getId())
-                       .filter(v -> v.getContentsSha().equals(contents.getSha224()))
-                       .orElseGet(() -> createVersion(file));
-    }
-
-    private Version createVersion(TextrepoFile file) {
-      contents().insert(contents);
-      return new Version(file.getId(), now(), contents.getSha224());
-    }
-
-    private VersionDao versions() {
-      return jdbi.onDemand(VersionDao.class);
-    }
-
-    private ContentsDao contents() {
-      return jdbi.onDemand(ContentsDao.class);
-    }
-  }
-
-  private static class GetOrCreateFile implements Function<Document, TextrepoFile> {
-    private final Jdbi jdbi;
-    private final Supplier<UUID> idGenerator;
-    private final short typeId;
-
-    private GetOrCreateFile(Jdbi jdbi, Supplier<UUID> idGenerator, short typeId) {
-      this.jdbi = jdbi;
-      this.idGenerator = idGenerator;
-      this.typeId = typeId;
-    }
-
-    @Override
-    public TextrepoFile apply(Document doc) {
-      return df().findFile(doc.getId(), typeId).orElseGet(() -> createFile(typeId));
-    }
-
-    private TextrepoFile createFile(short typeId) {
-      final var fileId = idGenerator.get();
-      files().create(fileId, typeId);
-      return new TextrepoFile(fileId, typeId);
-    }
-
-    private DocumentFilesDao df() {
-      return jdbi.onDemand(DocumentFilesDao.class);
-    }
-
-    private FileDao files() {
-      return jdbi.onDemand(FileDao.class);
-    }
-  }
-
-  private static class GetOrCreateDocument implements Function<String, Document> {
-    private final Jdbi jdbi;
-    private final Supplier<UUID> idGenerator;
-
-    private GetOrCreateDocument(Jdbi jdbi, Supplier<UUID> idGenerator) {
-      this.jdbi = jdbi;
-      this.idGenerator = idGenerator;
-    }
-
-    @Override
-    public Document apply(String externalId) {
-      return docs().getByExternalId(externalId).orElseGet(() -> createDocument(externalId));
-    }
-
-    private Document createDocument(String externalId) {
-      final var document = new Document(idGenerator.get(), externalId);
-      docs().insert(document);
-      return document;
-    }
-
-    private DocumentsDao docs() {
-      return jdbi.onDemand(DocumentsDao.class);
-    }
-  }
-
 }
