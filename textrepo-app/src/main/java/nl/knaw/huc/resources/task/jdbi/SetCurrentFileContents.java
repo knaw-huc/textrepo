@@ -40,8 +40,10 @@ class SetCurrentFileContents implements Function<TextrepoFile, Version> {
 
   private Supplier<Version> createNewVersionWithContents(TextrepoFile file) {
     return () -> {
+      final var version = new Version(file.getId(), now(), contents.getSha224());
       contents().insert(contents);
-      return new Version(file.getId(), now(), contents.getSha224());
+      versions().insert(version);
+      return version;
     };
   }
 
