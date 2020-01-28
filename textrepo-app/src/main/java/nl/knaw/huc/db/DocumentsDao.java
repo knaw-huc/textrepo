@@ -1,9 +1,7 @@
 package nl.knaw.huc.db;
 
 import nl.knaw.huc.core.Document;
-import nl.knaw.huc.core.TextrepoFile;
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
-import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.customizer.BindBean;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
@@ -23,4 +21,8 @@ public interface DocumentsDao {
   @SqlQuery("select id, external_id from documents where external_id = :externalId")
   @RegisterConstructorMapper(value = Document.class)
   Optional<Document> getByExternalId(String externalId);
+
+  default boolean exists(String externalId) {
+    return getByExternalId(externalId).isPresent();
+  }
 }
