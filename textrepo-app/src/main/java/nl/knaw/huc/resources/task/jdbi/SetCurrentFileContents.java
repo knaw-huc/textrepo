@@ -7,6 +7,7 @@ import nl.knaw.huc.db.ContentsDao;
 import nl.knaw.huc.db.VersionDao;
 import org.jdbi.v3.core.Jdbi;
 
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -24,9 +25,13 @@ class SetCurrentFileContents implements Function<TextrepoFile, Version> {
 
   @Override
   public Version apply(TextrepoFile file) {
+    return latestVersionIfIdentical(file)
+        .orElseGet(createNewVersionWithContents(file));
+  }
+
+  private Optional<Version> latestVersionIfIdentical(TextrepoFile file) {
     return versions().findLatestByFileId(file.getId())
-                     .filter(hasIdenticalContents())
-                     .orElseGet(createNewVersionWithContents(file));
+                     .filter(hasIdenticalContents());
   }
 
   private Predicate<Version> hasIdenticalContents() {
