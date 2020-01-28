@@ -27,8 +27,8 @@ class HaveFileForDocumentByType implements Function<Document, TextrepoFile> {
     return findFileForDocument(doc).orElseGet(createNewFileForDocument(doc));
   }
 
-  private Optional<TextrepoFile> findFileForDocument(Document document) {
-    return df().findFile(document.getId(), typeId);
+  private Optional<TextrepoFile> findFileForDocument(Document doc) {
+    return df().findFile(doc.getId(), typeId);
   }
 
   private Supplier<TextrepoFile> createNewFileForDocument(Document doc) {
