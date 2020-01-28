@@ -1,15 +1,10 @@
 package nl.knaw.huc.core;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.MoreObjects;
 
 import java.beans.ConstructorProperties;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
-/**
- * A file can contain different versions
- */
 public class Document {
 
   private UUID id;
