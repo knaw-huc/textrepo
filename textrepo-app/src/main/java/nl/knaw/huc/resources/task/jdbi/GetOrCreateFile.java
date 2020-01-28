@@ -6,6 +6,7 @@ import nl.knaw.huc.db.DocumentFilesDao;
 import nl.knaw.huc.db.FileDao;
 import org.jdbi.v3.core.Jdbi;
 
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -23,14 +24,21 @@ class GetOrCreateFile implements Function<Document, TextrepoFile> {
 
   @Override
   public TextrepoFile apply(Document doc) {
-    return df().findFile(doc.getId(), typeId)
-               .orElseGet(() -> createFile(typeId));
+    return findFileForDocument(doc)
+        .orElseGet(createNewFileForDocument(doc));
   }
 
-  private TextrepoFile createFile(short typeId) {
-    final var fileId = idGenerator.get();
-    files().create(fileId, typeId);
-    return new TextrepoFile(fileId, typeId);
+  private Optional<TextrepoFile> findFileForDocument(Document document) {
+    return df().findFile(document.getId(), typeId);
+  }
+
+  private Supplier<TextrepoFile> createNewFileForDocument(Document doc) {
+    return () -> {
+      final var file = new TextrepoFile(idGenerator.get(), typeId);
+      files().create(file.getId(), file.getTypeId()); // TODO: implement and use FileDao.save(TextrepoFile file)
+      df().insert(doc.getId(), file.getId());
+      return file;
+    };
   }
 
   private DocumentFilesDao df() {
