@@ -24,8 +24,7 @@ class HaveFileForDocumentByType implements Function<Document, TextrepoFile> {
 
   @Override
   public TextrepoFile apply(Document doc) {
-    return findFileForDocument(doc)
-        .orElseGet(createNewFileForDocument(doc));
+    return findFileForDocument(doc).orElseGet(createNewFileForDocument(doc));
   }
 
   private Optional<TextrepoFile> findFileForDocument(Document document) {
