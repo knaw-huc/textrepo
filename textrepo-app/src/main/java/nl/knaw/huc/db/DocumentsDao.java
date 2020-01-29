@@ -16,7 +16,7 @@ public interface DocumentsDao {
   @SqlUpdate("insert into documents (id, external_id) values (:id, :externalId)")
   void insert(@BindBean Document document);
 
-  @SqlQuery("select id, external_id from documents where id = :id")
+  @SqlQuery("select id, external_id from documents where id = ?")
   @RegisterConstructorMapper(value = Document.class)
   Document get(UUID id);
 }
