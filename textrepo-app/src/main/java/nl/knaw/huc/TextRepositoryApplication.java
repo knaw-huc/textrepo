@@ -15,7 +15,7 @@ import nl.knaw.huc.resources.FileMetadataResource;
 import nl.knaw.huc.resources.FileVersionsResource;
 import nl.knaw.huc.resources.FilesResource;
 import nl.knaw.huc.resources.TypeResource;
-import nl.knaw.huc.resources.task.Import;
+import nl.knaw.huc.resources.task.ImportFile;
 import nl.knaw.huc.resources.task.jdbi.JdbiTaskFactory;
 import nl.knaw.huc.service.ContentsService;
 import nl.knaw.huc.service.JdbiDocumentService;
@@ -90,7 +90,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     var versionsResource = new FileVersionsResource(versionService);
     var documentService = new JdbiDocumentService(jdbi, uuidGenerator);
     var documentsResource = new DocumentsResource(documentService, fileService, metadataService);
-    var importResource = new Import(new JdbiTaskFactory(jdbi, uuidGenerator));
+    var importResource = new ImportFile(new JdbiTaskFactory(jdbi, uuidGenerator));
 
     environment.jersey().register(typeResource);
     environment.jersey().register(metadataResource);

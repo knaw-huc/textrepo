@@ -24,11 +24,11 @@ import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
 
 @Api(tags = {"import", "documents"})
 @Path("task/import")
-public class Import {
-  private static final Logger LOG = LoggerFactory.getLogger(Import.class);
+public class ImportFile {
+  private static final Logger LOG = LoggerFactory.getLogger(ImportFile.class);
   private final TaskBuilderFactory factory;
 
-  public Import(TaskBuilderFactory factory) {
+  public ImportFile(TaskBuilderFactory factory) {
     this.factory = factory;
   }
 
