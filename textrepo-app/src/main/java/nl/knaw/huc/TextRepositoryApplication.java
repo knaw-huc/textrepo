@@ -15,6 +15,8 @@ import nl.knaw.huc.resources.FileMetadataResource;
 import nl.knaw.huc.resources.FileVersionsResource;
 import nl.knaw.huc.resources.FilesResource;
 import nl.knaw.huc.resources.TypeResource;
+import nl.knaw.huc.resources.task.Import;
+import nl.knaw.huc.resources.task.jdbi.JdbiTaskFactory;
 import nl.knaw.huc.service.ContentsService;
 import nl.knaw.huc.service.JdbiDocumentService;
 import nl.knaw.huc.service.JdbiFileContentsService;
@@ -88,6 +90,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     var versionsResource = new FileVersionsResource(versionService);
     var documentService = new JdbiDocumentService(jdbi, uuidGenerator);
     var documentsResource = new DocumentsResource(documentService, fileService);
+    var importResource = new Import(new JdbiTaskFactory(jdbi, uuidGenerator));
 
     environment.jersey().register(typeResource);
     environment.jersey().register(metadataResource);
@@ -96,6 +99,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     environment.jersey().register(contentsResource);
     environment.jersey().register(versionsResource);
     environment.jersey().register(documentsResource);
+    environment.jersey().register(importResource);
 
     environment.lifecycle().manage(fileIndexService);
     customIndexers.forEach(ci -> environment.lifecycle().manage(ci));

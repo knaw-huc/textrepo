@@ -18,7 +18,7 @@ class UpdateFilename implements Function<TextrepoFile, TextrepoFile> {
 
   @Override
   public TextrepoFile apply(TextrepoFile file) {
-    metadata().updateFileMetadata(file.getId(), new MetadataEntry("filename", filename));
+    metadata().upsertFileMetadata(file, new MetadataEntry("filename", filename));
     return file;
   }
 
