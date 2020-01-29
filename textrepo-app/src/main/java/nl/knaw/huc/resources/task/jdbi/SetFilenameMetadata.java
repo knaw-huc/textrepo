@@ -7,11 +7,11 @@ import org.jdbi.v3.core.Jdbi;
 
 import java.util.function.Function;
 
-class UpdateFilename implements Function<TextrepoFile, TextrepoFile> {
+class SetFilenameMetadata implements Function<TextrepoFile, TextrepoFile> {
   private final Jdbi jdbi;
   private final String filename;
 
-  UpdateFilename(Jdbi jdbi, String filename) {
+  SetFilenameMetadata(Jdbi jdbi, String filename) {
     this.jdbi = jdbi;
     this.filename = filename;
   }
