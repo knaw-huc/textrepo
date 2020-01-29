@@ -22,7 +22,7 @@ import java.io.InputStream;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
 
-@Api(tags = {"import", "documents"})
+@Api(tags = {"task", "import"})
 @Path("task/import")
 public class ImportFile {
   private static final Logger LOG = LoggerFactory.getLogger(ImportFile.class);
