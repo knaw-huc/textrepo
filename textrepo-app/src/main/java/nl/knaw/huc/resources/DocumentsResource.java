@@ -10,6 +10,7 @@ import nl.knaw.huc.api.ResultDocument;
 import nl.knaw.huc.core.Version;
 import nl.knaw.huc.service.DocumentService;
 import nl.knaw.huc.service.FileService;
+import nl.knaw.huc.service.MetadataService;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
@@ -46,10 +47,17 @@ public class DocumentsResource {
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final DocumentService documentService;
   private final FileService fileService;
+  private final MetadataService metadataService;
 
-  public DocumentsResource(DocumentService documentService, FileService fileService) {
+  public DocumentsResource(
+      DocumentService documentService,
+      FileService fileService,
+
+      MetadataService metadataService
+  ) {
     this.documentService = documentService;
     this.fileService = fileService;
+    this.metadataService = metadataService;
   }
 
   @POST
@@ -71,13 +79,12 @@ public class DocumentsResource {
     );
 
     final var filename = fileDetail.getFileName();
-    final var newFile = fileService.createFile(type);
+    final var newFile = fileService.createFile(type, filename);
     logger.debug("Created: {}", newFile);
 
-    fileService.createVersionWithFilenameMetadata(
+    fileService.createVersion(
         newFile,
-        readContent(uploadedInputStream),
-        filename
+        readContent(uploadedInputStream)
     );
     logger.debug("New version of {} created for content", newFile);
     final UUID newDocId;
@@ -139,7 +146,6 @@ public class DocumentsResource {
       @FormDataParam("contents") FormDataContentDisposition fileDetail
   ) {
     logger.debug("Updating {} contents of document: {}", type, docId);
-
     return updateFileByTypeAndDocId(type, docId, uploadedInputStream, fileDetail);
   }
 
@@ -192,6 +198,9 @@ public class DocumentsResource {
     return UriBuilder.fromResource(DocumentsResource.class).path("{uuid}/{type}").build(docId, type);
   }
 
+  /**
+   * TODO: move to service layer
+   */
   private Response updateFileByTypeAndDocId(
       String type,
       UUID docId,
@@ -201,11 +210,14 @@ public class DocumentsResource {
     final var file = documentService.findFileByTypeAndDocId(type, docId);
     logger.debug(" -> updating file: {}", file);
 
-    final var version = fileService.createVersionWithFilenameMetadata(
+    final var version = fileService.createVersion(
         file,
-        readContent(uploadedInputStream),
-        fileDetail.getFileName()
+        readContent(uploadedInputStream)
     );
+
+    var filenameMetadata = new MetadataEntry("filename", fileDetail.getFileName());
+    metadataService.update(file.getId(), filenameMetadata);
+
     logger.debug("Document [{}] has new version: {}", docId, version);
     return Response.ok().build();
   }

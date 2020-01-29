@@ -81,7 +81,8 @@ public class FilesResource {
         new FormContents(
             fileDetail.getFileName(),
             readContent(inputStream)
-        ));
+        )
+    );
 
     return Response
         .created(locationOf(resultFile.getVersion().getFileId()))
@@ -103,11 +104,10 @@ public class FilesResource {
   }
 
   private ResultContents handleNewFile(String typeName, FormContents formContents) {
-    var fileId = fileService.createFile(typeName);
-    var version = fileService.createVersionWithFilenameMetadata(
+    var fileId = fileService.createFile(typeName, formContents.getName());
+    var version = fileService.createVersion(
         fileId,
-        formContents.getContent(),
-        formContents.getName()
+        formContents.getContent()
     );
     return new ResultContents(
         formContents.getName(),

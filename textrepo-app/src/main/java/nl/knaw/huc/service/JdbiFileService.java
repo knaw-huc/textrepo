@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.validation.constraints.NotBlank;
 import javax.ws.rs.NotFoundException;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -41,23 +42,25 @@ public class JdbiFileService implements FileService {
     this.metadataService = metadataService;
   }
 
-  public TextrepoFile createFile(@Nonnull String type) {
+  public TextrepoFile createFile(
+      @Nonnull String type,
+      @Nonnull String filename
+  ) {
     logger.trace("creating file of type: {}", type);
     final var fileId = fileIdGenerator.get();
     final var typeId = typeService.getId(type);
     files().create(fileId, typeId);
+    metadataService.insert(fileId, new MetadataEntry("filename", filename));
     return new TextrepoFile(fileId, typeId);
   }
 
-  public Version createVersionWithFilenameMetadata(TextrepoFile file, byte[] content, String filename) {
+  public Version createVersion(TextrepoFile file, byte[] content) {
     final var contents = fromContent(content);
-    return addFile(contents, file, filename);
+    return addFile(contents, file);
   }
 
-  public Version addFile(@Nonnull Contents contents, TextrepoFile file, String filename) {
-    var version = versionService.insertNewVersion(file, contents, now());
-    metadataService.insert(version.getFileId(), new MetadataEntry("filename", filename));
-    return version;
+  public Version addFile(@Nonnull Contents contents, TextrepoFile file) {
+    return versionService.insertNewVersion(file, contents, now());
   }
 
   public Version getLatestVersion(@Nonnull UUID fileId) {
@@ -69,4 +72,5 @@ public class JdbiFileService implements FileService {
   private FileDao files() {
     return jdbi.onDemand(FileDao.class);
   }
+
 }

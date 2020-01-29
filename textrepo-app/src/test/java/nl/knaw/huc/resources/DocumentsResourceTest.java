@@ -4,10 +4,12 @@ import ch.qos.logback.classic.Level;
 import com.jayway.jsonpath.JsonPath;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.testing.junit.ResourceTestRule;
+import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.core.TextrepoFile;
 import nl.knaw.huc.service.DocumentService;
 import nl.knaw.huc.service.FileService;
+import nl.knaw.huc.service.MetadataService;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
@@ -29,8 +31,10 @@ import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -38,6 +42,7 @@ public class DocumentsResourceTest {
   private static final String TEST_CONTENT = "hello test";
   private static final String TEST_FILENAME = "just-a-filename.txt";
   private static final String TEST_TYPE = "test-type";
+  private static final Short TEST_TYPE_ID = (short) 42;
   private static final String TEST_EXTERNAL_ID = "test-external-id";
   private static final UUID TEST_FILE_ID = UUID.randomUUID();
   private static final UUID TEST_DOC_ID = UUID.randomUUID();
@@ -45,6 +50,7 @@ public class DocumentsResourceTest {
   private static final Jdbi jdbi = mock(Jdbi.class);
   private static final DocumentService documentService = mock(DocumentService.class);
   private static final FileService fileService = mock(FileService.class);
+  private static final MetadataService metadataService = mock(MetadataService.class);
 
   // https://stackoverflow.com/questions/31730571/how-to-turn-on-tracing-in-a-unit-test-using-a-resourcetestrule
   // Actually has to go /before/ ResourceTestRule these days as bootstrap()ing guarded against multiple calls.
@@ -56,7 +62,7 @@ public class DocumentsResourceTest {
   public static final ResourceTestRule resource = ResourceTestRule
       .builder()
       .addProvider(MultiPartFeature.class)
-      .addResource(new DocumentsResource(documentService, fileService))
+      .addResource(new DocumentsResource(documentService, fileService, metadataService))
       .build();
 
   @Before
@@ -71,14 +77,14 @@ public class DocumentsResourceTest {
 
   @Test
   public void postTestDocument() {
-    when(fileService.createFile(any(String.class))).thenReturn(new TextrepoFile(TEST_FILE_ID, (short) 42));
+    when(fileService.createFile(any(String.class), eq(TEST_FILENAME))).thenReturn(new TextrepoFile(TEST_FILE_ID, TEST_TYPE_ID));
     when(documentService.createDocument(anyString())).thenReturn(TEST_DOC_ID);
 
     var byExternalId = "false";
     var response = postTestFile(byExternalId);
 
     var type = ArgumentCaptor.forClass(String.class);
-    verify(fileService).createFile(type.capture());
+    verify(fileService).createFile(type.capture(), eq(TEST_FILENAME));
     assertThat(type.getValue()).isEqualTo(TEST_TYPE);
 
     var externalId = ArgumentCaptor.forClass(String.class);
@@ -91,7 +97,7 @@ public class DocumentsResourceTest {
 
   @Test
   public void addDocument_shouldUseExternalId_whenByExternalIdIsTrue() {
-    when(fileService.createFile(any(String.class)))
+    when(fileService.createFile(any(String.class), eq(TEST_FILENAME)))
         .thenReturn(new TextrepoFile(TEST_FILE_ID, (short) 42));
     when(documentService.findDocumentByExternalId(TEST_EXTERNAL_ID))
         .thenReturn(Optional.of(TEST_DOC_ID));
@@ -100,7 +106,7 @@ public class DocumentsResourceTest {
     var response = postTestFile(byExternalId);
 
     var type = ArgumentCaptor.forClass(String.class);
-    verify(fileService).createFile(type.capture());
+    verify(fileService).createFile(type.capture(), eq(TEST_FILENAME));
     assertThat(type.getValue()).isEqualTo(TEST_TYPE);
 
     var docId = ArgumentCaptor.forClass(UUID.class);
@@ -132,6 +138,8 @@ public class DocumentsResourceTest {
   public void updateDocumentByExternalIdAndType_shouldUpdateDocument() {
     when(documentService.findDocumentByExternalId(TEST_EXTERNAL_ID))
         .thenReturn(Optional.of(TEST_DOC_ID));
+    when(documentService.findFileByTypeAndDocId(TEST_TYPE, TEST_DOC_ID))
+        .thenReturn(new TextrepoFile(TEST_FILE_ID, TEST_TYPE_ID));
 
     final var bytes = TEST_CONTENT.getBytes();
     final var contentDisposition = FormDataContentDisposition
@@ -155,6 +163,10 @@ public class DocumentsResourceTest {
     var externalId = ArgumentCaptor.forClass(String.class);
     verify(documentService).findDocumentByExternalId(externalId.capture());
     assertThat(externalId.getValue()).isEqualTo(TEST_EXTERNAL_ID);
+
+    var metadata = ArgumentCaptor.forClass(MetadataEntry.class);
+    verify(metadataService, times(1)).update(eq(TEST_FILE_ID), metadata.capture());
+    assertThat(metadata.getValue().getValue()).isEqualTo(TEST_FILENAME);
   }
 
   @Test
