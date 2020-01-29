@@ -10,7 +10,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface DocumentsDao {
-
   @SqlUpdate("insert into documents (id, external_id) values (:id, :externalId)")
   void insert(@BindBean Document document);
 
@@ -18,11 +17,7 @@ public interface DocumentsDao {
   @RegisterConstructorMapper(value = Document.class)
   Document get(UUID id);
 
-  @SqlQuery("select id, external_id from documents where external_id = :externalId")
+  @SqlQuery("select id, external_id from documents where external_id = ?")
   @RegisterConstructorMapper(value = Document.class)
   Optional<Document> getByExternalId(String externalId);
-
-  default boolean exists(String externalId) {
-    return getByExternalId(externalId).isPresent();
-  }
 }
