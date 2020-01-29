@@ -2,7 +2,7 @@ package nl.knaw.huc.resources.task.jdbi;
 
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.db.DocumentsDao;
-import org.jdbi.v3.core.Jdbi;
+import org.jdbi.v3.core.Handle;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -10,11 +10,11 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 class HaveDocumentByExternalId implements Function<String, Document> {
-  private final Jdbi jdbi;
+  private final Handle transaction;
   private final Supplier<UUID> idGenerator;
 
-  HaveDocumentByExternalId(Jdbi jdbi, Supplier<UUID> idGenerator) {
-    this.jdbi = jdbi;
+  HaveDocumentByExternalId(Handle transaction, Supplier<UUID> idGenerator) {
+    this.transaction = transaction;
     this.idGenerator = idGenerator;
   }
 
@@ -36,6 +36,6 @@ class HaveDocumentByExternalId implements Function<String, Document> {
   }
 
   private DocumentsDao docs() {
-    return jdbi.onDemand(DocumentsDao.class);
+    return transaction.attach(DocumentsDao.class);
   }
 }

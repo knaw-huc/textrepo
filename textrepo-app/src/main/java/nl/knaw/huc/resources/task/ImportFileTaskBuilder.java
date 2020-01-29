@@ -9,7 +9,7 @@ public interface ImportFileTaskBuilder {
 
   ImportFileTaskBuilder forFilename(String name);
 
-  ImportFileTaskBuilder withContents(InputStream inputStream);
+  ImportFileTaskBuilder withContents(byte[] contents);
 
   Task build();
 }

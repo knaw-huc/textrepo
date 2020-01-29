@@ -5,6 +5,7 @@ import nl.knaw.huc.core.TextrepoFile;
 import nl.knaw.huc.core.Version;
 import nl.knaw.huc.db.ContentsDao;
 import nl.knaw.huc.db.VersionDao;
+import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
 
 import java.util.Optional;
@@ -15,11 +16,11 @@ import java.util.function.Supplier;
 import static java.time.LocalDateTime.now;
 
 class SetCurrentFileContents implements Function<TextrepoFile, Version> {
-  private final Jdbi jdbi;
+  private final Handle transaction;
   private final Contents contents;
 
-  SetCurrentFileContents(Jdbi jdbi, Contents contents) {
-    this.jdbi = jdbi;
+  SetCurrentFileContents(Handle transaction, Contents contents) {
+    this.transaction = transaction;
     this.contents = contents;
   }
 
@@ -48,10 +49,10 @@ class SetCurrentFileContents implements Function<TextrepoFile, Version> {
   }
 
   private VersionDao versions() {
-    return jdbi.onDemand(VersionDao.class);
+    return transaction.attach(VersionDao.class);
   }
 
   private ContentsDao contents() {
-    return jdbi.onDemand(ContentsDao.class);
+    return transaction.attach(ContentsDao.class);
   }
 }

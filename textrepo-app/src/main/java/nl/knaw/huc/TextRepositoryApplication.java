@@ -70,7 +70,9 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
 
   @Override
   public void run(TextRepositoryConfiguration config, Environment environment) {
-    Supplier<UUID> uuidGenerator = UUID::randomUUID;
+    final Supplier<UUID> uuidGenerator = UUID::randomUUID;
+
+    final int maxPayloadSize = 4 * 1024 * 1024; // TODO: arbitrary, get from configuration and figure out sane default
 
     var jdbi = createJdbi(config, environment);
     var contentsStoreService = new JdbiContentsStorage(jdbi);
@@ -90,7 +92,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     var versionsResource = new FileVersionsResource(versionService);
     var documentService = new JdbiDocumentService(jdbi, uuidGenerator);
     var documentsResource = new DocumentsResource(documentService, fileService, metadataService);
-    var importResource = new ImportFile(new JdbiTaskFactory(jdbi, uuidGenerator));
+    var importResource = new ImportFile(new JdbiTaskFactory(jdbi, uuidGenerator), maxPayloadSize);
 
     environment.jersey().register(typeResource);
     environment.jersey().register(metadataResource);

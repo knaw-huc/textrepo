@@ -1,7 +1,6 @@
 package nl.knaw.huc.resources.task.jdbi;
 
 import nl.knaw.huc.core.Contents;
-import nl.knaw.huc.core.Version;
 import nl.knaw.huc.db.TypeDao;
 import nl.knaw.huc.resources.task.ImportFileTaskBuilder;
 import nl.knaw.huc.resources.task.Task;
@@ -10,7 +9,6 @@ import org.jdbi.v3.core.Jdbi;
 import javax.ws.rs.NotFoundException;
 import java.io.InputStream;
 import java.util.UUID;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static nl.knaw.huc.resources.ResourceUtils.readContent;
@@ -23,7 +21,7 @@ class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
   private String externalId;
   private String typeName;
   private String filename;
-  private InputStream inputStream;
+  private byte[] contents;
 
   public JdbiImportFileTaskBuilder(Jdbi jdbi, Supplier<UUID> idGenerator) {
     this.jdbi = jdbi;
@@ -50,17 +48,14 @@ class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
   }
 
   @Override
-  public ImportFileTaskBuilder withContents(InputStream inputStream) {
-    this.inputStream = inputStream;
+  public ImportFileTaskBuilder withContents(byte[] contents) {
+    this.contents = contents;
     return this;
   }
 
   @Override
   public Task build() {
-    final var typeId = getTypeId();
-    final var contents = getContents();
-
-    return new JdbiImportDocumentTask(externalId, typeId, filename, contents);
+    return new JdbiImportDocumentTask(externalId, getTypeId(), filename, getContents());
   }
 
   private short getTypeId() {
@@ -68,7 +63,7 @@ class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
   }
 
   private Contents getContents() {
-    return Contents.fromContent(readContent(inputStream));
+    return Contents.fromContent(contents);
   }
 
   private TypeDao types() {
@@ -81,19 +76,25 @@ class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
 
   private class JdbiImportDocumentTask implements Task {
     private final String externalId;
-    private final Function<String, Version> task;
+    private final short typeId;
+    private final String filename;
+    private final Contents contents;
 
-    public JdbiImportDocumentTask(String externalId, short typeId, String filename, Contents contents) {
+    private JdbiImportDocumentTask(String externalId, short typeId, String filename, Contents contents) {
       this.externalId = externalId;
-      this.task = new HaveDocumentByExternalId(jdbi, documentIdGenerator)
-          .andThen(new HaveFileForDocumentByType(jdbi, fileIdGenerator, typeId))
-          .andThen(new SetFilenameMetadata(jdbi, filename))
-          .andThen(new SetCurrentFileContents(jdbi, contents));
+      this.typeId = typeId;
+      this.filename = filename;
+      this.contents = contents;
     }
 
     @Override
     public void run() {
-      task.apply(externalId);
+      jdbi.useTransaction(txn ->
+        new HaveDocumentByExternalId(txn, documentIdGenerator)
+          .andThen(new HaveFileForDocumentByType(txn, fileIdGenerator, typeId))
+          .andThen(new SetFilenameMetadata(txn, filename))
+          .andThen(new SetCurrentFileContents(txn, contents))
+          .apply(externalId));
     }
   }
 }

@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import nl.knaw.huc.resources.PayloadTooLargeException;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
@@ -11,6 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -21,15 +24,21 @@ import java.io.InputStream;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
+import static nl.knaw.huc.resources.ResourceUtils.readContent;
 
 @Api(tags = {"task", "import"})
 @Path("task/import")
 public class ImportFile {
   private static final Logger LOG = LoggerFactory.getLogger(ImportFile.class);
-  private final TaskBuilderFactory factory;
 
-  public ImportFile(TaskBuilderFactory factory) {
+  private final TaskBuilderFactory factory;
+  private final int maxPayloadSize;
+
+  public ImportFile(TaskBuilderFactory factory, int maxPayloadSize) {
     this.factory = factory;
+    this.maxPayloadSize = maxPayloadSize;
+
+    LOG.debug("ImportFile resource configured with maxPayloadSize={}", maxPayloadSize);
   }
 
   @POST
@@ -44,13 +53,30 @@ public class ImportFile {
       @NotNull @FormDataParam("contents") InputStream uploadedInputStream,
       @NotNull @FormDataParam("contents") FormDataContentDisposition fileDetail
   ) {
-    LOG.debug("importDocumentContentsForFileWithType: externalId={}, type={}", externalId, type);
-    final var builder = factory.getDocumentImportBuilder();
+    final var announcedSize = fileDetail.getSize();
+    LOG.debug("ImportFile: externalId={}, type={}, size={}", externalId, type, announcedSize);
 
+    // Protect my future self from accidentally uploading a "yuge" tarball:
+    //   1. check announced length before actually reading contents
+    //   2. if ok, read contents and ensure size matches announced size
+
+    if (announcedSize > maxPayloadSize) {
+      throw new PayloadTooLargeException("Max. allowed size: " + maxPayloadSize);
+    }
+
+    final var contents = readContent(uploadedInputStream);
+    if (contents.length != announcedSize) {
+      var msg = String.format("Actual content length (%d) does not match announced size (%d)",
+        contents.length, announcedSize);
+      LOG.warn(msg);
+      throw new BadRequestException(msg);
+    }
+
+    final var builder = factory.getDocumentImportBuilder();
     final var importTask = builder.forExternalId(externalId)
                                   .withType(type)
                                   .forFilename(fileDetail.getFileName())
-                                  .withContents(uploadedInputStream)
+                                  .withContents(contents)
                                   .build();
 
     // TODO: what would be a good (generic) return value for a task?
