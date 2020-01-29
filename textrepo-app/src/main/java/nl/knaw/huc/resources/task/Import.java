@@ -49,7 +49,7 @@ public class Import {
 
     final var importTask = builder.forExternalId(externalId)
                                   .withType(type)
-                                  .forFilename(fileDetail.getName())
+                                  .forFilename(fileDetail.getFileName())
                                   .withContents(uploadedInputStream)
                                   .build();
 
