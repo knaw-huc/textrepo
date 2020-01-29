@@ -60,50 +60,6 @@ public class DocumentsResource {
     this.metadataService = metadataService;
   }
 
-  @POST
-  @Consumes(MULTIPART_FORM_DATA)
-  @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Create a new document by uploading contents for one of its file types")
-  @ApiResponses(value = {@ApiResponse(code = 201, message = "CREATED")})
-  public Response addDocument(
-      @NotBlank @FormDataParam("type") String type,
-      @NotBlank @FormDataParam("externalId") String externalId,
-      // TODO: atm byExternalId means something like 'addFileToExistingDocByExternalId':
-      @NotNull @DefaultValue("false") @FormDataParam("byExternalId") Boolean addFileToExistingDocByExternalId,
-      @FormDataParam("contents") InputStream uploadedInputStream,
-      @FormDataParam("contents") FormDataContentDisposition fileDetail
-  ) {
-    logger.debug(
-        "addDocument: type={}, byExternalId={}, externalId={}",
-        type, addFileToExistingDocByExternalId, externalId
-    );
-
-    final var filename = fileDetail.getFileName();
-    final var newFile = fileService.createFile(type, filename);
-    logger.debug("Created: {}", newFile);
-
-    fileService.createVersion(
-        newFile,
-        readContent(uploadedInputStream)
-    );
-    logger.debug("New version of {} created for content", newFile);
-    final UUID newDocId;
-    if (addFileToExistingDocByExternalId) {
-      logger.debug("Finding existing document for external id: {}", externalId);
-      newDocId = documentService
-          .findDocumentByExternalId(externalId)
-          .orElseThrow(() -> new NotFoundException("No document for external id: " + externalId));
-      logger.debug("Adding file {} to existing document {}", newDocId, newFile.getId());
-      documentService.addFileToDocument(newDocId, newFile.getId());
-    } else {
-      newDocId = documentService.createDocument(externalId);
-      documentService.addFileToDocument(newDocId, newFile.getId());
-      logger.debug("Created new document {} for file {}", newDocId, newFile.getId());
-    }
-
-    return Response.created(locationOf(newDocId, type)).build();
-  }
-
   @GET
   @Path("/{id}")
   @Produces(APPLICATION_JSON)
@@ -117,24 +73,6 @@ public class DocumentsResource {
     return Response.ok(new ResultDocument(doc)).build();
   }
 
-  @GET
-  @Path("/{uuid}/{type}") // for now '/latest' is implicit
-  @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Get latest version of document's file by type")
-  @ApiResponses(value = {@ApiResponse(code = 200, response = Version.class, message = "OK")})
-  public Response getLatestVersionByType(
-      @PathParam("uuid") @Valid UUID docId,
-      @NotNull @PathParam("type") String typeName
-  ) {
-    logger.debug("getLatestVersionByType: docId={}, typeName={}", docId, typeName);
-    final var file = documentService.findFileByTypeAndDocId(typeName, docId);
-
-    logger.debug(" -> getting latest version of file: {}", file);
-    var version = fileService.getLatestVersion(file.getId());
-
-    return Response.ok(version).build();
-  }
-
   @PUT
   @Path("/{uuid}/{type}")
   @Consumes(MULTIPART_FORM_DATA)
@@ -146,23 +84,6 @@ public class DocumentsResource {
       @FormDataParam("contents") FormDataContentDisposition fileDetail
   ) {
     logger.debug("Updating {} contents of document: {}", type, docId);
-    return updateFileByTypeAndDocId(type, docId, uploadedInputStream, fileDetail);
-  }
-
-  @PUT
-  @Path("/external-id/{externalId}/{type}")
-  @Consumes(MULTIPART_FORM_DATA)
-  @Produces(APPLICATION_JSON)
-  public Response updateDocumentByExternalIdAndType(
-      @PathParam("externalId") @NotBlank String externalId,
-      @PathParam("type") @NotBlank String type,
-      @FormDataParam("contents") InputStream uploadedInputStream,
-      @FormDataParam("contents") FormDataContentDisposition fileDetail
-  ) {
-    logger.debug("Updating {} contents of document with external id: {}", type, externalId);
-    var docId = documentService.findDocumentByExternalId(externalId).orElseThrow(() ->
-        new NotFoundException(format("Document with external id [%s] could not be found", externalId))
-    );
     return updateFileByTypeAndDocId(type, docId, uploadedInputStream, fileDetail);
   }
 

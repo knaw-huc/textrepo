@@ -39,13 +39,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class DocumentsResourceTest {
-  private static final String TEST_CONTENT = "hello test";
-  private static final String TEST_FILENAME = "just-a-filename.txt";
-  private static final String TEST_TYPE = "test-type";
-  private static final Short TEST_TYPE_ID = (short) 42;
+
   private static final String TEST_EXTERNAL_ID = "test-external-id";
-  private static final UUID TEST_FILE_ID = UUID.randomUUID();
-  private static final UUID TEST_DOC_ID = UUID.randomUUID();
 
   private static final Jdbi jdbi = mock(Jdbi.class);
   private static final DocumentService documentService = mock(DocumentService.class);
@@ -76,50 +71,6 @@ public class DocumentsResourceTest {
   }
 
   @Test
-  public void postTestDocument() {
-    when(fileService.createFile(any(String.class), eq(TEST_FILENAME))).thenReturn(new TextrepoFile(TEST_FILE_ID, TEST_TYPE_ID));
-    when(documentService.createDocument(anyString())).thenReturn(TEST_DOC_ID);
-
-    var byExternalId = "false";
-    var response = postTestFile(byExternalId);
-
-    var type = ArgumentCaptor.forClass(String.class);
-    verify(fileService).createFile(type.capture(), eq(TEST_FILENAME));
-    assertThat(type.getValue()).isEqualTo(TEST_TYPE);
-
-    var externalId = ArgumentCaptor.forClass(String.class);
-    verify(documentService).createDocument(externalId.capture());
-    assertThat(externalId.getValue()).isEqualTo(TEST_EXTERNAL_ID);
-
-    assertThat(response.getStatus()).isEqualTo(201);
-    assertThat(response.getHeaderString("Location")).endsWith("documents/" + TEST_DOC_ID.toString() + "/" + TEST_TYPE);
-  }
-
-  @Test
-  public void addDocument_shouldUseExternalId_whenByExternalIdIsTrue() {
-    when(fileService.createFile(any(String.class), eq(TEST_FILENAME)))
-        .thenReturn(new TextrepoFile(TEST_FILE_ID, (short) 42));
-    when(documentService.findDocumentByExternalId(TEST_EXTERNAL_ID))
-        .thenReturn(Optional.of(TEST_DOC_ID));
-
-    var byExternalId = "true";
-    var response = postTestFile(byExternalId);
-
-    var type = ArgumentCaptor.forClass(String.class);
-    verify(fileService).createFile(type.capture(), eq(TEST_FILENAME));
-    assertThat(type.getValue()).isEqualTo(TEST_TYPE);
-
-    var docId = ArgumentCaptor.forClass(UUID.class);
-    var fileId = ArgumentCaptor.forClass(UUID.class);
-    verify(documentService).addFileToDocument(docId.capture(), fileId.capture());
-    assertThat(docId.getValue()).isEqualTo(TEST_DOC_ID);
-    assertThat(fileId.getValue()).isEqualTo(TEST_FILE_ID);
-
-    assertThat(response.getStatus()).isEqualTo(201);
-    assertThat(response.getHeaderString("Location")).endsWith("documents/" + TEST_DOC_ID.toString() + "/" + TEST_TYPE);
-  }
-
-  @Test
   public void getDocument_shouldAlsoReturnExternalId() {
     var docId = UUID.randomUUID();
     when(documentService.get(docId)).thenReturn(new Document(docId, TEST_EXTERNAL_ID));
@@ -132,93 +83,6 @@ public class DocumentsResourceTest {
     var body = response.readEntity(String.class);
     String externalId = JsonPath.parse(body).read("$.externalId");
     assertThat(externalId).isEqualTo(TEST_EXTERNAL_ID);
-  }
-
-  @Test
-  public void updateDocumentByExternalIdAndType_shouldUpdateDocument() {
-    when(documentService.findDocumentByExternalId(TEST_EXTERNAL_ID))
-        .thenReturn(Optional.of(TEST_DOC_ID));
-    when(documentService.findFileByTypeAndDocId(TEST_TYPE, TEST_DOC_ID))
-        .thenReturn(new TextrepoFile(TEST_FILE_ID, TEST_TYPE_ID));
-
-    final var bytes = TEST_CONTENT.getBytes();
-    final var contentDisposition = FormDataContentDisposition
-        .name("contents")
-        .fileName(TEST_FILENAME)
-        .size(bytes.length)
-        .build();
-
-    final var multiPart = new FormDataMultiPart()
-        .bodyPart(new FormDataBodyPart(contentDisposition, bytes, APPLICATION_OCTET_STREAM_TYPE));
-    final var entity = Entity.entity(multiPart, multiPart.getMediaType());
-
-    var response = resource
-        .client()
-        .register(MultiPartFeature.class)
-        .target("/documents/external-id/" + TEST_EXTERNAL_ID + "/" + TEST_TYPE)
-        .request()
-        .put(entity);
-
-    assertThat(response.getStatus()).isEqualTo(200);
-    var externalId = ArgumentCaptor.forClass(String.class);
-    verify(documentService).findDocumentByExternalId(externalId.capture());
-    assertThat(externalId.getValue()).isEqualTo(TEST_EXTERNAL_ID);
-
-    var metadata = ArgumentCaptor.forClass(MetadataEntry.class);
-    verify(metadataService, times(1)).update(eq(TEST_FILE_ID), metadata.capture());
-    assertThat(metadata.getValue().getValue()).isEqualTo(TEST_FILENAME);
-  }
-
-  @Test
-  public void updateDocumentByExternalIdAndType_shouldReturn404_whenExternalIdNotFound() {
-    when(documentService.findDocumentByExternalId(TEST_EXTERNAL_ID))
-        .thenReturn(Optional.empty());
-
-    final var bytes = TEST_CONTENT.getBytes();
-    final var contentDisposition = FormDataContentDisposition
-        .name("contents")
-        .fileName(TEST_FILENAME)
-        .size(bytes.length)
-        .build();
-
-    final var multiPart = new FormDataMultiPart()
-        .bodyPart(new FormDataBodyPart(contentDisposition, bytes, APPLICATION_OCTET_STREAM_TYPE));
-    final var entity = Entity.entity(multiPart, multiPart.getMediaType());
-
-    var response = resource
-        .client()
-        .register(MultiPartFeature.class)
-        .target("/documents/external-id/" + TEST_EXTERNAL_ID + "/" + TEST_TYPE)
-        .request()
-        .put(entity);
-
-    assertThat(response.getStatus()).isEqualTo(404);
-    var body = response.readEntity(String.class);
-    String message = JsonPath.parse(body).read("$.message");
-    assertThat(message).isEqualTo("Document with external id [" + TEST_EXTERNAL_ID + "] could not be found");
-  }
-
-  private Response postTestFile(String byExternalId) {
-    final var bytes = TEST_CONTENT.getBytes();
-    final var contentDisposition = FormDataContentDisposition
-        .name("contents")
-        .fileName(TEST_FILENAME)
-        .size(bytes.length)
-        .build();
-
-    final var multiPart = new FormDataMultiPart()
-        .field("type", TEST_TYPE)
-        .field("byExternalId", byExternalId)
-        .field("externalId", TEST_EXTERNAL_ID)
-        .bodyPart(new FormDataBodyPart(contentDisposition, bytes, APPLICATION_OCTET_STREAM_TYPE));
-    final var entity = Entity.entity(multiPart, multiPart.getMediaType());
-
-    final var request = resource
-        .client()
-        .register(MultiPartFeature.class)
-        .target("/documents")
-        .request();
-    return request.post(entity);
   }
 
 }
