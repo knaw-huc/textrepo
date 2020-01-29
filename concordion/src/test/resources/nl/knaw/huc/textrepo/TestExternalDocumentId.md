@@ -1,10 +1,10 @@
 # TestFiles
 
-## [Creating a new document with external document id](- 'upload')
+## [Creating a new document with external document ID](- 'upload')
 
 When a document with:
 
- - external id "[external-test-id](- "#externalId")" 
+ - external ID "[external-test-id](- "#externalId")" 
  - type "[text](- "#type")" 
  - contents "[hello test](- "#text")" 
 
@@ -15,9 +15,9 @@ is [```POST```ed](- "#doc=upload(#externalId, #type, #text)") then
  - The last part of the Location header, [ ](- "c:echo=#doc.docId"), is the file ID
  which is a [valid UUID](- "?=#doc.docIdIsUUID").
 
-## Get external id of document
+## Get external ID of document
 
-When a doc with id [ ](- "c:echo=#doc.docId") is [retrieved](- "#get=get(#doc.docId)"):
+When a doc with ID [ ](- "c:echo=#doc.docId") is [retrieved](- "#get=get(#doc.docId)"):
 
  - The HTTP response code should be [200 OK](- "?=#get.status");
  - The external ID should be [external-test-id](- "?=#get.externalId");
@@ -26,10 +26,14 @@ When a doc with id [ ](- "c:echo=#doc.docId") is [retrieved](- "#get=get(#doc.do
 
 When this document is updated with a file:
 
- - external id "[external-test-id](- "#externalId")" 
+ - external ID "[external-test-id](- "#externalId")" 
  - type "[text](- "#type")" 
  - contents "[hello test 2](- "#text")" 
 
 using [```PUT```](- "#doc2=update(#externalId, #type, #text)") then
+
  - The HTTP response code should be [200 OK](- "?=#doc2.status");
 
+## Get updated file contents
+
+// TODO

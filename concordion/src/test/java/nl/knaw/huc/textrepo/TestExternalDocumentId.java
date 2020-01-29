@@ -51,12 +51,6 @@ public class TestExternalDocumentId extends AbstractConcordionTest {
   public MultiValueResult update(String externalId, String type, String text) throws Exception {
     var endpoint = new URL(DOCUMENTS_URL + "/external-id/" + externalId + "/" + type);
     var response = putFileWithFilename(client(), endpoint, externalId, text.getBytes());
-
-    var locationHeader = getLocation(response);
-    var optionalFileId = locationHeader.map(location1 -> TestUtils.getDocumentId(location1, type));
-    var fileId = optionalFileId.orElse("No file id");
-
-    var location = locationHeader.orElse("No location");
     return new MultiValueResult()
         .with("status", getStatus(response));
   }
