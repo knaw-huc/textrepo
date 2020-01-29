@@ -39,10 +39,10 @@ public class Import {
   @ApiOperation("Import file as the current version for {type} of document referenced by {externalId}")
   @ApiResponses(value = {@ApiResponse(code = 201, message = "CREATED")})
   public Response importDocumentContentsForFileWithType(
-    @NotBlank @PathParam("externalId") String externalId,
-    @NotBlank @PathParam("type") String type,
-    @NotNull @FormDataParam("contents") InputStream uploadedInputStream,
-    @NotNull @FormDataParam("contents") FormDataContentDisposition fileDetail
+      @NotBlank @PathParam("externalId") String externalId,
+      @NotBlank @PathParam("type") String type,
+      @NotNull @FormDataParam("contents") InputStream uploadedInputStream,
+      @NotNull @FormDataParam("contents") FormDataContentDisposition fileDetail
   ) {
     LOG.debug("importDocumentContentsForFileWithType: externalId={}, type={}", externalId, type);
     final var builder = factory.getDocumentImportBuilder();
