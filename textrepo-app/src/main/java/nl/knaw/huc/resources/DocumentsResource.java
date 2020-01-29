@@ -71,13 +71,12 @@ public class DocumentsResource {
     );
 
     final var filename = fileDetail.getFileName();
-    final var newFile = fileService.createFile(type);
+    final var newFile = fileService.createFile(type, filename);
     logger.debug("Created: {}", newFile);
 
-    fileService.createVersionWithFilenameMetadata(
+    fileService.createVersion(
         newFile,
-        readContent(uploadedInputStream),
-        filename
+        readContent(uploadedInputStream)
     );
     logger.debug("New version of {} created for content", newFile);
     final UUID newDocId;
@@ -139,7 +138,6 @@ public class DocumentsResource {
       @FormDataParam("contents") FormDataContentDisposition fileDetail
   ) {
     logger.debug("Updating {} contents of document: {}", type, docId);
-
     return updateFileByTypeAndDocId(type, docId, uploadedInputStream, fileDetail);
   }
 
@@ -201,10 +199,9 @@ public class DocumentsResource {
     final var file = documentService.findFileByTypeAndDocId(type, docId);
     logger.debug(" -> updating file: {}", file);
 
-    final var version = fileService.createVersionWithFilenameMetadata(
+    final var version = fileService.createVersion(
         file,
-        readContent(uploadedInputStream),
-        fileDetail.getFileName()
+        readContent(uploadedInputStream)
     );
     logger.debug("Document [{}] has new version: {}", docId, version);
     return Response.ok().build();

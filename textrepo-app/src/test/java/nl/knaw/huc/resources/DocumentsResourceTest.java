@@ -29,6 +29,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -71,14 +72,14 @@ public class DocumentsResourceTest {
 
   @Test
   public void postTestDocument() {
-    when(fileService.createFile(any(String.class))).thenReturn(new TextrepoFile(TEST_FILE_ID, (short) 42));
+    when(fileService.createFile(any(String.class), eq(TEST_FILENAME))).thenReturn(new TextrepoFile(TEST_FILE_ID, (short) 42));
     when(documentService.createDocument(anyString())).thenReturn(TEST_DOC_ID);
 
     var byExternalId = "false";
     var response = postTestFile(byExternalId);
 
     var type = ArgumentCaptor.forClass(String.class);
-    verify(fileService).createFile(type.capture());
+    verify(fileService).createFile(type.capture(), eq(TEST_FILENAME));
     assertThat(type.getValue()).isEqualTo(TEST_TYPE);
 
     var externalId = ArgumentCaptor.forClass(String.class);
@@ -91,7 +92,7 @@ public class DocumentsResourceTest {
 
   @Test
   public void addDocument_shouldUseExternalId_whenByExternalIdIsTrue() {
-    when(fileService.createFile(any(String.class)))
+    when(fileService.createFile(any(String.class), eq(TEST_FILENAME)))
         .thenReturn(new TextrepoFile(TEST_FILE_ID, (short) 42));
     when(documentService.findDocumentByExternalId(TEST_EXTERNAL_ID))
         .thenReturn(Optional.of(TEST_DOC_ID));
@@ -100,7 +101,7 @@ public class DocumentsResourceTest {
     var response = postTestFile(byExternalId);
 
     var type = ArgumentCaptor.forClass(String.class);
-    verify(fileService).createFile(type.capture());
+    verify(fileService).createFile(type.capture(), eq(TEST_FILENAME));
     assertThat(type.getValue()).isEqualTo(TEST_TYPE);
 
     var docId = ArgumentCaptor.forClass(UUID.class);
