@@ -27,7 +27,7 @@ import java.util.UUID;
 import static java.lang.String.format;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
-@Api(tags = {"documents"})
+@Api(tags = {"documents", "metadata"})
 @Path("/rest/documents/{docId}/metadata")
 public class DocumentMetadataResource {
 
