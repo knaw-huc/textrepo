@@ -2,6 +2,7 @@ package nl.knaw.huc.resources;
 
 import io.dropwizard.testing.junit.ResourceTestRule;
 import nl.knaw.huc.core.Contents;
+import nl.knaw.huc.resources.rest.ContentsResource;
 import nl.knaw.huc.service.ContentsService;
 import nl.knaw.huc.service.store.ContentsStorage;
 import org.apache.commons.io.IOUtils;

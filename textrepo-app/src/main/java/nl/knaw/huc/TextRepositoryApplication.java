@@ -8,7 +8,7 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.federecio.dropwizard.swagger.SwaggerBundle;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
-import nl.knaw.huc.resources.ContentsResource;
+import nl.knaw.huc.resources.rest.ContentsResource;
 import nl.knaw.huc.resources.FileContentsResource;
 import nl.knaw.huc.resources.FileMetadataResource;
 import nl.knaw.huc.resources.FileVersionsResource;
