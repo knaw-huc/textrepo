@@ -1,4 +1,4 @@
-package nl.knaw.huc.resources;
+package nl.knaw.huc.resources.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import io.swagger.annotations.Api;
@@ -21,7 +21,7 @@ import java.util.UUID;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 @Api(tags = {"files", "versions"})
-@Path("/files/{uuid}/versions")
+@Path("/rest/files/{uuid}/versions")
 public class FileVersionsResource {
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
