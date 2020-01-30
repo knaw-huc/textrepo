@@ -11,4 +11,10 @@ import java.util.UUID;
 
 public interface DocumentService {
   Document get(UUID doc);
+
+  Document create(Document document);
+
+  Document update(Document document);
+
+  void delete(Document document);
 }

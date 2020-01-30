@@ -86,7 +86,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     var versionService = new JdbiVersionService(jdbi, contentsService, fileIndexService, customIndexers);
     var fileService = new JdbiFileService(jdbi, typeService, versionService, metadataService, uuidGenerator);
     var fileContentsService = new JdbiFileContentsService(jdbi, contentsService, versionService, metadataService);
-    var documentService = new JdbiDocumentService(jdbi);
+    var documentService = new JdbiDocumentService(jdbi, uuidGenerator);
     var documentMetadataService = new JdbiDocumentMetadataService(jdbi);
 
     var resources = newArrayList(

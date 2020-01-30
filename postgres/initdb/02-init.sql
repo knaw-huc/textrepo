@@ -44,8 +44,9 @@ create unique index doc_id_by_external_id on documents (external_id, id);
 create table documents_files (
   document_id uuid not null,
   file_id uuid not null references files (id),
-  primary key (document_id, file_id),		-- force unique index on pair
-  foreign key (document_id) references documents (id)
+  -- force unique index on pair:
+  primary key (document_id, file_id),
+  foreign key (document_id) references documents (id) on delete cascade
 );
 
 -- assist FK lookups: add compound index for PK fields in reverse order
@@ -57,7 +58,7 @@ create table documents_metadata (
   key varchar not null,
   value text,
   primary key (document_id, key),
-  foreign key (document_id) references documents (id)
+  foreign key (document_id) references documents (id) on delete cascade
 );
 
 -- File metadata items (e.g., filename). Key-value pairs linked to file.
