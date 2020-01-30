@@ -55,7 +55,7 @@ public class ContentsResourceTest {
   public void testGetFileBySha224_returnsFileContents_whenFileExists() throws IOException {
     when(FILE_STORAGE.getBySha224(eq(sha224))).thenReturn(TEXT_REPO_CONTENTS);
 
-    var response = resource.client().target("/contents/" + sha224).request().get();
+    var response = resource.client().target("/rest/contents/" + sha224).request().get();
     var inputStream = response.readEntity(InputStream.class);
     var actualContent = IOUtils.toString(inputStream, UTF_8);
     assertThat(actualContent).isEqualTo(content);
@@ -63,7 +63,7 @@ public class ContentsResourceTest {
 
   @Test
   public void testGetFileBySha224_returns400BadRequest_whenIllegalSha224() {
-    var response = resource.client().target("/contents/55d4c44f5bc05762d8807f75f3").request().get();
+    var response = resource.client().target("/rest/contents/55d4c44f5bc05762d8807f75f3").request().get();
     assertThat(response.getStatus()).isEqualTo(400);
 
     var actualErrorMessage = responsePart(response, "$.message");
@@ -75,10 +75,10 @@ public class ContentsResourceTest {
   public void testGetFileBySha224_returns404NotFound_whenNoSuchSha224Exists() {
     when(FILE_STORAGE.getBySha224(any())).thenThrow(new NotFoundException("File not found"));
 
-    var response = resource.client().target("/contents/" + sha224).request().get();
+    var response = resource.client().target("/rest/contents/" + sha224).request().get();
     assertThat(response.getStatus()).isEqualTo(404);
 
-    String actualErrorMessage = responsePart(response, "$.message");
+    var actualErrorMessage = responsePart(response, "$.message");
     assertThat(actualErrorMessage).contains("not found");
   }
 

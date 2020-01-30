@@ -20,7 +20,7 @@ import javax.ws.rs.core.Response;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
 
 @Api(tags = {"contents"})
-@Path("/contents")
+@Path("/rest/contents")
 public class ContentsResource {
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
