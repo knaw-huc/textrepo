@@ -34,6 +34,9 @@ import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
 import static nl.knaw.huc.core.Contents.fromContent;
 import static nl.knaw.huc.resources.ResourceUtils.readContent;
 
+/**
+ * TODO: deprecated, or move to /task?
+ */
 @Api(tags = {"files", "contents"})
 @Path("/files/{uuid}/contents")
 public class FileContentsResource {

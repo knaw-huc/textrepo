@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import nl.knaw.huc.service.task.TaskBuilderFactory;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
@@ -24,11 +25,11 @@ import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
 
 @Api(tags = {"task", "import"})
 @Path("task/import")
-public class ImportFile {
-  private static final Logger LOG = LoggerFactory.getLogger(ImportFile.class);
+public class ImportFileResource {
+  private static final Logger LOG = LoggerFactory.getLogger(ImportFileResource.class);
   private final TaskBuilderFactory factory;
 
-  public ImportFile(TaskBuilderFactory factory) {
+  public ImportFileResource(TaskBuilderFactory factory) {
     this.factory = factory;
   }
 

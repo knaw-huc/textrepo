@@ -1,4 +1,4 @@
-package nl.knaw.huc.resources.task.jdbi;
+package nl.knaw.huc.service.task.importfile;
 
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.db.DocumentsDao;
