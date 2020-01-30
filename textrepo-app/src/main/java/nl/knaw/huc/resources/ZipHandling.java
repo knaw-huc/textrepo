@@ -18,6 +18,9 @@ import java.util.zip.ZipInputStream;
 
 import static org.apache.commons.io.FilenameUtils.getExtension;
 
+/**
+ * TODO: deprecated, or move to /task?
+ */
 class ZipHandling {
   private static final Logger logger = LoggerFactory.getLogger(ZipHandling.class);
 

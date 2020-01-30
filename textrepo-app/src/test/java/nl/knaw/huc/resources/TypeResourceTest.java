@@ -2,8 +2,8 @@ package nl.knaw.huc.resources;
 
 import io.dropwizard.testing.junit.ResourceTestRule;
 import nl.knaw.huc.api.FormType;
-import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.core.Type;
+import nl.knaw.huc.resources.rest.TypeResource;
 import nl.knaw.huc.service.JdbiTypeService;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.junit.After;
@@ -12,10 +12,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-
-import javax.ws.rs.client.Entity;
 
 import static javax.ws.rs.client.Entity.json;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -57,7 +54,7 @@ public class TypeResourceTest {
     var type = new FormType(expectedName, expectedMimetype);
     var response = resource
         .client()
-        .target("/types")
+        .target("/rest/types")
         .request()
         .post(json(type));
 
@@ -75,7 +72,7 @@ public class TypeResourceTest {
 
     var response = resource
         .client()
-        .target("/types")
+        .target("/rest/types")
         .request()
         .post(json(type));
 

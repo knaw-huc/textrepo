@@ -13,7 +13,7 @@ import nl.knaw.huc.resources.FileContentsResource;
 import nl.knaw.huc.resources.rest.FileMetadataResource;
 import nl.knaw.huc.resources.rest.FileVersionsResource;
 import nl.knaw.huc.resources.FilesResource;
-import nl.knaw.huc.resources.TypeResource;
+import nl.knaw.huc.resources.rest.TypeResource;
 import nl.knaw.huc.resources.rest.DocumentMetadataResource;
 import nl.knaw.huc.resources.rest.DocumentsResource;
 import nl.knaw.huc.resources.task.ImportFileResource;
