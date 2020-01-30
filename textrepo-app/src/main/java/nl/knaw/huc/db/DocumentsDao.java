@@ -1,8 +1,6 @@
 package nl.knaw.huc.db;
 
-import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.core.Document;
-import nl.knaw.huc.core.TextrepoFile;
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
 import org.jdbi.v3.sqlobject.customizer.BindBean;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
