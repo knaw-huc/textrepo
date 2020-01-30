@@ -3,6 +3,7 @@ package nl.knaw.huc.resources;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.db.MetadataDao;
+import nl.knaw.huc.resources.rest.FileMetadataResource;
 import nl.knaw.huc.service.JdbiFileMetadataService;
 import nl.knaw.huc.service.MetadataService;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -78,7 +79,7 @@ public class FileMetadataResourceTest {
   private Response putMetadata(UUID fileId, MetadataEntry metadataEntry) {
     return resource
         .client()
-        .target("/files/" + fileId.toString() + "/metadata/" + metadataEntry.getKey())
+        .target("/rest/files/" + fileId.toString() + "/metadata/" + metadataEntry.getKey())
         .request()
         .put(Entity.json(metadataEntry.getValue()));
 

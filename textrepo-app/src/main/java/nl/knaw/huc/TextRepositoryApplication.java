@@ -10,7 +10,7 @@ import io.federecio.dropwizard.swagger.SwaggerBundle;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import nl.knaw.huc.resources.rest.ContentsResource;
 import nl.knaw.huc.resources.FileContentsResource;
-import nl.knaw.huc.resources.FileMetadataResource;
+import nl.knaw.huc.resources.rest.FileMetadataResource;
 import nl.knaw.huc.resources.FileVersionsResource;
 import nl.knaw.huc.resources.FilesResource;
 import nl.knaw.huc.resources.TypeResource;

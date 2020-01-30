@@ -146,7 +146,7 @@ public class TestMetadata extends AbstractConcordionTest {
   private Response getMetadata(String fileId) {
     return client()
         .register(MultiPartFeature.class)
-        .target(format(HTTP_APP_HOST + "/files/%s/metadata", fileId))
+        .target(format(HTTP_APP_HOST + "/rest/files/%s/metadata", fileId))
         .request().get();
   }
 }

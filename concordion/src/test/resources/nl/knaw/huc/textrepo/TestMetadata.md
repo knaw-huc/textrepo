@@ -5,7 +5,7 @@
 When:
 
  - creating a file [`test1.txt`](- "#filename") at [`/files`](- "#fileEndpoint");
- - and adding metadata [`{"foo":"bar","spam":"eggs"}`](- "#metadata") at [`/files/{fileId}/metadata`](- "#metadataEndpoint");
+ - and adding metadata [`{"foo":"bar","spam":"eggs"}`](- "#metadata") at [`/rest/files/{fileId}/metadata`](- "#metadataEndpoint");
 
 [ ](- "#file=createFileWithMetadata(#filename, #fileEndpoint, #metadata, #metadataEndpoint)")
 Then:
@@ -31,7 +31,7 @@ Then:
 When:
 
  - updating file with 
-   metadata-key [`foo`](- "#updatedKey") and -value [`baz`](- "#updatedValue") at [`/files/{fileId}/metadata/{key}`](- "#fileMetadataEndpoint")
+   metadata-key [`foo`](- "#updatedKey") and -value [`baz`](- "#updatedValue") at [`/rest/files/{fileId}/metadata/{key}`](- "#fileMetadataEndpoint")
    [ ](- "#file3=updateMetadataEntry(#fileMetadataEndpoint, #file.fileId, #updatedKey, #updatedValue)")
 
 Then:
@@ -39,4 +39,3 @@ Then:
  - Metadata entry `filename` should still have value: [test2.txt](- "?=#file3.filename");
  - Metadata entry `spam` should still have value: [eggs](- "?=#file3.spam");
  - Metadata entry `foo` should now have value: [baz](- "?=#file3.foo");
- 
