@@ -3,7 +3,7 @@ package nl.knaw.huc.resources;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.db.MetadataDao;
-import nl.knaw.huc.service.JdbiMetadataService;
+import nl.knaw.huc.service.JdbiFileMetadataService;
 import nl.knaw.huc.service.MetadataService;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.jdbi.v3.core.Jdbi;
@@ -33,7 +33,7 @@ public class FileMetadataResourceTest {
 
   private static final Jdbi jdbi = mock(Jdbi.class);
 
-  private static final MetadataService metadataService = new JdbiMetadataService(jdbi);
+  private static final MetadataService metadataService = new JdbiFileMetadataService(jdbi);
 
   private static final MetadataDao metadataDao = mock(MetadataDao.class);
 

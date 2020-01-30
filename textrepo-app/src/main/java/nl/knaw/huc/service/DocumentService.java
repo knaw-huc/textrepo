@@ -11,20 +11,4 @@ import java.util.UUID;
 
 public interface DocumentService {
   Document get(UUID doc);
-
-  /**
-   * Create a new document with a unique external ID
-   * @throws BadRequestException when external ID already exists
-   */
-  UUID createDocument(String externalId);
-
-  void addFileToDocument(UUID docId, UUID fileId);
-
-  TextrepoFile findFileByTypeAndDocId(String fileType, UUID docId);
-
-  Map<String, String> getMetadata(UUID docId);
-
-  boolean updateMetadata(UUID docId, MetadataEntry metadataEntry);
-
-  Optional<UUID> findDocumentByExternalId(String externalId);
 }

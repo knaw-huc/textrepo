@@ -19,19 +19,21 @@ import java.util.function.Supplier;
 
 import static java.lang.String.format;
 
-public class JdbiDocumentService implements DocumentService {
+public class JdbiDocumentMetadataService implements DocumentMetadataService {
   private final Jdbi jdbi;
 
-  public JdbiDocumentService(Jdbi jdbi) {
+  public JdbiDocumentMetadataService(Jdbi jdbi) {
     this.jdbi = jdbi;
   }
 
   @Override
-  public Document get(UUID id) {
-    return documents().get(id);
+  public Map<String, String> getByDocId(UUID docId) {
+    return jdbi.onDemand(MetadataDao.class).getMetadataByDocumentId(docId);
   }
 
-  private DocumentsDao documents() {
-    return jdbi.onDemand(DocumentsDao.class);
+  @Override
+  public boolean update(UUID docId, MetadataEntry entry) {
+    return jdbi.onDemand(MetadataDao.class).updateDocumentMetadata(docId, entry);
   }
+
 }

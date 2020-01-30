@@ -9,19 +9,21 @@ import io.dropwizard.setup.Environment;
 import io.federecio.dropwizard.swagger.SwaggerBundle;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import nl.knaw.huc.resources.ContentsResource;
-import nl.knaw.huc.resources.DocumentsResource;
 import nl.knaw.huc.resources.FileContentsResource;
 import nl.knaw.huc.resources.FileMetadataResource;
 import nl.knaw.huc.resources.FileVersionsResource;
 import nl.knaw.huc.resources.FilesResource;
 import nl.knaw.huc.resources.TypeResource;
+import nl.knaw.huc.resources.rest.DocumentMetadataResource;
+import nl.knaw.huc.resources.rest.DocumentsResource;
 import nl.knaw.huc.resources.task.ImportFile;
 import nl.knaw.huc.resources.task.jdbi.JdbiTaskFactory;
 import nl.knaw.huc.service.ContentsService;
+import nl.knaw.huc.service.JdbiDocumentMetadataService;
 import nl.knaw.huc.service.JdbiDocumentService;
 import nl.knaw.huc.service.JdbiFileContentsService;
+import nl.knaw.huc.service.JdbiFileMetadataService;
 import nl.knaw.huc.service.JdbiFileService;
-import nl.knaw.huc.service.JdbiMetadataService;
 import nl.knaw.huc.service.JdbiTypeService;
 import nl.knaw.huc.service.JdbiVersionService;
 import nl.knaw.huc.service.TypeService;
@@ -37,6 +39,8 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.UUID;
 import java.util.function.Supplier;
+
+import static com.google.common.collect.Lists.newArrayList;
 
 public class TextRepositoryApplication extends Application<TextRepositoryConfiguration> {
 
@@ -75,32 +79,29 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     var jdbi = createJdbi(config, environment);
     var contentsStoreService = new JdbiContentsStorage(jdbi);
     var contentsService = new ContentsService(contentsStoreService);
-    var contentsResource = new ContentsResource(contentsService);
-    var metadataService = new JdbiMetadataService(jdbi);
+    var metadataService = new JdbiFileMetadataService(jdbi);
     var typeService = new JdbiTypeService(jdbi);
-    var typeResource = new TypeResource(typeService);
-    var fileIndexService = new ElasticFileIndexer(config.getElasticsearch());
     var customIndexers = createElasticCustomFacetIndexers(config, typeService);
+    var fileIndexService = new ElasticFileIndexer(config.getElasticsearch());
     var versionService = new JdbiVersionService(jdbi, contentsService, fileIndexService, customIndexers);
     var fileService = new JdbiFileService(jdbi, typeService, versionService, metadataService, uuidGenerator);
-    var filesResource = new FilesResource(fileService);
     var fileContentsService = new JdbiFileContentsService(jdbi, contentsService, versionService, metadataService);
-    var fileContentsResource = new FileContentsResource(fileContentsService);
-    var metadataResource = new FileMetadataResource(metadataService);
-    var versionsResource = new FileVersionsResource(versionService);
-    var documentService = new JdbiDocumentService(jdbi, uuidGenerator);
-    var documentsResource = new DocumentsResource(documentService, fileService, metadataService);
-    var importResource = new ImportFile(new JdbiTaskFactory(jdbi, uuidGenerator));
+    var documentService = new JdbiDocumentService(jdbi);
+    var documentMetadataService = new JdbiDocumentMetadataService(jdbi);
 
-    environment.jersey().register(typeResource);
-    environment.jersey().register(metadataResource);
-    environment.jersey().register(filesResource);
-    environment.jersey().register(fileContentsResource);
-    environment.jersey().register(contentsResource);
-    environment.jersey().register(versionsResource);
-    environment.jersey().register(documentsResource);
-    environment.jersey().register(importResource);
+    var resources = newArrayList(
+        new ContentsResource(contentsService),
+        new TypeResource(typeService),
+        new FileContentsResource(fileContentsService),
+        new FileMetadataResource(metadataService),
+        new FileVersionsResource(versionService),
+        new DocumentsResource(documentService),
+        new DocumentMetadataResource(documentMetadataService),
+        new ImportFile(new JdbiTaskFactory(jdbi, uuidGenerator)),
+        new FilesResource(fileService)
+    );
 
+    resources.forEach((resource) -> environment.jersey().register(resource));
     environment.lifecycle().manage(fileIndexService);
     customIndexers.forEach(ci -> environment.lifecycle().manage(ci));
   }
