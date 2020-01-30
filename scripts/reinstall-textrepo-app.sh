@@ -2,6 +2,10 @@
 
 # use for development purposes only
 
+set -e
+
+if [[ ! -d "./textrepo-app" ]] ; then echo "./textrepo-app not found, aborting."; exit; fi
+
 # create new jar
 (cd textrepo-app && mvn clean install)
 
