@@ -17,7 +17,7 @@ import static nl.knaw.huc.textrepo.util.TestUtils.postFileWithFilename;
 import static nl.knaw.huc.textrepo.util.TestUtils.putFileWithFilename;
 import static nl.knaw.huc.textrepo.util.TestUtils.replace;
 
-import org.junit.Ignore; @Ignore public class TestMetadata extends AbstractConcordionTest {
+public class TestMetadata extends AbstractConcordionTest {
 
   public static class TestMetadataResult {
     public String fileId;

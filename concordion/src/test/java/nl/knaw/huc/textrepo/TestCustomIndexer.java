@@ -20,7 +20,7 @@ import static nl.knaw.huc.textrepo.util.TestUtils.getLocation;
 import static nl.knaw.huc.textrepo.util.TestUtils.isValidUuid;
 import static nl.knaw.huc.textrepo.util.TestUtils.postFileWithFilename;
 
-import org.junit.Ignore; @Ignore public class TestCustomIndexer extends AbstractConcordionTest {
+public class TestCustomIndexer extends AbstractConcordionTest {
 
   public static class UploadResult {
     public String validUuid1;

@@ -15,7 +15,7 @@ import static nl.knaw.huc.textrepo.util.TestUtils.getLocation;
 import static nl.knaw.huc.textrepo.util.TestUtils.getStatus;
 import static nl.knaw.huc.textrepo.util.TestUtils.postFileWithFilename;
 
-import org.junit.Ignore; @Ignore public class TestFiles extends AbstractConcordionTest {
+public class TestFiles extends AbstractConcordionTest {
 
   public MultiValueResult upload(String content) throws MalformedURLException {
     var filename = "test-" + UUID.randomUUID() + ".txt";

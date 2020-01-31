@@ -19,7 +19,7 @@ import static nl.knaw.huc.textrepo.Config.INDICES;
 import static nl.knaw.huc.textrepo.util.TestUtils.sleepMs;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-import org.junit.Ignore; @Ignore public class IndexUtils {
+public class IndexUtils {
 
   private final static Client client = JerseyClientBuilder.newClient();
   private static final Logger logger = LoggerFactory.getLogger(IndexUtils.class);
