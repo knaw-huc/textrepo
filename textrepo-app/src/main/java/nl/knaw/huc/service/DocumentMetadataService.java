@@ -11,5 +11,7 @@ public interface DocumentMetadataService {
 
   Map<String, String> getByDocId(UUID docId);
 
-  boolean update(UUID docId, MetadataEntry metadataEntry);
+  boolean upsert(UUID docId, MetadataEntry metadataEntry);
+
+  void delete(UUID docId, MetadataEntry entry);
 }

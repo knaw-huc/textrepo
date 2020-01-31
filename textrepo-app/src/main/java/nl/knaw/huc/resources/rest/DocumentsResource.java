@@ -44,10 +44,10 @@ public class DocumentsResource {
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Create document")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultDocument.class, message = "OK")})
-  public Response createDocument(
+  public Response create(
       @Valid FormDocument form
   ) {
-    logger.debug("createDocument: form={}", form);
+    logger.debug("create document: form={}", form);
     var doc = documentService.create(new Document(null, form.getExternalId()));
     return Response.ok(new ResultDocument(doc)).build();
   }
@@ -57,10 +57,10 @@ public class DocumentsResource {
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Read document")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultDocument.class, message = "OK")})
-  public Response getDocument(
+  public Response get(
       @PathParam("id") @Valid UUID id
   ) {
-    logger.debug("getDocument: id={}", id);
+    logger.debug("get document: id={}", id);
     final var doc = documentService
         .get(id)
         .orElseThrow(NotFoundException::new);
@@ -73,13 +73,13 @@ public class DocumentsResource {
   @Path("/{id}")
   @Consumes(APPLICATION_JSON)
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Update document")
+  @ApiOperation(value = "Create or update document")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultDocument.class, message = "OK")})
-  public Response updateDocument(
+  public Response update(
       @PathParam("id") @Valid UUID id,
       @Valid FormDocument form
   ) {
-    logger.debug("updateDocument: id={}; form={}", id, form);
+    logger.debug("update document: id={}; form={}", id, form);
     var doc = documentService.update(new Document(id, form.getExternalId()));
     return Response.ok(new ResultDocument(doc)).build();
   }
@@ -88,10 +88,10 @@ public class DocumentsResource {
   @Path("/{id}")
   @ApiOperation(value = "Delete document, its metadata and file links")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
-  public Response deleteDocument(
+  public Response delete(
       @PathParam("id") @Valid UUID id
   ) {
-    logger.debug("deleteDocument: id={}", id);
+    logger.debug("delete document: id={}", id);
     documentService.delete(new Document(id, null));
     return Response.ok().build();
   }

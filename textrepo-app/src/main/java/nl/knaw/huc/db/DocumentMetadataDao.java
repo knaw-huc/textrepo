@@ -12,14 +12,18 @@ import java.util.Map;
 import java.util.UUID;
 
 public interface DocumentMetadataDao {
-  @SqlUpdate("insert into documents_metadata (document_id, key, value) values (:id, :key, :value")
-  void insertDocumentMetadata(@Bind("id") UUID docId, @BindBean MetadataEntry metadataEntry);
+  @SqlUpdate("insert into documents_metadata (document_id, key, value) values (:id, :key, :value)")
+  void insert(@Bind("id") UUID docId, @BindBean MetadataEntry metadataEntry);
 
   @SqlQuery("select key, value from documents_metadata where document_id = ?")
   @KeyColumn("key")
   @ValueColumn("value")
   Map<String, String> getByDocumentId(@Bind UUID docId);
 
-  @SqlUpdate("update documents_metadata set value = :value where document_id = :id and key = :key")
-  boolean update(@Bind("id") UUID docId, @BindBean MetadataEntry metadataEntry);
+  @SqlUpdate("insert into documents_metadata (document_id, key, value) values (:id, :key, :value) " +
+      "on conflict (document_id, key) do update set value = excluded.value")
+  boolean upsert(@Bind("id") UUID docId, @BindBean MetadataEntry metadataEntry);
+
+  @SqlUpdate("delete from documents_metadata where document_id = :id and key = :key")
+  void delete(@Bind("id") UUID docId, @BindBean MetadataEntry metadataEntry);
 }

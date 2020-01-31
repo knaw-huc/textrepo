@@ -1,4 +1,4 @@
-# TestDocuments
+# Test document REST-endpoints
 
 ## [Create, get, update and delete documents](- 'create')
 
@@ -43,15 +43,15 @@ When updating document [ ](- "c:echo=#createResult.id") with a `PUT` to [`/rest/
 }```](- "#updatedEntity")
 
 
-[ ](- "#readResult=update(#updateEndpoint, #createResult.id, #updatedEntity)")
+[ ](- "#updateResult=update(#updateEndpoint, #createResult.id, #updatedEntity)")
 
 Then:
 
- - The response status should be: [200](- "?=#readResult.status");
- - The response should its updated external ID [updated-test-external-id](- "?=#readResult.externalId");
+ - The response status should be: [200](- "?=#updateResult.status");
+ - The response should its updated external ID [updated-test-external-id](- "?=#updateResult.externalId");
  - Full response:
 
-[ ](- "ext:embed=#readResult.body")
+[ ](- "ext:embed=#updateResult.body")
 
 ### Delete document
 When deleting document [ ](- "c:echo=#createResult.id") with a `DELETE` to [`/rest/documents/{id}`](- "#deleteEndpoint"):
@@ -60,7 +60,7 @@ When deleting document [ ](- "c:echo=#createResult.id") with a `DELETE` to [`/re
 
 Then:
 
- - The response status should be: [200](- "?=#readResult.status").
+ - The response status should be: [200](- "?=#deleteResult.status").
 
 ### Get document after deleting
 When reading document [ ](- "c:echo=#createResult.id") with a `GET` to [`/rest/documents/{id}`](- "#getEndpoint"):

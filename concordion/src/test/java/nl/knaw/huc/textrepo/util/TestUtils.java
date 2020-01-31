@@ -8,14 +8,15 @@ import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
-import org.junit.Ignore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.util.Map;
 import java.util.Optional;
@@ -27,8 +28,9 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static javax.ws.rs.client.Entity.entity;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
 import static nl.knaw.huc.textrepo.Config.FILE_TYPE;
+import static nl.knaw.huc.textrepo.Config.HOST;
 
-@Ignore public class TestUtils {
+public class TestUtils {
 
   public static byte[] getResourceFileBits(String resourcePath) throws IOException {
     return IOUtils.toByteArray(TestUtils.class.getClassLoader().getResourceAsStream(resourcePath));
@@ -192,5 +194,9 @@ import static nl.knaw.huc.textrepo.Config.FILE_TYPE;
       throw new IllegalArgumentException(format("Could not pretty print json string: %s", string), ex);
     }
     return "<pre>" + result + "</pre>";
+  }
+
+  public static URI replaceUrlParams(Object endpoint, Object... params) {
+    return UriBuilder.fromPath(HOST + endpoint.toString()).build(params);
   }
 }

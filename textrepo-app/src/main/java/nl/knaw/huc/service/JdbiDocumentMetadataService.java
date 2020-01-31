@@ -16,7 +16,7 @@ public class JdbiDocumentMetadataService implements DocumentMetadataService {
 
   @Override
   public void create(UUID docId, MetadataEntry metadataEntry) {
-
+    metadata().insert(docId, metadataEntry);
   }
 
   @Override
@@ -25,8 +25,13 @@ public class JdbiDocumentMetadataService implements DocumentMetadataService {
   }
 
   @Override
-  public boolean update(UUID docId, MetadataEntry entry) {
-    return metadata().update(docId, entry);
+  public boolean upsert(UUID docId, MetadataEntry entry) {
+    return metadata().upsert(docId, entry);
+  }
+
+  @Override
+  public void delete(UUID docId, MetadataEntry entry) {
+    metadata().delete(docId, entry);
   }
 
   private DocumentMetadataDao metadata() {

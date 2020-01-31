@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.MetadataEntry;
+import nl.knaw.huc.api.ResultDocumentMetadataEntry;
 import nl.knaw.huc.service.DocumentMetadataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,9 +15,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -25,7 +25,6 @@ import javax.ws.rs.core.Response;
 import java.util.Map;
 import java.util.UUID;
 
-import static java.lang.String.format;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 @Api(tags = {"documents", "metadata"})
@@ -41,28 +40,12 @@ public class DocumentMetadataResource {
     this.documentMetadataService = documentMetadataService;
   }
 
-  @POST
-  @Path("/{key}")
-  @Timed
-  @Consumes(APPLICATION_JSON)
-  @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Create document metadata entry")
-  @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
-  public Response createMetadataEntry(
-      @PathParam("docId") @NotNull @Valid UUID docId,
-      @PathParam("key") @NotBlank String key,
-      String value
-  ) {
-    logger.debug("createMetadata: docId={}, key={}, value={}", docId, key, value);
-    documentMetadataService.create(docId, new MetadataEntry(key, value));
-    return Response.ok().build();
-  }
-
   @GET
   @Produces(APPLICATION_JSON)
-  public Map<String, String> getDocumentMetadata(
+  public Map<String, String> get(
       @PathParam("docId") @NotNull @Valid UUID docId
   ) {
+    logger.debug("get metadata: docId={}", docId);
     return documentMetadataService.getByDocId(docId);
   }
 
@@ -71,17 +54,33 @@ public class DocumentMetadataResource {
   @Timed
   @Consumes(APPLICATION_JSON)
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Update value of a document metadata entry")
+  @ApiOperation(value = "Create or update document metadata entry")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
-  public Response updateMetadataEntry(
+  public Response update(
       @PathParam("docId") @NotNull @Valid UUID docId,
       @PathParam("key") @NotBlank String key,
       String value
   ) {
-    logger.debug("updateMetadata: docId={}, key={}, value={}", docId, key, value);
-    if (!documentMetadataService.update(docId, new MetadataEntry(key, value))) {
-      throw new NotFoundException(format("No metadata field [%s] found for document [%s]", key, docId));
-    }
+    logger.debug("update metadata: docId={}, key={}, value={}", docId, key, value);
+    var entry = new MetadataEntry(key, value);
+    documentMetadataService.upsert(docId, entry);
+    return Response.ok(new ResultDocumentMetadataEntry(docId, entry)).build();
+  }
+
+  @DELETE
+  @Path("/{key}")
+  @Timed
+  @Consumes(APPLICATION_JSON)
+  @Produces(APPLICATION_JSON)
+  @ApiOperation(value = "Update value of a document metadata entry")
+  @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
+  public Response delete(
+      @PathParam("docId") @NotNull @Valid UUID docId,
+      @PathParam("key") @NotBlank String key
+  ) {
+    logger.debug("delete metadata: docId={}, key={}", docId, key);
+    var entry = new MetadataEntry(key, null);
+    documentMetadataService.delete(docId, entry);
     return Response.ok().build();
   }
 
