@@ -9,3 +9,4 @@
 ## Rest API
 
  - [Documents](rest/TestRestDocuments.md "c:run")
+ - [Document metadata](rest/TestRestDocumentMetadata.md "c:run")
