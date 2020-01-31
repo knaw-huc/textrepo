@@ -16,6 +16,7 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -38,6 +39,23 @@ public class DocumentMetadataResource {
       DocumentMetadataService documentMetadataService
   ) {
     this.documentMetadataService = documentMetadataService;
+  }
+
+  @POST
+  @Path("/{key}")
+  @Timed
+  @Consumes(APPLICATION_JSON)
+  @Produces(APPLICATION_JSON)
+  @ApiOperation(value = "Create document metadata entry")
+  @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
+  public Response createMetadataEntry(
+      @PathParam("docId") @NotNull @Valid UUID docId,
+      @PathParam("key") @NotBlank String key,
+      String value
+  ) {
+    logger.debug("createMetadata: docId={}, key={}, value={}", docId, key, value);
+    documentMetadataService.create(docId, new MetadataEntry(key, value));
+    return Response.ok().build();
   }
 
   @GET

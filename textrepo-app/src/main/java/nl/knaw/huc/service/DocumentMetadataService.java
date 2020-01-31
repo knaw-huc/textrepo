@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.UUID;
 
 public interface DocumentMetadataService {
+  void create(UUID docId, MetadataEntry metadataEntry);
+
   Map<String, String> getByDocId(UUID docId);
 
   boolean update(UUID docId, MetadataEntry metadataEntry);
