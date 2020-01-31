@@ -7,7 +7,7 @@ import static java.lang.String.format;
 import static java.lang.System.getenv;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
-public class Config {
+import org.junit.Ignore; @Ignore public class Config {
 
   public static final String HTTP_ES_HOST = "http://" + requireNonBlank(getenv("ES_HOST"));
   public static final String HTTP_APP_HOST = "http://" + requireNonBlank(getenv("APP_HOST"));

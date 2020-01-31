@@ -39,7 +39,6 @@ public class DocumentsResource {
   }
 
   @POST
-  @Path("/{id}")
   @Consumes(APPLICATION_JSON)
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Create document")

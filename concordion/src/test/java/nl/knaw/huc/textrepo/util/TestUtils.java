@@ -1,11 +1,14 @@
 package nl.knaw.huc.textrepo.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.StringSubstitutor;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.junit.Ignore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,13 +28,14 @@ import static javax.ws.rs.client.Entity.entity;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
 import static nl.knaw.huc.textrepo.Config.FILE_TYPE;
 
-public class TestUtils {
+@Ignore public class TestUtils {
 
   public static byte[] getResourceFileBits(String resourcePath) throws IOException {
     return IOUtils.toByteArray(TestUtils.class.getClassLoader().getResourceAsStream(resourcePath));
   }
 
   static final Logger logger = LoggerFactory.getLogger(TestUtils.class);
+  static final ObjectMapper mapper = new ObjectMapper();
 
   public static String isValidUuidMsg(String fileId) {
     try {
@@ -179,4 +183,14 @@ public class TestUtils {
     return response.getStatus() + " " + response.getStatusInfo();
   }
 
+  public static String asPrettyJson(String string) {
+    var result = "";
+    try {
+      var json = mapper.readValue(string, Object.class);
+      result = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json);
+    } catch (JsonProcessingException ex) {
+      throw new IllegalArgumentException(format("Could not pretty print json string: %s", string), ex);
+    }
+    return "<pre>" + result + "</pre>";
+  }
 }

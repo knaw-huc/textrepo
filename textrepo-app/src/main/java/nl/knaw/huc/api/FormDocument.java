@@ -1,13 +1,20 @@
 package nl.knaw.huc.api;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
+
+import javax.validation.constraints.NotBlank;
 
 public class FormDocument {
 
+  @NotBlank(message = "is mandatory")
   private final String externalId;
 
-  public FormDocument(String externalId) {
+  @JsonCreator
+  public FormDocument(
+      @JsonProperty("externalId") String externalId
+  ) {
     this.externalId = externalId;
   }
 
