@@ -24,7 +24,7 @@ public interface DocumentsDao {
 
   @SqlUpdate("insert into documents (id, external_id) values (:id, :externalId) " +
       "on conflict (id) do update set external_id = excluded.external_id")
-  void upsert(@BindBean("document") Document document);
+  void upsert(@BindBean Document document);
 
   @SqlUpdate("delete from documents where id = ?")
   void delete(UUID id);

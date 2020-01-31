@@ -24,7 +24,7 @@ public class TestDocuments extends AbstractConcordionTest {
     public int status;
     public String body;
     public String validUuid;
-    public String docId;
+    public String id;
   }
 
   public CreateResult create(Object endpoint, Object newEntity) {
@@ -37,8 +37,8 @@ public class TestDocuments extends AbstractConcordionTest {
     var result = new CreateResult();
     result.status = response.getStatus();
     var body = response.readEntity(String.class);
-    result.docId = JsonPath.parse(body).read("$.id");
-    result.validUuid = TestUtils.isValidUuidMsg(result.docId);
+    result.id = JsonPath.parse(body).read("$.id");
+    result.validUuid = TestUtils.isValidUuidMsg(result.id);
     result.body = asPrettyJson(body);
     return result;
   }
@@ -50,10 +50,10 @@ public class TestDocuments extends AbstractConcordionTest {
     public String externalId;
   }
 
-  public ReadResult read(Object endpoint, Object docId) {
+  public ReadResult read(Object endpoint, Object id) {
     final var response = client
         .register(MultiPartFeature.class)
-        .target(replaceUrlParams(endpoint, docId.toString()))
+        .target(replaceUrlParams(endpoint, id))
         .request()
         .get();
 
@@ -67,16 +67,34 @@ public class TestDocuments extends AbstractConcordionTest {
     return result;
   }
 
-  private URI replaceUrlParams(Object endpoint, String param) {
-    return UriBuilder.fromPath(HOST + endpoint.toString()).build(param);
+  public static class UpdateResult {
+    public int status;
+    public String body;
+    public String externalId;
   }
 
-  public CreateResult update(Object endpoint, Object id, Object newEntity) {
-    return new CreateResult();
+  public UpdateResult update(Object endpoint, Object id, Object updatedEntity) {
+    final var response = client
+        .register(MultiPartFeature.class)
+        .target(replaceUrlParams(endpoint, id))
+        .request()
+        .put(entity(updatedEntity.toString(), APPLICATION_JSON_TYPE));
+
+    var result = new UpdateResult();
+    result.status = response.getStatus();
+    var  body = response.readEntity(String.class);
+    result.body = asPrettyJson(body);
+    var json = JsonPath.parse(body);
+    result.externalId = json.read("$.externalId");
+    return result;
   }
 
   public CreateResult delete(Object endpoint, Object id) {
     return new CreateResult();
+  }
+
+  private URI replaceUrlParams(Object endpoint, Object... params) {
+    return UriBuilder.fromPath(HOST + endpoint.toString()).build(params);
   }
 
 }
