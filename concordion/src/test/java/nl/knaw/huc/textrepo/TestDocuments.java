@@ -29,7 +29,6 @@ public class TestDocuments extends AbstractConcordionTest {
 
   public CreateResult create(Object endpoint, Object newEntity) {
     final var response = client
-        .register(MultiPartFeature.class)
         .target(HOST + endpoint.toString())
         .request()
         .post(entity(newEntity.toString(), APPLICATION_JSON_TYPE));
@@ -52,7 +51,6 @@ public class TestDocuments extends AbstractConcordionTest {
 
   public ReadResult read(Object endpoint, Object id) {
     final var response = client
-        .register(MultiPartFeature.class)
         .target(replaceUrlParams(endpoint, id))
         .request()
         .get();
@@ -75,7 +73,6 @@ public class TestDocuments extends AbstractConcordionTest {
 
   public UpdateResult update(Object endpoint, Object id, Object updatedEntity) {
     final var response = client
-        .register(MultiPartFeature.class)
         .target(replaceUrlParams(endpoint, id))
         .request()
         .put(entity(updatedEntity.toString(), APPLICATION_JSON_TYPE));
@@ -89,9 +86,37 @@ public class TestDocuments extends AbstractConcordionTest {
     return result;
   }
 
-  public CreateResult delete(Object endpoint, Object id) {
-    return new CreateResult();
+  public static class DeleteResult {
+    public int status;
   }
+
+  public DeleteResult delete(Object endpoint, Object id) {
+    final var response = client
+        .target(replaceUrlParams(endpoint, id))
+        .request()
+        .delete();
+
+    var result = new DeleteResult();
+    result.status = response.getStatus();
+    return result;
+  }
+
+  public static class GetAfterDeleteResult {
+    public int status;
+  }
+
+  public GetAfterDeleteResult getAfterDelele(Object endpoint, Object id) {
+    final var response = client
+        .target(replaceUrlParams(endpoint, id))
+        .request()
+        .get();
+
+    var result = new GetAfterDeleteResult();
+    result.status = response.getStatus();
+    return result;
+  }
+
+
 
   private URI replaceUrlParams(Object endpoint, Object... params) {
     return UriBuilder.fromPath(HOST + endpoint.toString()).build(params);

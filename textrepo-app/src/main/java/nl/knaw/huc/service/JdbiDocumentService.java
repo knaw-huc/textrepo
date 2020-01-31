@@ -29,7 +29,7 @@ public class JdbiDocumentService implements DocumentService {
   }
 
   @Override
-  public Document get(UUID id) {
+  public Optional<Document> get(UUID id) {
     return documents().get(id);
   }
 

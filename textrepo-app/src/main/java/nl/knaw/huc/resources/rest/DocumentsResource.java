@@ -15,6 +15,7 @@ import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -60,8 +61,12 @@ public class DocumentsResource {
       @PathParam("id") @Valid UUID id
   ) {
     logger.debug("getDocument: id={}", id);
-    final var doc = documentService.get(id);
-    return Response.ok(new ResultDocument(doc)).build();
+    final var doc = documentService
+        .get(id)
+        .orElseThrow(NotFoundException::new);
+    return Response
+        .ok(new ResultDocument(doc))
+        .build();
   }
 
   @PUT

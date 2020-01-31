@@ -17,6 +17,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -62,7 +63,7 @@ public class DocumentsResourceTest {
   @Test
   public void getDocument_shouldAlsoReturnExternalId() {
     var docId = UUID.randomUUID();
-    when(documentService.get(docId)).thenReturn(new Document(docId, TEST_EXTERNAL_ID));
+    when(documentService.get(docId)).thenReturn(Optional.of(new Document(docId, TEST_EXTERNAL_ID)));
     var response = resource
         .client()
         .register(MultiPartFeature.class)

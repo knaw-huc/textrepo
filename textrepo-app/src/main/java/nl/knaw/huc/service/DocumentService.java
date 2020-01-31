@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface DocumentService {
-  Document get(UUID doc);
+  Optional<Document> get(UUID doc);
 
   Document create(Document document);
 

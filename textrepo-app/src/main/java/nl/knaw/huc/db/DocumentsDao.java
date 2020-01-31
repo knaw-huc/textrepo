@@ -3,7 +3,6 @@ package nl.knaw.huc.db;
 import nl.knaw.huc.core.Document;
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
 import org.jdbi.v3.sqlobject.customizer.BindBean;
-import org.jdbi.v3.sqlobject.statement.SqlCall;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
@@ -16,7 +15,7 @@ public interface DocumentsDao {
 
   @SqlQuery("select id, external_id from documents where id = ?")
   @RegisterConstructorMapper(value = Document.class)
-  Document get(UUID id);
+  Optional<Document> get(UUID id);
 
   @SqlQuery("select id, external_id from documents where external_id = ?")
   @RegisterConstructorMapper(value = Document.class)
