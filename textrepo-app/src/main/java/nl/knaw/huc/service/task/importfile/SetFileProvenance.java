@@ -7,11 +7,11 @@ import org.jdbi.v3.core.Handle;
 
 import java.util.function.Function;
 
-class SetFilenameMetadata implements Function<TextrepoFile, TextrepoFile> {
+class SetFileProvenance implements Function<TextrepoFile, TextrepoFile> {
   private final Handle transaction;
   private final String filename;
 
-  SetFilenameMetadata(Handle transaction, String filename) {
+  SetFileProvenance(Handle transaction, String filename) {
     this.transaction = transaction;
     this.filename = filename;
   }

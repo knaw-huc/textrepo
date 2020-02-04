@@ -88,7 +88,7 @@ class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
       jdbi.useTransaction(txn ->
           new HaveDocumentByExternalId(txn, documentIdGenerator)
               .andThen(new HaveFileForDocumentByType(txn, fileIdGenerator, typeId))
-              .andThen(new SetFilenameMetadata(txn, filename))
+              .andThen(new SetFileProvenance(txn, filename))
               .andThen(new SetCurrentFileContents(txn, contents))
               .apply(externalId));
     }
