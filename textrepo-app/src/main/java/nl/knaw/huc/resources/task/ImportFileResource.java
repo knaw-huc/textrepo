@@ -35,7 +35,7 @@ public class ImportFileResource {
     this.factory = factory;
     this.maxPayloadSize = maxPayloadSize;
 
-    LOG.debug("ImportFile resource configured with maxPayloadSize={}", maxPayloadSize);
+    LOG.debug("ImportFileResource configured with maxPayloadSize={}", maxPayloadSize);
   }
 
   @POST
@@ -63,7 +63,7 @@ public class ImportFileResource {
 
     // Unfortunately, this does not work as fileDetail.getSize() is always -1 :-(
     // we could use https://github.com/dropwizard/dropwizard/issues/2327
-    final var contents = readContent(uploadedInputStream);
+    final var contents = readContent(uploadedInputStream, maxPayloadSize);
 
     final var builder = factory.getDocumentImportBuilder();
     final var importTask = builder.forExternalId(externalId)

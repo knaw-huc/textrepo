@@ -5,8 +5,8 @@ import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.core.TextrepoFile;
 import nl.knaw.huc.db.FileDao;
 import nl.knaw.huc.db.VersionDao;
-import nl.knaw.huc.service.JdbiFileContentsService;
 import nl.knaw.huc.service.ContentsService;
+import nl.knaw.huc.service.JdbiFileContentsService;
 import nl.knaw.huc.service.JdbiVersionService;
 import nl.knaw.huc.service.MetadataService;
 import nl.knaw.huc.service.VersionService;
@@ -70,7 +70,7 @@ public class FileContentsResourceTest {
   public static final ResourceTestRule resource = ResourceTestRule
       .builder()
       .addProvider(MultiPartFeature.class)
-      .addResource(new FileContentsResource(FILE_CONTENTS_SERVICE))
+      .addResource(new FileContentsResource(FILE_CONTENTS_SERVICE, content.length()))
       .build();
 
   @Captor

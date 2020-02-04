@@ -40,13 +40,16 @@ import static nl.knaw.huc.resources.ResourceUtils.readContent;
 @Api(tags = {"files", "contents"})
 @Path("/files/{uuid}/contents")
 public class FileContentsResource {
-
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private static final Logger LOG = LoggerFactory.getLogger(FileContentsResource.class);
 
   private final FileContentsService fileContentsService;
+  private final int maxPayloadSize;
 
-  public FileContentsResource(FileContentsService fileContentsService) {
+  public FileContentsResource(FileContentsService fileContentsService, int maxPayloadSize) {
     this.fileContentsService = fileContentsService;
+    this.maxPayloadSize = maxPayloadSize;
+
+    LOG.debug("FileContentsResource configured with maxPayloadSize={}", maxPayloadSize);
   }
 
   @PUT
@@ -60,10 +63,10 @@ public class FileContentsResource {
       @FormDataParam("contents") InputStream uploadedInputStream,
       @FormDataParam("contents") FormDataContentDisposition fileDetail
   ) {
-    logger.debug("updateFileContents: fileId={}, file={}", fileId, fileDetail.getFileName());
+    LOG.debug("updateFileContents: fileId={}, file={}", fileId, fileDetail.getFileName());
     var resultFile = handleUpdate(
         fileId,
-        readContent(uploadedInputStream),
+        readContent(uploadedInputStream, maxPayloadSize),
         fileDetail.getFileName()
     );
     if (resultFile == null) {
@@ -80,7 +83,7 @@ public class FileContentsResource {
   public Response getContents(
       @PathParam("uuid") @NotNull @Valid UUID fileId
   ) {
-    logger.debug("getContents: fileId={}", fileId);
+    LOG.debug("getContents: fileId={}", fileId);
     var contents = fileContentsService.getLatestFileContents(fileId);
     return Response
         .ok(contents.getContent(), APPLICATION_OCTET_STREAM)
@@ -98,14 +101,14 @@ public class FileContentsResource {
       byte[] content,
       String filename
   ) {
-    logger.debug("replacing contents: fileId={}", fileId);
+    LOG.debug("replacing contents: fileId={}", fileId);
     var contents = fromContent(content);
 
     final var startReplacing = now();
     var version = fileContentsService.replaceFileContents(fileId, contents, filename);
 
     if (version.getCreatedAt().isBefore(startReplacing)) {
-      logger.info("skip existing [{}]", filename);
+      LOG.info("skip existing [{}]", filename);
       return null;
     }
 

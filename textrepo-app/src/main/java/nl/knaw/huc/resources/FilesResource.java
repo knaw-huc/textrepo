@@ -43,13 +43,16 @@ import static org.eclipse.jetty.util.StringUtil.isBlank;
 @Api(tags = {"files"})
 @Path("/files")
 public class FilesResource {
-
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private static final Logger LOG = LoggerFactory.getLogger(FilesResource.class);
 
   private final FileService fileService;
+  private final int maxPayloadSize;
 
-  public FilesResource(FileService fileService) {
+  public FilesResource(FileService fileService, int maxPayloadSize) {
     this.fileService = fileService;
+    this.maxPayloadSize = maxPayloadSize;
+
+    LOG.debug("FileContentsResource configured with maxPayloadSize={}", maxPayloadSize);
   }
 
   @POST
@@ -70,7 +73,7 @@ public class FilesResource {
       throw new IllegalStateException("No filename");
     }
 
-    logger.debug("addFile: type={}, filename={}", typeName, fileDetail.getFileName());
+    LOG.debug("addFile: type={}, filename={}", typeName, fileDetail.getFileName());
 
     if (isZip(bodyPart, fileDetail)) {
       var resultFiles = handleZipFile(inputStream, formContents -> handleNewFile(typeName, formContents));
@@ -83,7 +86,7 @@ public class FilesResource {
         typeName,
         new FormContents(
             fileDetail.getFileName(),
-            readContent(inputStream)
+            readContent(inputStream, maxPayloadSize)
         )
     );
 
@@ -101,7 +104,7 @@ public class FilesResource {
   public Response getLatestVersionOfFile(
       @PathParam("uuid") @NotNull @Valid UUID fileId
   ) {
-    logger.debug("getLatestVersionOfFile: fileId={}", fileId);
+    LOG.debug("getLatestVersionOfFile: fileId={}", fileId);
     var version = fileService.getLatestVersion(fileId);
     return Response.ok(version).build();
   }

@@ -72,7 +72,7 @@ public class FilesResourceTest {
   public static final ResourceTestRule resource = ResourceTestRule
       .builder()
       .addProvider(MultiPartFeature.class)
-      .addResource(new FilesResource(FILE_SERVICE))
+      .addResource(new FilesResource(FILE_SERVICE, content.length()))
       .build();
 
   @Captor
