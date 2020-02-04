@@ -60,17 +60,13 @@ public class ImportFile {
     //   1. check announced length before actually reading contents
     //   2. if ok, read contents and ensure size matches announced size
 
-    if (announcedSize > maxPayloadSize) {
-      throw new PayloadTooLargeException("Max. allowed size: " + maxPayloadSize);
-    }
+    // if (announcedSize > maxPayloadSize) {
+    //   throw new PayloadTooLargeException("Max. allowed size: " + maxPayloadSize);
+    // }
 
+    // Unfortunately, this does not work as fileDetail.getSize() is always -1 :-(
+    // we could use https://github.com/dropwizard/dropwizard/issues/2327
     final var contents = readContent(uploadedInputStream);
-    if (contents.length != announcedSize) {
-      var msg = String.format("Actual content length (%d) does not match announced size (%d)",
-        contents.length, announcedSize);
-      LOG.warn(msg);
-      throw new BadRequestException(msg);
-    }
 
     final var builder = factory.getDocumentImportBuilder();
     final var importTask = builder.forExternalId(externalId)
