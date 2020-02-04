@@ -52,13 +52,11 @@ public class ImportFileResource {
     final var announcedSize = fileDetail.getSize();
     LOG.debug("ImportFile: externalId={}, type={}, size={}", externalId, type, announcedSize);
 
-    final var contents = readContent(uploadedInputStream, maxPayloadSize);
-
     final var builder = factory.getDocumentImportBuilder();
     final var importTask = builder.forExternalId(externalId)
                                   .withType(type)
                                   .forFilename(fileDetail.getFileName())
-                                  .withContents(contents)
+                                  .withContents(readContent(uploadedInputStream, maxPayloadSize))
                                   .build();
 
     // TODO: what would be a good (generic) return value for a task?
