@@ -6,11 +6,8 @@ import nl.knaw.huc.service.task.Task;
 import org.jdbi.v3.core.Jdbi;
 
 import javax.ws.rs.NotFoundException;
-import java.io.InputStream;
 import java.util.UUID;
 import java.util.function.Supplier;
-
-import static nl.knaw.huc.resources.ResourceUtils.readContent;
 
 class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
   private final Jdbi jdbi;
@@ -89,11 +86,11 @@ class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
     @Override
     public void run() {
       jdbi.useTransaction(txn ->
-        new HaveDocumentByExternalId(txn, documentIdGenerator)
-          .andThen(new HaveFileForDocumentByType(txn, fileIdGenerator, typeId))
-          .andThen(new SetFilenameMetadata(txn, filename))
-          .andThen(new SetCurrentFileContents(txn, contents))
-          .apply(externalId));
+          new HaveDocumentByExternalId(txn, documentIdGenerator)
+              .andThen(new HaveFileForDocumentByType(txn, fileIdGenerator, typeId))
+              .andThen(new SetFilenameMetadata(txn, filename))
+              .andThen(new SetCurrentFileContents(txn, contents))
+              .apply(externalId));
     }
   }
 }
