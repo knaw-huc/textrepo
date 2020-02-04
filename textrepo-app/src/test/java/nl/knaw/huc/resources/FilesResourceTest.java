@@ -38,6 +38,7 @@ import java.util.function.Supplier;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
+import static nl.knaw.huc.resources.ResourceTestUtils.responsePart;
 import static nl.knaw.huc.resources.TestUtils.getResourceAsBytes;
 import static nl.knaw.huc.resources.TestUtils.getResourceAsString;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -217,6 +218,16 @@ public class FilesResourceTest {
     assertThat(metadataEntries.get(0).getValue()).isEqualTo("hello-test.txt");
     assertThat(metadataEntries.get(1).getKey()).isEqualTo("filename");
     assertThat(metadataEntries.get(1).getValue()).isEqualTo("hello-test2.txt");
+  }
+
+  @Test
+  public void testPostFile_yieldsPayloadTooLarge_whenContentsLongerThanMaxAllowed() throws IOException {
+    final var response = postTestContents((content + " MADE TOO LONG").getBytes(), filename);
+    assertThat(response.getStatus()).isEqualTo(413);
+
+    final var message = responsePart(response, "message");
+    assertThat(message).containsIgnoringCase("max. allowed size");
+    assertThat(message).contains(String.valueOf(content.length()));
   }
 
   private Response postTestContents() {
