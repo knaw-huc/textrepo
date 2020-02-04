@@ -5,3 +5,8 @@
  - [Metadata](./TestMetadata.md "c:run")
  - [Versions](./TestVersions.md "c:run")
  - [Custom indexer](./TestCustomIndexer.md "c:run")
+
+## Rest API
+
+ - [Documents](rest/TestRestDocuments.md "c:run")
+ - [Document metadata](rest/TestRestDocumentMetadata.md "c:run")

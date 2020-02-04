@@ -21,8 +21,7 @@ public class Config {
 
   public static final String HOST = HTTP_APP_HOST;
   public static final String FILES_URL = HOST + "/files";
-  public static final String TYPES_URL = HOST + "/types";
-  public static final String DOCUMENTS_URL = HOST + "/documents";
+  public static final String TYPES_URL = HOST + "/rest/types";
 
   public static final List<String> INDICES = newArrayList(
       FILE_INDEX,

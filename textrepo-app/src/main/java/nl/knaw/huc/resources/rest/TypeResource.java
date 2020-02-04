@@ -1,4 +1,4 @@
-package nl.knaw.huc.resources;
+package nl.knaw.huc.resources.rest;
 
 import io.swagger.annotations.Api;
 import nl.knaw.huc.api.FormType;
@@ -19,7 +19,7 @@ import java.util.List;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 @Api(tags = {"types"})
-@Path("/types")
+@Path("/rest/types")
 public class TypeResource {
   private static final Logger logger = LoggerFactory.getLogger(TypeResource.class);
 

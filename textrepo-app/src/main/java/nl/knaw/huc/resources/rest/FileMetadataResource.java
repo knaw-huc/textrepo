@@ -1,4 +1,4 @@
-package nl.knaw.huc.resources;
+package nl.knaw.huc.resources.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import io.swagger.annotations.Api;
@@ -27,7 +27,7 @@ import java.util.UUID;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 @Api(tags = {"files", "metadata"})
-@Path("/files/{uuid}/metadata")
+@Path("/rest/files/{uuid}/metadata")
 public class FileMetadataResource {
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());

@@ -1,4 +1,4 @@
-package nl.knaw.huc.resources.task;
+package nl.knaw.huc.service.task;
 
 public interface Task {
   void run();

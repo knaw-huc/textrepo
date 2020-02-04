@@ -4,7 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import nl.knaw.huc.resources.PayloadTooLargeException;
+import nl.knaw.huc.service.task.TaskBuilderFactory;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
@@ -12,8 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -28,13 +26,12 @@ import static nl.knaw.huc.resources.ResourceUtils.readContent;
 
 @Api(tags = {"task", "import"})
 @Path("task/import")
-public class ImportFile {
-  private static final Logger LOG = LoggerFactory.getLogger(ImportFile.class);
-
+public class ImportFileResource {
+  private static final Logger LOG = LoggerFactory.getLogger(ImportFileResource.class);
   private final TaskBuilderFactory factory;
   private final int maxPayloadSize;
 
-  public ImportFile(TaskBuilderFactory factory, int maxPayloadSize) {
+  public ImportFileResource(TaskBuilderFactory factory, int maxPayloadSize) {
     this.factory = factory;
     this.maxPayloadSize = maxPayloadSize;
 

@@ -2,8 +2,9 @@ package nl.knaw.huc.resources;
 
 import io.dropwizard.testing.junit.ResourceTestRule;
 import nl.knaw.huc.api.MetadataEntry;
-import nl.knaw.huc.db.MetadataDao;
-import nl.knaw.huc.service.JdbiMetadataService;
+import nl.knaw.huc.db.FileMetadataDao;
+import nl.knaw.huc.resources.rest.FileMetadataResource;
+import nl.knaw.huc.service.JdbiFileMetadataService;
 import nl.knaw.huc.service.MetadataService;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.jdbi.v3.core.Jdbi;
@@ -33,9 +34,9 @@ public class FileMetadataResourceTest {
 
   private static final Jdbi jdbi = mock(Jdbi.class);
 
-  private static final MetadataService metadataService = new JdbiMetadataService(jdbi);
+  private static final MetadataService metadataService = new JdbiFileMetadataService(jdbi);
 
-  private static final MetadataDao metadataDao = mock(MetadataDao.class);
+  private static final FileMetadataDao FILE_METADATA_DAO = mock(FileMetadataDao.class);
 
   @ClassRule
   public static final ResourceTestRule resource = ResourceTestRule
@@ -51,13 +52,13 @@ public class FileMetadataResourceTest {
 
   @Before
   public void setupMocks() {
-    when(jdbi.onDemand(any())).thenReturn(metadataDao);
+    when(jdbi.onDemand(any())).thenReturn(FILE_METADATA_DAO);
     MockitoAnnotations.initMocks(this);
   }
 
   @After
   public void resetMocks() {
-    reset(jdbi, metadataDao);
+    reset(jdbi, FILE_METADATA_DAO);
   }
 
   @Test
@@ -69,7 +70,7 @@ public class FileMetadataResourceTest {
     var response = putMetadata(fileId, metadata);
 
     assertThat(response.getStatus()).isEqualTo(200);
-    verify(metadataDao, times(1)).updateFileMetadata(fileIdCaptor.capture(), metadataCaptor.capture());
+    verify(FILE_METADATA_DAO, times(1)).updateFileMetadata(fileIdCaptor.capture(), metadataCaptor.capture());
     assertThat(fileIdCaptor.getValue()).isEqualTo(fileId);
     assertThat(metadataCaptor.getValue().getKey()).isEqualTo(key);
     assertThat(metadataCaptor.getValue().getValue()).isEqualTo(value);
@@ -78,7 +79,7 @@ public class FileMetadataResourceTest {
   private Response putMetadata(UUID fileId, MetadataEntry metadataEntry) {
     return resource
         .client()
-        .target("/files/" + fileId.toString() + "/metadata/" + metadataEntry.getKey())
+        .target("/rest/files/" + fileId.toString() + "/metadata/" + metadataEntry.getKey())
         .request()
         .put(Entity.json(metadataEntry.getValue()));
 

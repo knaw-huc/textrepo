@@ -1,4 +1,6 @@
-package nl.knaw.huc.resources.task;
+package nl.knaw.huc.service.task.importfile;
+
+import nl.knaw.huc.service.task.Task;
 
 import java.io.InputStream;
 

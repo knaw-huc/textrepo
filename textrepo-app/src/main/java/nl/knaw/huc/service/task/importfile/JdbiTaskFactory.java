@@ -1,7 +1,6 @@
-package nl.knaw.huc.resources.task.jdbi;
+package nl.knaw.huc.service.task.importfile;
 
-import nl.knaw.huc.resources.task.ImportFileTaskBuilder;
-import nl.knaw.huc.resources.task.TaskBuilderFactory;
+import nl.knaw.huc.service.task.TaskBuilderFactory;
 import org.jdbi.v3.core.Jdbi;
 
 import java.util.UUID;

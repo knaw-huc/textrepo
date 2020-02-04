@@ -1,10 +1,9 @@
-package nl.knaw.huc.resources.task.jdbi;
+package nl.knaw.huc.service.task.importfile;
 
 import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.core.TextrepoFile;
-import nl.knaw.huc.db.MetadataDao;
+import nl.knaw.huc.db.FileMetadataDao;
 import org.jdbi.v3.core.Handle;
-import org.jdbi.v3.core.Jdbi;
 
 import java.util.function.Function;
 
@@ -23,7 +22,7 @@ class SetFilenameMetadata implements Function<TextrepoFile, TextrepoFile> {
     return file;
   }
 
-  private MetadataDao metadata() {
-    return transaction.attach(MetadataDao.class);
+  private FileMetadataDao metadata() {
+    return transaction.attach(FileMetadataDao.class);
   }
 }

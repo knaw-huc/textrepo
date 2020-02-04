@@ -37,6 +37,9 @@ import static nl.knaw.huc.resources.ZipHandling.handleZipFile;
 import static nl.knaw.huc.resources.ZipHandling.isZip;
 import static org.eclipse.jetty.util.StringUtil.isBlank;
 
+/**
+ * TODO: deprecated, or move to /task?
+ */
 @Api(tags = {"files"})
 @Path("/files")
 public class FilesResource {

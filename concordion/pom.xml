@@ -102,6 +102,12 @@
       <version>2.2.0</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.concordion</groupId>
+      <artifactId>concordion-embed-extension</artifactId>
+      <version>1.2.0</version>
+    </dependency>
+
     <!-- Add missing Java 11 modules for json-path: -->
     <dependency>
       <groupId>javax.xml.bind</groupId>

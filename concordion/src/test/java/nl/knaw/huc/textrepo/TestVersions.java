@@ -68,7 +68,7 @@ public class TestVersions extends AbstractConcordionTest {
   }
 
   private String getVersions(String fileId) {
-    var url = String.format("%s/files/%s/versions", APP_HOST, fileId);
+    var url = String.format("%s/rest/files/%s/versions", APP_HOST, fileId);
     return getByUrl(url);
   }
 

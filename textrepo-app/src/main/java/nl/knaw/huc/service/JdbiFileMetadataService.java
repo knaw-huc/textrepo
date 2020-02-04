@@ -1,17 +1,17 @@
 package nl.knaw.huc.service;
 
 import nl.knaw.huc.api.MetadataEntry;
-import nl.knaw.huc.db.MetadataDao;
+import nl.knaw.huc.db.FileMetadataDao;
 import org.jdbi.v3.core.Jdbi;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.UUID;
 
-public class JdbiMetadataService implements MetadataService {
+public class JdbiFileMetadataService implements MetadataService {
   private final Jdbi jdbi;
 
-  public JdbiMetadataService(Jdbi jdbi) {
+  public JdbiFileMetadataService(Jdbi jdbi) {
     this.jdbi = jdbi;
   }
 
@@ -35,7 +35,7 @@ public class JdbiMetadataService implements MetadataService {
     getMetadataDao().updateFileMetadata(fileId, entry);
   }
 
-  private MetadataDao getMetadataDao() {
-    return jdbi.onDemand(MetadataDao.class);
+  private FileMetadataDao getMetadataDao() {
+    return jdbi.onDemand(FileMetadataDao.class);
   }
 }

@@ -1,5 +1,7 @@
 package nl.knaw.huc.textrepo.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.StringSubstitutor;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
@@ -12,7 +14,9 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.util.Map;
 import java.util.Optional;
@@ -24,6 +28,7 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static javax.ws.rs.client.Entity.entity;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
 import static nl.knaw.huc.textrepo.Config.FILE_TYPE;
+import static nl.knaw.huc.textrepo.Config.HOST;
 
 public class TestUtils {
 
@@ -32,6 +37,7 @@ public class TestUtils {
   }
 
   static final Logger logger = LoggerFactory.getLogger(TestUtils.class);
+  static final ObjectMapper mapper = new ObjectMapper();
 
   public static String isValidUuidMsg(String fileId) {
     try {
@@ -179,4 +185,18 @@ public class TestUtils {
     return response.getStatus() + " " + response.getStatusInfo();
   }
 
+  public static String asPrettyJson(String string) {
+    var result = "";
+    try {
+      var json = mapper.readValue(string, Object.class);
+      result = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json);
+    } catch (JsonProcessingException ex) {
+      throw new IllegalArgumentException(format("Could not pretty print json string: %s", string), ex);
+    }
+    return "<pre>" + result + "</pre>";
+  }
+
+  public static URI replaceUrlParams(Object endpoint, Object... params) {
+    return UriBuilder.fromPath(HOST + endpoint.toString()).build(params);
+  }
 }

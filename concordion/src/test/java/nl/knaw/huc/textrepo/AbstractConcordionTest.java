@@ -38,7 +38,7 @@ import static nl.knaw.huc.textrepo.util.IndexUtils.emptyIndices;
 public abstract class AbstractConcordionTest {
 
   final Logger logger = LoggerFactory.getLogger(this.getClass());
-  final static Client client = JerseyClientBuilder.newClient();
+  protected final static Client client = JerseyClientBuilder.newClient();
 
   static Client client() {
     return client;

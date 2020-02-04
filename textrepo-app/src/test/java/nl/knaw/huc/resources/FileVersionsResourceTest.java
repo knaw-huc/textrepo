@@ -6,6 +6,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import nl.knaw.huc.core.Version;
 import nl.knaw.huc.db.VersionDao;
+import nl.knaw.huc.resources.rest.FileVersionsResource;
 import nl.knaw.huc.service.ContentsService;
 import nl.knaw.huc.service.JdbiVersionService;
 import nl.knaw.huc.service.VersionService;
@@ -97,7 +98,7 @@ public class FileVersionsResourceTest {
   private Response getVersions(UUID filename) {
     return resource
         .client()
-        .target("/files/" + filename.toString() + "/versions")
+        .target("/rest/files/" + filename.toString() + "/versions")
         .request()
         .get();
 
