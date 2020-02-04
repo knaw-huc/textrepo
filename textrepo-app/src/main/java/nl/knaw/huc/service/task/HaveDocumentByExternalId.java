@@ -1,4 +1,4 @@
-package nl.knaw.huc.service.task.importfile;
+package nl.knaw.huc.service.task;
 
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.db.DocumentsDao;
@@ -9,11 +9,11 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-class HaveDocumentByExternalId implements Function<String, Document> {
+public class HaveDocumentByExternalId implements Function<String, Document> {
   private final Handle transaction;
   private final Supplier<UUID> idGenerator;
 
-  HaveDocumentByExternalId(Handle transaction, Supplier<UUID> idGenerator) {
+  public HaveDocumentByExternalId(Handle transaction, Supplier<UUID> idGenerator) {
     this.transaction = transaction;
     this.idGenerator = idGenerator;
   }

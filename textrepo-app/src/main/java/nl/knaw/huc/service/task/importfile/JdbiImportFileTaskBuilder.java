@@ -2,6 +2,7 @@ package nl.knaw.huc.service.task.importfile;
 
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.db.TypeDao;
+import nl.knaw.huc.service.task.HaveDocumentByExternalId;
 import nl.knaw.huc.service.task.Task;
 import org.jdbi.v3.core.Jdbi;
 
