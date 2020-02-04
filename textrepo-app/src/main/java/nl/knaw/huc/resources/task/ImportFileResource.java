@@ -34,7 +34,6 @@ public class ImportFileResource {
   public ImportFileResource(TaskBuilderFactory factory, int maxPayloadSize) {
     this.factory = factory;
     this.maxPayloadSize = maxPayloadSize;
-
     LOG.debug("ImportFileResource configured with maxPayloadSize={}", maxPayloadSize);
   }
 
@@ -53,16 +52,6 @@ public class ImportFileResource {
     final var announcedSize = fileDetail.getSize();
     LOG.debug("ImportFile: externalId={}, type={}, size={}", externalId, type, announcedSize);
 
-    // Protect my future self from accidentally uploading a "yuge" tarball:
-    //   1. check announced length before actually reading contents
-    //   2. if ok, read contents and ensure size matches announced size
-
-    // if (announcedSize > maxPayloadSize) {
-    //   throw new PayloadTooLargeException("Max. allowed size: " + maxPayloadSize);
-    // }
-
-    // Unfortunately, this does not work as fileDetail.getSize() is always -1 :-(
-    // we could use https://github.com/dropwizard/dropwizard/issues/2327
     final var contents = readContent(uploadedInputStream, maxPayloadSize);
 
     final var builder = factory.getDocumentImportBuilder();
