@@ -1,4 +1,4 @@
-package nl.knaw.huc.service.task.importfile;
+package nl.knaw.huc.service.task;
 
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.core.TextrepoFile;
@@ -15,13 +15,13 @@ import java.util.function.Supplier;
 import static java.time.LocalDateTime.now;
 import static java.util.Objects.requireNonNull;
 
-class SetCurrentFileContents implements Function<Handle, Version> {
+public class SetCurrentFileContents implements Function<Handle, Version> {
   private final TextrepoFile file;
   private final Contents contents;
 
   private Handle transaction;
 
-  SetCurrentFileContents(TextrepoFile file, Contents contents) {
+  public SetCurrentFileContents(TextrepoFile file, Contents contents) {
     this.file = requireNonNull(file);
     this.contents = requireNonNull(contents);
   }

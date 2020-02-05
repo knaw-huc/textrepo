@@ -1,4 +1,4 @@
-package nl.knaw.huc.service.task.importfile;
+package nl.knaw.huc.service.task;
 
 import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.core.TextrepoFile;
@@ -9,13 +9,13 @@ import java.util.function.Function;
 
 import static java.util.Objects.requireNonNull;
 
-class SetFileProvenance implements Function<Handle, MetadataEntry> {
+public class SetFileProvenance implements Function<Handle, MetadataEntry> {
   private final TextrepoFile file;
   private final String filename;
 
   private Handle transaction;
 
-  SetFileProvenance(TextrepoFile file, String filename) {
+  public SetFileProvenance(TextrepoFile file, String filename) {
     this.file = requireNonNull(file);
     this.filename = requireNonNull(filename);
   }
