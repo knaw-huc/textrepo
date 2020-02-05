@@ -23,7 +23,7 @@ public class SetFileProvenance implements Function<Handle, MetadataEntry> {
   @Override
   public MetadataEntry apply(Handle transaction) {
     this.transaction = requireNonNull(transaction);
-    final var entry = new MetadataEntry("filename", this.filename);
+    final var entry = new MetadataEntry("filename", filename);
     metadata().upsertFileMetadata(file, entry);
     return entry;
   }
