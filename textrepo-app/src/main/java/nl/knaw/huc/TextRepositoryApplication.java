@@ -40,10 +40,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.UUID;
 import java.util.function.Supplier;
-
-import static com.google.common.collect.Lists.newArrayList;
 
 public class TextRepositoryApplication extends Application<TextRepositoryConfiguration> {
 
@@ -97,7 +96,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     var documentService = new JdbiDocumentService(jdbi, uuidGenerator);
     var documentMetadataService = new JdbiDocumentMetadataService(jdbi);
 
-    var resources = newArrayList(
+    var resources = Arrays.asList(
         new ContentsResource(contentsService),
         new TypesResource(typeService),
         new FileContentsResource(fileContentsService, maxPayloadSize),
