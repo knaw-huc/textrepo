@@ -8,7 +8,7 @@
 [ ](- "#typeId=getTypeId()")
 [ ](- "#fooTypeId=getFooTypeId()")
 
-To add file metadata we created a file first: [ ](- "c:echo=#docId")
+To add a file we create a document first: [ ](- "c:echo=#docId")
 
 ### Create file
 When creating the following file with a `POST` to [`/rest/files`](- "#createEndpoint"):
