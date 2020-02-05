@@ -3,8 +3,8 @@ package nl.knaw.huc.resources;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.core.TextrepoFile;
-import nl.knaw.huc.db.FileDao;
-import nl.knaw.huc.db.VersionDao;
+import nl.knaw.huc.db.FilesDao;
+import nl.knaw.huc.db.VersionsDao;
 import nl.knaw.huc.service.ContentsService;
 import nl.knaw.huc.service.JdbiFileContentsService;
 import nl.knaw.huc.service.JdbiVersionService;
@@ -63,8 +63,8 @@ public class FileContentsResourceTest {
       metadataService
   );
 
-  private static final VersionDao versionDao = mock(VersionDao.class);
-  private static final FileDao fileDao = mock(FileDao.class);
+  private static final VersionsDao VERSIONS_DAO = mock(VersionsDao.class);
+  private static final FilesDao FILES_DAO = mock(FilesDao.class);
 
   @ClassRule
   public static final ResourceTestRule resource = ResourceTestRule
@@ -82,19 +82,19 @@ public class FileContentsResourceTest {
   @Before
   public void setupMocks() {
     MockitoAnnotations.initMocks(this);
-    when(jdbi.onDemand(VersionDao.class)).thenReturn(versionDao);
-    when(jdbi.onDemand(FileDao.class)).thenReturn(fileDao);
+    when(jdbi.onDemand(VersionsDao.class)).thenReturn(VERSIONS_DAO);
+    when(jdbi.onDemand(FilesDao.class)).thenReturn(FILES_DAO);
   }
 
   @After
   public void resetMocks() {
-    reset(jdbi, versionDao, fileIndexer, metadataService, versionDao, fileDao);
+    reset(jdbi, VERSIONS_DAO, fileIndexer, metadataService, VERSIONS_DAO, FILES_DAO);
   }
 
   @Test
   public void testUpdateFileContents_addsFilenameMetadata() {
     var fileUuid = UUID.fromString(fileId);
-    when(fileDao.find(any()))
+    when(FILES_DAO.find(any()))
         .thenReturn(new TextrepoFile(fileUuid, (short) 1));
 
     putTestFile();

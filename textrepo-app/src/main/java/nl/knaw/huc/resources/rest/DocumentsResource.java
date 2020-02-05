@@ -44,7 +44,7 @@ public class DocumentsResource {
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Create document")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultDocument.class, message = "OK")})
-  public Response create(
+  public Response post(
       @Valid FormDocument form
   ) {
     logger.debug("create document: form={}", form);
@@ -55,7 +55,7 @@ public class DocumentsResource {
   @GET
   @Path("/{id}")
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Read document")
+  @ApiOperation(value = "Retrieve document")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultDocument.class, message = "OK")})
   public Response get(
       @PathParam("id") @Valid UUID id
@@ -75,7 +75,7 @@ public class DocumentsResource {
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Create or update document")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultDocument.class, message = "OK")})
-  public Response update(
+  public Response put(
       @PathParam("id") @Valid UUID id,
       @Valid FormDocument form
   ) {
@@ -92,7 +92,7 @@ public class DocumentsResource {
       @PathParam("id") @Valid UUID id
   ) {
     logger.debug("delete document: id={}", id);
-    documentService.delete(new Document(id, null));
+    documentService.delete(id);
     return Response.ok().build();
   }
 

@@ -3,7 +3,7 @@ package nl.knaw.huc.resources;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import nl.knaw.huc.api.FormType;
 import nl.knaw.huc.core.Type;
-import nl.knaw.huc.resources.rest.TypeResource;
+import nl.knaw.huc.resources.rest.TypesResource;
 import nl.knaw.huc.service.JdbiTypeService;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.junit.After;
@@ -23,7 +23,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
-public class TypeResourceTest {
+public class TypesResourceTest {
 
   @Captor
   private ArgumentCaptor<Type> typeCaptor;
@@ -34,7 +34,7 @@ public class TypeResourceTest {
   public static final ResourceTestRule resource = ResourceTestRule
       .builder()
       .addProvider(MultiPartFeature.class)
-      .addResource(new TypeResource(typeService))
+      .addResource(new TypesResource(typeService))
       .build();
 
   @Before
@@ -58,7 +58,7 @@ public class TypeResourceTest {
         .request()
         .post(json(type));
 
-    assertThat(response.getStatus()).isEqualTo(204);
+    assertThat(response.getStatus()).isEqualTo(200);
 
     verify(typeService, times(1)).create(typeCaptor.capture());
     var toCreate = typeCaptor.getValue();

@@ -7,6 +7,7 @@ import java.beans.ConstructorProperties;
 
 public class Type {
 
+  private short id;
   private final String name;
   private final String mimetype;
 
@@ -16,12 +17,18 @@ public class Type {
     this.mimetype = mimetype;
   }
 
-  @JsonProperty
+  public short getId() {
+    return id;
+  }
+
+  public void setId(short id) {
+    this.id = id;
+  }
+
   public String getName() {
     return name;
   }
 
-  @JsonProperty
   public String getMimetype() {
     return mimetype;
   }

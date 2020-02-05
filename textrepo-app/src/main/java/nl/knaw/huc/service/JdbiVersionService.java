@@ -3,7 +3,7 @@ package nl.knaw.huc.service;
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.core.TextrepoFile;
 import nl.knaw.huc.core.Version;
-import nl.knaw.huc.db.VersionDao;
+import nl.knaw.huc.db.VersionsDao;
 import nl.knaw.huc.service.index.FileIndexer;
 import nl.knaw.huc.service.index.ElasticCustomIndexer;
 import org.jdbi.v3.core.Jdbi;
@@ -60,7 +60,7 @@ public class JdbiVersionService implements VersionService {
     return getVersionDao().findByFileId(fileId);
   }
 
-  private VersionDao getVersionDao() {
-    return jdbi.onDemand(VersionDao.class);
+  private VersionsDao getVersionDao() {
+    return jdbi.onDemand(VersionsDao.class);
   }
 }

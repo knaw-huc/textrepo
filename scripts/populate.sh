@@ -1,25 +1,30 @@
 #!/usr/bin/env bash
 set -e
 
-HOST=localhost:8080/textrepo
-TXT=example.txt
-XML=example.xml
+HOST=localhost:8080/textrepo/rest
 
-# Check example files exist:
-if [[ ! -f $TXT ]] ; then echo "File '$TXT' not found, aborting."; exit; fi
-if [[ ! -f $XML ]] ; then echo "File '$XML' not found, aborting."; exit; fi
+# Create 'text' and 'xml' file types:
+TYPE_ID=$(curl "$HOST/types" \
+  -H 'content-type:application/json' \
+  -d '{"name": "text", "mimetype": "text/plain"}' | jq '.id')
 
-# Add 'text' and 'xml' file types:
-curl "$HOST/types" -H 'Content-Type:application/json' -d '{"name": "text", "mimetype": "text/plain"}'
-curl "$HOST/types" -H 'Content-Type:application/json' -d '{"name": "xml", "mimetype": "application/xml"}'
+echo "Created text type with id: $TYPE_ID"
 
-# Add text and xml file to same document:
-curl -sv "$HOST/documents" \
-  -F "contents=@$TXT;filename=example.file" \
-  -F type=text \
-  -F externalId=exampleFile
-curl -sv "$HOST/documents" \
-  -F "contents=@$XML;filename=example.file" \
-  -F type=xml \
-  -F externalId=exampleFile \
-  -F byExternalId=true
+curl "$HOST/types" \
+  -H 'content-type:application/json' \
+  -d '{"name": "xml", "mimetype": "application/xml"}'
+
+# Create document:
+DOC_ID=$(curl "$HOST/documents" \
+  -H 'content-type:application/json' \
+  -d '{"externalId": "example-external-id"}' | jq '.id')
+
+echo "Created document with id: $DOC_ID"
+
+# Create file:
+FILE_ID=$(curl "$HOST/files" \
+  -H 'content-type:application/json' \
+  -d "{\"docId\": $DOC_ID, \"typeId\": $TYPE_ID}" | jq '.id')
+
+echo "Created file with id: $FILE_ID"
+

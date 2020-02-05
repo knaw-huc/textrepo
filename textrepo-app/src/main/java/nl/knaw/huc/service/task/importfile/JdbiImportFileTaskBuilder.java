@@ -1,7 +1,7 @@
 package nl.knaw.huc.service.task.importfile;
 
 import nl.knaw.huc.core.Contents;
-import nl.knaw.huc.db.TypeDao;
+import nl.knaw.huc.db.TypesDao;
 import nl.knaw.huc.service.task.Task;
 import org.jdbi.v3.core.Jdbi;
 
@@ -62,8 +62,8 @@ class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
     return Contents.fromContent(contents);
   }
 
-  private TypeDao types() {
-    return jdbi.onDemand(TypeDao.class);
+  private TypesDao types() {
+    return jdbi.onDemand(TypesDao.class);
   }
 
   private Supplier<NotFoundException> typeNotFound(String name) {

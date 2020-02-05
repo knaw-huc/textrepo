@@ -1,7 +1,7 @@
 package nl.knaw.huc.service;
 
 import nl.knaw.huc.core.Type;
-import nl.knaw.huc.db.TypeDao;
+import nl.knaw.huc.db.TypesDao;
 import org.jdbi.v3.core.Jdbi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +53,7 @@ public class JdbiTypeService implements TypeService {
         )));
   }
 
-  private TypeDao types() {
-    return jdbi.onDemand(TypeDao.class);
+  private TypesDao types() {
+    return jdbi.onDemand(TypesDao.class);
   }
 }

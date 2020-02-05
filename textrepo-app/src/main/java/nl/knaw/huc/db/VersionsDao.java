@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface VersionDao {
+public interface VersionsDao {
 
   @SqlUpdate("insert into versions (file_id, created_at, contents_sha) values (:fileId, :createdAt, :contentsSha)")
   void insert(@BindBean Version version);

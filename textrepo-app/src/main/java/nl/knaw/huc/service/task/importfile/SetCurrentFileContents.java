@@ -4,9 +4,8 @@ import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.core.TextrepoFile;
 import nl.knaw.huc.core.Version;
 import nl.knaw.huc.db.ContentsDao;
-import nl.knaw.huc.db.VersionDao;
+import nl.knaw.huc.db.VersionsDao;
 import org.jdbi.v3.core.Handle;
-import org.jdbi.v3.core.Jdbi;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -48,8 +47,8 @@ class SetCurrentFileContents implements Function<TextrepoFile, Version> {
     };
   }
 
-  private VersionDao versions() {
-    return transaction.attach(VersionDao.class);
+  private VersionsDao versions() {
+    return transaction.attach(VersionsDao.class);
   }
 
   private ContentsDao contents() {

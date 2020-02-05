@@ -3,7 +3,7 @@ package nl.knaw.huc.service.task.importfile;
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.core.TextrepoFile;
 import nl.knaw.huc.db.DocumentFilesDao;
-import nl.knaw.huc.db.FileDao;
+import nl.knaw.huc.db.FilesDao;
 import org.jdbi.v3.core.Handle;
 
 import java.util.Optional;
@@ -16,7 +16,7 @@ class HaveFileForDocumentByType implements Function<Document, TextrepoFile> {
   private final Supplier<UUID> idGenerator;
   private final short typeId;
 
-  private FileDao fileDao;
+  private FilesDao filesDao;
   private DocumentFilesDao documentFilesDao;
 
   HaveFileForDocumentByType(Handle transaction, Supplier<UUID> idGenerator, short typeId) {
@@ -28,7 +28,7 @@ class HaveFileForDocumentByType implements Function<Document, TextrepoFile> {
   @Override
   public TextrepoFile apply(Document doc) {
     documentFilesDao = transaction.attach(DocumentFilesDao.class);
-    fileDao = transaction.attach(FileDao.class);
+    filesDao = transaction.attach(FilesDao.class);
     return findFileForDocument(doc).orElseGet(createNewFileForDocument(doc));
   }
 
@@ -39,7 +39,7 @@ class HaveFileForDocumentByType implements Function<Document, TextrepoFile> {
   private Supplier<TextrepoFile> createNewFileForDocument(Document doc) {
     return () -> {
       final var file = new TextrepoFile(idGenerator.get(), typeId);
-      fileDao.create(file.getId(), file.getTypeId()); // TODO: implement and use FileDao.save(TextrepoFile file)
+      filesDao.create(file.getId(), file.getTypeId()); // TODO: implement and use FileDao.save(TextrepoFile file)
       documentFilesDao.insert(doc.getId(), file.getId());
       return file;
     };

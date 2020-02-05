@@ -15,4 +15,14 @@ public interface FileService {
   Version addFile(Contents contents, TextrepoFile file);
 
   Version getLatestVersion(@Nonnull UUID fileId);
+
+  TextrepoFile create(UUID docId, TextrepoFile textrepoFile);
+
+  TextrepoFile get(UUID fileId);
+
+  UUID getDocumentId(UUID fileId);
+
+  TextrepoFile upsert(UUID docId, TextrepoFile textrepoFile);
+
+  void delete(UUID fileId);
 }

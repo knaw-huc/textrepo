@@ -10,7 +10,7 @@ import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 import java.util.List;
 import java.util.Optional;
 
-public interface TypeDao {
+public interface TypesDao {
 
   @SqlUpdate("insert into types (name, mimetype) values (:name, :mimetype)")
   @GetGeneratedKeys
