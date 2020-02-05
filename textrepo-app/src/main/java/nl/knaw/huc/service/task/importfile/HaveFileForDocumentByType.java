@@ -50,7 +50,7 @@ class HaveFileForDocumentByType implements ProvidesInTransaction<TextrepoFile> {
   private Supplier<TextrepoFile> createNewFileForDocument(Document doc, short typeId) {
     return () -> {
       final var file = new TextrepoFile(idGenerator.get(), typeId);
-      files().create(file.getId(), file.getTypeId()); // TODO: implement and use FileDao.save(TextrepoFile file)
+      files().insert(file.getId(), file.getTypeId()); // TODO: implement and use FileDao.save(TextrepoFile file)
       documentFiles().insert(doc.getId(), file.getId());
       return file;
     };

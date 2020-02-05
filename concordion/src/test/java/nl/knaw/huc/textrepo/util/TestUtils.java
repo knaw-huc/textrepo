@@ -2,7 +2,6 @@ package nl.knaw.huc.textrepo.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.StringSubstitutor;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
@@ -12,10 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.util.Map;
@@ -27,14 +24,10 @@ import static java.lang.String.format;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static javax.ws.rs.client.Entity.entity;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
-import static nl.knaw.huc.textrepo.Config.FILE_TYPE;
+import static nl.knaw.huc.textrepo.Config.TEXT_TYPE;
 import static nl.knaw.huc.textrepo.Config.HOST;
 
 public class TestUtils {
-
-  public static byte[] getResourceFileBits(String resourcePath) throws IOException {
-    return IOUtils.toByteArray(TestUtils.class.getClassLoader().getResourceAsStream(resourcePath));
-  }
 
   static final Logger logger = LoggerFactory.getLogger(TestUtils.class);
   static final ObjectMapper mapper = new ObjectMapper();
@@ -62,21 +55,12 @@ public class TestUtils {
     return getId(location, pattern);
   }
 
-  public static String getDocumentId(String location, String type) {
-    var pattern = Pattern.compile(".*\\/documents\\/(.*)\\/" + type);
-    return getId(location, pattern);
-  }
-
   private static String getId(String location, Pattern pattern) {
     var matcher = pattern.matcher(location);
     if (matcher.matches()) {
       return matcher.group(1);
     }
     throw new IllegalStateException(format("No file id in location [%s]", location));
-  }
-
-  public static Entity<FormDataMultiPart> getMultiPartEntity(FormDataMultiPart multiPart) {
-    return entity(multiPart, multiPart.getMediaType());
   }
 
   public static Optional<String> getLocation(Response response) {
@@ -94,35 +78,7 @@ public class TestUtils {
         .build();
 
     final var multiPart = new FormDataMultiPart()
-        .field("type", FILE_TYPE)
-        .bodyPart(new FormDataBodyPart(
-            contentDisposition,
-            content,
-            APPLICATION_OCTET_STREAM_TYPE)
-        );
-
-    final var request = client
-        .register(MultiPartFeature.class)
-        .target(filesEndpoint.toString())
-        .request();
-
-    final var entity = entity(multiPart, multiPart.getMediaType());
-
-    return request.post(entity);
-  }
-
-  public static Response postDocumentWithExternalIdAndType(
-      Client client, URL filesEndpoint, String externalId, String fileType, byte[] content
-  ) {
-    logger.info("Posting document with external id [{}] to [{}]", externalId, filesEndpoint);
-    var contentDisposition = FormDataContentDisposition
-        .name("contents")
-        .size(content.length)
-        .build();
-
-    final var multiPart = new FormDataMultiPart()
-        .field("type", fileType)
-        .field("externalId", externalId)
+        .field("type", TEXT_TYPE)
         .bodyPart(new FormDataBodyPart(
             contentDisposition,
             content,
@@ -199,4 +155,5 @@ public class TestUtils {
   public static URI replaceUrlParams(Object endpoint, Object... params) {
     return UriBuilder.fromPath(HOST + endpoint.toString()).build(params);
   }
+
 }

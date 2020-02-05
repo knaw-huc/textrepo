@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -49,7 +50,7 @@ public class JdbiFileService implements FileService {
     logger.trace("creating file of type: {}", type);
     final var fileId = fileIdGenerator.get();
     final var typeId = typeService.getId(type);
-    files().create(fileId, typeId);
+    files().insert(fileId, typeId);
     metadataService.insert(fileId, new MetadataEntry("filename", filename));
     return new TextrepoFile(fileId, typeId);
   }
@@ -69,20 +70,24 @@ public class JdbiFileService implements FileService {
         .orElseThrow(() -> new NotFoundException(format("No such file: %s", fileId)));
   }
 
-  /**
-   * TODO: check that file type is unique for document
-   */
   @Override
-  public TextrepoFile create(UUID docId, TextrepoFile file) {
+  public TextrepoFile insert(UUID docId, TextrepoFile file) {
     file.setId(fileIdGenerator.get());
-    files().create(file.getId(), file.getTypeId());
-    documentsFiles().insert(docId, file.getId());
+    jdbi.useTransaction(transaction -> {
+      var documentFilesDao = transaction.attach(DocumentFilesDao.class);
+      var filesDao = transaction.attach(FilesDao.class);
+      checkFileByDocAndType(docId, file, documentFilesDao);
+      filesDao.insert(file.getId(), file.getTypeId());
+      documentFilesDao.insert(docId, file.getId());
+    });
     return file;
   }
 
   @Override
   public TextrepoFile get(UUID fileId) {
-    return files().find(fileId);
+    return files()
+        .find(fileId)
+        .orElseThrow(() -> new NotFoundException(format("No such file: %s", fileId)));
   }
 
   @Override
@@ -92,14 +97,30 @@ public class JdbiFileService implements FileService {
         .orElseThrow(() -> new NotFoundException(format("File %s has no document", fileId)));
   }
 
-  /**
-   * TODO: check that file type is unique for document
-   */
   @Override
   public TextrepoFile upsert(UUID docId, TextrepoFile file) {
-    files().upsert(file);
-    documentsFiles().upsert(docId, file.getId());
+    jdbi.useTransaction(transaction -> {
+      var documentFilesDao = transaction.attach(DocumentFilesDao.class);
+      var filesDao = transaction.attach(FilesDao.class);
+      checkFileByDocAndType(docId, file, documentFilesDao);
+      filesDao.upsert(file);
+      documentFilesDao.upsert(docId, file.getId());
+    });
     return file;
+  }
+
+  /**
+   * @throws BadRequestException when another file exists with same type and docId:
+   */
+  private void checkFileByDocAndType(UUID docId, TextrepoFile file, DocumentFilesDao documentFilesDao) {
+    var found = documentFilesDao.findFile(docId, file.getTypeId());
+
+    if (found.isPresent() && !found.get().getId().equals(file.getId())) {
+      throw new BadRequestException(format(
+          "File with type [%s] and doc id [%s] already exists",
+          file.getTypeId(), docId
+      ));
+    }
   }
 
   @Override

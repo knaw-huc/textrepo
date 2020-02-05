@@ -48,7 +48,9 @@ public class JdbiFileContentsService implements FileContentsService {
       @Nonnull String filename
   ) {
     final var currentSha224 = contents.getSha224();
-    var file = getFileDao().find(fileId);
+    var file = files()
+        .find(fileId)
+        .orElseThrow(() -> new NotFoundException(format("No such file: %s", fileId)));
     var version = versionService
         .findLatestVersion(fileId)
         .filter(v -> v.getContentsSha().equals(currentSha224)) // already the current file for this file
@@ -59,7 +61,7 @@ public class JdbiFileContentsService implements FileContentsService {
     return version;
   }
 
-  private FilesDao getFileDao() {
+  private FilesDao files() {
     return jdbi.onDemand(FilesDao.class);
   }
 

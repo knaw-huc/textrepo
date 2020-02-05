@@ -43,10 +43,11 @@ create unique index doc_id_by_external_id on documents (external_id, id);
 
 create table documents_files (
   document_id uuid not null,
-  file_id uuid not null references files (id),
+  file_id uuid not null unique,
   -- force unique index on pair:
   primary key (document_id, file_id),
-  foreign key (document_id) references documents (id) on delete cascade
+  foreign key (document_id) references documents (id) on delete cascade,
+  foreign key (file_id) references files (id) on delete cascade
 );
 
 -- assist FK lookups: add compound index for PK fields in reverse order

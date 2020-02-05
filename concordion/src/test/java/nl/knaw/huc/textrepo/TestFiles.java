@@ -4,8 +4,6 @@ import com.jayway.jsonpath.JsonPath;
 import nl.knaw.huc.textrepo.util.TestUtils;
 import org.concordion.api.MultiValueResult;
 
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.core.Response;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.UUID;

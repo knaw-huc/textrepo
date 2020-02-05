@@ -16,7 +16,7 @@ public interface FileService {
 
   Version getLatestVersion(@Nonnull UUID fileId);
 
-  TextrepoFile create(UUID docId, TextrepoFile textrepoFile);
+  TextrepoFile insert(UUID docId, TextrepoFile textrepoFile);
 
   TextrepoFile get(UUID fileId);
 

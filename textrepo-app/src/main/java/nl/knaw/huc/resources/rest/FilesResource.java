@@ -48,7 +48,7 @@ public class FilesResource {
       @Valid FormTextrepoFile form
   ) {
     logger.debug("create file: form={}", form);
-    var file = fileService.create(form.getDocId(), new TextrepoFile(null, form.getTypeId()));
+    var file = fileService.insert(form.getDocId(), new TextrepoFile(null, form.getTypeId()));
     return Response.ok(new ResultTextrepoFile(form.getDocId(), file)).build();
   }
 
@@ -63,7 +63,8 @@ public class FilesResource {
   ) {
     logger.debug("get file: id={}", id);
     var file = fileService.get(id);
-    return Response.ok(new ResultTextrepoFile(fileService.getDocumentId(file.getId()), file)).build();
+    var docId = fileService.getDocumentId(file.getId());
+    return Response.ok(new ResultTextrepoFile(docId, file)).build();
   }
 
   @PUT

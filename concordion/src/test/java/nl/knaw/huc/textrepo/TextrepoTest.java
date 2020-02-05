@@ -1,5 +1,11 @@
 package nl.knaw.huc.textrepo;
 
-public class TextrepoTest extends AbstractConcordionTest {
+import org.concordion.api.FullOGNL;
+import org.concordion.integration.junit4.ConcordionRunner;
+import org.junit.runner.RunWith;
+
+@FullOGNL
+@RunWith(ConcordionRunner.class)
+public class TextrepoTest {
   // concordion needs this *Test.java-class to render the breadcrumb index page.
 }

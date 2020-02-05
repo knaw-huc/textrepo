@@ -2,15 +2,14 @@ package nl.knaw.huc.textrepo.rest;
 
 import com.jayway.jsonpath.JsonPath;
 import nl.knaw.huc.textrepo.AbstractConcordionTest;
+import nl.knaw.huc.textrepo.util.RestUtils;
 import org.concordion.api.extension.Extensions;
 import org.concordion.api.option.ConcordionOptions;
 import org.concordion.ext.EmbedExtension;
 
 import static javax.ws.rs.client.Entity.entity;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
-import static nl.knaw.huc.textrepo.Config.HOST;
 import static nl.knaw.huc.textrepo.util.TestUtils.asPrettyJson;
-import static nl.knaw.huc.textrepo.util.TestUtils.isValidUuidMsg;
 import static nl.knaw.huc.textrepo.util.TestUtils.replaceUrlParams;
 
 @Extensions(EmbedExtension.class)
@@ -18,13 +17,7 @@ import static nl.knaw.huc.textrepo.util.TestUtils.replaceUrlParams;
 public class TestRestDocumentMetadata extends AbstractConcordionTest {
 
   public String createDocument() {
-    final var response = client
-        .target(HOST + "/rest/documents")
-        .request()
-        .post(entity("{\"externalId\":  \"dummy\"}", APPLICATION_JSON_TYPE));
-
-    var body = response.readEntity(String.class);
-    return JsonPath.parse(body).read("$.id");
+    return RestUtils.createDocument(client);
   }
 
   public static class CreateResult {
@@ -45,22 +38,21 @@ public class TestRestDocumentMetadata extends AbstractConcordionTest {
     return result;
   }
 
-  public static class ReadResult {
+  public static class RetrieveResult {
     public int status;
     public String body;
     public String value;
   }
 
-  public ReadResult read(Object endpoint, Object id, Object key) {
+  public RetrieveResult retrieve(Object endpoint, Object id, Object key) {
     final var response = client
         .target(replaceUrlParams(endpoint, id))
         .request()
         .get();
 
-    var result = new ReadResult();
+    var result = new RetrieveResult();
     result.status = response.getStatus();
     var body = response.readEntity(String.class);
-    System.out.println("status: " + response.getStatus() + "" + body);
     result.body = asPrettyJson(body);
     var json = JsonPath.parse(body);
     result.value = json.read("$." + key.toString());
@@ -103,18 +95,18 @@ public class TestRestDocumentMetadata extends AbstractConcordionTest {
     return result;
   }
 
-  public static class GetAfterDeleteResult {
+  public static class RetrieveAfterDeleteResult {
     public int status;
     public String body;
   }
 
-  public GetAfterDeleteResult getAfterDelele(Object endpoint, Object id) {
+  public RetrieveAfterDeleteResult retrieveAfterDelete(Object endpoint, Object id) {
     final var response = client
         .target(replaceUrlParams(endpoint, id))
         .request()
         .get();
 
-    var result = new GetAfterDeleteResult();
+    var result = new RetrieveAfterDeleteResult();
     result.status = response.getStatus();
     result.body = response.readEntity(String.class);
     return result;

@@ -1,6 +1,6 @@
-# Test document metadata REST-endpoints
+# Test /rest/document/{id}/metadata
 
-## Create, get, update and delete document metadata
+## Create, retrieve, update and delete document metadata
 
 ### Set up
 
@@ -8,7 +8,7 @@
 
 To add document metadata we created a document first: [ ](- "c:echo=#docId")
 
-### Add document metadata
+### Create document metadata
 When adding the following document metadata with a `PUT` to [`/rest/documents/{id}/metadata/{key}`](- "#createEndpoint")
 
  - where key is [`test-key`](- "#metadataKey")
@@ -23,20 +23,20 @@ Then:
  
 [ ](- "ext:embed=#createResult.body")
 
-### Get document metadata
-When reading the metadata of a document with a `GET` to [`/rest/documents/{id}/metadata`](- "#getEndpoint") 
+### Retrieve document metadata
+When retrieving the metadata of a document with a `GET` to [`/rest/documents/{id}/metadata`](- "#getEndpoint") 
 
  - where `{id}` is [ ](- "c:echo=#docId"):
 
-[ ](- "#readResult=read(#getEndpoint, #docId, #metadataKey)")
+[ ](- "#retrieveResult=retrieve(#getEndpoint, #docId, #metadataKey)")
 
 Then:
 
- - The response status should be: [200](- "?=#readResult.status");
- - The response should contain the value [test-value](- "?=#readResult.value");
+ - The response status should be: [200](- "?=#retrieveResult.status");
+ - The response should contain the value [test-value](- "?=#retrieveResult.value");
  - Full response:
 
-[ ](- "ext:embed=#readResult.body")
+[ ](- "ext:embed=#retrieveResult.body")
 
 ### Update document metadata entry
 When updating metadata entry with a `PUT` to [`/rest/documents/{id}/metadata/{key}`](- "#updateEndpoint"):
@@ -47,18 +47,18 @@ When updating metadata entry with a `PUT` to [`/rest/documents/{id}/metadata/{ke
 [ ](- "#updateResult=update(#updateEndpoint, #docId, #metadataKey, #updatedMetadataValue)")
 Then:
 
- - The response status should be: [200](- "?=#readResult.status");
+ - The response status should be: [200](- "?=#retrieveResult.status");
  - The response should its updated value [updated-test-value](- "?=#updateResult.value");
  - Full response:
 
 [ ](- "ext:embed=#updateResult.body")
 
-### Get document metadata after updating entry
-When reading the metadata of a document with a `GET` to [`/rest/documents/{id}/metadata`](- "#getEndpoint") 
+### Retrieve document metadata after updating entry
+When retrieving the metadata of a document with a `GET` to [`/rest/documents/{id}/metadata`](- "#getEndpoint") 
 
  - where `{id}` is [ ](- "c:echo=#docId"):
 
-[ ](- "#updatedReadResult=read(#getEndpoint, #docId, #metadataKey)")
+[ ](- "#updatedReadResult=retrieve(#getEndpoint, #docId, #metadataKey)")
 
 Then:
 
@@ -80,13 +80,13 @@ Then:
 
  - The response status should be: [200](- "?=#deleteResult.status").
 
-### Get document metadata after deleting entry
-When reading document metadata with a `GET` to [`/rest/documents/{id}/metadata`](- "#getEndpoint"):
+### Retrieve document metadata after deleting entry
+When retrieving document metadata with a `GET` to [`/rest/documents/{id}/metadata`](- "#getEndpoint"):
 
-[ ](- "#readAfterDeleteResult=getAfterDelele(#getEndpoint, #docId)")
+[ ](- "#retrieveAfterDeleteResult=retrieveAfterDelete(#getEndpoint, #docId)")
 
 Then:
 
- - The response status should be: [200](- "?=#readAfterDeleteResult.status").
- - Document metadata should be empty: [{}](- "?=#readAfterDeleteResult.body").
+ - The response status should be: [200](- "?=#retrieveAfterDeleteResult.status").
+ - Document metadata should be empty: [{}](- "?=#retrieveAfterDeleteResult.body").
 
