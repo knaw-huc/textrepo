@@ -21,7 +21,7 @@ public class JdbiTaskFactory implements TaskBuilderFactory {
     this.jdbi = requireNonNull(jdbi);
   }
 
-  public JdbiTaskFactory withIDGenerator(Supplier<UUID> idGenerator) {
+  public JdbiTaskFactory withIdGenerator(Supplier<UUID> idGenerator) {
     this.idGenerator = requireNonNull(idGenerator);
     return this;
   }

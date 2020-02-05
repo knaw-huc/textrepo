@@ -44,7 +44,7 @@ public class JdbiVersionService implements VersionService {
   ) {
     contentsService.addContents(contents);
 
-    var latestVersionContent = contents.asUTF8String();
+    var latestVersionContent = contents.asUtf8String();
     fileIndexService.indexFile(file, latestVersionContent);
     customFacetIndexers.forEach(indexer -> indexer.indexFile(file, latestVersionContent));
 

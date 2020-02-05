@@ -39,7 +39,7 @@ public class Contents {
   }
 
   @JsonIgnore
-  public String asUTF8String() {
+  public String asUtf8String() {
     return new String(content, StandardCharsets.UTF_8);
   }
 }

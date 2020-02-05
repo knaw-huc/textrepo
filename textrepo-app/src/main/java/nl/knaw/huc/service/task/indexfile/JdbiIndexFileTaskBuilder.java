@@ -53,7 +53,7 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
         final var doc = new FindDocumentByExternalId(externalId).exececuteIn(txn);
         final var file = new FindDocumentFileByType(doc, typeName).exececuteIn(txn);
         final var contents = new GetLatestFileContent(file).exececuteIn(txn);
-        indexer.indexFile(file, contents.asUTF8String());
+        indexer.indexFile(file, contents.asUtf8String());
       });
     }
   }
