@@ -18,8 +18,8 @@ public class JdbiDocumentService implements DocumentService {
   }
 
   @Override
-  public Optional<Document> get(UUID id) {
-    return documents().get(id);
+  public Optional<Document> get(UUID docId) {
+    return documents().get(docId);
   }
 
   @Override
@@ -36,8 +36,8 @@ public class JdbiDocumentService implements DocumentService {
   }
 
   @Override
-  public void delete(Document document) {
-    documents().delete(document.getId());
+  public void delete(UUID docId) {
+    documents().delete(docId);
   }
 
   private DocumentsDao documents() {

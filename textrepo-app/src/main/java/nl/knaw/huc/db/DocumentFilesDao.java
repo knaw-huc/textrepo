@@ -28,4 +28,15 @@ public interface DocumentFilesDao {
 
   @SqlQuery("select distinct id from documents where external_id = :externalId")
   Optional<UUID> findDocumentByExternalId(@Bind("externalId") String externalId);
+
+  @SqlQuery("select distinct document_id from documents where file_id = :fileId")
+  Optional<UUID> findDocumentId(@Bind("fileId") UUID fileId);
+
+  /**
+   * Insert file id and document id
+   * When file id already exists, update document id
+   */
+  @SqlUpdate("insert into documents_files (document_id, file_id) values (:docId, :fileId) " +
+      "on conflict (file_id) do update set value = excluded.document_id")
+  void upsert(UUID docId, UUID fileId);
 }

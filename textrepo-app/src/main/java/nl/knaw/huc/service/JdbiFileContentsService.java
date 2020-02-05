@@ -3,7 +3,7 @@ package nl.knaw.huc.service;
 import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.core.Version;
-import nl.knaw.huc.db.FileDao;
+import nl.knaw.huc.db.FilesDao;
 import org.jdbi.v3.core.Jdbi;
 
 import javax.annotation.Nonnull;
@@ -59,8 +59,8 @@ public class JdbiFileContentsService implements FileContentsService {
     return version;
   }
 
-  private FileDao getFileDao() {
-    return jdbi.onDemand(FileDao.class);
+  private FilesDao getFileDao() {
+    return jdbi.onDemand(FilesDao.class);
   }
 
 }

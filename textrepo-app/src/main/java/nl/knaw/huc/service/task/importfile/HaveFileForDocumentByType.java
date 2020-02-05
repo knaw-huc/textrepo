@@ -3,8 +3,8 @@ package nl.knaw.huc.service.task.importfile;
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.core.TextrepoFile;
 import nl.knaw.huc.db.DocumentFilesDao;
-import nl.knaw.huc.db.FileDao;
-import nl.knaw.huc.db.TypeDao;
+import nl.knaw.huc.db.FilesDao;
+import nl.knaw.huc.db.TypesDao;
 import org.jdbi.v3.core.Handle;
 
 import javax.ws.rs.NotFoundException;
@@ -56,12 +56,12 @@ class HaveFileForDocumentByType implements Function<Handle, TextrepoFile> {
     };
   }
 
-  private TypeDao types() {
-    return transaction.attach(TypeDao.class);
+  private TypesDao types() {
+    return transaction.attach(TypesDao.class);
   }
 
-  private FileDao files() {
-    return transaction.attach(FileDao.class);
+  private FilesDao files() {
+    return transaction.attach(FilesDao.class);
   }
 
   private DocumentFilesDao documentFiles() {

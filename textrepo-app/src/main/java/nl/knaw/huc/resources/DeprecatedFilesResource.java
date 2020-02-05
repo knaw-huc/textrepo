@@ -42,13 +42,13 @@ import static org.eclipse.jetty.util.StringUtil.isBlank;
  */
 @Api(tags = {"files"})
 @Path("/files")
-public class FilesResource {
-  private static final Logger LOG = LoggerFactory.getLogger(FilesResource.class);
+public class DeprecatedFilesResource {
+  private static final Logger LOG = LoggerFactory.getLogger(DeprecatedFilesResource.class);
 
   private final FileService fileService;
   private final int maxPayloadSize;
 
-  public FilesResource(FileService fileService, int maxPayloadSize) {
+  public DeprecatedFilesResource(FileService fileService, int maxPayloadSize) {
     this.fileService = fileService;
     this.maxPayloadSize = maxPayloadSize;
 

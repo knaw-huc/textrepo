@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import nl.knaw.huc.core.Version;
-import nl.knaw.huc.db.VersionDao;
+import nl.knaw.huc.db.VersionsDao;
 import nl.knaw.huc.resources.rest.FileVersionsResource;
 import nl.knaw.huc.service.ContentsService;
 import nl.knaw.huc.service.JdbiVersionService;
@@ -48,7 +48,7 @@ public class FileVersionsResourceTest {
       newArrayList(mock(ElasticCustomIndexer.class))
   );
 
-  private static final VersionDao versionDao = mock(VersionDao.class);
+  private static final VersionsDao VERSIONS_DAO = mock(VersionsDao.class);
 
   @ClassRule
   public static final ResourceTestRule resource = ResourceTestRule
@@ -59,13 +59,13 @@ public class FileVersionsResourceTest {
 
   @Before
   public void setupMocks() {
-    when(jdbi.onDemand(any())).thenReturn(versionDao);
+    when(jdbi.onDemand(any())).thenReturn(VERSIONS_DAO);
     MockitoAnnotations.initMocks(this);
   }
 
   @After
   public void resetMocks() {
-    reset(jdbi, versionDao);
+    reset(jdbi, VERSIONS_DAO);
   }
 
   @Test
@@ -77,11 +77,11 @@ public class FileVersionsResourceTest {
     var sha2 = "d476f2f6e00deaa918dfbec79545412134e02095f870269175b89376";
     var version2 = new Version(uuid, LocalDateTime.now(), sha2);
     versions.add(version2);
-    when(versionDao.findByFileId(any())).thenReturn(versions);
+    when(VERSIONS_DAO.findByFileId(any())).thenReturn(versions);
 
     var response = getVersions(uuid);
 
-    verify(versionDao, times(1)).findByFileId(uuid);
+    verify(VERSIONS_DAO, times(1)).findByFileId(uuid);
     var responseJson = response.readEntity(String.class);
     var mapper = new ObjectMapper();
     // To read date time field:

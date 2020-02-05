@@ -8,14 +8,15 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.federecio.dropwizard.swagger.SwaggerBundle;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
+import nl.knaw.huc.resources.DeprecatedFilesResource;
 import nl.knaw.huc.resources.FileContentsResource;
-import nl.knaw.huc.resources.FilesResource;
 import nl.knaw.huc.resources.rest.ContentsResource;
 import nl.knaw.huc.resources.rest.DocumentMetadataResource;
 import nl.knaw.huc.resources.rest.DocumentsResource;
 import nl.knaw.huc.resources.rest.FileMetadataResource;
 import nl.knaw.huc.resources.rest.FileVersionsResource;
-import nl.knaw.huc.resources.rest.TypeResource;
+import nl.knaw.huc.resources.rest.FilesResource;
+import nl.knaw.huc.resources.rest.TypesResource;
 import nl.knaw.huc.resources.task.ImportFileResource;
 import nl.knaw.huc.resources.task.IndexResource;
 import nl.knaw.huc.service.ContentsService;
@@ -96,7 +97,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
 
     var resources = newArrayList(
         new ContentsResource(contentsService),
-        new TypeResource(typeService),
+        new TypesResource(typeService),
         new FileContentsResource(fileContentsService, maxPayloadSize),
         new FileMetadataResource(metadataService),
         new FileVersionsResource(versionService),
@@ -104,7 +105,8 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
         new DocumentMetadataResource(documentMetadataService),
         new ImportFileResource(taskBuilderFactory, maxPayloadSize),
         new IndexResource(taskBuilderFactory),
-        new FilesResource(fileService, maxPayloadSize)
+        new DeprecatedFilesResource(fileService, maxPayloadSize),
+        new FilesResource(fileService)
     );
 
     resources.forEach((resource) -> environment.jersey().register(resource));

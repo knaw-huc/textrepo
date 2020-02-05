@@ -3,7 +3,7 @@ package nl.knaw.huc.service.task;
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.core.TextrepoFile;
 import nl.knaw.huc.db.DocumentFilesDao;
-import nl.knaw.huc.db.TypeDao;
+import nl.knaw.huc.db.TypesDao;
 import org.jdbi.v3.core.Handle;
 
 import javax.ws.rs.NotFoundException;
@@ -43,8 +43,8 @@ public class FindDocumentFileByType implements Function<Handle, TextrepoFile> {
         String.format("No %s file found for document with externalId: %s", typeName, document.getExternalId()));
   }
 
-  private TypeDao types() {
-    return transaction.attach(TypeDao.class);
+  private TypesDao types() {
+    return transaction.attach(TypesDao.class);
   }
 
   private DocumentFilesDao documentFiles() {

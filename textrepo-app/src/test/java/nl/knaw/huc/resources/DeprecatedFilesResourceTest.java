@@ -5,8 +5,8 @@ import io.dropwizard.testing.junit.ResourceTestRule;
 import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.api.MultipleLocations;
 import nl.knaw.huc.core.TextrepoFile;
-import nl.knaw.huc.db.FileDao;
-import nl.knaw.huc.db.VersionDao;
+import nl.knaw.huc.db.FilesDao;
+import nl.knaw.huc.db.VersionsDao;
 import nl.knaw.huc.service.ContentsService;
 import nl.knaw.huc.service.FileService;
 import nl.knaw.huc.service.JdbiFileService;
@@ -49,7 +49,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class FilesResourceTest {
+public class DeprecatedFilesResourceTest {
   private static final String uuid = "b59c2b24-cafe-babe-9bb3-deadbeefc2c6";
   private static final String content = "hello test";
   private String filename = "just-a-filename.txt";
@@ -66,14 +66,14 @@ public class FilesResourceTest {
   private static final Supplier<UUID> idGenerator = mock(Supplier.class);
   private static final FileService FILE_SERVICE =
       new JdbiFileService(jdbi, typeService, versions, metadataService, idGenerator);
-  private static final VersionDao versionDao = mock(VersionDao.class);
-  private static final FileDao fileDao = mock(FileDao.class);
+  private static final VersionsDao VERSIONS_DAO = mock(VersionsDao.class);
+  private static final FilesDao FILES_DAO = mock(FilesDao.class);
 
   @ClassRule
   public static final ResourceTestRule resource = ResourceTestRule
       .builder()
       .addProvider(MultiPartFeature.class)
-      .addResource(new FilesResource(FILE_SERVICE, content.length()))
+      .addResource(new DeprecatedFilesResource(FILE_SERVICE, content.length()))
       .build();
 
   @Captor
@@ -84,15 +84,15 @@ public class FilesResourceTest {
 
   @Before
   public void setupMocks() {
-    when(jdbi.onDemand(FileDao.class)).thenReturn(fileDao);
-    when(jdbi.onDemand(VersionDao.class)).thenReturn(versionDao);
+    when(jdbi.onDemand(FilesDao.class)).thenReturn(FILES_DAO);
+    when(jdbi.onDemand(VersionsDao.class)).thenReturn(VERSIONS_DAO);
     when(idGenerator.get()).thenReturn(UUID.fromString(uuid));
     MockitoAnnotations.initMocks(this);
   }
 
   @After
   public void resetMocks() {
-    reset(jdbi, fileDao, versionDao, fileIndexer, metadataService);
+    reset(jdbi, FILES_DAO, VERSIONS_DAO, fileIndexer, metadataService);
   }
 
   @Test
