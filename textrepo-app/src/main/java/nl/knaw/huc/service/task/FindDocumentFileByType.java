@@ -7,12 +7,11 @@ import nl.knaw.huc.db.TypesDao;
 import org.jdbi.v3.core.Handle;
 
 import javax.ws.rs.NotFoundException;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
-public class FindDocumentFileByType implements Function<Handle, TextrepoFile> {
+public class FindDocumentFileByType implements ProvidesInTransaction<TextrepoFile> {
   private final Document document;
   private final String typeName;
 
@@ -24,7 +23,7 @@ public class FindDocumentFileByType implements Function<Handle, TextrepoFile> {
   }
 
   @Override
-  public TextrepoFile apply(Handle transaction) {
+  public TextrepoFile exececuteIn(Handle transaction) {
     this.transaction = requireNonNull(transaction);
 
     final var typeId = types().find(typeName)

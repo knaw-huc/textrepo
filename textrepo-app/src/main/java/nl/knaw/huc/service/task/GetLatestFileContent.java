@@ -10,12 +10,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.NotFoundException;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
-public class GetLatestFileContent implements Function<Handle, Contents> {
+public class GetLatestFileContent implements ProvidesInTransaction<Contents> {
   private static final Logger LOG = LoggerFactory.getLogger(GetLatestFileContent.class);
 
   private final TextrepoFile file;
@@ -27,7 +26,7 @@ public class GetLatestFileContent implements Function<Handle, Contents> {
   }
 
   @Override
-  public Contents apply(Handle transaction) {
+  public Contents exececuteIn(Handle transaction) {
     this.transaction = requireNonNull(transaction);
     final var latest = versions().findLatestByFileId(file.getId())
                                  .orElseThrow(noLatestVersionFound(file));

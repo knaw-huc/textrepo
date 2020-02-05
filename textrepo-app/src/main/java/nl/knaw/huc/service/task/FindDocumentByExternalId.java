@@ -5,12 +5,11 @@ import nl.knaw.huc.db.DocumentsDao;
 import org.jdbi.v3.core.Handle;
 
 import javax.ws.rs.NotFoundException;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
-public class FindDocumentByExternalId implements Function<Handle, Document> {
+public class FindDocumentByExternalId implements ProvidesInTransaction<Document> {
   private final String externalId;
 
   private Handle transaction;
@@ -20,7 +19,7 @@ public class FindDocumentByExternalId implements Function<Handle, Document> {
   }
 
   @Override
-  public Document apply(Handle transaction) {
+  public Document exececuteIn(Handle transaction) {
     this.transaction = requireNonNull(transaction);
     return docs().getByExternalId(externalId).orElseThrow(documentNotFound(externalId));
   }

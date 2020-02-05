@@ -6,12 +6,11 @@ import org.jdbi.v3.core.Handle;
 
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
-public class HaveDocumentByExternalId implements Function<Handle, Document> {
+public class HaveDocumentByExternalId implements ProvidesInTransaction<Document> {
   private final Supplier<UUID> idGenerator;
   private final String externalId;
 
@@ -23,7 +22,7 @@ public class HaveDocumentByExternalId implements Function<Handle, Document> {
   }
 
   @Override
-  public Document apply(Handle transaction) {
+  public Document exececuteIn(Handle transaction) {
     this.transaction = requireNonNull(transaction);
     return findDocument().orElseGet(createNewDocument());
   }

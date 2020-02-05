@@ -50,9 +50,9 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
     @Override
     public void run() {
       jdbi.useTransaction(txn -> {
-        final var doc = new FindDocumentByExternalId(externalId).apply(txn);
-        final var file = new FindDocumentFileByType(doc, typeName).apply(txn);
-        final var contents = new GetLatestFileContent(file).apply(txn);
+        final var doc = new FindDocumentByExternalId(externalId).exececuteIn(txn);
+        final var file = new FindDocumentFileByType(doc, typeName).exececuteIn(txn);
+        final var contents = new GetLatestFileContent(file).exececuteIn(txn);
         indexer.indexFile(file, contents.asUTF8String());
       });
     }

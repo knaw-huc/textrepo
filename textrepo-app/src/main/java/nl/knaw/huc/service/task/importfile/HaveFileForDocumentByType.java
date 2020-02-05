@@ -5,17 +5,17 @@ import nl.knaw.huc.core.TextrepoFile;
 import nl.knaw.huc.db.DocumentFilesDao;
 import nl.knaw.huc.db.FilesDao;
 import nl.knaw.huc.db.TypesDao;
+import nl.knaw.huc.service.task.ProvidesInTransaction;
 import org.jdbi.v3.core.Handle;
 
 import javax.ws.rs.NotFoundException;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
-class HaveFileForDocumentByType implements Function<Handle, TextrepoFile> {
+class HaveFileForDocumentByType implements ProvidesInTransaction<TextrepoFile> {
   private final Supplier<UUID> idGenerator;
   private final Document doc;
   private final String typeName;
@@ -29,7 +29,7 @@ class HaveFileForDocumentByType implements Function<Handle, TextrepoFile> {
   }
 
   @Override
-  public TextrepoFile apply(Handle transaction) {
+  public TextrepoFile exececuteIn(Handle transaction) {
     this.transaction = requireNonNull(transaction);
     final var typeId = getTypeId();
     return findFileForDocument(doc, typeId).orElseGet(createNewFileForDocument(doc, typeId));

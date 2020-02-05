@@ -8,14 +8,13 @@ import nl.knaw.huc.db.VersionsDao;
 import org.jdbi.v3.core.Handle;
 
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import static java.time.LocalDateTime.now;
 import static java.util.Objects.requireNonNull;
 
-public class SetCurrentFileContents implements Function<Handle, Version> {
+public class SetCurrentFileContents implements ProvidesInTransaction<Version> {
   private final TextrepoFile file;
   private final Contents contents;
 
@@ -27,7 +26,7 @@ public class SetCurrentFileContents implements Function<Handle, Version> {
   }
 
   @Override
-  public Version apply(Handle transaction) {
+  public Version exececuteIn(Handle transaction) {
     this.transaction = requireNonNull(transaction);
     return latestVersionIfIdentical().orElseGet(createNewVersionWithContents());
   }
