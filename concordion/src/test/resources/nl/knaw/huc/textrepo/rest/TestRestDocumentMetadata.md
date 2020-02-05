@@ -1,6 +1,6 @@
-# Test document metadata REST-endpoints
+# Test /rest/document/{id}/metadata
 
-## Create, get, update and delete document metadata
+## Create, retrieve, update and delete document metadata
 
 ### Set up
 
@@ -8,7 +8,7 @@
 
 To add document metadata we created a document first: [ ](- "c:echo=#docId")
 
-### Add document metadata
+### Create document metadata
 When adding the following document metadata with a `PUT` to [`/rest/documents/{id}/metadata/{key}`](- "#createEndpoint")
 
  - where key is [`test-key`](- "#metadataKey")
@@ -23,7 +23,7 @@ Then:
  
 [ ](- "ext:embed=#createResult.body")
 
-### Get document metadata
+### Retrieve document metadata
 When reading the metadata of a document with a `GET` to [`/rest/documents/{id}/metadata`](- "#getEndpoint") 
 
  - where `{id}` is [ ](- "c:echo=#docId"):
@@ -53,7 +53,7 @@ Then:
 
 [ ](- "ext:embed=#updateResult.body")
 
-### Get document metadata after updating entry
+### Retrieve document metadata after updating entry
 When reading the metadata of a document with a `GET` to [`/rest/documents/{id}/metadata`](- "#getEndpoint") 
 
  - where `{id}` is [ ](- "c:echo=#docId"):
@@ -80,10 +80,10 @@ Then:
 
  - The response status should be: [200](- "?=#deleteResult.status").
 
-### Get document metadata after deleting entry
+### Retrieve document metadata after deleting entry
 When reading document metadata with a `GET` to [`/rest/documents/{id}/metadata`](- "#getEndpoint"):
 
-[ ](- "#readAfterDeleteResult=getAfterDelele(#getEndpoint, #docId)")
+[ ](- "#readAfterDeleteResult=getAfterDelete(#getEndpoint, #docId)")
 
 Then:
 

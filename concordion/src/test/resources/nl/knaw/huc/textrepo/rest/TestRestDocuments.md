@@ -1,6 +1,6 @@
-# Test document REST-endpoints
+# Test /rest/documents
 
-## [Create, get, update and delete documents](- 'create')
+## Create, retrieve, update and delete documents
 
 ### Create document
 When creating the following document with a `POST` to [`/rest/documents`](- "#createEndpoint"):
@@ -65,7 +65,7 @@ Then:
 ### Get document after deleting
 When reading document [ ](- "c:echo=#createResult.id") with a `GET` to [`/rest/documents/{id}`](- "#getEndpoint"):
 
-[ ](- "#readAfterDeleteResult=getAfterDelele(#getEndpoint, #createResult.id)")
+[ ](- "#readAfterDeleteResult=getAfterDelete(#getEndpoint, #createResult.id)")
 
 Then:
 

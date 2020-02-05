@@ -3,7 +3,9 @@ set -e
 
 HOST=localhost:8080/textrepo/rest
 
+
 # Create 'text' and 'xml' file types:
+
 TYPE_ID=$(curl "$HOST/types" \
   -H 'content-type:application/json' \
   -d '{"name": "text", "mimetype": "text/plain"}' | jq '.id')
@@ -14,14 +16,22 @@ curl "$HOST/types" \
   -H 'content-type:application/json' \
   -d '{"name": "xml", "mimetype": "application/xml"}'
 
-# Create document:
+
+# Create two documents:
+
 DOC_ID=$(curl "$HOST/documents" \
   -H 'content-type:application/json' \
   -d '{"externalId": "example-external-id"}' | jq '.id')
 
 echo "Created document with id: $DOC_ID"
 
+curl "$HOST/documents" \
+  -H 'content-type:application/json' \
+  -d '{"externalId": "other-example-external-id"}'
+
+
 # Create file:
+
 FILE_ID=$(curl "$HOST/files" \
   -H 'content-type:application/json' \
   -d "{\"docId\": $DOC_ID, \"typeId\": $TYPE_ID}" | jq '.id')

@@ -28,8 +28,11 @@ public class Config {
       CUSTOM_INDEX,
       AUTOCOMPLETE_INDEX
   );
-  public static final String FILE_TYPE = "text";
-  public static final String MIMETYPE = "text/plain";
+  public static final String TEXT_TYPE = "text";
+  public static final String TEXT_MIMETYPE = "text/plain";
+
+  public static final String FOO_TYPE = "foo";
+  public static final String FOO_MIMETYPE = "foo/bar";
 
   private static String requireNonBlank(String field) {
     if (isBlank(field)) {

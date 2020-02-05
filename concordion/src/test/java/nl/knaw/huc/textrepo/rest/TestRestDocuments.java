@@ -36,9 +36,9 @@ public class TestRestDocuments extends AbstractConcordionTest {
     var result = new CreateResult();
     result.status = response.getStatus();
     var body = response.readEntity(String.class);
+    result.body = asPrettyJson(body);
     result.id = JsonPath.parse(body).read("$.id");
     result.validUuid = TestUtils.isValidUuidMsg(result.id);
-    result.body = asPrettyJson(body);
     return result;
   }
 
@@ -105,7 +105,7 @@ public class TestRestDocuments extends AbstractConcordionTest {
     public int status;
   }
 
-  public GetAfterDeleteResult getAfterDelele(Object endpoint, Object id) {
+  public GetAfterDeleteResult getAfterDelete(Object endpoint, Object id) {
     final var response = client
         .target(replaceUrlParams(endpoint, id))
         .request()

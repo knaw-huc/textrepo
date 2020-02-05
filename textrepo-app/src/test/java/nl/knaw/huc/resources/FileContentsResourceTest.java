@@ -27,6 +27,7 @@ import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 
 import javax.ws.rs.client.Entity;
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.google.common.collect.Lists.newArrayList;
@@ -95,7 +96,7 @@ public class FileContentsResourceTest {
   public void testUpdateFileContents_addsFilenameMetadata() {
     var fileUuid = UUID.fromString(fileId);
     when(FILES_DAO.find(any()))
-        .thenReturn(new TextrepoFile(fileUuid, (short) 1));
+        .thenReturn(Optional.of(new TextrepoFile(fileUuid, (short) 1)));
 
     putTestFile();
 

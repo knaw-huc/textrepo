@@ -85,7 +85,9 @@ public class JdbiFileService implements FileService {
 
   @Override
   public TextrepoFile get(UUID fileId) {
-    return files().find(fileId);
+    return files()
+        .find(fileId)
+        .orElseThrow(() -> new NotFoundException(format("No such file: %s", fileId)));
   }
 
   @Override

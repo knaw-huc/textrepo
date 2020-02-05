@@ -3,18 +3,22 @@ package nl.knaw.huc.textrepo.rest;
 import com.jayway.jsonpath.JsonPath;
 import nl.knaw.huc.textrepo.AbstractConcordionTest;
 import nl.knaw.huc.textrepo.util.RestUtils;
+import nl.knaw.huc.textrepo.util.TestUtils;
 import org.concordion.api.extension.Extensions;
 import org.concordion.api.option.ConcordionOptions;
 import org.concordion.ext.EmbedExtension;
 
+import javax.ws.rs.core.UriBuilder;
+import java.net.URI;
+
 import static javax.ws.rs.client.Entity.entity;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
+import static nl.knaw.huc.textrepo.Config.HOST;
 import static nl.knaw.huc.textrepo.util.TestUtils.asPrettyJson;
-import static nl.knaw.huc.textrepo.util.TestUtils.replaceUrlParams;
 
 @Extensions(EmbedExtension.class)
 @ConcordionOptions(declareNamespaces = {"ext", "urn:concordion-extensions:2010"})
-public class TestRestDocumentMetadata extends AbstractConcordionTest {
+public class TestRestFiles extends AbstractConcordionTest {
 
   public String createDocument() {
     return RestUtils.createDocument(client);
@@ -23,17 +27,26 @@ public class TestRestDocumentMetadata extends AbstractConcordionTest {
   public static class CreateResult {
     public int status;
     public String body;
+    public String validUuid;
+    public String id;
   }
 
-  public CreateResult create(Object endpoint, Object id, Object key, Object value) {
+  public CreateResult create(Object endpoint, Object newEntity, Object docId, Object typeId) {
+    var newEntityJson = newEntity
+        .toString()
+        .replace("{docId}", docId.toString())
+        .replace("{typeId}", typeId.toString());
+
     final var response = client
-        .target(replaceUrlParams(endpoint, id, key))
+        .target(HOST + endpoint.toString())
         .request()
-        .put(entity(value.toString(), APPLICATION_JSON_TYPE));
+        .post(entity(newEntityJson, APPLICATION_JSON_TYPE));
 
     var result = new CreateResult();
     result.status = response.getStatus();
     var body = response.readEntity(String.class);
+    result.id = JsonPath.parse(body).read("$.id");
+    result.validUuid = TestUtils.isValidUuidMsg(result.id);
     result.body = asPrettyJson(body);
     return result;
   }
@@ -41,10 +54,11 @@ public class TestRestDocumentMetadata extends AbstractConcordionTest {
   public static class ReadResult {
     public int status;
     public String body;
-    public String value;
+    public String validUuid;
+    public String correctType;
   }
 
-  public ReadResult read(Object endpoint, Object id, Object key) {
+  public ReadResult read(Object endpoint, Object id) {
     final var response = client
         .target(replaceUrlParams(endpoint, id))
         .request()
@@ -55,28 +69,36 @@ public class TestRestDocumentMetadata extends AbstractConcordionTest {
     var body = response.readEntity(String.class);
     result.body = asPrettyJson(body);
     var json = JsonPath.parse(body);
-    result.value = json.read("$." + key.toString());
+    result.validUuid = TestUtils.isValidUuidMsg(json.read("$.id"));
+    int resultTypeId = json.read("$.typeId");
+    result.correctType = resultTypeId == textTypeId ? "correct type" : "" + resultTypeId + " != " + textTypeId;
     return result;
   }
 
   public static class UpdateResult {
     public int status;
     public String body;
-    public String value;
+    public String updatedType;
   }
 
-  public UpdateResult update(Object endpoint, Object docId, Object metadataKey, Object updatedMetadataValue) {
-    final var response = client
-        .target(replaceUrlParams(endpoint, docId, metadataKey))
-        .request()
-        .put(entity(updatedMetadataValue.toString(), APPLICATION_JSON_TYPE));
+  public UpdateResult update(Object endpoint, Object id, Object updatedEntity, Object docId, Object typeId) {
+    updatedEntity = updatedEntity
+        .toString()
+        .replace("{docId}", docId.toString())
+        .replace("{typeId}", typeId.toString());
 
+    final var response = client
+        .target(replaceUrlParams(endpoint, id))
+        .request()
+        .put(entity(updatedEntity.toString(), APPLICATION_JSON_TYPE));
+
+    var body = response.readEntity(String.class);
     var result = new UpdateResult();
     result.status = response.getStatus();
-    var body = response.readEntity(String.class);
     result.body = asPrettyJson(body);
     var json = JsonPath.parse(body);
-    result.value = json.read("$.value");
+    int resultTypeId = json.read("$.typeId");
+    result.updatedType = resultTypeId == fooTypeId ? "updated type" : "" + resultTypeId + " != " + typeId;
     return result;
   }
 
@@ -84,9 +106,9 @@ public class TestRestDocumentMetadata extends AbstractConcordionTest {
     public int status;
   }
 
-  public DeleteResult delete(Object endpoint, Object docId, Object key) {
+  public DeleteResult delete(Object endpoint, Object id) {
     final var response = client
-        .target(replaceUrlParams(endpoint, docId, key))
+        .target(replaceUrlParams(endpoint, id))
         .request()
         .delete();
 
@@ -97,7 +119,6 @@ public class TestRestDocumentMetadata extends AbstractConcordionTest {
 
   public static class GetAfterDeleteResult {
     public int status;
-    public String body;
   }
 
   public GetAfterDeleteResult getAfterDelete(Object endpoint, Object id) {
@@ -108,8 +129,11 @@ public class TestRestDocumentMetadata extends AbstractConcordionTest {
 
     var result = new GetAfterDeleteResult();
     result.status = response.getStatus();
-    result.body = response.readEntity(String.class);
     return result;
+  }
+
+  private URI replaceUrlParams(Object endpoint, Object... params) {
+    return UriBuilder.fromPath(HOST + endpoint.toString()).build(params);
   }
 
 }
