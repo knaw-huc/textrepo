@@ -38,19 +38,19 @@ public class TestRestDocumentMetadata extends AbstractConcordionTest {
     return result;
   }
 
-  public static class ReadResult {
+  public static class RetrieveResult {
     public int status;
     public String body;
     public String value;
   }
 
-  public ReadResult read(Object endpoint, Object id, Object key) {
+  public RetrieveResult retrieve(Object endpoint, Object id, Object key) {
     final var response = client
         .target(replaceUrlParams(endpoint, id))
         .request()
         .get();
 
-    var result = new ReadResult();
+    var result = new RetrieveResult();
     result.status = response.getStatus();
     var body = response.readEntity(String.class);
     result.body = asPrettyJson(body);
@@ -95,18 +95,18 @@ public class TestRestDocumentMetadata extends AbstractConcordionTest {
     return result;
   }
 
-  public static class GetAfterDeleteResult {
+  public static class RetrieveAfterDeleteResult {
     public int status;
     public String body;
   }
 
-  public GetAfterDeleteResult getAfterDelete(Object endpoint, Object id) {
+  public RetrieveAfterDeleteResult retrieveAfterDelete(Object endpoint, Object id) {
     final var response = client
         .target(replaceUrlParams(endpoint, id))
         .request()
         .get();
 
-    var result = new GetAfterDeleteResult();
+    var result = new RetrieveAfterDeleteResult();
     result.status = response.getStatus();
     result.body = response.readEntity(String.class);
     return result;

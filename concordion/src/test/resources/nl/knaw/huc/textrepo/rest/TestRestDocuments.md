@@ -20,20 +20,20 @@ Then:
 [ ](- "ext:embed=#createResult.body")
 
 ### Get document
-When reading the following document with a `GET` to [`/rest/documents/{id}`](- "#getEndpoint") 
+When retrieving the following document with a `GET` to [`/rest/documents/{id}`](- "#getEndpoint") 
 
  - where `{id}` is [ ](- "c:echo=#createResult.id"):
 
-[ ](- "#readResult=read(#getEndpoint, #createResult.id)")
+[ ](- "#retrieveResult=retrieve(#getEndpoint, #createResult.id)")
 
 Then:
 
- - The response status should be: [200](- "?=#readResult.status");
- - The response should contain a [valid UUID](- "?=#readResult.validUuid");
- - The response should contain an external ID [test-external-id](- "?=#readResult.externalId");
+ - The response status should be: [200](- "?=#retrieveResult.status");
+ - The response should contain a [valid UUID](- "?=#retrieveResult.validUuid");
+ - The response should contain an external ID [test-external-id](- "?=#retrieveResult.externalId");
  - Full response:
 
-[ ](- "ext:embed=#readResult.body")
+[ ](- "ext:embed=#retrieveResult.body")
 
 ### Update document
 When updating document [ ](- "c:echo=#createResult.id") with a `PUT` to [`/rest/documents/{id}`](- "#updateEndpoint"):
@@ -63,11 +63,11 @@ Then:
  - The response status should be: [200](- "?=#deleteResult.status").
 
 ### Get document after deleting
-When reading document [ ](- "c:echo=#createResult.id") with a `GET` to [`/rest/documents/{id}`](- "#getEndpoint"):
+When retrieving document [ ](- "c:echo=#createResult.id") with a `GET` to [`/rest/documents/{id}`](- "#getEndpoint"):
 
-[ ](- "#readAfterDeleteResult=getAfterDelete(#getEndpoint, #createResult.id)")
+[ ](- "#retrieveAfterDeleteResult=getAfterDelete(#getEndpoint, #createResult.id)")
 
 Then:
 
- - The response status should be: [404](- "?=#readAfterDeleteResult.status").
+ - The response status should be: [404](- "?=#retrieveAfterDeleteResult.status").
 

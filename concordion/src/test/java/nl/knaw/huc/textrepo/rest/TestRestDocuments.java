@@ -49,7 +49,7 @@ public class TestRestDocuments extends AbstractConcordionTest {
     public String externalId;
   }
 
-  public ReadResult read(Object endpoint, Object id) {
+  public ReadResult retrieve(Object endpoint, Object id) {
     final var response = client
         .target(replaceUrlParams(endpoint, id))
         .request()

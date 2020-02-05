@@ -28,20 +28,20 @@ Then:
 [ ](- "ext:embed=#createResult.body")
 
 ### Retrieve file
-When reading the following file with a `GET` to [`/rest/files/{id}`](- "#getEndpoint") 
+When retrieving the following file with a `GET` to [`/rest/files/{id}`](- "#getEndpoint") 
 
  - where `{id}` is [ ](- "c:echo=#createResult.id"):
 
-[ ](- "#readResult=read(#getEndpoint, #createResult.id)")
+[ ](- "#retrieveResult=retrieve(#getEndpoint, #createResult.id)")
 
 Then:
 
- - The response status should be: [200](- "?=#readResult.status");
- - The response should contain a [valid UUID](- "?=#readResult.validUuid");
- - The response should contain a [correct type](- "?=#readResult.correctType");
+ - The response status should be: [200](- "?=#retrieveResult.status");
+ - The response should contain a [valid UUID](- "?=#retrieveResult.validUuid");
+ - The response should contain a [correct type](- "?=#retrieveResult.correctType");
  - Full response:
 
-[ ](- "ext:embed=#readResult.body")
+[ ](- "ext:embed=#retrieveResult.body")
 
 ### Update file
 When updating file [ ](- "c:echo=#createResult.id") with a `PUT` to [`/rest/files/{id}`](- "#updateEndpoint"):
@@ -71,11 +71,11 @@ Then:
  - The response status should be: [200](- "?=#deleteResult.status").
 
 ### Retrieve file after deleting
-When reading file [ ](- "c:echo=#createResult.id") with a `GET` to [`/rest/files/{id}`](- "#getEndpoint"):
+When retrieving file [ ](- "c:echo=#createResult.id") with a `GET` to [`/rest/files/{id}`](- "#getEndpoint"):
 
-[ ](- "#readAfterDeleteResult=getAfterDelete(#getEndpoint, #createResult.id)")
+[ ](- "#retrieveAfterDeleteResult=getAfterDelete(#getEndpoint, #createResult.id)")
 
 Then:
 
- - The response status should be: [404](- "?=#readAfterDeleteResult.status").
+ - The response status should be: [404](- "?=#retrieveAfterDeleteResult.status").
 

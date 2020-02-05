@@ -58,7 +58,7 @@ public class TestRestFiles extends AbstractConcordionTest {
     public String correctType;
   }
 
-  public ReadResult read(Object endpoint, Object id) {
+  public ReadResult retrieve(Object endpoint, Object id) {
     final var response = client
         .target(replaceUrlParams(endpoint, id))
         .request()
