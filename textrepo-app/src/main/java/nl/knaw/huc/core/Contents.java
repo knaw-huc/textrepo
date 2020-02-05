@@ -1,11 +1,13 @@
 package nl.knaw.huc.core;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 
 import javax.annotation.Nonnull;
 import java.beans.ConstructorProperties;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Contents of a file, identified by its sha224-hash
@@ -34,5 +36,10 @@ public class Contents {
   @JsonProperty
   public byte[] getContent() {
     return content;
+  }
+
+  @JsonIgnore
+  public String asUTF8String() {
+    return new String(content, StandardCharsets.UTF_8);
   }
 }

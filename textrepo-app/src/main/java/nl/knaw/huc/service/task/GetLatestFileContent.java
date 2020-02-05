@@ -13,22 +13,24 @@ import javax.ws.rs.NotFoundException;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class GetLatestFileContent implements Function<TextrepoFile, Contents> {
+public class GetLatestFileContent implements Function<Handle, Contents> {
   private static final Logger LOG = LoggerFactory.getLogger(GetLatestFileContent.class);
 
-  private final Handle transaction;
+  private final TextrepoFile file;
 
-  public GetLatestFileContent(Handle transaction) {
-    this.transaction = transaction;
+  public GetLatestFileContent(TextrepoFile file) {
+    this.file = file;
   }
 
   @Override
-  public Contents apply(TextrepoFile file) {
-    final var latest = versions().findLatestByFileId(file.getId())
-                                 .orElseThrow(noLatestVersionFound(file));
+  public Contents apply(Handle transaction) {
+    final var versions = transaction.attach(VersionDao.class);
+    final var latest = versions.findLatestByFileId(file.getId())
+                               .orElseThrow(noLatestVersionFound(file));
 
-    return contents().findBySha224(latest.getContentsSha())
-                     .orElseThrow(noContentsFoundForVersion(file, latest));
+    final var contents = transaction.attach(ContentsDao.class);
+    return contents.findBySha224(latest.getContentsSha())
+                   .orElseThrow(noContentsFoundForVersion(file, latest));
   }
 
   private Supplier<NotFoundException> noLatestVersionFound(TextrepoFile file) {
@@ -48,11 +50,4 @@ public class GetLatestFileContent implements Function<TextrepoFile, Contents> {
     };
   }
 
-  private ContentsDao contents() {
-    return transaction.attach(ContentsDao.class);
-  }
-
-  private VersionDao versions() {
-    return transaction.attach(VersionDao.class);
-  }
 }

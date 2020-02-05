@@ -1,6 +1,5 @@
 package nl.knaw.huc.service.task.indexfile;
 
-import nl.knaw.huc.db.TypeDao;
 import nl.knaw.huc.service.index.FileIndexer;
 import nl.knaw.huc.service.task.FindDocumentByExternalId;
 import nl.knaw.huc.service.task.FindDocumentFileByType;
@@ -8,14 +7,10 @@ import nl.knaw.huc.service.task.GetLatestFileContent;
 import nl.knaw.huc.service.task.Task;
 import org.jdbi.v3.core.Jdbi;
 
-import javax.ws.rs.NotFoundException;
-import java.util.function.Supplier;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
   private final Jdbi jdbi;
   private final FileIndexer indexer;
+
   private String externalId;
   private String typeName;
 
@@ -38,37 +33,25 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
 
   @Override
   public Task build() {
-    return new JdbiIndexFileTask(getTypeId());
-  }
-
-  private short getTypeId() {
-    return types().find(typeName).orElseThrow(typeNotFound(typeName));
-  }
-
-  private TypeDao types() {
-    return jdbi.onDemand(TypeDao.class);
-  }
-
-  private Supplier<NotFoundException> typeNotFound(String name) {
-    return () -> new NotFoundException(String.format("No type found with name: %s", name));
+    return new JdbiIndexFileTask(externalId, typeName);
   }
 
   private class JdbiIndexFileTask implements Task {
-    private short typeId;
+    private final String externalId;
+    private final String typeName;
 
-    private JdbiIndexFileTask(short typeId) {
-      this.typeId = typeId;
+    private JdbiIndexFileTask(String externalId, String typeName) {
+      this.externalId = externalId;
+      this.typeName = typeName;
     }
 
     @Override
     public void run() {
       jdbi.useTransaction(txn -> {
-        final var file =
-            new FindDocumentByExternalId(txn)
-                .andThen(new FindDocumentFileByType(txn, typeName, typeId))
-                .apply(externalId);
-        final var contents = new GetLatestFileContent(txn).apply(file);
-        indexer.indexFile(file, new String(contents.getContent(), UTF_8));
+        final var doc = new FindDocumentByExternalId(externalId).apply(txn);
+        final var file = new FindDocumentFileByType(doc, typeName).apply(txn);
+        final var contents = new GetLatestFileContent(file).apply(txn);
+        indexer.indexFile(file, contents.asUTF8String());
       });
     }
   }

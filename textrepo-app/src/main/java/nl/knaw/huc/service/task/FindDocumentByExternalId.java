@@ -5,31 +5,24 @@ import nl.knaw.huc.db.DocumentsDao;
 import org.jdbi.v3.core.Handle;
 
 import javax.ws.rs.NotFoundException;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class FindDocumentByExternalId implements Function<String, Document> {
-  private final Handle transaction;
+public class FindDocumentByExternalId implements Function<Handle, Document> {
+  private final String externalId;
 
-  public FindDocumentByExternalId(Handle transaction) {
-    this.transaction = transaction;
+  public FindDocumentByExternalId(String externalId) {
+    this.externalId = externalId;
   }
 
   @Override
-  public Document apply(String externalId) {
-    return findDocument(externalId).orElseThrow(documentNotFound(externalId));
-  }
-
-  private Optional<Document> findDocument(String externalId) {
-    return docs().getByExternalId(externalId);
+  public Document apply(Handle transaction) {
+    final var docs = transaction.attach(DocumentsDao.class);
+    return docs.getByExternalId(externalId).orElseThrow(documentNotFound(externalId));
   }
 
   private Supplier<NotFoundException> documentNotFound(String externalId) {
     return () -> new NotFoundException("No document found for externalId: " + externalId);
   }
 
-  private DocumentsDao docs() {
-    return transaction.attach(DocumentsDao.class);
-  }
 }
