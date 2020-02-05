@@ -13,13 +13,22 @@ import static java.util.Objects.requireNonNull;
 
 public class JdbiTaskFactory implements TaskBuilderFactory {
   private final Jdbi jdbi;
-  private final Supplier<UUID> idGenerator;
-  private final FileIndexer fileIndexer;
 
-  public JdbiTaskFactory(Jdbi jdbi, Supplier<UUID> idGenerator, FileIndexer fileIndexer) {
+  private Supplier<UUID> idGenerator;
+  private FileIndexer fileIndexer;
+
+  public JdbiTaskFactory(Jdbi jdbi) {
     this.jdbi = requireNonNull(jdbi);
-    this.idGenerator = requireNonNull(idGenerator);
-    this.fileIndexer = requireNonNull(fileIndexer);
+  }
+
+  public JdbiTaskFactory withIDGenerator(Supplier<UUID> idGenerator) {
+    this.idGenerator = idGenerator;
+    return this;
+  }
+
+  public JdbiTaskFactory withFileIndexer(FileIndexer fileIndexer) {
+    this.fileIndexer = fileIndexer;
+    return this;
   }
 
   @Override

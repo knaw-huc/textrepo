@@ -88,7 +88,9 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     var typeService = new JdbiTypeService(jdbi);
     var customIndexers = createElasticCustomFacetIndexers(config, typeService);
     var fileIndexService = new ElasticFileIndexer(config.getElasticsearch());
-    var taskBuilderFactory = new JdbiTaskFactory(jdbi, uuidGenerator, fileIndexService);
+    var taskBuilderFactory = new JdbiTaskFactory(jdbi)
+        .withIDGenerator(uuidGenerator)
+        .withFileIndexer(fileIndexService);
     var versionService = new JdbiVersionService(jdbi, contentsService, fileIndexService, customIndexers);
     var fileService = new JdbiFileService(jdbi, typeService, versionService, metadataService, uuidGenerator);
     var fileContentsService = new JdbiFileContentsService(jdbi, contentsService, versionService, metadataService);
