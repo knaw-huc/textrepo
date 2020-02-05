@@ -8,8 +8,8 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.federecio.dropwizard.swagger.SwaggerBundle;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
-import nl.knaw.huc.resources.FileContentsResource;
 import nl.knaw.huc.resources.DeprecatedFilesResource;
+import nl.knaw.huc.resources.FileContentsResource;
 import nl.knaw.huc.resources.rest.ContentsResource;
 import nl.knaw.huc.resources.rest.DocumentMetadataResource;
 import nl.knaw.huc.resources.rest.DocumentsResource;
@@ -18,6 +18,7 @@ import nl.knaw.huc.resources.rest.FileVersionsResource;
 import nl.knaw.huc.resources.rest.FilesResource;
 import nl.knaw.huc.resources.rest.TypesResource;
 import nl.knaw.huc.resources.task.ImportFileResource;
+import nl.knaw.huc.resources.task.IndexResource;
 import nl.knaw.huc.service.ContentsService;
 import nl.knaw.huc.service.JdbiDocumentMetadataService;
 import nl.knaw.huc.service.JdbiDocumentService;
@@ -37,6 +38,7 @@ import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -58,7 +60,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
   }
 
   @Override
-  public void initialize(final Bootstrap<TextRepositoryConfiguration> bootstrap) {
+  public void initialize(@Nonnull final Bootstrap<TextRepositoryConfiguration> bootstrap) {
     bootstrap.addBundle(new MultiPartBundle());
     bootstrap.addBundle(new JdbiExceptionsBundle());
     bootstrap.addBundle(getSwaggerBundle());
@@ -86,6 +88,9 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     var typeService = new JdbiTypeService(jdbi);
     var customIndexers = createElasticCustomFacetIndexers(config, typeService);
     var fileIndexService = new ElasticFileIndexer(config.getElasticsearch());
+    var taskBuilderFactory = new JdbiTaskFactory(jdbi)
+        .withIdGenerator(uuidGenerator)
+        .withFileIndexer(fileIndexService);
     var versionService = new JdbiVersionService(jdbi, contentsService, fileIndexService, customIndexers);
     var fileService = new JdbiFileService(jdbi, typeService, versionService, metadataService, uuidGenerator);
     var fileContentsService = new JdbiFileContentsService(jdbi, contentsService, versionService, metadataService);
@@ -100,7 +105,8 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
         new FileVersionsResource(versionService),
         new DocumentsResource(documentService),
         new DocumentMetadataResource(documentMetadataService),
-        new ImportFileResource(new JdbiTaskFactory(jdbi, uuidGenerator), maxPayloadSize),
+        new ImportFileResource(taskBuilderFactory, maxPayloadSize),
+        new IndexResource(taskBuilderFactory),
         new DeprecatedFilesResource(fileService, maxPayloadSize),
         new FilesResource(fileService)
     );

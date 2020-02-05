@@ -4,8 +4,8 @@ import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.core.TextrepoFile;
 import nl.knaw.huc.core.Version;
 import nl.knaw.huc.db.VersionsDao;
-import nl.knaw.huc.service.index.FileIndexer;
 import nl.knaw.huc.service.index.ElasticCustomIndexer;
+import nl.knaw.huc.service.index.FileIndexer;
 import org.jdbi.v3.core.Jdbi;
 
 import javax.annotation.Nonnull;
@@ -13,8 +13,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class JdbiVersionService implements VersionService {
   private final Jdbi jdbi;
@@ -46,7 +44,7 @@ public class JdbiVersionService implements VersionService {
   ) {
     contentsService.addContents(contents);
 
-    var latestVersionContent = new String(contents.getContent(), UTF_8);
+    var latestVersionContent = contents.asUtf8String();
     fileIndexService.indexFile(file, latestVersionContent);
     customFacetIndexers.forEach(indexer -> indexer.indexFile(file, latestVersionContent));
 
