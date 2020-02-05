@@ -39,7 +39,7 @@ class HaveFileForDocumentByType implements Function<Document, TextrepoFile> {
   private Supplier<TextrepoFile> createNewFileForDocument(Document doc) {
     return () -> {
       final var file = new TextrepoFile(idGenerator.get(), typeId);
-      filesDao.create(file.getId(), file.getTypeId()); // TODO: implement and use FileDao.save(TextrepoFile file)
+      filesDao.insert(file.getId(), file.getTypeId()); // TODO: implement and use FileDao.save(TextrepoFile file)
       documentFilesDao.insert(doc.getId(), file.getId());
       return file;
     };

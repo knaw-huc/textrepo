@@ -11,7 +11,7 @@ import java.util.UUID;
 
 public interface FilesDao {
   @SqlUpdate("insert into files (id, type_id) values (:fileId, :typeId)")
-  void create(@Bind("fileId") UUID fileId, @Bind("typeId") short typeId);
+  void insert(@Bind("fileId") UUID fileId, @Bind("typeId") short typeId);
 
   @SqlQuery("select id, type_id from files where id = ?")
   @RegisterConstructorMapper(value = TextrepoFile.class)
