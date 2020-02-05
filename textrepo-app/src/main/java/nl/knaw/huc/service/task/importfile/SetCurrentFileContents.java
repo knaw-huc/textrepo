@@ -6,7 +6,6 @@ import nl.knaw.huc.core.Version;
 import nl.knaw.huc.db.ContentsDao;
 import nl.knaw.huc.db.VersionDao;
 import org.jdbi.v3.core.Handle;
-import org.jdbi.v3.core.Jdbi;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -14,23 +13,26 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import static java.time.LocalDateTime.now;
+import static java.util.Objects.requireNonNull;
 
-class SetCurrentFileContents implements Function<TextrepoFile, Version> {
-  private final Handle transaction;
+class SetCurrentFileContents implements Function<Handle, Version> {
+  private final TextrepoFile file;
   private final Contents contents;
 
-  SetCurrentFileContents(Handle transaction, Contents contents) {
-    this.transaction = transaction;
-    this.contents = contents;
+  private Handle transaction;
+
+  SetCurrentFileContents(TextrepoFile file, Contents contents) {
+    this.file = requireNonNull(file);
+    this.contents = requireNonNull(contents);
   }
 
   @Override
-  public Version apply(TextrepoFile file) {
-    return latestVersionIfIdentical(file)
-        .orElseGet(createNewVersionWithContents(file));
+  public Version apply(Handle transaction) {
+    this.transaction = requireNonNull(transaction);
+    return latestVersionIfIdentical().orElseGet(createNewVersionWithContents());
   }
 
-  private Optional<Version> latestVersionIfIdentical(TextrepoFile file) {
+  private Optional<Version> latestVersionIfIdentical() {
     return versions().findLatestByFileId(file.getId())
                      .filter(hasIdenticalContents());
   }
@@ -39,7 +41,7 @@ class SetCurrentFileContents implements Function<TextrepoFile, Version> {
     return candidate -> candidate.getContentsSha().equals(contents.getSha224());
   }
 
-  private Supplier<Version> createNewVersionWithContents(TextrepoFile file) {
+  private Supplier<Version> createNewVersionWithContents() {
     return () -> {
       final var version = new Version(file.getId(), now(), contents.getSha224());
       contents().insert(contents);

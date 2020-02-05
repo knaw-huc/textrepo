@@ -9,25 +9,30 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class HaveDocumentByExternalId implements Function<String, Document> {
-  private final Handle transaction;
-  private final Supplier<UUID> idGenerator;
+import static java.util.Objects.requireNonNull;
 
-  public HaveDocumentByExternalId(Handle transaction, Supplier<UUID> idGenerator) {
-    this.transaction = transaction;
-    this.idGenerator = idGenerator;
+public class HaveDocumentByExternalId implements Function<Handle, Document> {
+  private final Supplier<UUID> idGenerator;
+  private final String externalId;
+
+  private Handle transaction;
+
+  public HaveDocumentByExternalId(Supplier<UUID> idGenerator, String externalId) {
+    this.idGenerator = requireNonNull(idGenerator);
+    this.externalId = requireNonNull(externalId);
   }
 
   @Override
-  public Document apply(String externalId) {
-    return findDocument(externalId).orElseGet(createNewDocument(externalId));
+  public Document apply(Handle transaction) {
+    this.transaction = requireNonNull(transaction);
+    return findDocument().orElseGet(createNewDocument());
   }
 
-  private Optional<Document> findDocument(String externalId) {
+  private Optional<Document> findDocument() {
     return docs().getByExternalId(externalId);
   }
 
-  private Supplier<Document> createNewDocument(String externalId) {
+  private Supplier<Document> createNewDocument() {
     return () -> {
       final var document = new Document(idGenerator.get(), externalId);
       docs().insert(document);

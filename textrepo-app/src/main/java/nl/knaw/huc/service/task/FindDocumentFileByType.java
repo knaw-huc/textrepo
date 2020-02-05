@@ -10,23 +10,28 @@ import javax.ws.rs.NotFoundException;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static java.util.Objects.requireNonNull;
+
 public class FindDocumentFileByType implements Function<Handle, TextrepoFile> {
   private final Document document;
   private final String typeName;
 
+  private Handle transaction;
+
   public FindDocumentFileByType(Document document, String typeName) {
-    this.document = document;
-    this.typeName = typeName;
+    this.document = requireNonNull(document);
+    this.typeName = requireNonNull(typeName);
   }
 
   @Override
   public TextrepoFile apply(Handle transaction) {
-    final var types = transaction.attach(TypeDao.class);
-    final var typeId = types.find(typeName).orElseThrow(illegalType(typeName));
+    this.transaction = requireNonNull(transaction);
 
-    final var filesForDocument = transaction.attach(DocumentFilesDao.class);
-    return filesForDocument.findFile(document.getId(), typeId)
-                           .orElseThrow(fileNotFound(document));
+    final var typeId = types().find(typeName)
+                              .orElseThrow(illegalType(typeName));
+
+    return documentFiles().findFile(document.getId(), typeId)
+                          .orElseThrow(fileNotFound(document));
   }
 
   private Supplier<NotFoundException> illegalType(String name) {
@@ -38,4 +43,11 @@ public class FindDocumentFileByType implements Function<Handle, TextrepoFile> {
         String.format("No %s file found for document with externalId: %s", typeName, document.getExternalId()));
   }
 
+  private TypeDao types() {
+    return transaction.attach(TypeDao.class);
+  }
+
+  private DocumentFilesDao documentFiles() {
+    return transaction.attach(DocumentFilesDao.class);
+  }
 }

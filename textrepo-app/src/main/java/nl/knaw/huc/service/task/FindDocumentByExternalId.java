@@ -8,21 +8,28 @@ import javax.ws.rs.NotFoundException;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static java.util.Objects.requireNonNull;
+
 public class FindDocumentByExternalId implements Function<Handle, Document> {
   private final String externalId;
 
+  private Handle transaction;
+
   public FindDocumentByExternalId(String externalId) {
-    this.externalId = externalId;
+    this.externalId = requireNonNull(externalId);
   }
 
   @Override
   public Document apply(Handle transaction) {
-    final var docs = transaction.attach(DocumentsDao.class);
-    return docs.getByExternalId(externalId).orElseThrow(documentNotFound(externalId));
+    this.transaction = requireNonNull(transaction);
+    return docs().getByExternalId(externalId).orElseThrow(documentNotFound(externalId));
   }
 
   private Supplier<NotFoundException> documentNotFound(String externalId) {
     return () -> new NotFoundException("No document found for externalId: " + externalId);
   }
 
+  private DocumentsDao docs() {
+    return transaction.attach(DocumentsDao.class);
+  }
 }

@@ -7,19 +7,25 @@ import org.jdbi.v3.core.Handle;
 
 import java.util.function.Function;
 
-class SetFileProvenance implements Function<TextrepoFile, TextrepoFile> {
-  private final Handle transaction;
+import static java.util.Objects.requireNonNull;
+
+class SetFileProvenance implements Function<Handle, MetadataEntry> {
+  private final TextrepoFile file;
   private final String filename;
 
-  SetFileProvenance(Handle transaction, String filename) {
-    this.transaction = transaction;
-    this.filename = filename;
+  private Handle transaction;
+
+  SetFileProvenance(TextrepoFile file, String filename) {
+    this.file = requireNonNull(file);
+    this.filename = requireNonNull(filename);
   }
 
   @Override
-  public TextrepoFile apply(TextrepoFile file) {
-    metadata().upsertFileMetadata(file, new MetadataEntry("filename", filename));
-    return file;
+  public MetadataEntry apply(Handle transaction) {
+    this.transaction = requireNonNull(transaction);
+    final var entry = new MetadataEntry("filename", this.filename);
+    metadata().upsertFileMetadata(file, entry);
+    return entry;
   }
 
   private FileMetadataDao metadata() {

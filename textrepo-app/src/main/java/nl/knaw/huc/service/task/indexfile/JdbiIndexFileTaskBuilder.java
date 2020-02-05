@@ -7,6 +7,8 @@ import nl.knaw.huc.service.task.GetLatestFileContent;
 import nl.knaw.huc.service.task.Task;
 import org.jdbi.v3.core.Jdbi;
 
+import static java.util.Objects.requireNonNull;
+
 public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
   private final Jdbi jdbi;
   private final FileIndexer indexer;
@@ -15,19 +17,19 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
   private String typeName;
 
   public JdbiIndexFileTaskBuilder(Jdbi jdbi, FileIndexer indexer) {
-    this.jdbi = jdbi;
-    this.indexer = indexer;
+    this.jdbi = requireNonNull(jdbi);
+    this.indexer = requireNonNull(indexer);
   }
 
   @Override
   public IndexFileTaskBuilder forExternalId(String externalId) {
-    this.externalId = externalId;
+    this.externalId = requireNonNull(externalId);
     return this;
   }
 
   @Override
   public IndexFileTaskBuilder withType(String typeName) {
-    this.typeName = typeName;
+    this.typeName = requireNonNull(typeName);
     return this;
   }
 

@@ -9,15 +9,17 @@ import org.jdbi.v3.core.Jdbi;
 import java.util.UUID;
 import java.util.function.Supplier;
 
+import static java.util.Objects.requireNonNull;
+
 public class JdbiTaskFactory implements TaskBuilderFactory {
   private final Jdbi jdbi;
   private final Supplier<UUID> idGenerator;
   private final FileIndexer fileIndexer;
 
   public JdbiTaskFactory(Jdbi jdbi, Supplier<UUID> idGenerator, FileIndexer fileIndexer) {
-    this.jdbi = jdbi;
-    this.idGenerator = idGenerator;
-    this.fileIndexer = fileIndexer;
+    this.jdbi = requireNonNull(jdbi);
+    this.idGenerator = requireNonNull(idGenerator);
+    this.fileIndexer = requireNonNull(fileIndexer);
   }
 
   @Override

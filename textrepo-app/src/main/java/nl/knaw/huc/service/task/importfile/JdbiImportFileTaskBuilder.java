@@ -10,6 +10,8 @@ import javax.ws.rs.NotFoundException;
 import java.util.UUID;
 import java.util.function.Supplier;
 
+import static java.util.Objects.requireNonNull;
+
 class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
   private final Jdbi jdbi;
   private final Supplier<UUID> documentIdGenerator;
@@ -21,42 +23,38 @@ class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
   private byte[] contents;
 
   public JdbiImportFileTaskBuilder(Jdbi jdbi, Supplier<UUID> idGenerator) {
-    this.jdbi = jdbi;
-    this.documentIdGenerator = idGenerator;
-    this.fileIdGenerator = idGenerator;
+    this.jdbi = requireNonNull(jdbi);
+    this.documentIdGenerator = requireNonNull(idGenerator);
+    this.fileIdGenerator = requireNonNull(idGenerator);
   }
 
   @Override
   public ImportFileTaskBuilder forExternalId(String externalId) {
-    this.externalId = externalId;
+    this.externalId = requireNonNull(externalId);
     return this;
   }
 
   @Override
   public ImportFileTaskBuilder withType(String typeName) {
-    this.typeName = typeName;
+    this.typeName = requireNonNull(typeName);
     return this;
   }
 
   @Override
   public ImportFileTaskBuilder forFilename(String name) {
-    this.filename = name;
+    this.filename = requireNonNull(name);
     return this;
   }
 
   @Override
   public ImportFileTaskBuilder withContents(byte[] contents) {
-    this.contents = contents;
+    this.contents = requireNonNull(contents);
     return this;
   }
 
   @Override
   public Task build() {
-    return new JdbiImportDocumentTask(externalId, getTypeId(), filename, getContents());
-  }
-
-  private short getTypeId() {
-    return types().find(typeName).orElseThrow(typeNotFound(typeName));
+    return new JdbiImportDocumentTask(externalId, typeName, filename, getContents());
   }
 
   private Contents getContents() {
@@ -73,25 +71,25 @@ class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
 
   private class JdbiImportDocumentTask implements Task {
     private final String externalId;
-    private final short typeId;
+    private final String typeName;
     private final String filename;
     private final Contents contents;
 
-    private JdbiImportDocumentTask(String externalId, short typeId, String filename, Contents contents) {
+    private JdbiImportDocumentTask(String externalId, String typeName, String filename, Contents contents) {
       this.externalId = externalId;
-      this.typeId = typeId;
+      this.typeName = typeName;
       this.filename = filename;
       this.contents = contents;
     }
 
     @Override
     public void run() {
-      jdbi.useTransaction(txn ->
-          new HaveDocumentByExternalId(txn, documentIdGenerator)
-              .andThen(new HaveFileForDocumentByType(txn, fileIdGenerator, typeId))
-              .andThen(new SetFileProvenance(txn, filename))
-              .andThen(new SetCurrentFileContents(txn, contents))
-              .apply(externalId));
+      jdbi.useTransaction(txn -> {
+        final var doc = new HaveDocumentByExternalId(documentIdGenerator, externalId).apply(txn);
+        final var file = new HaveFileForDocumentByType(fileIdGenerator, doc, typeName).apply(txn);
+        final var entry = new SetFileProvenance(file, filename).apply(txn);
+        final var version = new SetCurrentFileContents(file, contents).apply(txn);
+      });
     }
   }
 }

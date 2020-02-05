@@ -13,24 +13,27 @@ import javax.ws.rs.NotFoundException;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static java.util.Objects.requireNonNull;
+
 public class GetLatestFileContent implements Function<Handle, Contents> {
   private static final Logger LOG = LoggerFactory.getLogger(GetLatestFileContent.class);
 
   private final TextrepoFile file;
 
+  private Handle transaction;
+
   public GetLatestFileContent(TextrepoFile file) {
-    this.file = file;
+    this.file = requireNonNull(file);
   }
 
   @Override
   public Contents apply(Handle transaction) {
-    final var versions = transaction.attach(VersionDao.class);
-    final var latest = versions.findLatestByFileId(file.getId())
-                               .orElseThrow(noLatestVersionFound(file));
+    this.transaction = requireNonNull(transaction);
+    final var latest = versions().findLatestByFileId(file.getId())
+                                 .orElseThrow(noLatestVersionFound(file));
 
-    final var contents = transaction.attach(ContentsDao.class);
-    return contents.findBySha224(latest.getContentsSha())
-                   .orElseThrow(noContentsFoundForVersion(file, latest));
+    return contents().findBySha224(latest.getContentsSha())
+                     .orElseThrow(noContentsFoundForVersion(file, latest));
   }
 
   private Supplier<NotFoundException> noLatestVersionFound(TextrepoFile file) {
@@ -43,11 +46,18 @@ public class GetLatestFileContent implements Function<Handle, Contents> {
 
   private Supplier<NotFoundException> noContentsFoundForVersion(TextrepoFile file, Version latest) {
     return () -> {
-      final var message = String.format("No contents found for Latest version of file %s, sha224=%s",
+      final var message = String.format("No contents found for latest version of file %s, sha224=%s",
           file.getId(), latest.getContentsSha());
       LOG.warn(message);
       return new NotFoundException(message);
     };
   }
 
+  private VersionDao versions() {
+    return transaction.attach(VersionDao.class);
+  }
+
+  private ContentsDao contents() {
+    return transaction.attach(ContentsDao.class);
+  }
 }
