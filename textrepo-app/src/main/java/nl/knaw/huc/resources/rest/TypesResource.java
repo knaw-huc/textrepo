@@ -1,6 +1,7 @@
 package nl.knaw.huc.resources.rest;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import nl.knaw.huc.api.FormType;
 import nl.knaw.huc.api.ResultTextrepoFile;
 import nl.knaw.huc.api.ResultType;
@@ -34,6 +35,7 @@ public class TypesResource {
 
   @GET
   @Produces(APPLICATION_JSON)
+  @ApiOperation(value = "Retrieve types")
   public List<String> getTypes() {
     return typeService.list();
   }
@@ -41,6 +43,7 @@ public class TypesResource {
   @POST
   @Consumes(APPLICATION_JSON)
   @Produces(APPLICATION_JSON)
+  @ApiOperation(value = "Add type")
   public Response addType(
       @NotNull @Valid FormType form
   ) {

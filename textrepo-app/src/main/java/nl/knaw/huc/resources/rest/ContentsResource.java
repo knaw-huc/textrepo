@@ -34,7 +34,7 @@ public class ContentsResource {
   @Path("/{sha224}")
   @Timed
   @Produces(APPLICATION_OCTET_STREAM)
-  @ApiOperation(value = "Download contents by sha224")
+  @ApiOperation(value = "Retrieve contents")
   @ApiResponses(value = {@ApiResponse(code = 200, response = byte[].class, message = "OK")})
   public Response getContentsBySha224(
       @PathParam("sha224") @NotBlank String sha224

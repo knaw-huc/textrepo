@@ -22,7 +22,7 @@ import static java.util.stream.Collectors.toList;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 @Api(tags = {"documents"})
-@Path("/rest/documents/{id}/files")
+@Path("/rest/documents/{docId}/files")
 public class DocumentFilesResource {
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -36,17 +36,17 @@ public class DocumentFilesResource {
 
   @GET
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Retrieve document")
+  @ApiOperation(value = "Retrieve document files")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultDocument.class, message = "OK")})
   public Response get(
-      @PathParam("id") @Valid UUID id
+      @PathParam("docId") @Valid UUID docId
   ) {
-    logger.debug("get files for document: id={}", id);
+    logger.debug("get files for document: docId={}", docId);
     final var files = documentFilesService
-        .getFilesByDocumentId(id);
+        .getFilesByDocumentId(docId);
     var results = files
         .stream()
-        .map((file) -> new ResultTextrepoFile(id, file))
+        .map((file) -> new ResultTextrepoFile(docId, file))
         .collect(toList());
     return Response
         .ok(results)

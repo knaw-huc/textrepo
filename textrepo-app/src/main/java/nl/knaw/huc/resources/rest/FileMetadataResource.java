@@ -41,7 +41,7 @@ public class FileMetadataResource {
   @GET
   @Timed
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Get all metadata of a file")
+  @ApiOperation(value = "Retrieve file metadata")
   @ApiResponses(value = {@ApiResponse(code = 200, responseContainer = "Map", response = String.class, message = "OK")})
   public Response get(
       @PathParam("fileId") @NotNull @Valid UUID fileId
@@ -55,7 +55,7 @@ public class FileMetadataResource {
   @Timed
   @Consumes(APPLICATION_JSON)
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Update value of a file metadata entry")
+  @ApiOperation(value = "Create or update file metadata entry")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
   public Response put(
       @PathParam("fileId") @Valid UUID fileId,
@@ -73,7 +73,7 @@ public class FileMetadataResource {
   @Timed
   @Consumes(APPLICATION_JSON)
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Delete value of a document metadata entry")
+  @ApiOperation(value = "Delete document metadata entry")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
   public Response delete(
       @PathParam("fileId") @NotNull @Valid UUID fileId,
