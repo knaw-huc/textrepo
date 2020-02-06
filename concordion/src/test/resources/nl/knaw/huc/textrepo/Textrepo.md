@@ -10,4 +10,5 @@
 
  - [Documents](rest/TestRestDocuments.md "c:run")
  - [Document metadata](rest/TestRestDocumentMetadata.md "c:run")
+ - [Document files](rest/TestRestDocumentFiles.md "c:run")
  - [Files](rest/TestRestFiles.md "c:run")

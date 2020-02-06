@@ -1,4 +1,4 @@
-# Test /rest/files
+# Test `/rest/files`
 
 ## Create, retrieve, update and delete files
 

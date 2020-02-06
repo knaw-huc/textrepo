@@ -1,4 +1,4 @@
-# Test /rest/document/{id}/metadata
+# Test `/rest/document/{id}/metadata`
 
 ## Create, retrieve, update and delete document metadata
 

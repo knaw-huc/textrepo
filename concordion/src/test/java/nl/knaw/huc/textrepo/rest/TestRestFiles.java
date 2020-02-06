@@ -21,7 +21,7 @@ import static nl.knaw.huc.textrepo.util.TestUtils.asPrettyJson;
 public class TestRestFiles extends AbstractConcordionTest {
 
   public String createDocument() {
-    return RestUtils.createDocument(client);
+    return RestUtils.createDocument();
   }
 
   public static class CreateResult {
@@ -51,20 +51,20 @@ public class TestRestFiles extends AbstractConcordionTest {
     return result;
   }
 
-  public static class ReadResult {
+  public static class RetrieveResult {
     public int status;
     public String body;
     public String validUuid;
     public String correctType;
   }
 
-  public ReadResult retrieve(Object endpoint, Object id) {
+  public RetrieveResult retrieve(Object endpoint, Object id) {
     final var response = client
         .target(replaceUrlParams(endpoint, id))
         .request()
         .get();
 
-    var result = new ReadResult();
+    var result = new RetrieveResult();
     result.status = response.getStatus();
     var body = response.readEntity(String.class);
     result.body = asPrettyJson(body);
