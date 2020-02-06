@@ -5,8 +5,6 @@
 ### Set up
 
 [ ](- "createDocumentWithTwoFiles()")
-[ ](- "createDocumentWithTwoFiles()")
-[ ](- "createDocumentWithTwoFiles()")
 
 To retrieve all files of a document we first create:
 
