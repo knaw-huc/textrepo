@@ -22,12 +22,12 @@ public class JdbiTaskFactory implements TaskBuilderFactory {
   }
 
   public JdbiTaskFactory withIdGenerator(Supplier<UUID> idGenerator) {
-    this.idGenerator = idGenerator;
+    this.idGenerator = requireNonNull(idGenerator);
     return this;
   }
 
   public JdbiTaskFactory withFileIndexer(FileIndexer fileIndexer) {
-    this.fileIndexer = fileIndexer;
+    this.fileIndexer = requireNonNull(fileIndexer);
     return this;
   }
 
