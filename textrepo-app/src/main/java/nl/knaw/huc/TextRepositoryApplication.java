@@ -11,6 +11,7 @@ import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import nl.knaw.huc.resources.DeprecatedFilesResource;
 import nl.knaw.huc.resources.FileContentsResource;
 import nl.knaw.huc.resources.rest.ContentsResource;
+import nl.knaw.huc.resources.rest.DocumentFilesResource;
 import nl.knaw.huc.resources.rest.DocumentMetadataResource;
 import nl.knaw.huc.resources.rest.DocumentsResource;
 import nl.knaw.huc.resources.rest.FileMetadataResource;
@@ -20,6 +21,7 @@ import nl.knaw.huc.resources.rest.TypesResource;
 import nl.knaw.huc.resources.task.ImportFileResource;
 import nl.knaw.huc.resources.task.IndexResource;
 import nl.knaw.huc.service.ContentsService;
+import nl.knaw.huc.service.JdbiDocumentFilesService;
 import nl.knaw.huc.service.JdbiDocumentMetadataService;
 import nl.knaw.huc.service.JdbiDocumentService;
 import nl.knaw.huc.service.JdbiFileContentsService;
@@ -93,6 +95,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
         .withFileIndexer(fileIndexService);
     var versionService = new JdbiVersionService(jdbi, contentsService, fileIndexService, customIndexers);
     var fileService = new JdbiFileService(jdbi, typeService, versionService, metadataService, uuidGenerator);
+    var documentFilesService = new JdbiDocumentFilesService(jdbi);
     var fileContentsService = new JdbiFileContentsService(jdbi, contentsService, versionService, metadataService);
     var documentService = new JdbiDocumentService(jdbi, uuidGenerator);
     var documentMetadataService = new JdbiDocumentMetadataService(jdbi);
@@ -108,7 +111,8 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
         new ImportFileResource(taskBuilderFactory, maxPayloadSize),
         new IndexResource(taskBuilderFactory),
         new DeprecatedFilesResource(fileService, maxPayloadSize),
-        new FilesResource(fileService)
+        new FilesResource(fileService),
+        new DocumentFilesResource(documentFilesService)
     );
 
     resources.forEach((resource) -> environment.jersey().register(resource));
