@@ -17,17 +17,17 @@ public class JdbiFileContentsService implements FileContentsService {
 
   private final ContentsService contentsService;
   private final VersionService versionService;
-  private MetadataService metadataService;
+  private FileMetadataService fileMetadataService;
   private Jdbi jdbi;
 
   public JdbiFileContentsService(
       Jdbi jdbi, ContentsService contentsService,
       VersionService versionService,
-      MetadataService metadataService
+      FileMetadataService fileMetadataService
   ) {
     this.contentsService = contentsService;
     this.versionService = versionService;
-    this.metadataService = metadataService;
+    this.fileMetadataService = fileMetadataService;
     this.jdbi = jdbi;
   }
 
@@ -56,7 +56,7 @@ public class JdbiFileContentsService implements FileContentsService {
         .filter(v -> v.getContentsSha().equals(currentSha224)) // already the current file for this file
         .orElseGet(() -> versionService.insertNewVersion(file, contents, now()));
 
-    metadataService.update(fileId, new MetadataEntry("filename", filename));
+    fileMetadataService.upsert(fileId, new MetadataEntry("filename", filename));
 
     return version;
   }

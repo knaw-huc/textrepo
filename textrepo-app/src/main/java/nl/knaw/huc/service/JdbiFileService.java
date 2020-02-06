@@ -29,18 +29,18 @@ public class JdbiFileService implements FileService {
   private final VersionService versionService;
   private final Supplier<UUID> fileIdGenerator;
 
-  private MetadataService metadataService;
+  private FileMetadataService fileMetadataService;
 
   public JdbiFileService(
       Jdbi jdbi,
       TypeService typeService,
       VersionService versionService,
-      MetadataService metadataService, Supplier<UUID> fileIdGenerator) {
+      FileMetadataService fileMetadataService, Supplier<UUID> fileIdGenerator) {
     this.jdbi = jdbi;
     this.typeService = typeService;
     this.versionService = versionService;
     this.fileIdGenerator = fileIdGenerator;
-    this.metadataService = metadataService;
+    this.fileMetadataService = fileMetadataService;
   }
 
   public TextrepoFile createFile(
@@ -51,7 +51,7 @@ public class JdbiFileService implements FileService {
     final var fileId = fileIdGenerator.get();
     final var typeId = typeService.getId(type);
     files().insert(fileId, typeId);
-    metadataService.insert(fileId, new MetadataEntry("filename", filename));
+    fileMetadataService.insert(fileId, new MetadataEntry("filename", filename));
     return new TextrepoFile(fileId, typeId);
   }
 

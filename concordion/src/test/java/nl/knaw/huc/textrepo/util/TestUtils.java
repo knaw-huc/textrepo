@@ -147,7 +147,7 @@ public class TestUtils {
       var json = mapper.readValue(string, Object.class);
       result = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json);
     } catch (JsonProcessingException ex) {
-      throw new IllegalArgumentException(format("Could not pretty print json string: %s", string), ex);
+      throw new IllegalArgumentException(format("Could not pretty print json string: [%s]", string), ex);
     }
     return "<pre>" + result + "</pre>";
   }

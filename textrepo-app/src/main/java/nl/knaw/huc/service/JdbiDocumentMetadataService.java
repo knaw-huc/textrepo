@@ -30,8 +30,8 @@ public class JdbiDocumentMetadataService implements DocumentMetadataService {
   }
 
   @Override
-  public void delete(UUID docId, MetadataEntry entry) {
-    metadata().delete(docId, entry);
+  public void delete(UUID docId, String key) {
+    metadata().delete(docId, key);
   }
 
   private DocumentMetadataDao metadata() {

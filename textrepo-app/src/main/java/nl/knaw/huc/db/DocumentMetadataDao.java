@@ -25,5 +25,5 @@ public interface DocumentMetadataDao {
   boolean upsert(@Bind("id") UUID docId, @BindBean MetadataEntry metadataEntry);
 
   @SqlUpdate("delete from documents_metadata where document_id = :id and key = :key")
-  void delete(@Bind("id") UUID docId, @BindBean MetadataEntry metadataEntry);
+  void delete(@Bind("id") UUID docId, @Bind("key") String key);
 }

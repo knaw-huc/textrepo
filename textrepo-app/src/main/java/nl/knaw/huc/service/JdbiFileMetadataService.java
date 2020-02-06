@@ -8,7 +8,7 @@ import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.UUID;
 
-public class JdbiFileMetadataService implements MetadataService {
+public class JdbiFileMetadataService implements FileMetadataService {
   private final Jdbi jdbi;
 
   public JdbiFileMetadataService(Jdbi jdbi) {
@@ -17,25 +17,25 @@ public class JdbiFileMetadataService implements MetadataService {
 
   @Override
   public Map<String, String> getMetadata(UUID fileId) {
-    return getMetadataDao().getMetadataByFileId(fileId);
-  }
-
-  @Override
-  public void addMetadata(@Nonnull UUID fileId, @Nonnull Map<String, String> metadata) {
-    getMetadataDao().bulkInsert(fileId, metadata.entrySet().iterator());
+    return metadata().getMetadataByFileId(fileId);
   }
 
   @Override
   public void insert(@Nonnull UUID fileId, @Nonnull MetadataEntry entry) {
-    getMetadataDao().insertFileMetadata(fileId, entry);
+    metadata().insert(fileId, entry);
   }
 
   @Override
-  public void update(@Nonnull UUID fileId, MetadataEntry entry) {
-    getMetadataDao().updateFileMetadata(fileId, entry);
+  public void upsert(@Nonnull UUID fileId, MetadataEntry entry) {
+    metadata().upsert(fileId, entry);
   }
 
-  private FileMetadataDao getMetadataDao() {
+  @Override
+  public void delete(UUID fileId, String key) {
+    metadata().delete(fileId, key);
+  }
+
+  private FileMetadataDao metadata() {
     return jdbi.onDemand(FileMetadataDao.class);
   }
 }

@@ -6,7 +6,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.MetadataEntry;
-import nl.knaw.huc.service.MetadataService;
+import nl.knaw.huc.api.ResultFileMetadataEntry;
+import nl.knaw.huc.service.FileMetadataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,43 +15,39 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
-import java.util.Map;
 import java.util.UUID;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 @Api(tags = {"files", "metadata"})
-@Path("/rest/files/{uuid}/metadata")
+@Path("/rest/files/{fileId}/metadata")
 public class FileMetadataResource {
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-  private final MetadataService metadataService;
+  private final FileMetadataService fileMetadataService;
 
-  public FileMetadataResource(MetadataService metadataService) {
-    this.metadataService = metadataService;
+  public FileMetadataResource(FileMetadataService fileMetadataService) {
+    this.fileMetadataService = fileMetadataService;
   }
 
-  @POST
+  @GET
   @Timed
-  @Consumes(APPLICATION_JSON)
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Create metadata for a file")
-  @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
-  public Response addMetadata(
-      @PathParam("uuid") @NotNull @Valid UUID fileId,
-      @NotNull Map<String, String> metadata
+  @ApiOperation(value = "Get all metadata of a file")
+  @ApiResponses(value = {@ApiResponse(code = 200, responseContainer = "Map", response = String.class, message = "OK")})
+  public Response get(
+      @PathParam("fileId") @NotNull @Valid UUID fileId
   ) {
-    logger.debug("addMetadata: fileId={}, metadata={}", fileId, metadata);
-    metadataService.addMetadata(fileId, metadata);
-    return Response.ok().build();
+    logger.debug("get file metadata: fileId={}", fileId);
+    return Response.ok(fileMetadataService.getMetadata(fileId)).build();
   }
 
   @PUT
@@ -60,26 +57,31 @@ public class FileMetadataResource {
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Update value of a file metadata entry")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
-  public Response updateMetadataEntry(
-      @PathParam("uuid") @Valid UUID fileId,
+  public Response put(
+      @PathParam("fileId") @Valid UUID fileId,
       @PathParam("key") @NotNull String key,
       @NotBlank String value
   ) {
-    logger.debug("updateMetadata: fileId={}, key={}, value={}", fileId, key, value);
-    metadataService.update(fileId, new MetadataEntry(key, value));
-    return Response.ok().build();
+    logger.debug("update or create file metadata: fileId={}, key={}, value={}", fileId, key, value);
+    MetadataEntry entry = new MetadataEntry(key, value);
+    fileMetadataService.upsert(fileId, entry);
+    return Response.ok(new ResultFileMetadataEntry(fileId, entry)).build();
   }
 
-  @GET
+  @DELETE
+  @Path("/{key}")
   @Timed
+  @Consumes(APPLICATION_JSON)
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Get all metadata of a file")
-  @ApiResponses(value = {@ApiResponse(code = 200, responseContainer = "Map", response = String.class, message = "OK")})
-  public Response getMetadata(
-      @PathParam("uuid") @NotNull @Valid UUID fileId
+  @ApiOperation(value = "Delete value of a document metadata entry")
+  @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
+  public Response delete(
+      @PathParam("fileId") @NotNull @Valid UUID fileId,
+      @PathParam("key") @NotBlank String key
   ) {
-    logger.debug("getMetadata: fileId={}", fileId);
-    return Response.ok(metadataService.getMetadata(fileId)).build();
+    logger.debug("delete file metadata: fileId={}, key={}", fileId, key);
+    fileMetadataService.delete(fileId, key);
+    return Response.ok().build();
   }
 
 }

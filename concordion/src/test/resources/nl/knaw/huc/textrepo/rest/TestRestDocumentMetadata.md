@@ -11,8 +11,8 @@ To add document metadata we created a document first: [ ](- "c:echo=#docId")
 ### Create document metadata
 When adding the following document metadata with a `PUT` to [`/rest/documents/{id}/metadata/{key}`](- "#createEndpoint")
 
- - where key is [`test-key`](- "#metadataKey")
- - where value is [`test-value`](- "#metadataValue")
+ - where key is [`test-key`](- "#metadataKey");
+ - and value is [`test-value`](- "#metadataValue").
 
 [ ](- "#createResult=create(#createEndpoint, #docId, #metadataKey, #metadataValue)")
 

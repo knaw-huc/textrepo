@@ -5,7 +5,7 @@ import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.db.FileMetadataDao;
 import nl.knaw.huc.resources.rest.FileMetadataResource;
 import nl.knaw.huc.service.JdbiFileMetadataService;
-import nl.knaw.huc.service.MetadataService;
+import nl.knaw.huc.service.FileMetadataService;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.jdbi.v3.core.Jdbi;
 import org.junit.After;
@@ -34,7 +34,7 @@ public class FileMetadataResourceTest {
 
   private static final Jdbi jdbi = mock(Jdbi.class);
 
-  private static final MetadataService metadataService = new JdbiFileMetadataService(jdbi);
+  private static final FileMetadataService FILE_METADATA_SERVICE = new JdbiFileMetadataService(jdbi);
 
   private static final FileMetadataDao FILE_METADATA_DAO = mock(FileMetadataDao.class);
 
@@ -42,7 +42,7 @@ public class FileMetadataResourceTest {
   public static final ResourceTestRule resource = ResourceTestRule
       .builder()
       .addProvider(MultiPartFeature.class)
-      .addResource(new FileMetadataResource(metadataService))
+      .addResource(new FileMetadataResource(FILE_METADATA_SERVICE))
       .build();
 
   @Captor
@@ -70,7 +70,7 @@ public class FileMetadataResourceTest {
     var response = putMetadata(fileId, metadata);
 
     assertThat(response.getStatus()).isEqualTo(200);
-    verify(FILE_METADATA_DAO, times(1)).updateFileMetadata(fileIdCaptor.capture(), metadataCaptor.capture());
+    verify(FILE_METADATA_DAO, times(1)).upsert(fileIdCaptor.capture(), metadataCaptor.capture());
     assertThat(fileIdCaptor.getValue()).isEqualTo(fileId);
     assertThat(metadataCaptor.getValue().getKey()).isEqualTo(key);
     assertThat(metadataCaptor.getValue().getValue()).isEqualTo(value);

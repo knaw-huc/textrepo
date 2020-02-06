@@ -11,7 +11,7 @@ import nl.knaw.huc.service.ContentsService;
 import nl.knaw.huc.service.FileService;
 import nl.knaw.huc.service.JdbiFileService;
 import nl.knaw.huc.service.JdbiVersionService;
-import nl.knaw.huc.service.MetadataService;
+import nl.knaw.huc.service.FileMetadataService;
 import nl.knaw.huc.service.TypeService;
 import nl.knaw.huc.service.VersionService;
 import nl.knaw.huc.service.index.ElasticCustomIndexer;
@@ -57,7 +57,7 @@ public class DeprecatedFilesResourceTest {
   private static final ContentsService contentsService = new ContentsService(mock(ContentsStorage.class));
   private static final Jdbi jdbi = mock(Jdbi.class);
   private static final ElasticFileIndexer fileIndexer = mock(ElasticFileIndexer.class);
-  private static final MetadataService metadataService = mock(MetadataService.class);
+  private static final FileMetadataService FILE_METADATA_SERVICE = mock(FileMetadataService.class);
   private static final TypeService typeService = mock(TypeService.class);
   private static final ElasticCustomIndexer facetIndexer = mock(ElasticCustomIndexer.class);
   private static final VersionService versions =
@@ -65,7 +65,7 @@ public class DeprecatedFilesResourceTest {
   @SuppressWarnings("unchecked")
   private static final Supplier<UUID> idGenerator = mock(Supplier.class);
   private static final FileService FILE_SERVICE =
-      new JdbiFileService(jdbi, typeService, versions, metadataService, idGenerator);
+      new JdbiFileService(jdbi, typeService, versions, FILE_METADATA_SERVICE, idGenerator);
   private static final VersionsDao VERSIONS_DAO = mock(VersionsDao.class);
   private static final FilesDao FILES_DAO = mock(FilesDao.class);
 
@@ -92,7 +92,7 @@ public class DeprecatedFilesResourceTest {
 
   @After
   public void resetMocks() {
-    reset(jdbi, FILES_DAO, VERSIONS_DAO, fileIndexer, metadataService);
+    reset(jdbi, FILES_DAO, VERSIONS_DAO, fileIndexer, FILE_METADATA_SERVICE);
   }
 
   @Test
@@ -190,7 +190,7 @@ public class DeprecatedFilesResourceTest {
   public void testAddFile_addsFilenameMetadata() {
     postTestContents();
 
-    verify(metadataService, times(1)).insert(
+    verify(FILE_METADATA_SERVICE, times(1)).insert(
         uuidCaptor.capture(),
         metadataEntryCaptor.capture()
     );
@@ -207,7 +207,7 @@ public class DeprecatedFilesResourceTest {
 
     postTestContents(zipFile, zipFilename);
 
-    verify(metadataService, times(2)).insert(
+    verify(FILE_METADATA_SERVICE, times(2)).insert(
         uuidCaptor.capture(),
         metadataEntryCaptor.capture()
     );
