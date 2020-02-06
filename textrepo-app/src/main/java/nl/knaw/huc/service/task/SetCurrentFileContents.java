@@ -8,6 +8,7 @@ import nl.knaw.huc.db.VersionsDao;
 import org.jdbi.v3.core.Handle;
 
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -15,12 +16,19 @@ import static java.time.LocalDateTime.now;
 import static java.util.Objects.requireNonNull;
 
 public class SetCurrentFileContents implements ProvidesInTransaction<Version> {
+
+  private Supplier<UUID> versionIdGenerator;
   private final TextrepoFile file;
   private final Contents contents;
 
   private Handle transaction;
 
-  public SetCurrentFileContents(TextrepoFile file, Contents contents) {
+  public SetCurrentFileContents(
+      Supplier<UUID> versionIdGenerator,
+      TextrepoFile file,
+      Contents contents
+  ) {
+    this.versionIdGenerator = versionIdGenerator;
     this.file = requireNonNull(file);
     this.contents = requireNonNull(contents);
   }
@@ -42,7 +50,8 @@ public class SetCurrentFileContents implements ProvidesInTransaction<Version> {
 
   private Supplier<Version> createNewVersionWithContents() {
     return () -> {
-      final var version = new Version(file.getId(), now(), contents.getSha224());
+      var id = versionIdGenerator.get();
+      final var version = new Version(id, file.getId(), now(), contents.getSha224());
       contents().insert(contents);
       versions().insert(version);
       return version;

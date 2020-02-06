@@ -54,7 +54,8 @@ public class FileContentsResourceTest {
   private static final VersionService versionService = new JdbiVersionService(
       jdbi, CONTENTS_SERVICE,
       fileIndexer,
-      newArrayList(customFacetIndexer)
+      newArrayList(customFacetIndexer),
+      UUID::randomUUID
   );
 
   private static final JdbiFileContentsService FILE_CONTENTS_SERVICE = new JdbiFileContentsService(

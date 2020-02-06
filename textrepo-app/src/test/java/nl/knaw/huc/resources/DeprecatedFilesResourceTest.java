@@ -61,7 +61,7 @@ public class DeprecatedFilesResourceTest {
   private static final TypeService typeService = mock(TypeService.class);
   private static final ElasticCustomIndexer facetIndexer = mock(ElasticCustomIndexer.class);
   private static final VersionService versions =
-      new JdbiVersionService(jdbi, contentsService, fileIndexer, newArrayList(facetIndexer));
+      new JdbiVersionService(jdbi, contentsService, fileIndexer, newArrayList(facetIndexer), UUID::randomUUID);
   @SuppressWarnings("unchecked")
   private static final Supplier<UUID> idGenerator = mock(Supplier.class);
   private static final FileService FILE_SERVICE =

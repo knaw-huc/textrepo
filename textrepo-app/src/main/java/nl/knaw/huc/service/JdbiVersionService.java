@@ -13,22 +13,27 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 public class JdbiVersionService implements VersionService {
   private final Jdbi jdbi;
   private final ContentsService contentsService;
   private FileIndexer fileIndexService;
   private List<ElasticCustomIndexer> customFacetIndexers;
+  private Supplier<UUID> uuidGenerator;
 
   public JdbiVersionService(
       Jdbi jdbi,
       ContentsService contentsService,
       FileIndexer fileIndexService,
-      List<ElasticCustomIndexer> customFacetIndexers) {
+      List<ElasticCustomIndexer> customFacetIndexers,
+      Supplier<UUID> uuidGenerator
+  ) {
     this.jdbi = jdbi;
     this.contentsService = contentsService;
     this.fileIndexService = fileIndexService;
     this.customFacetIndexers = customFacetIndexers;
+    this.uuidGenerator = uuidGenerator;
   }
 
   @Override
@@ -48,7 +53,8 @@ public class JdbiVersionService implements VersionService {
     fileIndexService.indexFile(file, latestVersionContent);
     customFacetIndexers.forEach(indexer -> indexer.indexFile(file, latestVersionContent));
 
-    var newVersion = new Version(file.getId(), time, contents.getSha224());
+    var id = uuidGenerator.get();
+    var newVersion = new Version(id, file.getId(), time, contents.getSha224());
     getVersionDao().insert(newVersion);
     return newVersion;
   }

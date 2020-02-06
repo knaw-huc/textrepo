@@ -92,7 +92,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     var taskBuilderFactory = new JdbiTaskFactory(jdbi)
         .withIdGenerator(uuidGenerator)
         .withFileIndexer(fileIndexService);
-    var versionService = new JdbiVersionService(jdbi, contentsService, fileIndexService, customIndexers);
+    var versionService = new JdbiVersionService(jdbi, contentsService, fileIndexService, customIndexers, uuidGenerator);
     var fileService = new JdbiFileService(jdbi, typeService, versionService, metadataService, uuidGenerator);
     var documentFilesService = new JdbiDocumentFilesService(jdbi);
     var fileContentsService = new JdbiFileContentsService(jdbi, contentsService, versionService, metadataService);
