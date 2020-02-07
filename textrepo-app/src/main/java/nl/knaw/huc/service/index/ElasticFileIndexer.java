@@ -9,7 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import java.io.IOException;
+import javax.ws.rs.WebApplicationException;
+import java.util.Optional;
 
 /**
  * Default indexer indexing all files as plain text
@@ -26,19 +27,22 @@ public class ElasticFileIndexer implements FileIndexer, Managed {
     client = new TextRepoElasticClient(config);
   }
 
-  public void indexFile(@Nonnull TextrepoFile file, @Nonnull String latestVersionContent) {
+  public Optional<String> indexFile(@Nonnull TextrepoFile file, @Nonnull String content) {
     logger.info("Add file [{}] to index [{}]", file, config.index);
     var indexRequest = new IndexRequest(config.index)
         .id(file.getId().toString())
-        .source(config.contentField, latestVersionContent);
-    indexRequest(indexRequest);
+        .source(config.contentField, content);
+    final var response = indexRequest(indexRequest);
+    return Optional.of(String.format("Index [%s] %s for id=%s (version: %d)",
+        response.getIndex(), response.getResult().getLowercase(), response.getId(), response.getVersion()
+    ));
   }
 
   IndexResponse indexRequest(IndexRequest indexRequest) {
     try {
       return client.getClient().index(indexRequest, RequestOptions.DEFAULT);
-    } catch (IOException ex) {
-      throw new RuntimeException("Could not index in Elasticsearch", ex);
+    } catch (Exception ex) {
+      throw new WebApplicationException("Could not index in Elasticsearch", ex);
     }
   }
 

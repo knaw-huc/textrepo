@@ -12,7 +12,6 @@ import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
-import org.jdbi.v3.core.Jdbi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +21,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.UUID;
 
 import static java.lang.String.format;
@@ -82,30 +82,22 @@ public class ElasticCustomIndexer implements FileIndexer, Managed {
     }
   }
 
-  /**
-   * Index file
-   */
   @Override
-  public void indexFile(
-      @Nonnull TextrepoFile file,
-      @Nonnull String latestVersionContent
-  ) {
-    var mimetype = typeService
-        .getType(file.getTypeId())
-        .getMimetype();
-
+  public Optional<String> indexFile(@Nonnull TextrepoFile file, @Nonnull String latestVersionContent) {
+    var mimetype = typeService.getType(file.getTypeId()).getMimetype();
     if (!mimetypeSupported(mimetype)) {
-      return;
+      return Optional.empty();
     }
 
     var response = getFields(latestVersionContent, mimetype);
     var esFacets = response.readEntity(String.class);
 
-    if (!gotFieldsStatusOk(response, esFacets)) {
-      return;
+    Optional<String> fieldStatusComplaint = checkFieldStatus(response, esFacets);
+    if (fieldStatusComplaint.isPresent()) {
+      return fieldStatusComplaint;
     }
 
-    index(file.getId(), esFacets);
+    return index(file.getId(), esFacets);
   }
 
   private Response getMapping(CustomIndexerConfiguration config) throws CustomIndexerException {
@@ -176,33 +168,30 @@ public class ElasticCustomIndexer implements FileIndexer, Managed {
     return true;
   }
 
-  private boolean gotFieldsStatusOk(Response response, String esFacets) {
+  private Optional<String> checkFieldStatus(Response response, String esFacets) {
     if (response.getStatus() != 200) {
-      logger.error(
-          "Could not get fields for {}, response was: {} - {}",
-          config.elasticsearch.index, response.getStatus(), esFacets
-      );
-      return false;
+      final var msg = format("Could not get fields for %s, response was: %d - %s",
+          config.elasticsearch.index, response.getStatus(), esFacets);
+      logger.error(msg);
+      return Optional.of(msg);
     }
-    return true;
+    return Optional.empty();
   }
 
-  private void index(@Nonnull UUID fileId, String esFacets) {
+  private Optional<String> index(@Nonnull UUID fileId, String esFacets) {
     var indexRequest = new IndexRequest(config.elasticsearch.index)
         .id(fileId.toString())
         .source(esFacets, JSON);
     var response = indexer.indexRequest(indexRequest);
     var status = response.status().getStatus();
     if (status == 201) {
-      logger.debug(
-          "Succesfully added file [{}] to index [{}]",
-          fileId, config.elasticsearch.index
-      );
+      logger.debug("Successfully added file [{}] to index [{}]", fileId, config.elasticsearch.index);
+      return Optional.empty();
     } else {
-      logger.error(
-          "Response of adding file {} to index {} was: {} - {}",
-          fileId, config.elasticsearch.index, status, response.toString()
-      );
+      final var msg = format("Response of adding file %s to index %s was: %d - %s",
+          fileId, config.elasticsearch.index, status, response.toString());
+      logger.error(msg);
+      return Optional.of(msg);
     }
   }
 
