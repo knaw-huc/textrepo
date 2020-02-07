@@ -32,7 +32,6 @@ public interface VersionsDao {
   @RegisterConstructorMapper(value = Version.class)
   Optional<Version> find(UUID id);
 
-  @SqlUpdate("insert into versions (id, file_id, created_at, contents_sha) " +
-      "values (:id, :fileId, :createdAt, :contentsSha)")
+  @SqlUpdate("delete from versions where id = ?")
   void delete(UUID id);
 }

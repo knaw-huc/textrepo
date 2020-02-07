@@ -7,22 +7,30 @@ import nl.knaw.huc.textrepo.util.TestUtils;
 import org.concordion.api.extension.Extensions;
 import org.concordion.api.option.ConcordionOptions;
 import org.concordion.ext.EmbedExtension;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
-import javax.ws.rs.core.UriBuilder;
-import java.net.URI;
+import java.time.Month;
+import java.time.Year;
 
+import static java.time.LocalDate.now;
 import static javax.ws.rs.client.Entity.entity;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
+import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
 import static nl.knaw.huc.textrepo.Config.HOST;
 import static nl.knaw.huc.textrepo.util.TestUtils.asPrettyJson;
 import static nl.knaw.huc.textrepo.util.TestUtils.replaceUrlParams;
 
 @Extensions(EmbedExtension.class)
 @ConcordionOptions(declareNamespaces = {"ext", "urn:concordion-extensions:2010"})
-public class TestRestFiles extends AbstractConcordionTest {
+public class TestRestVersions extends AbstractConcordionTest {
 
   public String createDocument() {
     return RestUtils.createDocument();
+  }
+
+  public String createFile(String docId) {
+    return RestUtils.createFile(docId, textTypeId);
   }
 
   public static class CreateResult {
@@ -32,16 +40,19 @@ public class TestRestFiles extends AbstractConcordionTest {
     public String id;
   }
 
-  public CreateResult create(Object endpoint, Object newEntity, Object docId, Object typeId) {
-    var newEntityJson = newEntity
-        .toString()
-        .replace("{docId}", docId.toString())
-        .replace("{typeId}", typeId.toString());
+  public CreateResult create(Object endpoint, Object newEntity, String fileId) {
+    var multiPart = new FormDataMultiPart()
+        .field("fileId", fileId)
+        .field("contents", newEntity, APPLICATION_OCTET_STREAM_TYPE);
 
-    final var response = client
-        .target(HOST + endpoint.toString())
-        .request()
-        .post(entity(newEntityJson, APPLICATION_JSON_TYPE));
+    var request = client
+        .register(MultiPartFeature.class)
+        .target(HOST + endpoint)
+        .request();
+
+    var entity = entity(multiPart, multiPart.getMediaType());
+
+    var response = request.post(entity);
 
     var result = new CreateResult();
     result.status = response.getStatus();
@@ -56,7 +67,8 @@ public class TestRestFiles extends AbstractConcordionTest {
     public int status;
     public String body;
     public String validUuid;
-    public String correctType;
+    public String validSha;
+    public String validTimestamp;
   }
 
   public RetrieveResult retrieve(Object endpoint, Object id) {
@@ -71,22 +83,23 @@ public class TestRestFiles extends AbstractConcordionTest {
     result.body = asPrettyJson(body);
     var json = JsonPath.parse(body);
     result.validUuid = TestUtils.isValidUuidMsg(json.read("$.id"));
-    int resultTypeId = json.read("$.typeId");
-    result.correctType = resultTypeId == textTypeId ? "correct type" : "" + resultTypeId + " != " + textTypeId;
+    String resultSha = json.read("$.contentsSha");
+    result.validSha = resultSha.length() == 56 ? "valid sha224" : resultSha + " is not valid";
+    var yearValid = json.read("$.createdAt[0]", Integer.class).equals(Year.now().getValue());
+    var monthValid = json.read("$.createdAt[1]", Integer.class).equals(Month.from(now()).getValue());
+    var dayValid = json.read("$.createdAt[2]", Integer.class).equals(now().getDayOfMonth());
+    result.validTimestamp = yearValid && monthValid && dayValid
+        ? "valid timestamp"
+        : json.read("$.createdAt", String.class) + " is not valid";
     return result;
   }
 
   public static class UpdateResult {
     public int status;
     public String body;
-    public String updatedType;
   }
 
-  public UpdateResult update(Object endpoint, Object id, Object updatedEntity, Object docId, Object typeId) {
-    updatedEntity = updatedEntity
-        .toString()
-        .replace("{docId}", docId.toString())
-        .replace("{typeId}", typeId.toString());
+  public UpdateResult update(Object endpoint, Object updatedEntity, String id) {
 
     final var response = client
         .target(replaceUrlParams(endpoint, id))
@@ -98,8 +111,6 @@ public class TestRestFiles extends AbstractConcordionTest {
     result.status = response.getStatus();
     result.body = asPrettyJson(body);
     var json = JsonPath.parse(body);
-    int resultTypeId = json.read("$.typeId");
-    result.updatedType = resultTypeId == fooTypeId ? "updated type" : "" + resultTypeId + " != " + typeId;
     return result;
   }
 

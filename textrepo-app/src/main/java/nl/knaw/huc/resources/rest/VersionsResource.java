@@ -56,12 +56,11 @@ public class VersionsResource {
   @ApiOperation(value = "Create version")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultVersion.class, message = "OK")})
   public Response post(
-      @Valid @FormDataParam("uuid") UUID fileId,
+      @FormDataParam("fileId") UUID fileId,
       @FormDataParam("contents") InputStream inputStream,
       @FormDataParam("contents") FormDataContentDisposition fileDetail
   ) {
-    var filename = fileDetail.getFileName();
-    logger.debug("post version: fileId={}, filename={}", fileId, filename);
+    logger.debug("post version: fileId={}", fileId);
     var contents = fromContent(readContent(inputStream, maxPayloadSize));
     var version = versionService.createNewVersion(fileId, contents, now());
     return Response.ok(new ResultVersion(version)).build();
