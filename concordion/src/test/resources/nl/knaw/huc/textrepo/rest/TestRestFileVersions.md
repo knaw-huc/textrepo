@@ -1,4 +1,4 @@
-# Test `/rest/file/{id}/metadata`
+# Test `/rest/file/{id}/versions`
 
 ## Retrieve file versions
 
@@ -17,7 +17,7 @@ To view the versions of a file we first create:
   - and a new version: [ ](- "c:echo=#newVersionId").
 
 ### Retrieve file versions
-When retrieving the metadata of a file with a `GET` to [`/rest/files/{id}/versions`](- "#getEndpoint") 
+When retrieving the versions of a file with a `GET` to [`/rest/files/{id}/versions`](- "#getEndpoint") 
 
  - where `{id}` is [ ](- "c:echo=#fileId"):
 
