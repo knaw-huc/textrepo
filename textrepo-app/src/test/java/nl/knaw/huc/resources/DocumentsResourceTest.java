@@ -8,7 +8,7 @@ import nl.knaw.huc.core.Document;
 import nl.knaw.huc.resources.rest.DocumentsResource;
 import nl.knaw.huc.service.DocumentService;
 import nl.knaw.huc.service.FileService;
-import nl.knaw.huc.service.MetadataService;
+import nl.knaw.huc.service.FileMetadataService;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.jdbi.v3.core.Jdbi;
 import org.junit.After;
@@ -35,7 +35,7 @@ public class DocumentsResourceTest {
   private static final Jdbi jdbi = mock(Jdbi.class);
   private static final DocumentService documentService = mock(DocumentService.class);
   private static final FileService fileService = mock(FileService.class);
-  private static final MetadataService metadataService = mock(MetadataService.class);
+  private static final FileMetadataService metadataService = mock(FileMetadataService.class);
 
   // https://stackoverflow.com/questions/31730571/how-to-turn-on-tracing-in-a-unit-test-using-a-resourcetestrule
   // Actually has to go /before/ ResourceTestRule these days as bootstrap()ing guarded against multiple calls.

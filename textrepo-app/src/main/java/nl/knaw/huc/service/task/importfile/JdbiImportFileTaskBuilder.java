@@ -18,6 +18,7 @@ class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
   private final Jdbi jdbi;
   private final Supplier<UUID> documentIdGenerator;
   private final Supplier<UUID> fileIdGenerator;
+  private final Supplier<UUID> versionIdGenerator;
 
   private String externalId;
   private String typeName;
@@ -28,6 +29,7 @@ class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
     this.jdbi = requireNonNull(jdbi);
     this.documentIdGenerator = requireNonNull(idGenerator);
     this.fileIdGenerator = requireNonNull(idGenerator);
+    this.versionIdGenerator = requireNonNull(idGenerator);
   }
 
   @Override
@@ -90,7 +92,7 @@ class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
         final var doc = new HaveDocumentByExternalId(documentIdGenerator, externalId).exececuteIn(transaction);
         final var file = new HaveFileForDocumentByType(fileIdGenerator, doc, typeName).exececuteIn(transaction);
         final var entry = new SetFileProvenance(file, filename).exececuteIn(transaction);
-        final var version = new SetCurrentFileContents(file, contents).exececuteIn(transaction);
+        final var version = new SetCurrentFileContents(versionIdGenerator, file, contents).exececuteIn(transaction);
       });
     }
   }

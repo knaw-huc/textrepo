@@ -1,6 +1,7 @@
 package nl.knaw.huc.textrepo.util;
 
 import com.jayway.jsonpath.JsonPath;
+import org.glassfish.jersey.client.JerseyClientBuilder;
 
 import javax.ws.rs.client.Client;
 
@@ -10,20 +11,26 @@ import static javax.ws.rs.client.Entity.json;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
 import static nl.knaw.huc.textrepo.Config.HOST;
 import static nl.knaw.huc.textrepo.Config.TYPES_URL;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 public class RestUtils {
 
-  public static String createDocument(Client client) {
+  private static Client client = JerseyClientBuilder.newClient();
+
+  /**
+   * @return document uuid
+   */
+  public static String createDocument() {
     final var response = client
         .target(HOST + "/rest/documents")
         .request()
-        .post(entity("{\"externalId\":  \"dummy\"}", APPLICATION_JSON_TYPE));
+        .post(entity("{\"externalId\":  \"dummy-" + randomAlphabetic(5) + "\"}", APPLICATION_JSON_TYPE));
 
     var body = response.readEntity(String.class);
     return JsonPath.parse(body).read("$.id");
   }
 
-  public static int createType(Client client, String type, String mimetype) {
+  public static int createType(String type, String mimetype) {
     var response = client
         .target(TYPES_URL)
         .request()
@@ -32,4 +39,13 @@ public class RestUtils {
     return JsonPath.parse(body).read("$.id");
   }
 
+  public static String createFile(String docId, int typeId) {
+    final var response = client
+        .target(HOST + "/rest/files/")
+        .request()
+        .post(entity("{\"docId\":  \"" + docId + "\", \"typeId\":  \"" + typeId + "\"}", APPLICATION_JSON_TYPE));
+
+    var body = response.readEntity(String.class);
+    return JsonPath.parse(body).read("$.id");
+  }
 }

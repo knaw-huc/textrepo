@@ -45,7 +45,8 @@ public class FileVersionsResourceTest {
       jdbi,
       mock(ContentsService.class),
       mock(ElasticFileIndexer.class),
-      newArrayList(mock(ElasticCustomIndexer.class))
+      newArrayList(mock(ElasticCustomIndexer.class)),
+      UUID::randomUUID
   );
 
   private static final VersionsDao VERSIONS_DAO = mock(VersionsDao.class);
@@ -72,10 +73,10 @@ public class FileVersionsResourceTest {
   public void testGetVersions_returnsVersions() throws IOException {
     List<Version> versions = new ArrayList<>();
     var sha1 = "fcd01d3b5648843931feb9ef4468250ac1a968a41add37f663af3bb0";
-    var version1 = new Version(uuid, LocalDateTime.now(), sha1);
+    var version1 = new Version(UUID.randomUUID(), uuid, LocalDateTime.now(), sha1);
     versions.add(version1);
     var sha2 = "d476f2f6e00deaa918dfbec79545412134e02095f870269175b89376";
-    var version2 = new Version(uuid, LocalDateTime.now(), sha2);
+    var version2 = new Version(UUID.randomUUID(), uuid, LocalDateTime.now(), sha2);
     versions.add(version2);
     when(VERSIONS_DAO.findByFileId(any())).thenReturn(versions);
 

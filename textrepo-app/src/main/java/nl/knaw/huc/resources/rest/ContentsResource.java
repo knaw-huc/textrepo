@@ -31,21 +31,21 @@ public class ContentsResource {
   }
 
   @GET
-  @Path("/{sha224}")
+  @Path("/{sha}")
   @Timed
   @Produces(APPLICATION_OCTET_STREAM)
-  @ApiOperation(value = "Download contents by sha224")
+  @ApiOperation(value = "Retrieve contents")
   @ApiResponses(value = {@ApiResponse(code = 200, response = byte[].class, message = "OK")})
   public Response getContentsBySha224(
-      @PathParam("sha224") @NotBlank String sha224
+      @PathParam("sha") @NotBlank String sha
   ) {
-    logger.debug("getContentsBySha224: sha224={}", sha224);
-    if (sha224.length() != 56) {
-      logger.warn("bad length in sha224 ({}): {}", sha224.length(), sha224);
-      throw new BadRequestException("not a sha224: " + sha224);
+    logger.debug("getContentsBySha224: sha={}", sha);
+    if (sha.length() != 56) {
+      logger.warn("bad length in sha ({}): {}", sha.length(), sha);
+      throw new BadRequestException("not a sha: " + sha);
     }
 
-    final var contents = contentsService.getBySha224(sha224);
+    final var contents = contentsService.getBySha(sha);
 
     return Response
         .ok(contents.getContent(), APPLICATION_OCTET_STREAM)

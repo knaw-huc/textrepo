@@ -17,17 +17,17 @@ public class JdbiFileContentsService implements FileContentsService {
 
   private final ContentsService contentsService;
   private final VersionService versionService;
-  private MetadataService metadataService;
+  private FileMetadataService fileMetadataService;
   private Jdbi jdbi;
 
   public JdbiFileContentsService(
       Jdbi jdbi, ContentsService contentsService,
       VersionService versionService,
-      MetadataService metadataService
+      FileMetadataService fileMetadataService
   ) {
     this.contentsService = contentsService;
     this.versionService = versionService;
-    this.metadataService = metadataService;
+    this.fileMetadataService = fileMetadataService;
     this.jdbi = jdbi;
   }
 
@@ -38,7 +38,7 @@ public class JdbiFileContentsService implements FileContentsService {
         .findLatestVersion(fileId)
         .orElseThrow(() -> new NotFoundException(format("No such file: %s", fileId)));
 
-    return contentsService.getBySha224(version.getContentsSha());
+    return contentsService.getBySha(version.getContentsSha());
   }
 
   @Override
@@ -48,15 +48,12 @@ public class JdbiFileContentsService implements FileContentsService {
       @Nonnull String filename
   ) {
     final var currentSha224 = contents.getSha224();
-    var file = files()
-        .find(fileId)
-        .orElseThrow(() -> new NotFoundException(format("No such file: %s", fileId)));
     var version = versionService
         .findLatestVersion(fileId)
         .filter(v -> v.getContentsSha().equals(currentSha224)) // already the current file for this file
-        .orElseGet(() -> versionService.insertNewVersion(file, contents, now()));
+        .orElseGet(() -> versionService.createNewVersion(fileId, contents, now()));
 
-    metadataService.update(fileId, new MetadataEntry("filename", filename));
+    fileMetadataService.upsert(fileId, new MetadataEntry("filename", filename));
 
     return version;
   }

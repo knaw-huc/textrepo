@@ -110,9 +110,9 @@ public class DeprecatedFilesResource {
   }
 
   private ResultContents handleNewFile(String typeName, FormContents formContents) {
-    var fileId = fileService.createFile(typeName, formContents.getName());
+    var file = fileService.createFile(typeName, formContents.getName());
     var version = fileService.createVersion(
-        fileId,
+        file,
         formContents.getContent()
     );
     return new ResultContents(

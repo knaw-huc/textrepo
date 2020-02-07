@@ -69,8 +69,8 @@ public abstract class AbstractConcordionTest {
   }
 
   private void initTypes() {
-    textTypeId = createType(client, TEXT_TYPE, TEXT_MIMETYPE);
-    fooTypeId = createType(client, FOO_TYPE, FOO_MIMETYPE);
+    textTypeId = createType(TEXT_TYPE, TEXT_MIMETYPE);
+    fooTypeId = createType(FOO_TYPE, FOO_MIMETYPE);
   }
 
   private void emptyTextrepoDatabase() {

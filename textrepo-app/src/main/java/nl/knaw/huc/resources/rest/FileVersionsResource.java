@@ -21,7 +21,7 @@ import java.util.UUID;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 @Api(tags = {"files", "versions"})
-@Path("/rest/files/{uuid}/versions")
+@Path("/rest/files/{fileId}/versions")
 public class FileVersionsResource {
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -35,15 +35,15 @@ public class FileVersionsResource {
   @GET
   @Timed
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Get all versions of a file")
+  @ApiOperation(value = "Retrieve file versions")
   @ApiResponses(value = {
     @ApiResponse(code = 200, responseContainer = "Map", response = ResultVersion.class, message = "OK")})
   public Response getVersions(
-      @PathParam("uuid") @Valid UUID fileId
+      @PathParam("fileId") @Valid UUID fileId
   ) {
-    logger.debug("getVersions: fileId={}", fileId);
+    logger.debug("get versions of file: fileId={}", fileId);
     var results = versionService
-        .getVersions(fileId)
+        .getAll(fileId)
         .stream()
         .map(ResultVersion::new);
     return Response.ok().entity(results).build();

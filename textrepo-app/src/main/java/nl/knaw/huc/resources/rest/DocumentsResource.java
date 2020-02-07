@@ -86,7 +86,7 @@ public class DocumentsResource {
 
   @DELETE
   @Path("/{id}")
-  @ApiOperation(value = "Delete document, its metadata and file links")
+  @ApiOperation(value = "Delete document")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
   public Response delete(
       @PathParam("id") @Valid UUID id

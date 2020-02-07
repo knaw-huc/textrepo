@@ -7,14 +7,22 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class ResultVersion {
+
+  private final UUID id;
   private UUID fileId;
   private LocalDateTime createdAt;
   private String contentsSha;
 
   public ResultVersion(Version version) {
+    this.id = version.getId();
     this.fileId = version.getFileId();
     this.createdAt = version.getCreatedAt();
     this.contentsSha = version.getContentsSha();
+  }
+
+  @JsonProperty
+  public UUID getId() {
+    return id;
   }
 
   @JsonProperty

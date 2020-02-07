@@ -29,8 +29,10 @@ public class JdbiContentsStorage implements ContentsStorage {
   }
 
   @Override
-  public Contents getBySha224(String sha224) {
-    return getContentsDao().findBySha224(sha224).orElseThrow(() -> new NotFoundException("Contents not found"));
+  public Contents getBySha(String sha) {
+    return getContentsDao()
+        .findBySha224(sha)
+        .orElseThrow(() -> new NotFoundException("Contents not found"));
   }
 
   private ContentsDao getContentsDao() {

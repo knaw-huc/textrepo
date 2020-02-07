@@ -8,7 +8,7 @@ import nl.knaw.huc.db.VersionsDao;
 import nl.knaw.huc.service.ContentsService;
 import nl.knaw.huc.service.JdbiFileContentsService;
 import nl.knaw.huc.service.JdbiVersionService;
-import nl.knaw.huc.service.MetadataService;
+import nl.knaw.huc.service.FileMetadataService;
 import nl.knaw.huc.service.VersionService;
 import nl.knaw.huc.service.index.ElasticCustomIndexer;
 import nl.knaw.huc.service.index.ElasticFileIndexer;
@@ -48,20 +48,21 @@ public class FileContentsResourceTest {
   private static final Jdbi jdbi = mock(Jdbi.class);
   private static final ContentsService CONTENTS_SERVICE = new ContentsService(mock(ContentsStorage.class));
   private static final ElasticFileIndexer fileIndexer = mock(ElasticFileIndexer.class);
-  private static final MetadataService metadataService = mock(MetadataService.class);
+  private static final FileMetadataService FILE_METADATA_SERVICE = mock(FileMetadataService.class);
   private static final ElasticCustomIndexer customFacetIndexer = mock(ElasticCustomIndexer.class);
 
   private static final VersionService versionService = new JdbiVersionService(
       jdbi, CONTENTS_SERVICE,
       fileIndexer,
-      newArrayList(customFacetIndexer)
+      newArrayList(customFacetIndexer),
+      UUID::randomUUID
   );
 
   private static final JdbiFileContentsService FILE_CONTENTS_SERVICE = new JdbiFileContentsService(
       jdbi,
       CONTENTS_SERVICE,
       versionService,
-      metadataService
+      FILE_METADATA_SERVICE
   );
 
   private static final VersionsDao VERSIONS_DAO = mock(VersionsDao.class);
@@ -89,7 +90,7 @@ public class FileContentsResourceTest {
 
   @After
   public void resetMocks() {
-    reset(jdbi, VERSIONS_DAO, fileIndexer, metadataService, VERSIONS_DAO, FILES_DAO);
+    reset(jdbi, VERSIONS_DAO, fileIndexer, FILE_METADATA_SERVICE, VERSIONS_DAO, FILES_DAO);
   }
 
   @Test
@@ -100,7 +101,7 @@ public class FileContentsResourceTest {
 
     putTestFile();
 
-    verify(metadataService, times(1)).update(
+    verify(FILE_METADATA_SERVICE, times(1)).upsert(
         uuidCaptor.capture(),
         metadataEntryCaptor.capture()
     );

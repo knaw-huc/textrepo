@@ -6,6 +6,7 @@ import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -39,4 +40,11 @@ public interface DocumentFilesDao {
   @SqlUpdate("insert into documents_files (document_id, file_id) values (?, ?) " +
       "on conflict (file_id) do update set document_id = excluded.document_id")
   void upsert(UUID docId, UUID fileId);
+
+  @SqlQuery("select id, type_id " +
+      "from documents_files as df left join files as f on f.id = df.file_id " +
+      "where df.document_id = ?")
+  @RegisterConstructorMapper(TextrepoFile.class)
+  List<TextrepoFile> findFilesByDocumentId(UUID docId);
+
 }

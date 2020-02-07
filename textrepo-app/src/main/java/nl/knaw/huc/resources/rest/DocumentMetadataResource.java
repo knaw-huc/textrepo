@@ -42,6 +42,7 @@ public class DocumentMetadataResource {
 
   @GET
   @Produces(APPLICATION_JSON)
+  @ApiOperation(value = "Retrieve document metadata")
   public Map<String, String> get(
       @PathParam("docId") @NotNull @Valid UUID docId
   ) {
@@ -72,15 +73,14 @@ public class DocumentMetadataResource {
   @Timed
   @Consumes(APPLICATION_JSON)
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Update value of a document metadata entry")
+  @ApiOperation(value = "Delete document metadata entry")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
   public Response delete(
       @PathParam("docId") @NotNull @Valid UUID docId,
       @PathParam("key") @NotBlank String key
   ) {
     logger.debug("delete metadata: docId={}, key={}", docId, key);
-    var entry = new MetadataEntry(key, null);
-    documentMetadataService.delete(docId, entry);
+    documentMetadataService.delete(docId, key);
     return Response.ok().build();
   }
 

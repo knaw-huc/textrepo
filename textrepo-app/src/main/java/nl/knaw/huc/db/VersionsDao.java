@@ -13,14 +13,26 @@ import java.util.UUID;
 
 public interface VersionsDao {
 
-  @SqlUpdate("insert into versions (file_id, created_at, contents_sha) values (:fileId, :createdAt, :contentsSha)")
+  @SqlUpdate("insert into versions (id, file_id, created_at, contents_sha) " +
+      "values (:id, :fileId, :createdAt, :contentsSha)")
   void insert(@BindBean Version version);
 
-  @SqlQuery("select file_id, created_at, contents_sha from versions where file_id = ? order by created_at desc limit 1")
+  @SqlQuery("select id, file_id, created_at, contents_sha " +
+      "from versions where file_id = ? order by created_at desc limit 1")
   @RegisterConstructorMapper(value = Version.class)
   Optional<Version> findLatestByFileId(@Bind UUID fileId);
 
-  @SqlQuery("select file_id, created_at, contents_sha from versions where file_id = ? order by created_at asc")
+  @SqlQuery("select id, file_id, created_at, contents_sha " +
+      "from versions where file_id = ? order by created_at asc")
   @RegisterConstructorMapper(value = Version.class)
   List<Version> findByFileId(UUID fileId);
+
+  @SqlQuery("select id, file_id, created_at, contents_sha " +
+      "from versions where id = ? order by created_at asc")
+  @RegisterConstructorMapper(value = Version.class)
+  Optional<Version> find(UUID id);
+
+  @SqlUpdate("insert into versions (id, file_id, created_at, contents_sha) " +
+      "values (:id, :fileId, :createdAt, :contentsSha)")
+  void delete(UUID id);
 }

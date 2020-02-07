@@ -17,7 +17,7 @@ import static nl.knaw.huc.textrepo.util.TestUtils.replaceUrlParams;
 public class TestRestDocumentMetadata extends AbstractConcordionTest {
 
   public String createDocument() {
-    return RestUtils.createDocument(client);
+    return RestUtils.createDocument();
   }
 
   public static class CreateResult {

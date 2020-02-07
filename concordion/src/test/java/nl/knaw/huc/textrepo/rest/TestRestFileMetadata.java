@@ -2,55 +2,55 @@ package nl.knaw.huc.textrepo.rest;
 
 import com.jayway.jsonpath.JsonPath;
 import nl.knaw.huc.textrepo.AbstractConcordionTest;
-import nl.knaw.huc.textrepo.util.TestUtils;
+import nl.knaw.huc.textrepo.util.RestUtils;
 import org.concordion.api.extension.Extensions;
 import org.concordion.api.option.ConcordionOptions;
 import org.concordion.ext.EmbedExtension;
 
-import javax.ws.rs.core.UriBuilder;
-
-import java.net.URI;
-
 import static javax.ws.rs.client.Entity.entity;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
-import static nl.knaw.huc.textrepo.Config.HOST;
 import static nl.knaw.huc.textrepo.util.TestUtils.asPrettyJson;
 import static nl.knaw.huc.textrepo.util.TestUtils.replaceUrlParams;
 
 @Extensions(EmbedExtension.class)
-@ConcordionOptions(declareNamespaces={"ext", "urn:concordion-extensions:2010"})
-public class TestRestDocuments extends AbstractConcordionTest {
+@ConcordionOptions(declareNamespaces = {"ext", "urn:concordion-extensions:2010"})
+public class TestRestFileMetadata extends AbstractConcordionTest {
+
+  private String docId;
+
+  public void createDocument() {
+    docId = RestUtils.createDocument();
+  }
+
+  public String createFile() {
+    return RestUtils.createFile(docId, textTypeId);
+  }
 
   public static class CreateResult {
     public int status;
     public String body;
-    public String validUuid;
-    public String id;
   }
 
-  public CreateResult create(Object endpoint, Object newEntity) {
+  public CreateResult create(Object endpoint, Object id, Object key, Object value) {
     final var response = client
-        .target(HOST + endpoint.toString())
+        .target(replaceUrlParams(endpoint, id, key))
         .request()
-        .post(entity(newEntity.toString(), APPLICATION_JSON_TYPE));
+        .put(entity(value.toString(), APPLICATION_JSON_TYPE));
 
     var result = new CreateResult();
     result.status = response.getStatus();
     var body = response.readEntity(String.class);
     result.body = asPrettyJson(body);
-    result.id = JsonPath.parse(body).read("$.id");
-    result.validUuid = TestUtils.isValidUuidMsg(result.id);
     return result;
   }
 
   public static class RetrieveResult {
     public int status;
     public String body;
-    public String validUuid;
-    public String externalId;
+    public String value;
   }
 
-  public RetrieveResult retrieve(Object endpoint, Object id) {
+  public RetrieveResult retrieve(Object endpoint, Object id, Object key) {
     final var response = client
         .target(replaceUrlParams(endpoint, id))
         .request()
@@ -58,32 +58,31 @@ public class TestRestDocuments extends AbstractConcordionTest {
 
     var result = new RetrieveResult();
     result.status = response.getStatus();
-    var  body = response.readEntity(String.class);
+    var body = response.readEntity(String.class);
     result.body = asPrettyJson(body);
     var json = JsonPath.parse(body);
-    result.validUuid = TestUtils.isValidUuidMsg(json.read("$.id"));
-    result.externalId = json.read("$.externalId");
+    result.value = json.read("$." + key.toString());
     return result;
   }
 
   public static class UpdateResult {
     public int status;
     public String body;
-    public String externalId;
+    public String value;
   }
 
-  public UpdateResult update(Object endpoint, Object id, Object updatedEntity) {
+  public UpdateResult update(Object endpoint, Object docId, Object metadataKey, Object updatedMetadataValue) {
     final var response = client
-        .target(replaceUrlParams(endpoint, id))
+        .target(replaceUrlParams(endpoint, docId, metadataKey))
         .request()
-        .put(entity(updatedEntity.toString(), APPLICATION_JSON_TYPE));
+        .put(entity(updatedMetadataValue.toString(), APPLICATION_JSON_TYPE));
 
     var result = new UpdateResult();
     result.status = response.getStatus();
-    var  body = response.readEntity(String.class);
+    var body = response.readEntity(String.class);
     result.body = asPrettyJson(body);
     var json = JsonPath.parse(body);
-    result.externalId = json.read("$.externalId");
+    result.value = json.read("$.value");
     return result;
   }
 
@@ -91,9 +90,9 @@ public class TestRestDocuments extends AbstractConcordionTest {
     public int status;
   }
 
-  public DeleteResult delete(Object endpoint, Object id) {
+  public DeleteResult delete(Object endpoint, Object docId, Object key) {
     final var response = client
-        .target(replaceUrlParams(endpoint, id))
+        .target(replaceUrlParams(endpoint, docId, key))
         .request()
         .delete();
 
@@ -102,18 +101,20 @@ public class TestRestDocuments extends AbstractConcordionTest {
     return result;
   }
 
-  public static class GetAfterDeleteResult {
+  public static class RetrieveAfterDeleteResult {
     public int status;
+    public String body;
   }
 
-  public GetAfterDeleteResult getAfterDelete(Object endpoint, Object id) {
+  public RetrieveAfterDeleteResult retrieveAfterDelete(Object endpoint, Object id) {
     final var response = client
         .target(replaceUrlParams(endpoint, id))
         .request()
         .get();
 
-    var result = new GetAfterDeleteResult();
+    var result = new RetrieveAfterDeleteResult();
     result.status = response.getStatus();
+    result.body = response.readEntity(String.class);
     return result;
   }
 

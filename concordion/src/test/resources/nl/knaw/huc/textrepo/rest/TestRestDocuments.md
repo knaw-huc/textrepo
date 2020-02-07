@@ -1,4 +1,4 @@
-# Test /rest/documents
+# Test `/rest/documents`
 
 ## Create, retrieve, update and delete documents
 

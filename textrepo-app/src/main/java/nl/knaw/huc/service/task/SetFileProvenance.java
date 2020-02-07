@@ -22,7 +22,7 @@ public class SetFileProvenance implements ProvidesInTransaction<MetadataEntry> {
   public MetadataEntry exececuteIn(Handle transaction) {
     this.transaction = requireNonNull(transaction);
     final var entry = new MetadataEntry("filename", filename);
-    metadata().upsertFileMetadata(file, entry);
+    metadata().upsert(file.getId(), entry);
     return entry;
   }
 

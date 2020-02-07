@@ -22,10 +22,12 @@ create index files_by_type_id on files (type_id);
 
 -- A version is the contents of a file at a specific time.
 create table versions (
+  id uuid not null,
   file_id uuid not null,
   contents_sha char(56),
   created_at timestamp with time zone not null,
-  primary key (file_id, created_at),
+  primary key (id),
+  unique (file_id, created_at),
   foreign key (file_id) references files (id),
   foreign key (contents_sha) references contents (sha224)
 );

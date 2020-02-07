@@ -14,11 +14,21 @@ public interface VersionService {
 
   Optional<Version> findLatestVersion(@Nonnull UUID fileId);
 
-  Version insertNewVersion(
+  Version createNewVersion(
+      @Nonnull UUID fileId,
+      @Nonnull Contents contents,
+      @Nonnull LocalDateTime time
+  );
+
+  Version createNewVersion(
       @Nonnull TextrepoFile file,
       @Nonnull Contents contents,
       @Nonnull LocalDateTime time
   );
 
-  List<Version> getVersions(UUID fileId);
+  List<Version> getAll(UUID fileId);
+
+  Version get(UUID id);
+
+  void delete(UUID id);
 }
