@@ -14,7 +14,7 @@ public class ContentsService {
     contentsStorage.storeContents(contents);
   }
 
-  public Contents getBySha224(String sha224) {
-    return contentsStorage.getBySha224(sha224);
+  public Contents getBySha(String sha) {
+    return contentsStorage.getBySha(sha);
   }
 }

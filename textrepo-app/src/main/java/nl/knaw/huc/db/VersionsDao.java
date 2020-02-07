@@ -26,4 +26,13 @@ public interface VersionsDao {
       "from versions where file_id = ? order by created_at asc")
   @RegisterConstructorMapper(value = Version.class)
   List<Version> findByFileId(UUID fileId);
+
+  @SqlQuery("select id, file_id, created_at, contents_sha " +
+      "from versions where id = ? order by created_at asc")
+  @RegisterConstructorMapper(value = Version.class)
+  Optional<Version> find(UUID id);
+
+  @SqlUpdate("insert into versions (id, file_id, created_at, contents_sha) " +
+      "values (:id, :fileId, :createdAt, :contentsSha)")
+  void delete(UUID id);
 }

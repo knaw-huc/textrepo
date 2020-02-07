@@ -31,7 +31,7 @@ public class ContentsServiceTest {
 
   @Test
   public void testGetBySha224_ReturnsFile_whenFilePresent() {
-    when(STORE.getBySha224(SHA224)).thenReturn(FILE);
-    assertThat(SERVICE_UNDER_TEST.getBySha224(SHA224)).isEqualTo(FILE);
+    when(STORE.getBySha(SHA224)).thenReturn(FILE);
+    assertThat(SERVICE_UNDER_TEST.getBySha(SHA224)).isEqualTo(FILE);
   }
 }

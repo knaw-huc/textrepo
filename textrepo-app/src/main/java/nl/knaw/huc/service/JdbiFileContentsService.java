@@ -38,7 +38,7 @@ public class JdbiFileContentsService implements FileContentsService {
         .findLatestVersion(fileId)
         .orElseThrow(() -> new NotFoundException(format("No such file: %s", fileId)));
 
-    return contentsService.getBySha224(version.getContentsSha());
+    return contentsService.getBySha(version.getContentsSha());
   }
 
   @Override
@@ -48,13 +48,10 @@ public class JdbiFileContentsService implements FileContentsService {
       @Nonnull String filename
   ) {
     final var currentSha224 = contents.getSha224();
-    var file = files()
-        .find(fileId)
-        .orElseThrow(() -> new NotFoundException(format("No such file: %s", fileId)));
     var version = versionService
         .findLatestVersion(fileId)
         .filter(v -> v.getContentsSha().equals(currentSha224)) // already the current file for this file
-        .orElseGet(() -> versionService.insertNewVersion(file, contents, now()));
+        .orElseGet(() -> versionService.createNewVersion(fileId, contents, now()));
 
     fileMetadataService.upsert(fileId, new MetadataEntry("filename", filename));
 

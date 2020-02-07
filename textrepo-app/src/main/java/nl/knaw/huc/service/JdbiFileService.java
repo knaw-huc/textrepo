@@ -61,7 +61,7 @@ public class JdbiFileService implements FileService {
   }
 
   public Version addFile(@Nonnull Contents contents, TextrepoFile file) {
-    return versionService.insertNewVersion(file, contents, now());
+    return versionService.createNewVersion(file, contents, now());
   }
 
   public Version getLatestVersion(@Nonnull UUID fileId) {

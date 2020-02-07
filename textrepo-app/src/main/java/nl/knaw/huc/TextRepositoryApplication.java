@@ -18,6 +18,7 @@ import nl.knaw.huc.resources.rest.FileMetadataResource;
 import nl.knaw.huc.resources.rest.FileVersionsResource;
 import nl.knaw.huc.resources.rest.FilesResource;
 import nl.knaw.huc.resources.rest.TypesResource;
+import nl.knaw.huc.resources.rest.VersionsResource;
 import nl.knaw.huc.resources.task.ImportFileResource;
 import nl.knaw.huc.resources.task.IndexResource;
 import nl.knaw.huc.service.ContentsService;
@@ -111,7 +112,8 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
         new IndexResource(taskBuilderFactory),
         new DeprecatedFilesResource(fileService, maxPayloadSize),
         new FilesResource(fileService),
-        new DocumentFilesResource(documentFilesService)
+        new DocumentFilesResource(documentFilesService),
+        new VersionsResource(versionService, maxPayloadSize)
     );
 
     resources.forEach((resource) -> environment.jersey().register(resource));

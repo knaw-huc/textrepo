@@ -7,5 +7,5 @@ import javax.annotation.Nonnull;
 public interface ContentsStorage {
   void storeContents(@Nonnull Contents contents);
 
-  Contents getBySha224(@Nonnull String sha224);
+  Contents getBySha(@Nonnull String sha);
 }

@@ -43,7 +43,7 @@ public class FileVersionsResource {
   ) {
     logger.debug("get versions of file: fileId={}", fileId);
     var results = versionService
-        .getVersions(fileId)
+        .getAll(fileId)
         .stream()
         .map(ResultVersion::new);
     return Response.ok().entity(results).build();
