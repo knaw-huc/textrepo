@@ -7,7 +7,6 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.FormVersion;
 import nl.knaw.huc.api.ResultVersion;
-import nl.knaw.huc.core.Version;
 import nl.knaw.huc.service.VersionService;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -55,15 +54,15 @@ public class VersionsResource {
   @Consumes(MULTIPART_FORM_DATA)
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Create version")
-  @ApiResponses(value = {@ApiResponse(code = 200, response = Version.class, message = "OK")})
+  @ApiResponses(value = {@ApiResponse(code = 200, response = ResultVersion.class, message = "OK")})
   public Response post(
-      @FormDataParam("fileId") @Valid UUID fileId,
-      @FormDataParam("contents") InputStream uploadedInputStream,
+      @Valid @FormDataParam("uuid") UUID fileId,
+      @FormDataParam("contents") InputStream inputStream,
       @FormDataParam("contents") FormDataContentDisposition fileDetail
   ) {
     var filename = fileDetail.getFileName();
     logger.debug("post version: fileId={}, filename={}", fileId, filename);
-    var contents = fromContent(readContent(uploadedInputStream, maxPayloadSize));
+    var contents = fromContent(readContent(inputStream, maxPayloadSize));
     var version = versionService.createNewVersion(fileId, contents, now());
     return Response.ok(new ResultVersion(version)).build();
   }
