@@ -24,7 +24,7 @@ create index files_by_type_id on files (type_id);
 create table versions (
   id uuid primary key,
   file_id uuid not null,
-  contents_sha char(56),
+  contents_sha char(56) not null,
   created_at timestamp with time zone not null,
   unique (file_id, created_at),
   foreign key (file_id) references files (id),
