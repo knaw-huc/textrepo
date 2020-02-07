@@ -6,10 +6,14 @@ import nl.knaw.huc.service.task.FindDocumentFileByType;
 import nl.knaw.huc.service.task.GetLatestFileContent;
 import nl.knaw.huc.service.task.Task;
 import org.jdbi.v3.core.Jdbi;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.util.Objects.requireNonNull;
 
 public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
+  private static final Logger LOG = LoggerFactory.getLogger(JdbiIndexFileTaskBuilder.class);
+
   private final Jdbi jdbi;
   private final FileIndexer indexer;
 
@@ -53,7 +57,8 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
         final var doc = new FindDocumentByExternalId(externalId).exececuteIn(txn);
         final var file = new FindDocumentFileByType(doc, typeName).exececuteIn(txn);
         final var contents = new GetLatestFileContent(file).exececuteIn(txn);
-        indexer.indexFile(file, contents.asUtf8String());
+        final var indexResult = indexer.indexFile(file, contents.asUtf8String());
+        indexResult.ifPresent(LOG::warn);
       });
     }
   }
