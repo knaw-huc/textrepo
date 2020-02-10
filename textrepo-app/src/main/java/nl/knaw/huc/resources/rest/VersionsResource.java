@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.FormVersion;
 import nl.knaw.huc.api.ResultVersion;
+import nl.knaw.huc.exceptions.MethodNotAllowedException;
 import nl.knaw.huc.service.VersionService;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -90,7 +91,7 @@ public class VersionsResource {
       @PathParam("id") @Valid UUID id,
       @Valid FormVersion form
   ) {
-    throw new NotAllowedException(PUT_ERROR_MSG);
+    throw new MethodNotAllowedException(PUT_ERROR_MSG);
   }
 
   @DELETE
