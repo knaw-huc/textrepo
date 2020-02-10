@@ -16,7 +16,7 @@ public class MethodNotAllowedExceptionMapper implements ExceptionMapper<MethodNo
 
   @Override
   public Response toResponse(MethodNotAllowedException ex) {
-    logger.error(ex.getMessage());
+    logger.debug(ex.getMessage());
     return Response
         .status(METHOD_NOT_ALLOWED)
         .entity(new ResultException(METHOD_NOT_ALLOWED.getStatusCode(), ex.getMessage()))
