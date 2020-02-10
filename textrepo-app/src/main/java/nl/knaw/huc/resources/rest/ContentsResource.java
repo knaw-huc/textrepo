@@ -36,7 +36,7 @@ public class ContentsResource {
   @Produces(APPLICATION_OCTET_STREAM)
   @ApiOperation(value = "Retrieve contents")
   @ApiResponses(value = {@ApiResponse(code = 200, response = byte[].class, message = "OK")})
-  public Response getContentsBySha224(
+  public Response get(
       @PathParam("sha") @NotBlank String sha
   ) {
     logger.debug("getContentsBySha224: sha={}", sha);
