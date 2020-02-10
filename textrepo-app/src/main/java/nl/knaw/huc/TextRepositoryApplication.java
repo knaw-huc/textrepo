@@ -8,6 +8,7 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.federecio.dropwizard.swagger.SwaggerBundle;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
+import nl.knaw.huc.exceptions.MethodNotAllowedExceptionMapper;
 import nl.knaw.huc.resources.DeprecatedFilesResource;
 import nl.knaw.huc.resources.FileContentsResource;
 import nl.knaw.huc.resources.rest.ContentsResource;
@@ -119,6 +120,8 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
         new VersionsResource(versionService, maxPayloadSize),
         new VersionContentsResource(versionContentsService)
     );
+
+    environment.jersey().register(new MethodNotAllowedExceptionMapper());
 
     resources.forEach((resource) -> environment.jersey().register(resource));
     environment.lifecycle().manage(fileIndexService);
