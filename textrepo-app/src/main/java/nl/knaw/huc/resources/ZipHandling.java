@@ -27,10 +27,7 @@ class ZipHandling {
   private ZipHandling() {
   }
 
-  static boolean isZip(
-    FormDataBodyPart bodyPart,
-    FormDataContentDisposition fileDetail
-  ) {
+  static boolean isZip(FormDataBodyPart bodyPart, FormDataContentDisposition fileDetail) {
     return "application/zip".equals(bodyPart.getMediaType().toString()) ||
         "zip".equals(getExtension(fileDetail.getFileName()));
   }

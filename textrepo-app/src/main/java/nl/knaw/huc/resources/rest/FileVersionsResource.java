@@ -35,9 +35,8 @@ public class FileVersionsResource {
   @GET
   @Timed
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Retrieve file versions")
-  @ApiResponses(value = {
-    @ApiResponse(code = 200, responseContainer = "Map", response = ResultVersion.class, message = "OK")})
+  @ApiOperation("Retrieve file versions")
+  @ApiResponses({@ApiResponse(code = 200, responseContainer = "Map", response = ResultVersion.class, message = "OK")})
   public Response getVersions(
       @PathParam("fileId") @Valid UUID fileId
   ) {
