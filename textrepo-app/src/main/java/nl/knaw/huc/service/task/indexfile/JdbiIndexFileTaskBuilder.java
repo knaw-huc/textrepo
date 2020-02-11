@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.NotFoundException;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
@@ -103,19 +102,17 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
     }
 
     private void indexFilesByType(Short typeId) {
-      jdbi.onDemand(FilesDao.class).foreachByType(typeId, indexFile());
+      jdbi.onDemand(FilesDao.class).foreachByType(typeId, this::indexFile);
     }
 
-    private Consumer<TextrepoFile> indexFile() {
-      return file -> {
-        logger.debug("Indexing file: {}", file.getId());
-        jdbi.useTransaction(txn -> {
-          final var contents = new GetLatestFileContent(file).executeIn(txn);
-          final var indexResult = indexer.indexFile(file, contents.asUtf8String());
-          indexResult.ifPresent(LOG::warn);
-          filesAffected++;
-        });
-      };
+    private void indexFile(TextrepoFile file) {
+      logger.debug("Indexing file: {}", file.getId());
+      jdbi.useTransaction(txn -> {
+        final var contents = new GetLatestFileContent(file).executeIn(txn);
+        final var indexResult = indexer.indexFile(file, contents.asUtf8String());
+        indexResult.ifPresent(LOG::warn);
+        filesAffected++;
+      });
     }
   }
 }
