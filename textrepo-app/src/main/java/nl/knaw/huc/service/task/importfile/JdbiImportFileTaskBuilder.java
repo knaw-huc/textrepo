@@ -1,14 +1,12 @@
 package nl.knaw.huc.service.task.importfile;
 
 import nl.knaw.huc.core.Contents;
-import nl.knaw.huc.db.TypesDao;
 import nl.knaw.huc.service.task.HaveDocumentByExternalId;
 import nl.knaw.huc.service.task.SetCurrentFileContents;
 import nl.knaw.huc.service.task.SetFileProvenance;
 import nl.knaw.huc.service.task.Task;
 import org.jdbi.v3.core.Jdbi;
 
-import javax.ws.rs.NotFoundException;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -63,14 +61,6 @@ class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
 
   private Contents getContents() {
     return Contents.fromContent(contents);
-  }
-
-  private TypesDao types() {
-    return jdbi.onDemand(TypesDao.class);
-  }
-
-  private Supplier<NotFoundException> typeNotFound(String name) {
-    return () -> new NotFoundException(String.format("No type found with name: %s", name));
   }
 
   private class JdbiImportDocumentTask implements Task {
