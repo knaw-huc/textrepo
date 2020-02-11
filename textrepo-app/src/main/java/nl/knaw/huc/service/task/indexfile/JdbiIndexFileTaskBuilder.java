@@ -8,7 +8,6 @@ import nl.knaw.huc.service.task.FindDocumentByExternalId;
 import nl.knaw.huc.service.task.FindDocumentFileByType;
 import nl.knaw.huc.service.task.GetLatestFileContent;
 import nl.knaw.huc.service.task.Task;
-import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,7 +86,7 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
 
     @Override
     public void run() {
-      jdbi.useTransaction(txn -> indexFilesByType(txn, resolveType()));
+      indexFilesByType(resolveType());
       logger.info("Total files affected: {}", filesAffected);
     }
 
@@ -103,19 +102,20 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
       return () -> new NotFoundException(String.format("No such type: %s", typeName));
     }
 
-    private void indexFilesByType(Handle txn, Short typeId) {
-      txn.attach(FilesDao.class).foreachByType(typeId, indexFile(txn));
+    private void indexFilesByType(Short typeId) {
+      jdbi.onDemand(FilesDao.class).foreachByType(typeId, indexFile());
     }
 
-    private Consumer<TextrepoFile> indexFile(Handle txn) {
+    private Consumer<TextrepoFile> indexFile() {
       return file -> {
         logger.debug("Indexing file: {}", file.getId());
-        final var contents = new GetLatestFileContent(file).executeIn(txn);
-        final var indexResult = indexer.indexFile(file, contents.asUtf8String());
-        indexResult.ifPresent(LOG::warn);
-        filesAffected++;
+        jdbi.useTransaction(txn -> {
+          final var contents = new GetLatestFileContent(file).executeIn(txn);
+          final var indexResult = indexer.indexFile(file, contents.asUtf8String());
+          indexResult.ifPresent(LOG::warn);
+          filesAffected++;
+        });
       };
     }
   }
-
 }
