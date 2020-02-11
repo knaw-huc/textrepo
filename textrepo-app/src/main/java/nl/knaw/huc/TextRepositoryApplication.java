@@ -21,7 +21,7 @@ import nl.knaw.huc.resources.rest.FilesResource;
 import nl.knaw.huc.resources.rest.TypesResource;
 import nl.knaw.huc.resources.rest.VersionContentsResource;
 import nl.knaw.huc.resources.rest.VersionsResource;
-import nl.knaw.huc.resources.task.ImportFileResource;
+import nl.knaw.huc.resources.task.ImportResource;
 import nl.knaw.huc.resources.task.IndexResource;
 import nl.knaw.huc.service.ContentsService;
 import nl.knaw.huc.service.JdbiDocumentFilesService;
@@ -112,7 +112,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
         new FileVersionsResource(versionService),
         new DocumentsResource(documentService),
         new DocumentMetadataResource(documentMetadataService),
-        new ImportFileResource(taskBuilderFactory, maxPayloadSize),
+        new ImportResource(taskBuilderFactory, maxPayloadSize),
         new IndexResource(taskBuilderFactory),
         new DeprecatedFilesResource(fileService, maxPayloadSize),
         new FilesResource(fileService),

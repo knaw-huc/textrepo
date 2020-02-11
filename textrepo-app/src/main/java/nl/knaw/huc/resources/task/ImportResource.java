@@ -26,12 +26,12 @@ import static nl.knaw.huc.resources.ResourceUtils.readContent;
 
 @Api(tags = {"task", "import"})
 @Path("task/import")
-public class ImportFileResource {
-  private static final Logger LOG = LoggerFactory.getLogger(ImportFileResource.class);
+public class ImportResource {
+  private static final Logger LOG = LoggerFactory.getLogger(ImportResource.class);
   private final TaskBuilderFactory factory;
   private final int maxPayloadSize;
 
-  public ImportFileResource(TaskBuilderFactory factory, int maxPayloadSize) {
+  public ImportResource(TaskBuilderFactory factory, int maxPayloadSize) {
     this.factory = factory;
     this.maxPayloadSize = maxPayloadSize;
     LOG.debug("ImportFileResource configured with maxPayloadSize={}", maxPayloadSize);
