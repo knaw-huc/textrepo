@@ -8,6 +8,7 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.federecio.dropwizard.swagger.SwaggerBundle;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
+import nl.knaw.huc.exceptions.MethodNotAllowedExceptionMapper;
 import nl.knaw.huc.resources.DeprecatedFilesResource;
 import nl.knaw.huc.resources.FileContentsResource;
 import nl.knaw.huc.resources.rest.ContentsResource;
@@ -18,6 +19,7 @@ import nl.knaw.huc.resources.rest.FileMetadataResource;
 import nl.knaw.huc.resources.rest.FileVersionsResource;
 import nl.knaw.huc.resources.rest.FilesResource;
 import nl.knaw.huc.resources.rest.TypesResource;
+import nl.knaw.huc.resources.rest.VersionContentsResource;
 import nl.knaw.huc.resources.rest.VersionsResource;
 import nl.knaw.huc.resources.task.ImportFileResource;
 import nl.knaw.huc.resources.task.IndexResource;
@@ -29,6 +31,7 @@ import nl.knaw.huc.service.JdbiFileContentsService;
 import nl.knaw.huc.service.JdbiFileMetadataService;
 import nl.knaw.huc.service.JdbiFileService;
 import nl.knaw.huc.service.JdbiTypeService;
+import nl.knaw.huc.service.JdbiVersionContentsService;
 import nl.knaw.huc.service.JdbiVersionService;
 import nl.knaw.huc.service.TypeService;
 import nl.knaw.huc.service.index.CustomIndexerException;
@@ -94,6 +97,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
         .withIdGenerator(uuidGenerator)
         .withFileIndexer(fileIndexService);
     var versionService = new JdbiVersionService(jdbi, contentsService, fileIndexService, customIndexers, uuidGenerator);
+    var versionContentsService = new JdbiVersionContentsService(jdbi);
     var fileService = new JdbiFileService(jdbi, typeService, versionService, metadataService, uuidGenerator);
     var documentFilesService = new JdbiDocumentFilesService(jdbi);
     var fileContentsService = new JdbiFileContentsService(jdbi, contentsService, versionService, metadataService);
@@ -113,8 +117,11 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
         new DeprecatedFilesResource(fileService, maxPayloadSize),
         new FilesResource(fileService),
         new DocumentFilesResource(documentFilesService),
-        new VersionsResource(versionService, maxPayloadSize)
+        new VersionsResource(versionService, maxPayloadSize),
+        new VersionContentsResource(versionContentsService)
     );
+
+    environment.jersey().register(new MethodNotAllowedExceptionMapper());
 
     resources.forEach((resource) -> environment.jersey().register(resource));
     environment.lifecycle().manage(fileIndexService);

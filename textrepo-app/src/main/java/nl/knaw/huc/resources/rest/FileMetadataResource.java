@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.api.ResultFileMetadataEntry;
+import nl.knaw.huc.exceptions.MethodNotAllowedException;
 import nl.knaw.huc.service.FileMetadataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,7 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -31,11 +33,20 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 public class FileMetadataResource {
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private static final String POST_ERROR_MSG = "Not allowed to post metadata: use put instead";
 
   private final FileMetadataService fileMetadataService;
 
   public FileMetadataResource(FileMetadataService fileMetadataService) {
     this.fileMetadataService = fileMetadataService;
+  }
+
+  @POST
+  @Produces(APPLICATION_JSON)
+  @ApiOperation(value = POST_ERROR_MSG)
+  @ApiResponses(value = {@ApiResponse(code = 405, message = POST_ERROR_MSG)})
+  public Response post() {
+    throw new MethodNotAllowedException(POST_ERROR_MSG);
   }
 
   @GET
