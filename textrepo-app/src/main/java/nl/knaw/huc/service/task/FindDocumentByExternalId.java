@@ -19,7 +19,7 @@ public class FindDocumentByExternalId implements ProvidesInTransaction<Document>
   }
 
   @Override
-  public Document exececuteIn(Handle transaction) {
+  public Document executeIn(Handle transaction) {
     this.transaction = requireNonNull(transaction);
     return docs().getByExternalId(externalId).orElseThrow(documentNotFound(externalId));
   }

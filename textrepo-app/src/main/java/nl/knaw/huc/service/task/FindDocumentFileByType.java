@@ -23,7 +23,7 @@ public class FindDocumentFileByType implements ProvidesInTransaction<TextrepoFil
   }
 
   @Override
-  public TextrepoFile exececuteIn(Handle transaction) {
+  public TextrepoFile executeIn(Handle transaction) {
     this.transaction = requireNonNull(transaction);
 
     final var typeId = types().find(typeName)

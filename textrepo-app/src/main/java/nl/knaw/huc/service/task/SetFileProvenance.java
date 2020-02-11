@@ -19,7 +19,7 @@ public class SetFileProvenance implements ProvidesInTransaction<MetadataEntry> {
   }
 
   @Override
-  public MetadataEntry exececuteIn(Handle transaction) {
+  public MetadataEntry executeIn(Handle transaction) {
     this.transaction = requireNonNull(transaction);
     final var entry = new MetadataEntry("filename", filename);
     metadata().upsert(file.getId(), entry);

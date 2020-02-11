@@ -26,7 +26,7 @@ public class GetLatestFileContent implements ProvidesInTransaction<Contents> {
   }
 
   @Override
-  public Contents exececuteIn(Handle transaction) {
+  public Contents executeIn(Handle transaction) {
     this.transaction = requireNonNull(transaction);
     final var latest = versions().findLatestByFileId(file.getId())
                                  .orElseThrow(noLatestVersionFound(file));

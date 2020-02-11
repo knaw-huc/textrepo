@@ -29,7 +29,7 @@ class HaveFileForDocumentByType implements ProvidesInTransaction<TextrepoFile> {
   }
 
   @Override
-  public TextrepoFile exececuteIn(Handle transaction) {
+  public TextrepoFile executeIn(Handle transaction) {
     this.transaction = requireNonNull(transaction);
     final var typeId = getTypeId();
     return findFileForDocument(doc, typeId).orElseGet(createNewFileForDocument(doc, typeId));

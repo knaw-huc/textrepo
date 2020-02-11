@@ -34,7 +34,7 @@ public class SetCurrentFileContents implements ProvidesInTransaction<Version> {
   }
 
   @Override
-  public Version exececuteIn(Handle transaction) {
+  public Version executeIn(Handle transaction) {
     this.transaction = requireNonNull(transaction);
     return latestVersionIfIdentical().orElseGet(createNewVersionWithContents());
   }

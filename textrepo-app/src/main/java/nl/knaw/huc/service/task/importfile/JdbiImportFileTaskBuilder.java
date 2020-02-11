@@ -79,10 +79,10 @@ class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
     @Override
     public void run() {
       jdbi.useTransaction(transaction -> {
-        final var doc = new HaveDocumentByExternalId(documentIdGenerator, externalId).exececuteIn(transaction);
-        final var file = new HaveFileForDocumentByType(fileIdGenerator, doc, typeName).exececuteIn(transaction);
-        final var entry = new SetFileProvenance(file, filename).exececuteIn(transaction);
-        final var version = new SetCurrentFileContents(versionIdGenerator, file, contents).exececuteIn(transaction);
+        final var doc = new HaveDocumentByExternalId(documentIdGenerator, externalId).executeIn(transaction);
+        final var file = new HaveFileForDocumentByType(fileIdGenerator, doc, typeName).executeIn(transaction);
+        final var entry = new SetFileProvenance(file, filename).executeIn(transaction);
+        final var version = new SetCurrentFileContents(versionIdGenerator, file, contents).executeIn(transaction);
       });
     }
   }
