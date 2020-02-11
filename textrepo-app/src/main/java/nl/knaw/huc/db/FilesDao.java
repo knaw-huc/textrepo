@@ -9,6 +9,7 @@ import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public interface FilesDao {
   @SqlUpdate("insert into files (id, type_id) values (:fileId, :typeId)")
@@ -17,6 +18,10 @@ public interface FilesDao {
   @SqlQuery("select id, type_id from files where id = ?")
   @RegisterConstructorMapper(value = TextrepoFile.class)
   Optional<TextrepoFile> find(UUID id);
+
+  @SqlQuery("select id, type_id from files where type_id = :typeId")
+  @RegisterConstructorMapper(value = TextrepoFile.class)
+  void foreachByType(@Bind("typeId") short typeId, Consumer<TextrepoFile> consumer);
 
   @SqlUpdate("insert into files (id, type_id) values (:id, :typeId) " +
       "on conflict (id) do update set type_id = excluded.type_id")

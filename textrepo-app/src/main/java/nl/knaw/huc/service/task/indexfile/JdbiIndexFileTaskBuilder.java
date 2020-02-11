@@ -1,13 +1,21 @@
 package nl.knaw.huc.service.task.indexfile;
 
+import nl.knaw.huc.core.TextrepoFile;
+import nl.knaw.huc.db.FilesDao;
+import nl.knaw.huc.db.TypesDao;
 import nl.knaw.huc.service.index.FileIndexer;
 import nl.knaw.huc.service.task.FindDocumentByExternalId;
 import nl.knaw.huc.service.task.FindDocumentFileByType;
 import nl.knaw.huc.service.task.GetLatestFileContent;
 import nl.knaw.huc.service.task.Task;
+import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.ws.rs.NotFoundException;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
@@ -39,6 +47,9 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
 
   @Override
   public Task build() {
+    if (externalId == null) {
+      return new JdbiIndexAllFilesTask(typeName);
+    }
     return new JdbiIndexFileTask(externalId, typeName);
   }
 
@@ -54,12 +65,57 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
     @Override
     public void run() {
       jdbi.useTransaction(txn -> {
-        final var doc = new FindDocumentByExternalId(externalId).exececuteIn(txn);
-        final var file = new FindDocumentFileByType(doc, typeName).exececuteIn(txn);
-        final var contents = new GetLatestFileContent(file).exececuteIn(txn);
+        final var doc = new FindDocumentByExternalId(externalId).executeIn(txn);
+        final var file = new FindDocumentFileByType(doc, typeName).executeIn(txn);
+        final var contents = new GetLatestFileContent(file).executeIn(txn);
         final var indexResult = indexer.indexFile(file, contents.asUtf8String());
         indexResult.ifPresent(LOG::warn);
       });
     }
   }
+
+  private class JdbiIndexAllFilesTask implements Task {
+    private final Logger logger = LoggerFactory.getLogger(JdbiIndexAllFilesTask.class);
+
+    private final String typeName;
+
+    private int filesAffected = 0;
+
+    private JdbiIndexAllFilesTask(String typeName) {
+      this.typeName = typeName;
+    }
+
+    @Override
+    public void run() {
+      jdbi.useTransaction(txn -> indexFilesByType(txn, resolveType()));
+      logger.info("Total files affected: {}", filesAffected);
+    }
+
+    private Short resolveType() {
+      return types().find(typeName).orElseThrow(noSuchType(typeName));
+    }
+
+    private TypesDao types() {
+      return jdbi.onDemand(TypesDao.class);
+    }
+
+    private Supplier<NotFoundException> noSuchType(String typeName) {
+      return () -> new NotFoundException(String.format("No such type: %s", typeName));
+    }
+
+    private void indexFilesByType(Handle txn, Short typeId) {
+      txn.attach(FilesDao.class).foreachByType(typeId, indexFile(txn));
+    }
+
+    private Consumer<TextrepoFile> indexFile(Handle txn) {
+      return file -> {
+        logger.debug("Indexing file: {}", file.getId());
+        final var contents = new GetLatestFileContent(file).executeIn(txn);
+        final var indexResult = indexer.indexFile(file, contents.asUtf8String());
+        indexResult.ifPresent(LOG::warn);
+        filesAffected++;
+      };
+    }
+  }
+
 }

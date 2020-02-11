@@ -32,4 +32,15 @@ public class IndexResource {
     task.run();
     return Response.accepted().build();
   }
+
+  @POST
+  @Path("/files/{type}")
+  public Response indexAll(@PathParam("type") String type) {
+    LOG.debug("Indexing ALL files of type: {}", type);
+    final var task = factory.getDocumentIndexBuilder()
+                            .withType(type)
+                            .build();
+    task.run();
+    return Response.accepted().build();
+  }
 }
