@@ -40,9 +40,9 @@ public class FindFileTest {
 
   @Test
   public void testFindFile_usesTransactionToAccessFilesDao() {
-    when(FILES_DAO.find(TEST_FILE.getId())).thenReturn(Optional.of(TEST_FILE));
+    when(FILES_DAO.find(any())).thenReturn(Optional.of(mock(TextrepoFile.class)));
     new FindFile(TEST_FILE.getId()).executeIn(TRANSACTION);
-    verify(FILES_DAO).find(TEST_FILE.getId());
+    verify(TRANSACTION).attach(FilesDao.class);
   }
 
   @Test
