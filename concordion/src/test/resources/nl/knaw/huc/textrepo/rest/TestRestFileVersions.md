@@ -9,6 +9,7 @@
 [ ](- "#oldVersionId=createVersion(#fileId)")
 [ ](- "#newVersionId=createVersion(#fileId)")
 
+A file can have multiple versions.
 To view all versions of a file we first create: 
   
   - a document;

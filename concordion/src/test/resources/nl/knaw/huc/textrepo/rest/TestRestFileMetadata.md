@@ -2,11 +2,10 @@
 
 ## Create, retrieve, update and delete file metadata
 
-### Set up
-
 [ ](- "createDocument()")
 [ ](- "#fileId=createFile()")
 
+A file has metadata: a map of key-value pairs. 
 To add file metadata we first create: 
   
   - a document;

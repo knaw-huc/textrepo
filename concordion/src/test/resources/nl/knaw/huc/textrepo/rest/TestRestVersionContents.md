@@ -8,7 +8,8 @@
 [ ](- "#fileId=createFile(#docId)")
 [ ](- "#versionId=createVersion(#fileId)")
 
-To view the content of a file we first create: 
+A version has content.
+To retrieve the contents of a version we first create: 
   
   - a document;
   - a file;

@@ -7,6 +7,7 @@
 [ ](- "#docId=createDocument()")
 [ ](- "#fileId=createFile(#docId)")
 
+A file can have multiple versions.
 To add a version we first create:
  
  - a document: [ ](- "c:echo=#docId")

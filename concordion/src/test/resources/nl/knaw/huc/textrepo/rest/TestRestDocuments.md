@@ -2,6 +2,9 @@
 
 ## Create, retrieve, update and delete documents
 
+Document is the top level entity in the text repository. 
+A document can represent any physical document like a page or multiple pages, and contains all text files (plain text, xml, etc.) that describe this document.  
+
 ### Create document
 When creating the following document with a `POST` to [`/rest/documents`](- "#createEndpoint"):
 
