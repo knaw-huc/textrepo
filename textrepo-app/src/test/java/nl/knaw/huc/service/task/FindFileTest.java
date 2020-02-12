@@ -2,22 +2,16 @@ package nl.knaw.huc.service.task;
 
 import nl.knaw.huc.core.TextrepoFile;
 import nl.knaw.huc.db.FilesDao;
-import nl.knaw.huc.service.FileService;
-import org.assertj.core.api.AssertionsForClassTypes;
-import org.assertj.core.util.TextFileWriter;
-import org.checkerframework.checker.nullness.Opt;
 import org.jdbi.v3.core.Handle;
-import org.jdbi.v3.core.Jdbi;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import javax.ws.rs.NotFoundException;
-import java.awt.*;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
