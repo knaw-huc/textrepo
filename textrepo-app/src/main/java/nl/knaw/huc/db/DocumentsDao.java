@@ -2,6 +2,7 @@ package nl.knaw.huc.db;
 
 import nl.knaw.huc.core.Document;
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
+import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.customizer.BindBean;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
@@ -22,9 +23,9 @@ public interface DocumentsDao {
   @RegisterConstructorMapper(value = Document.class)
   Optional<Document> getByExternalId(String externalId);
 
-  @SqlQuery("select id, external_id from documents where external_id like %?%")
+  @SqlQuery("select id, external_id from documents where external_id like :externalId")
   @RegisterConstructorMapper(value = Document.class)
-  List<Document> getByExternalIdLike(String externalId);
+  List<Document> getByExternalIdLike(@Bind("externalId") String externalId);
 
   @SqlUpdate("insert into documents (id, external_id) values (:id, :externalId) " +
       "on conflict (id) do update set external_id = excluded.external_id")

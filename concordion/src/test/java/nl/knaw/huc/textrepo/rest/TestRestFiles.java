@@ -8,21 +8,19 @@ import org.concordion.api.extension.Extensions;
 import org.concordion.api.option.ConcordionOptions;
 import org.concordion.ext.EmbedExtension;
 
-import javax.ws.rs.core.UriBuilder;
-import java.net.URI;
-
 import static javax.ws.rs.client.Entity.entity;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
 import static nl.knaw.huc.textrepo.Config.HOST;
 import static nl.knaw.huc.textrepo.util.TestUtils.asPrettyJson;
 import static nl.knaw.huc.textrepo.util.TestUtils.replaceUrlParams;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 @Extensions(EmbedExtension.class)
 @ConcordionOptions(declareNamespaces = {"ext", "urn:concordion-extensions:2010"})
 public class TestRestFiles extends AbstractConcordionTest {
 
   public String createDocument() {
-    return RestUtils.createDocument();
+    return RestUtils.createDocument("dummy-" + randomAlphabetic(5));
   }
 
   public static class CreateResult {

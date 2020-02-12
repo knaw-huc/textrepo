@@ -1,8 +1,6 @@
 package nl.knaw.huc.textrepo.util;
 
 import com.jayway.jsonpath.JsonPath;
-import nl.knaw.huc.textrepo.rest.TestRestVersions;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -16,7 +14,6 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
 import static nl.knaw.huc.textrepo.Config.HOST;
 import static nl.knaw.huc.textrepo.Config.TYPES_URL;
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 public class RestUtils {
 
@@ -25,11 +22,11 @@ public class RestUtils {
   /**
    * @return document uuid
    */
-  public static String createDocument() {
+  public static String createDocument(String externalId) {
     final var response = client
         .target(HOST + "/rest/documents")
         .request()
-        .post(entity("{\"externalId\":  \"dummy-" + randomAlphabetic(5) + "\"}", APPLICATION_JSON_TYPE));
+        .post(entity("{\"externalId\":  \"" + externalId + "\"}", APPLICATION_JSON_TYPE));
 
     var body = response.readEntity(String.class);
     return JsonPath.parse(body).read("$.id");

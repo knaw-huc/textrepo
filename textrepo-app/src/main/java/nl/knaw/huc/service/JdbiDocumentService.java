@@ -43,11 +43,11 @@ public class JdbiDocumentService implements DocumentService {
 
   /**
    * get all documents filtered by externalId
-   * At the moment externalId
+   * Atm only filtered by externalId
    */
   @Override
   public List<Document> getAll(String externalId) {
-    return documents().getByExternalIdLike(externalId);
+    return documents().getByExternalIdLike("%" + externalId + "%");
   }
 
   private DocumentsDao documents() {
