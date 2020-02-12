@@ -1,6 +1,7 @@
 package nl.knaw.huc.service.task.importfile;
 
 import nl.knaw.huc.core.Contents;
+import nl.knaw.huc.core.Version;
 import nl.knaw.huc.service.task.HaveDocumentByExternalId;
 import nl.knaw.huc.service.task.SetCurrentFileContents;
 import nl.knaw.huc.service.task.SetFileProvenance;
@@ -12,7 +13,7 @@ import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
-class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
+public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
   private final Jdbi jdbi;
   private final Supplier<UUID> documentIdGenerator;
   private final Supplier<UUID> fileIdGenerator;
@@ -63,7 +64,7 @@ class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
     return Contents.fromBytes(contents);
   }
 
-  private class JdbiImportDocumentTask implements Task {
+  private class JdbiImportDocumentTask implements Task<Version> {
     private final String externalId;
     private final String typeName;
     private final String filename;
@@ -77,12 +78,12 @@ class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
     }
 
     @Override
-    public void run() {
-      jdbi.useTransaction(transaction -> {
+    public Version run() {
+      return jdbi.inTransaction(transaction -> {
         final var doc = new HaveDocumentByExternalId(documentIdGenerator, externalId).executeIn(transaction);
         final var file = new HaveFileForDocumentByType(fileIdGenerator, doc, typeName).executeIn(transaction);
         final var entry = new SetFileProvenance(file, filename).executeIn(transaction);
-        final var version = new SetCurrentFileContents(versionIdGenerator, file, contents).executeIn(transaction);
+        return new SetCurrentFileContents(versionIdGenerator, file, contents).executeIn(transaction);
       });
     }
   }
