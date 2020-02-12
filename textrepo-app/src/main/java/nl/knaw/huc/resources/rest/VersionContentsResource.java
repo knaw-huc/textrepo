@@ -31,8 +31,8 @@ import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
 public class VersionContentsResource {
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
-  private static final String POST_ERROR_MSG = "Not allowed to post content: create new version instead";
-  private static final String PUT_ERROR_MSG = "Not allowed to put content of version: create new version instead";
+  private static final String POST_ERROR_MSG = "Not allowed to post content: post new version instead";
+  private static final String PUT_ERROR_MSG = "Not allowed to put content of version: post new version instead";
   private static final String DELETE_ERROR_MSG = "Not allowed to delete content of version: delete version instead";
 
   private VersionContentsService contentsService;

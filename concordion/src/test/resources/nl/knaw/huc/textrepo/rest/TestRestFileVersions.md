@@ -9,7 +9,7 @@
 [ ](- "#oldVersionId=createVersion(#fileId)")
 [ ](- "#newVersionId=createVersion(#fileId)")
 
-To view the versions of a file we first create: 
+To view all versions of a file we first create: 
   
   - a document;
   - a file: [ ](- "c:echo=#fileId");
