@@ -40,10 +40,6 @@ public class GetVersionContent implements ProvidesInTransaction<Contents> {
     };
   }
 
-  private VersionsDao versions() {
-    return transaction.attach(VersionsDao.class);
-  }
-
   private ContentsDao contents() {
     return transaction.attach(ContentsDao.class);
   }
