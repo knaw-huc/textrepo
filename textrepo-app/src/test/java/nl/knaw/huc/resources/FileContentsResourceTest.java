@@ -41,7 +41,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class FileContentsResourceTest {
-  private static final String content = "hello test";
+  private static final String contents = "hello test";
   private String filename = "just-a-filename.txt";
   private String fileId = "b59c2b24-cafe-babe-9bb3-deadbeefc2c6";
 
@@ -72,7 +72,7 @@ public class FileContentsResourceTest {
   public static final ResourceTestRule resource = ResourceTestRule
       .builder()
       .addProvider(MultiPartFeature.class)
-      .addResource(new FileContentsResource(FILE_CONTENTS_SERVICE, content.length()))
+      .addResource(new FileContentsResource(FILE_CONTENTS_SERVICE, contents.length()))
       .build();
 
   @Captor
@@ -112,7 +112,7 @@ public class FileContentsResourceTest {
   }
 
   private void putTestFile() {
-    var bytes = content.getBytes();
+    var bytes = contents.getBytes();
     putTestFile(bytes, filename, fileId);
   }
 

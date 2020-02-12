@@ -27,11 +27,11 @@ public class ElasticFileIndexer implements FileIndexer, Managed {
     client = new TextRepoElasticClient(config);
   }
 
-  public Optional<String> indexFile(@Nonnull TextrepoFile file, @Nonnull String content) {
+  public Optional<String> indexFile(@Nonnull TextrepoFile file, @Nonnull String latestVersionContents) {
     logger.info("Add file [{}] to index [{}]", file, config.index);
     var indexRequest = new IndexRequest(config.index)
         .id(file.getId().toString())
-        .source(config.contentField, content);
+        .source(config.contentsField, latestVersionContents);
     final var response = indexRequest(indexRequest);
     return Optional.of(String.format("Index [%s] %s for id=%s (version: %d)",
         response.getIndex(), response.getResult().getLowercase(), response.getId(), response.getVersion()

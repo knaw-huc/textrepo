@@ -83,13 +83,13 @@ public class ElasticCustomIndexer implements FileIndexer, Managed {
   }
 
   @Override
-  public Optional<String> indexFile(@Nonnull TextrepoFile file, @Nonnull String latestVersionContent) {
+  public Optional<String> indexFile(@Nonnull TextrepoFile file, @Nonnull String latestVersionContents) {
     var mimetype = typeService.getType(file.getTypeId()).getMimetype();
     if (!mimetypeSupported(mimetype)) {
       return Optional.empty();
     }
 
-    var response = getFields(latestVersionContent, mimetype);
+    var response = getFields(latestVersionContents, mimetype);
     var esFacets = response.readEntity(String.class);
 
     Optional<String> fieldStatusComplaint = checkFieldStatus(response, esFacets);
@@ -113,12 +113,12 @@ public class ElasticCustomIndexer implements FileIndexer, Managed {
     }
   }
 
-  private Response getFields(@Nonnull String latestVersionContent, String mimetype) {
+  private Response getFields(@Nonnull String latestVersionContents, String mimetype) {
     switch (config.fields.type) {
       case "urlencoded":
-        return getFieldsUrlencoded(latestVersionContent, mimetype);
+        return getFieldsUrlencoded(latestVersionContents, mimetype);
       case "multipart":
-        return getFieldsMultiparted(latestVersionContent, mimetype);
+        return getFieldsMultiparted(latestVersionContents, mimetype);
       default:
         throw new IllegalStateException(format(
             "Fields type [%s] of [%s] does not exist",
@@ -128,15 +128,15 @@ public class ElasticCustomIndexer implements FileIndexer, Managed {
     }
   }
 
-  private Response getFieldsUrlencoded(@Nonnull String latestVersionContent, String mimetype) {
+  private Response getFieldsUrlencoded(@Nonnull String latestVersionContents, String mimetype) {
     return requestClient
         .target(config.fields.url)
         .request()
-        .post(entity(latestVersionContent, mimetype));
+        .post(entity(latestVersionContents, mimetype));
   }
 
-  private Response getFieldsMultiparted(@Nonnull String latestVersionContent, String mimetype) {
-    return postMultiparted(latestVersionContent.getBytes(), mimetype);
+  private Response getFieldsMultiparted(@Nonnull String latestVersionContents, String mimetype) {
+    return postMultiparted(latestVersionContents.getBytes(), mimetype);
   }
 
   private Response postMultiparted(byte[] bytes, String mimetype) {

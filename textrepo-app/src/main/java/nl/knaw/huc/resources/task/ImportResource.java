@@ -22,7 +22,7 @@ import java.io.InputStream;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
-import static nl.knaw.huc.resources.ResourceUtils.readContent;
+import static nl.knaw.huc.resources.ResourceUtils.readContents;
 
 @Api(tags = {"task", "import"})
 @Path("task/import")
@@ -56,7 +56,7 @@ public class ImportResource {
     final var importTask = builder.forExternalId(externalId)
                                   .withType(type)
                                   .forFilename(fileDetail.getFileName())
-                                  .withContents(readContent(uploadedInputStream, maxPayloadSize))
+                                  .withContents(readContents(uploadedInputStream, maxPayloadSize))
                                   .build();
 
     // TODO: what would be a good (generic) return value for a task?

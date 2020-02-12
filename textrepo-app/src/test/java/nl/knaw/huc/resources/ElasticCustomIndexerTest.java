@@ -8,7 +8,6 @@ import nl.knaw.huc.service.index.CustomIndexerException;
 import nl.knaw.huc.service.index.ElasticCustomIndexer;
 import nl.knaw.huc.service.index.ElasticsearchConfiguration;
 import nl.knaw.huc.service.index.FieldsConfiguration;
-import org.jdbi.v3.core.Jdbi;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -203,7 +202,7 @@ public class ElasticCustomIndexerTest {
     var mockEsUrl = "localhost:" + mockIndexPort;
     var config = new CustomIndexerConfiguration();
     config.elasticsearch = new ElasticsearchConfiguration();
-    config.elasticsearch.contentField = "does-not-matter";
+    config.elasticsearch.contentsField = "does-not-matter";
     config.elasticsearch.hosts = newArrayList(mockEsUrl);
     config.elasticsearch.index = "test-index";
     config.fields = FieldsConfiguration.build(type, mockFieldsUrl);

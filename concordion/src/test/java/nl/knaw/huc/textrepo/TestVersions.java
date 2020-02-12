@@ -25,14 +25,14 @@ public class TestVersions extends AbstractConcordionTest {
   }
 
   public TestVersionsResult uploadMultipleVersions(
-      String content,
+      String contents,
       String filesEndpoint,
       String newContent,
       String fileContentsEndpoint
   ) throws MalformedURLException {
     var result = new TestVersionsResult();
 
-    var response = postFile(filesEndpoint, content);
+    var response = postFile(filesEndpoint, contents);
 
     result.status = response.getStatus();
     result.fileId = getFileId(getLocation(response).orElse("/no-file-uuid"));
@@ -58,12 +58,12 @@ public class TestVersions extends AbstractConcordionTest {
     ).getStatus();
   }
 
-  private Response postFile(String filesEndpoint, String content) throws MalformedURLException {
+  private Response postFile(String filesEndpoint, String contents) throws MalformedURLException {
     return TestUtils.postFileWithFilename(
         client(),
         new URL(HTTP_APP_HOST + filesEndpoint),
         "test.txt",
-        content.getBytes()
+        contents.getBytes()
     );
   }
 
@@ -74,7 +74,7 @@ public class TestVersions extends AbstractConcordionTest {
 
   private String getIndexedFile(String fileId) {
     var url = ES_HOST + "/files/_doc/" + fileId;
-    return JsonPath.parse(getByUrl(url)).read("$._source.content");
+    return JsonPath.parse(getByUrl(url)).read("$._source.contents");
   }
 
   private String getByUrl(String url) {

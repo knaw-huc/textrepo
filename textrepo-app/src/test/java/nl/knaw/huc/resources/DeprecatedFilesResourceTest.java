@@ -51,7 +51,7 @@ import static org.mockito.Mockito.when;
 
 public class DeprecatedFilesResourceTest {
   private static final String uuid = "b59c2b24-cafe-babe-9bb3-deadbeefc2c6";
-  private static final String content = "hello test";
+  private static final String contents = "hello test";
   private String filename = "just-a-filename.txt";
 
   private static final ContentsService contentsService = new ContentsService(mock(ContentsStorage.class));
@@ -73,7 +73,7 @@ public class DeprecatedFilesResourceTest {
   public static final ResourceTestRule resource = ResourceTestRule
       .builder()
       .addProvider(MultiPartFeature.class)
-      .addResource(new DeprecatedFilesResource(FILE_SERVICE, content.length()))
+      .addResource(new DeprecatedFilesResource(FILE_SERVICE, contents.length()))
       .build();
 
   @Captor
@@ -106,10 +106,10 @@ public class DeprecatedFilesResourceTest {
   public void testAddFile_addsContentsWithFileIdToIndex() {
     postTestContents();
     var file = ArgumentCaptor.forClass(TextrepoFile.class);
-    var latestVersionContent = ArgumentCaptor.forClass(String.class);
-    verify(fileIndexer).indexFile(file.capture(), latestVersionContent.capture());
+    var latestVersionContents = ArgumentCaptor.forClass(String.class);
+    verify(fileIndexer).indexFile(file.capture(), latestVersionContents.capture());
     assertThat(file.getValue()).isOfAnyClassIn(TextrepoFile.class);
-    assertThat(latestVersionContent.getValue()).isEqualTo(content);
+    assertThat(latestVersionContents.getValue()).isEqualTo(contents);
   }
 
   @Test
@@ -121,7 +121,7 @@ public class DeprecatedFilesResourceTest {
 
     var zippedFile = ArgumentCaptor.forClass(String.class);
     verify(fileIndexer).indexFile(ArgumentCaptor.forClass(TextrepoFile.class).capture(), zippedFile.capture());
-    assertThat(zippedFile.getValue()).isEqualToIgnoringWhitespace(content);
+    assertThat(zippedFile.getValue()).isEqualToIgnoringWhitespace(contents);
   }
 
   @Test
@@ -167,7 +167,7 @@ public class DeprecatedFilesResourceTest {
         ArgumentCaptor.forClass(TextrepoFile.class).capture(),
         zippedFile.capture()
     );
-    assertThat(zippedFile.getValue()).isEqualToIgnoringWhitespace(content);
+    assertThat(zippedFile.getValue()).isEqualToIgnoringWhitespace(contents);
   }
 
   @Test
@@ -178,12 +178,12 @@ public class DeprecatedFilesResourceTest {
     postTestContents(zipFile, zipFilename);
 
     var zippedContentsCaptor = ArgumentCaptor.forClass(String.class);
-    var zippedContent = getResourceAsString("zip/mac-archive-content.xml");
+    var zippedContents = getResourceAsString("zip/mac-archive-contents.xml");
     verify(fileIndexer, times(1)).indexFile(
         ArgumentCaptor.forClass(TextrepoFile.class).capture(),
         zippedContentsCaptor.capture()
     );
-    assertThat(zippedContentsCaptor.getValue()).isEqualToIgnoringWhitespace(zippedContent);
+    assertThat(zippedContentsCaptor.getValue()).isEqualToIgnoringWhitespace(zippedContents);
   }
 
   @Test
@@ -222,16 +222,16 @@ public class DeprecatedFilesResourceTest {
 
   @Test
   public void testPostFile_yieldsPayloadTooLarge_whenContentsLongerThanMaxAllowed() throws IOException {
-    final var response = postTestContents((content + " MADE TOO LONG").getBytes(), filename);
+    final var response = postTestContents((contents + " MADE TOO LONG").getBytes(), filename);
     assertThat(response.getStatus()).isEqualTo(413);
 
     final var message = responsePart(response, "message");
     assertThat(message).containsIgnoringCase("max. allowed size");
-    assertThat(message).contains(String.valueOf(content.length()));
+    assertThat(message).contains(String.valueOf(contents.length()));
   }
 
   private Response postTestContents() {
-    var bytes = content.getBytes();
+    var bytes = contents.getBytes();
     return postTestContents(bytes, filename);
   }
 

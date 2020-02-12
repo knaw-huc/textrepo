@@ -14,14 +14,14 @@ import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
-public class GetLatestFileContent implements ProvidesInTransaction<Contents> {
-  private static final Logger LOG = LoggerFactory.getLogger(GetLatestFileContent.class);
+public class GetLatestFileContents implements ProvidesInTransaction<Contents> {
+  private static final Logger LOG = LoggerFactory.getLogger(GetLatestFileContents.class);
 
   private final TextrepoFile file;
 
   private Handle transaction;
 
-  public GetLatestFileContent(TextrepoFile file) {
+  public GetLatestFileContents(TextrepoFile file) {
     this.file = requireNonNull(file);
   }
 

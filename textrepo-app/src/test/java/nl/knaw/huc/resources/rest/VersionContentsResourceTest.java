@@ -41,7 +41,7 @@ public class VersionContentsResourceTest {
     assertThat(body.read("$.code", Integer.class))
         .isEqualTo(405);
     assertThat(body.read("$.message", String.class))
-        .contains("Not allowed to post content");
+        .contains("Not allowed to post contents");
   }
 
 }

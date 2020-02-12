@@ -19,7 +19,6 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.NotAllowedException;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -32,8 +31,8 @@ import java.util.UUID;
 import static java.time.LocalDateTime.now;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
-import static nl.knaw.huc.core.Contents.fromContent;
-import static nl.knaw.huc.resources.ResourceUtils.readContent;
+import static nl.knaw.huc.core.Contents.fromBytes;
+import static nl.knaw.huc.resources.ResourceUtils.readContents;
 
 @Api(tags = {"versions"})
 @Path("/rest/versions")
@@ -62,7 +61,7 @@ public class VersionsResource {
       @FormDataParam("contents") FormDataContentDisposition fileDetail
   ) {
     logger.debug("post version: fileId={}", fileId);
-    var contents = fromContent(readContent(inputStream, maxPayloadSize));
+    var contents = fromBytes(readContents(inputStream, maxPayloadSize));
     var version = versionService.createNewVersion(fileId, contents, now());
     return Response.ok(new ResultVersion(version)).build();
   }
