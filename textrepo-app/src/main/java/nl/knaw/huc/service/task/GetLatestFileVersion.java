@@ -17,17 +17,15 @@ public class GetLatestFileVersion implements ProvidesInTransaction<Version> {
 
   private final TextrepoFile file;
 
-  private Handle transaction;
-
   public GetLatestFileVersion(TextrepoFile file) {
     this.file = requireNonNull(file);
   }
 
   @Override
   public Version executeIn(Handle transaction) {
-    this.transaction = requireNonNull(transaction);
-    return versions().findLatestByFileId(file.getId())
-                     .orElseThrow(noLatestVersionFound(file));
+    return transaction.attach(VersionsDao.class)
+                      .findLatestByFileId(file.getId())
+                      .orElseThrow(noLatestVersionFound(file));
   }
 
   private Supplier<NotFoundException> noLatestVersionFound(TextrepoFile file) {
@@ -36,10 +34,6 @@ public class GetLatestFileVersion implements ProvidesInTransaction<Version> {
       LOG.warn(message);
       return new NotFoundException(message);
     };
-  }
-
-  private VersionsDao versions() {
-    return transaction.attach(VersionsDao.class);
   }
 
 }
