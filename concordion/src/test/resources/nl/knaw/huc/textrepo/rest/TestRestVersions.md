@@ -2,8 +2,6 @@
 
 ## Create, retrieve, update and delete versions
 
-### Set up
-
 [ ](- "#docId=createDocument()")
 [ ](- "#fileId=createFile(#docId)")
 

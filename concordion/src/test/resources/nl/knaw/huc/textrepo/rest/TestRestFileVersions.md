@@ -2,8 +2,6 @@
 
 ## Retrieve file versions
 
-### Set up
-
 [ ](- "#docId=createDocument()")
 [ ](- "#fileId=createFile(#docId)")
 [ ](- "#oldVersionId=createVersion(#fileId)")

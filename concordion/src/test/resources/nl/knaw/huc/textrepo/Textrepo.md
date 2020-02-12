@@ -15,3 +15,4 @@
  - [File versions](rest/TestRestFileVersions.md "c:run")
  - [Versions](rest/TestRestVersions.md "c:run")
  - [Version contents](rest/TestRestVersionContents.md "c:run")
+ - [Contents](rest/TestRestContents.md "c:run")
