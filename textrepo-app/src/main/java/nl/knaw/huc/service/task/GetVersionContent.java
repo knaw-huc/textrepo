@@ -3,7 +3,6 @@ package nl.knaw.huc.service.task;
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.core.Version;
 import nl.knaw.huc.db.ContentsDao;
-import nl.knaw.huc.db.VersionsDao;
 import org.jdbi.v3.core.Handle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,17 +17,15 @@ public class GetVersionContent implements ProvidesInTransaction<Contents> {
 
   private final Version version;
 
-  private Handle transaction;
-
   public GetVersionContent(Version version) {
     this.version = requireNonNull(version);
   }
 
   @Override
   public Contents executeIn(Handle transaction) {
-    this.transaction = requireNonNull(transaction);
-    return contents().findBySha224(version.getContentsSha())
-                     .orElseThrow(noContentsFoundForVersion(version));
+    return transaction.attach(ContentsDao.class)
+                      .findBySha224(version.getContentsSha())
+                      .orElseThrow(noContentsFoundForVersion(version));
   }
 
   private Supplier<NotFoundException> noContentsFoundForVersion(Version latest) {
@@ -40,7 +37,4 @@ public class GetVersionContent implements ProvidesInTransaction<Contents> {
     };
   }
 
-  private ContentsDao contents() {
-    return transaction.attach(ContentsDao.class);
-  }
 }
