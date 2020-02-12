@@ -1,5 +1,7 @@
 package nl.knaw.huc.resources;
 
+import nl.knaw.huc.exceptions.PayloadTooLargeException;
+
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;

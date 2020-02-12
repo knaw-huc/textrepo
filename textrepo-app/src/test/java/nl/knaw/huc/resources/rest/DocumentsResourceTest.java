@@ -1,10 +1,11 @@
-package nl.knaw.huc.resources;
+package nl.knaw.huc.resources.rest;
 
 import ch.qos.logback.classic.Level;
 import com.jayway.jsonpath.JsonPath;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import nl.knaw.huc.core.Document;
+import nl.knaw.huc.exceptions.MethodNotAllowedExceptionMapper;
 import nl.knaw.huc.resources.rest.DocumentsResource;
 import nl.knaw.huc.service.DocumentService;
 import nl.knaw.huc.service.FileService;
@@ -48,6 +49,7 @@ public class DocumentsResourceTest {
       .builder()
       .addProvider(MultiPartFeature.class)
       .addResource(new DocumentsResource(documentService))
+      .addResource(new MethodNotAllowedExceptionMapper())
       .build();
 
   @Before
@@ -73,6 +75,16 @@ public class DocumentsResourceTest {
     var body = response.readEntity(String.class);
     String externalId = JsonPath.parse(body).read("$.externalId");
     assertThat(externalId).isEqualTo(TEST_EXTERNAL_ID);
+  }
+
+  @Test
+  public void getDocuments_returns405_whenNoExternalId() {
+    var response = resource
+        .client()
+        .register(MultiPartFeature.class)
+        .target("/rest/documents")
+        .request().get();
+    assertThat(response.getStatus()).isEqualTo(405);
   }
 
 }
