@@ -3,6 +3,7 @@ package nl.knaw.huc.service.task.importfile;
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.core.Version;
 import nl.knaw.huc.service.task.HaveDocumentByExternalId;
+import nl.knaw.huc.service.task.HaveFileForDocumentByType;
 import nl.knaw.huc.service.task.SetCurrentFileContents;
 import nl.knaw.huc.service.task.SetFileProvenance;
 import nl.knaw.huc.service.task.Task;
@@ -56,7 +57,7 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
   }
 
   @Override
-  public Task build() {
+  public Task<Version> build() {
     return new JdbiImportDocumentTask(externalId, typeName, filename, getContents());
   }
 

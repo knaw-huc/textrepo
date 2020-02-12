@@ -3,6 +3,7 @@ package nl.knaw.huc.service.task;
 import nl.knaw.huc.service.index.FileIndexer;
 import nl.knaw.huc.service.task.finder.FindFileTaskBuilder;
 import nl.knaw.huc.service.task.importfile.ImportFileTaskBuilder;
+import nl.knaw.huc.service.task.finder.JdbiFindFileTaskBuilder;
 import nl.knaw.huc.service.task.importfile.JdbiImportFileTaskBuilder;
 import nl.knaw.huc.service.task.indexfile.IndexFileTaskBuilder;
 import nl.knaw.huc.service.task.indexfile.JdbiIndexFileTaskBuilder;

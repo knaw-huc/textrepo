@@ -1,6 +1,9 @@
-package nl.knaw.huc.service.task;
+package nl.knaw.huc.service.task.finder;
 
 import nl.knaw.huc.core.Version;
+import nl.knaw.huc.service.task.FindFile;
+import nl.knaw.huc.service.task.GetLatestFileVersion;
+import nl.knaw.huc.service.task.Task;
 import nl.knaw.huc.service.task.finder.FindFileTaskBuilder;
 import org.jdbi.v3.core.Jdbi;
 

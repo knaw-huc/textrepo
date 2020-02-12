@@ -1,4 +1,4 @@
-package nl.knaw.huc.service.task.importfile;
+package nl.knaw.huc.service.task;
 
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.core.TextrepoFile;
@@ -15,14 +15,14 @@ import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
-class HaveFileForDocumentByType implements ProvidesInTransaction<TextrepoFile> {
+public class HaveFileForDocumentByType implements ProvidesInTransaction<TextrepoFile> {
   private final Supplier<UUID> idGenerator;
   private final Document doc;
   private final String typeName;
 
   private Handle transaction;
 
-  HaveFileForDocumentByType(Supplier<UUID> idGenerator, Document doc, String typeName) {
+  public HaveFileForDocumentByType(Supplier<UUID> idGenerator, Document doc, String typeName) {
     this.idGenerator = requireNonNull(idGenerator);
     this.doc = requireNonNull(doc);
     this.typeName = requireNonNull(typeName);
