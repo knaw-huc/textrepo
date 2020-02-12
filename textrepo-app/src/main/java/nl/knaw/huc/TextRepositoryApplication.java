@@ -21,6 +21,7 @@ import nl.knaw.huc.resources.rest.FilesResource;
 import nl.knaw.huc.resources.rest.TypesResource;
 import nl.knaw.huc.resources.rest.VersionContentsResource;
 import nl.knaw.huc.resources.rest.VersionsResource;
+import nl.knaw.huc.resources.task.FindResource;
 import nl.knaw.huc.resources.task.ImportResource;
 import nl.knaw.huc.resources.task.IndexResource;
 import nl.knaw.huc.service.ContentsService;
@@ -38,7 +39,7 @@ import nl.knaw.huc.service.index.CustomIndexerException;
 import nl.knaw.huc.service.index.ElasticCustomIndexer;
 import nl.knaw.huc.service.index.ElasticFileIndexer;
 import nl.knaw.huc.service.store.JdbiContentsStorage;
-import nl.knaw.huc.service.task.importfile.JdbiTaskFactory;
+import nl.knaw.huc.service.task.JdbiTaskFactory;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 import org.slf4j.Logger;
@@ -114,6 +115,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
         new DocumentMetadataResource(documentMetadataService),
         new ImportResource(taskBuilderFactory, maxPayloadSize),
         new IndexResource(taskBuilderFactory),
+        new FindResource(taskBuilderFactory),
         new DeprecatedFilesResource(fileService, maxPayloadSize),
         new FilesResource(fileService),
         new DocumentFilesResource(documentFilesService),

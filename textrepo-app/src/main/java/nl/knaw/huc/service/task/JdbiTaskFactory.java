@@ -1,7 +1,9 @@
-package nl.knaw.huc.service.task.importfile;
+package nl.knaw.huc.service.task;
 
 import nl.knaw.huc.service.index.FileIndexer;
-import nl.knaw.huc.service.task.TaskBuilderFactory;
+import nl.knaw.huc.service.task.finder.FindFileTaskBuilder;
+import nl.knaw.huc.service.task.importfile.ImportFileTaskBuilder;
+import nl.knaw.huc.service.task.importfile.JdbiImportFileTaskBuilder;
 import nl.knaw.huc.service.task.indexfile.IndexFileTaskBuilder;
 import nl.knaw.huc.service.task.indexfile.JdbiIndexFileTaskBuilder;
 import org.jdbi.v3.core.Jdbi;
@@ -41,4 +43,8 @@ public class JdbiTaskFactory implements TaskBuilderFactory {
     return new JdbiIndexFileTaskBuilder(jdbi, fileIndexer);
   }
 
+  @Override
+  public FindFileTaskBuilder getFileFinderBuilder() {
+    return new JdbiFindFileTaskBuilder(jdbi);
+  }
 }

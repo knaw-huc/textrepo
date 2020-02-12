@@ -7,5 +7,5 @@ public interface IndexFileTaskBuilder {
 
   IndexFileTaskBuilder withType(String type);
 
-  Task build();
+  Task<String> build();
 }

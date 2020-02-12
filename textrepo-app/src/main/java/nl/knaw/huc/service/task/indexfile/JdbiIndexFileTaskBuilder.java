@@ -44,14 +44,14 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
   }
 
   @Override
-  public Task build() {
+  public Task<String> build() {
     if (externalId == null) {
       return new JdbiIndexAllFilesTask(typeName);
     }
     return new JdbiIndexFileTask(externalId, typeName);
   }
 
-  private class JdbiIndexFileTask implements Task {
+  private class JdbiIndexFileTask implements Task<String> {
     private final String externalId;
     private final String typeName;
 
@@ -61,18 +61,19 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
     }
 
     @Override
-    public void run() {
-      jdbi.useTransaction(txn -> {
+    public String run() {
+      return jdbi.inTransaction(txn -> {
         final var doc = new FindDocumentByExternalId(externalId).executeIn(txn);
         final var file = new FindDocumentFileByType(doc, typeName).executeIn(txn);
         final var contents = new GetLatestFileContents(file).executeIn(txn);
         final var indexResult = indexer.indexFile(file, contents.asUtf8String());
         indexResult.ifPresent(LOG::warn);
+        return indexResult.orElse("Ok");
       });
     }
   }
 
-  private class JdbiIndexAllFilesTask implements Task {
+  private class JdbiIndexAllFilesTask implements Task<String> {
     private final Logger logger = LoggerFactory.getLogger(JdbiIndexAllFilesTask.class);
 
     private final String typeName;
@@ -84,9 +85,11 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
     }
 
     @Override
-    public void run() {
+    public String run() {
       indexFilesByType(resolveType());
-      logger.info("Total files affected: {}", filesAffected);
+      final var msg = String.format("Total files affected: %d", filesAffected);
+      logger.info(msg);
+      return msg;
     }
 
     private Short resolveType() {
