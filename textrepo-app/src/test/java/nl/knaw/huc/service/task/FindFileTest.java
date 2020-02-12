@@ -39,6 +39,11 @@ public class FindFileTest {
     reset(FILES_DAO); // to reset verify() counters
   }
 
+  @Test(expected = NullPointerException.class)
+  public void testFindFile_rejectsNullQuery() {
+    new FindFile(null);
+  }
+
   @Test
   public void testFindFile_usesTransactionToAccessFilesDao() {
     when(FILES_DAO.find(TEST_FILE.getId())).thenReturn(Optional.of(TEST_FILE));

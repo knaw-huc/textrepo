@@ -5,14 +5,17 @@ import nl.knaw.huc.db.FilesDao;
 import org.jdbi.v3.core.Handle;
 
 import javax.ws.rs.NotFoundException;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Supplier;
+
+import static java.util.Objects.requireNonNull;
 
 public class FindFile implements ProvidesInTransaction<TextrepoFile> {
   private final UUID fileId;
 
   public FindFile(UUID fileId) {
-    this.fileId = fileId;
+    this.fileId = requireNonNull(fileId);
   }
 
   @Override
