@@ -1,7 +1,7 @@
 # Test `/rest/documents` collection
 
 ## Retrieve documents by external ID
-To add file metadata we first create: 
+To find documents we first create: 
   
   - a document with external ID: [`first-external-id`](- "#externalId1");
   - and a document with external ID: [`second-external-id`](- "#externalId2").
@@ -13,8 +13,7 @@ To add file metadata we first create:
 An external ID should be unique. 
 So when we search documents with a `PUT` to [`/rest/documents`](- "#searchEndpoint")
 
- - with query param: [`externalId`](- "#queryParam") 
- - with externalId: [`first-external-id`](- "#queryParamValue").
+ - with query param: [`externalId`](- "#queryParam") and value: [`first-external-id`](- "#queryParamValue").
 
 [ ](- "#searchSingle=search(#searchEndpoint, #queryParam, #queryParamValue)")
 
@@ -31,8 +30,7 @@ Then:
 An external ID should be unique. 
 So when we search documents with a `PUT` to [`/rest/documents`](- "#searchEndpoint")
 
- - with query param: [`externalId`](- "#queryParam") 
- - with externalId: [`ext`](- "#queryParamValue").
+ - with query param: [`externalId`](- "#queryParam") and value: [`ext`](- "#queryParamValue").
 
 [ ](- "#searchSingle=searchMultiple(#searchEndpoint, #queryParam, #queryParamValue)")
 
