@@ -1,6 +1,7 @@
 package nl.knaw.huc.textrepo.rest;
 
 import com.jayway.jsonpath.JsonPath;
+import net.minidev.json.JSONArray;
 import nl.knaw.huc.textrepo.AbstractConcordionTest;
 import nl.knaw.huc.textrepo.util.RestUtils;
 import org.concordion.api.extension.Extensions;
@@ -8,9 +9,9 @@ import org.concordion.api.option.ConcordionOptions;
 import org.concordion.ext.EmbedExtension;
 
 import static java.lang.String.format;
-import static javax.ws.rs.client.Entity.entity;
 import static nl.knaw.huc.textrepo.util.TestUtils.asPrettyJson;
 import static nl.knaw.huc.textrepo.util.TestUtils.replaceUrlParams;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 @Extensions(EmbedExtension.class)
 @ConcordionOptions(declareNamespaces = {"ext", "urn:concordion-extensions:2010"})
@@ -21,7 +22,7 @@ public class TestRestDocumentFiles extends AbstractConcordionTest {
   private String fooFileId;
 
   public void createDocumentWithTwoFiles() {
-    this.docId = RestUtils.createDocument();
+    this.docId = RestUtils.createDocument("dummy-" + randomAlphabetic(5));
     this.textFileId = RestUtils.createFile(docId, textTypeId);
     this.fooFileId = RestUtils.createFile(docId, fooTypeId);
   }
@@ -58,10 +59,13 @@ public class TestRestDocumentFiles extends AbstractConcordionTest {
     result.body = asPrettyJson(body);
     var json = JsonPath.parse(body);
     result.count = json.read("$.length()");
-    int typeId1 = json.read("$[0].typeId");
-    int typeId2 = json.read("$[1].typeId");
+
+    var typeId1 = (int) json.read("$[?(@.id == \"" + textFileId + "\")].typeId", JSONArray.class).get(0);
     result.type1 = typeId1 == textTypeId ? "text" : format("[%d] != text type id [%d]", typeId1, textTypeId);
+
+    var typeId2 = (int) json.read("$[?(@.id == \"" + fooFileId + "\")].typeId", JSONArray.class).get(0);
     result.type2 = typeId2 == fooTypeId ? "foo" : format("[%d] != foo type id [%d]", typeId2, fooTypeId);
+
     return result;
   }
 

@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.FormDocument;
 import nl.knaw.huc.api.ResultDocument;
 import nl.knaw.huc.core.Document;
+import nl.knaw.huc.exceptions.MethodNotAllowedException;
 import nl.knaw.huc.service.DocumentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,10 +22,13 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.util.UUID;
 
+import static java.util.stream.Collectors.toList;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Api(tags = {"documents"})
 @Path("/rest/documents")
@@ -50,6 +54,28 @@ public class DocumentsResource {
     logger.debug("create document: form={}", form);
     var doc = documentService.create(new Document(null, form.getExternalId()));
     return Response.ok(new ResultDocument(doc)).build();
+  }
+
+  @GET
+  @Produces(APPLICATION_JSON)
+  @ApiOperation(value = "Retrieve document")
+  @ApiResponses(value = {@ApiResponse(code = 200, response = ResultDocument.class, message = "OK")})
+  public Response get(
+      @QueryParam("externalId") String externalId
+  ) {
+    logger.debug("get documents");
+
+    if (isBlank(externalId)) {
+      throw new MethodNotAllowedException("Query param 'externalId' is required at the moment.");
+    }
+
+    var docs = documentService.getAll(externalId);
+
+    return Response.ok(docs
+        .stream()
+        .map(ResultDocument::new)
+        .collect(toList())
+    ).build();
   }
 
   @GET

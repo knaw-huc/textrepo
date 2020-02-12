@@ -2,6 +2,7 @@ package nl.knaw.huc.service;
 
 import nl.knaw.huc.core.Document;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -13,4 +14,6 @@ public interface DocumentService {
   Document update(Document document);
 
   void delete(UUID docId);
+
+  List<Document> getAll(String externalId);
 }

@@ -7,10 +7,6 @@ import org.concordion.api.extension.Extensions;
 import org.concordion.api.option.ConcordionOptions;
 import org.concordion.ext.EmbedExtension;
 
-import javax.ws.rs.core.UriBuilder;
-
-import java.net.URI;
-
 import static javax.ws.rs.client.Entity.entity;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
 import static nl.knaw.huc.textrepo.Config.HOST;

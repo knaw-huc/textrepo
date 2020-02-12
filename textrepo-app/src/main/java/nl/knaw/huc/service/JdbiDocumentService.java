@@ -4,6 +4,7 @@ import nl.knaw.huc.core.Document;
 import nl.knaw.huc.db.DocumentsDao;
 import org.jdbi.v3.core.Jdbi;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -38,6 +39,15 @@ public class JdbiDocumentService implements DocumentService {
   @Override
   public void delete(UUID docId) {
     documents().delete(docId);
+  }
+
+  /**
+   * get all documents filtered by externalId
+   * Atm only filtered by externalId
+   */
+  @Override
+  public List<Document> getAll(String externalId) {
+    return documents().getByExternalIdLike("%" + externalId + "%");
   }
 
   private DocumentsDao documents() {

@@ -11,6 +11,7 @@ import static javax.ws.rs.client.Entity.entity;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
 import static nl.knaw.huc.textrepo.util.TestUtils.asPrettyJson;
 import static nl.knaw.huc.textrepo.util.TestUtils.replaceUrlParams;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 @Extensions(EmbedExtension.class)
 @ConcordionOptions(declareNamespaces = {"ext", "urn:concordion-extensions:2010"})
@@ -19,7 +20,7 @@ public class TestRestFileMetadata extends AbstractConcordionTest {
   private String docId;
 
   public void createDocument() {
-    docId = RestUtils.createDocument();
+    docId = RestUtils.createDocument("dummy-" + randomAlphabetic(5));
   }
 
   public String createFile() {

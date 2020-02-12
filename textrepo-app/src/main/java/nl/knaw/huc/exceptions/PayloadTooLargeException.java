@@ -1,4 +1,4 @@
-package nl.knaw.huc.resources;
+package nl.knaw.huc.exceptions;
 
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.core.Response;

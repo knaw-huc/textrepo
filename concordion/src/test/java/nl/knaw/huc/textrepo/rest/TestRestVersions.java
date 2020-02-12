@@ -20,13 +20,14 @@ import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
 import static nl.knaw.huc.textrepo.Config.HOST;
 import static nl.knaw.huc.textrepo.util.TestUtils.asPrettyJson;
 import static nl.knaw.huc.textrepo.util.TestUtils.replaceUrlParams;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 @Extensions(EmbedExtension.class)
 @ConcordionOptions(declareNamespaces = {"ext", "urn:concordion-extensions:2010"})
 public class TestRestVersions extends AbstractConcordionTest {
 
   public String createDocument() {
-    return RestUtils.createDocument();
+    return RestUtils.createDocument("dummy-" + randomAlphabetic(5));
   }
 
   public String createFile(String docId) {
