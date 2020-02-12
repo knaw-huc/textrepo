@@ -10,7 +10,7 @@ import java.util.UUID;
 public interface FileService {
   TextrepoFile createFile(String type, String filename);
 
-  Version createVersion(TextrepoFile file, byte[] content);
+  Version createVersion(TextrepoFile file, byte[] contents);
 
   Version addFile(Contents contents, TextrepoFile file);
 

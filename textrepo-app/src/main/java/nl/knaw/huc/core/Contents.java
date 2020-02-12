@@ -16,16 +16,16 @@ public class Contents {
   private static final DigestUtils SHA_224 = new DigestUtils(MessageDigestAlgorithms.SHA_224);
 
   private final String sha224;
-  private final byte[] content;
+  private final byte[] contents;
 
-  public static Contents fromContent(@Nonnull byte[] content) {
-    return new Contents(SHA_224.digestAsHex(content), content);
+  public static Contents fromBytes(@Nonnull byte[] contents) {
+    return new Contents(SHA_224.digestAsHex(contents), contents);
   }
 
-  @ConstructorProperties({"sha224", "content"})
-  public Contents(String sha224, byte[] content) {
+  @ConstructorProperties({"sha224", "contents"})
+  public Contents(String sha224, byte[] contents) {
     this.sha224 = sha224;
-    this.content = content;
+    this.contents = contents;
   }
 
   @JsonProperty
@@ -34,12 +34,12 @@ public class Contents {
   }
 
   @JsonProperty
-  public byte[] getContent() {
-    return content;
+  public byte[] getContents() {
+    return contents;
   }
 
   @JsonIgnore
   public String asUtf8String() {
-    return new String(content, StandardCharsets.UTF_8);
+    return new String(contents, StandardCharsets.UTF_8);
   }
 }

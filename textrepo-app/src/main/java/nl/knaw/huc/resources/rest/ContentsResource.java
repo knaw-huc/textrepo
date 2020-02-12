@@ -39,7 +39,7 @@ public class ContentsResource {
   public Response get(
       @PathParam("sha") @NotBlank String sha
   ) {
-    logger.debug("getContentsBySha224: sha={}", sha);
+    logger.debug("get contents: sha={}", sha);
     if (sha.length() != 56) {
       logger.warn("bad length in sha ({}): {}", sha.length(), sha);
       throw new BadRequestException("not a sha: " + sha);
@@ -48,7 +48,7 @@ public class ContentsResource {
     final var contents = contentsService.getBySha(sha);
 
     return Response
-        .ok(contents.getContent(), APPLICATION_OCTET_STREAM)
+        .ok(contents.getContents(), APPLICATION_OCTET_STREAM)
         .header("Content-Disposition", "attachment;")
         .build();
   }

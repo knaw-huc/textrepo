@@ -51,9 +51,9 @@ class ZipHandling {
         logger.info("handle zipped [{}]", filename);
 
         inputStream.transferTo(buffer);
-        var content = buffer.toByteArray();
+        var contents = buffer.toByteArray();
         buffer.reset();
-        var formFile = new FormContents(filename, content);
+        var formFile = new FormContents(filename, contents);
         var resultFile = handleFile.apply(formFile);
         results.add(resultFile);
       }

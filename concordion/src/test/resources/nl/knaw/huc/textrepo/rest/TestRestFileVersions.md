@@ -2,14 +2,13 @@
 
 ## Retrieve file versions
 
-### Set up
-
 [ ](- "#docId=createDocument()")
 [ ](- "#fileId=createFile(#docId)")
 [ ](- "#oldVersionId=createVersion(#fileId)")
 [ ](- "#newVersionId=createVersion(#fileId)")
 
-To view the versions of a file we first create: 
+A file can have multiple versions.
+To view all versions of a file we first create: 
   
   - a document;
   - a file: [ ](- "c:echo=#fileId");

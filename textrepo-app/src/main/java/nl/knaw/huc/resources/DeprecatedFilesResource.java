@@ -32,7 +32,7 @@ import java.util.UUID;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
 import static nl.knaw.huc.resources.ResourceUtils.locationOf;
-import static nl.knaw.huc.resources.ResourceUtils.readContent;
+import static nl.knaw.huc.resources.ResourceUtils.readContents;
 import static nl.knaw.huc.resources.ZipHandling.handleZipFile;
 import static nl.knaw.huc.resources.ZipHandling.isZip;
 import static org.eclipse.jetty.util.StringUtil.isBlank;
@@ -86,7 +86,7 @@ public class DeprecatedFilesResource {
         typeName,
         new FormContents(
             fileDetail.getFileName(),
-            readContent(inputStream, maxPayloadSize)
+            readContents(inputStream, maxPayloadSize)
         )
     );
 
@@ -113,7 +113,7 @@ public class DeprecatedFilesResource {
     var file = fileService.createFile(typeName, formContents.getName());
     var version = fileService.createVersion(
         file,
-        formContents.getContent()
+        formContents.getContents()
     );
     return new ResultContents(
         formContents.getName(),

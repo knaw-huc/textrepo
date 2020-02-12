@@ -20,8 +20,8 @@ public class ElasticsearchConfiguration {
   public String index;
 
   /**
-   * Field in which to store file content.
+   * Field in which to store version contents.
    */
   @JsonProperty
-  public String contentField;
+  public String contentsField;
 }

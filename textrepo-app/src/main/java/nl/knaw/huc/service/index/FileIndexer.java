@@ -8,6 +8,6 @@ import java.util.Optional;
 public interface FileIndexer {
   Optional<String> indexFile(
       @Nonnull TextrepoFile file,
-      @Nonnull String latestVersionContent
+      @Nonnull String latestVersionContents
   );
 }

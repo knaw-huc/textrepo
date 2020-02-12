@@ -29,10 +29,10 @@ public class ContentsResourceTest {
   private static final ContentsStorage FILE_STORAGE = mock(ContentsStorage.class);
 
   private final static String sha224 = "55d4c44f5bc05762d8807f75f3f24b4095afa583ef70ac97eaf7afc6";
-  private final static String content = "hello test";
+  private final static String contents = "hello test";
   private final static Contents TEXT_REPO_CONTENTS = new Contents(
       sha224,
-      content.getBytes()
+      contents.getBytes()
   );
 
   @ClassRule
@@ -57,8 +57,8 @@ public class ContentsResourceTest {
 
     var response = resource.client().target("/rest/contents/" + sha224).request().get();
     var inputStream = response.readEntity(InputStream.class);
-    var actualContent = IOUtils.toString(inputStream, UTF_8);
-    assertThat(actualContent).isEqualTo(content);
+    var actualContents = IOUtils.toString(inputStream, UTF_8);
+    assertThat(actualContents).isEqualTo(contents);
   }
 
   @Test

@@ -2,10 +2,9 @@
 
 ## Retrieve files of a document
 
-### Set up
-
 [ ](- "createDocumentWithTwoFiles()")
 
+A document can contain multiple types, and only one file per type. 
 To retrieve all files of a document we first create:
 
  - a document: [ ](- "c:echo=getDocId()");

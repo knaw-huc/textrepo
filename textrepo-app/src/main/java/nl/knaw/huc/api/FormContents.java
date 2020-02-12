@@ -3,18 +3,18 @@ package nl.knaw.huc.api;
 public class FormContents {
 
   private final String name;
-  private final byte[] content;
+  private final byte[] contents;
 
-  public FormContents(String name, byte[] content) {
+  public FormContents(String name, byte[] contents) {
     this.name = name;
-    this.content = content;
+    this.contents = contents;
   }
 
   public String getName() {
     return name;
   }
 
-  public byte[] getContent() {
-    return content;
+  public byte[] getContents() {
+    return contents;
   }
 }

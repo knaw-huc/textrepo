@@ -149,6 +149,10 @@ public class TestUtils {
     } catch (JsonProcessingException ex) {
       throw new IllegalArgumentException(format("Could not pretty print json string: [%s]", string), ex);
     }
+    return asCodeBlock(result);
+  }
+
+  public static String asCodeBlock(String result) {
     return "<pre>" + result + "</pre>";
   }
 

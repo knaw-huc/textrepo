@@ -6,7 +6,7 @@ import nl.knaw.huc.db.TypesDao;
 import nl.knaw.huc.service.index.FileIndexer;
 import nl.knaw.huc.service.task.FindDocumentByExternalId;
 import nl.knaw.huc.service.task.FindDocumentFileByType;
-import nl.knaw.huc.service.task.GetLatestFileContent;
+import nl.knaw.huc.service.task.GetLatestFileContents;
 import nl.knaw.huc.service.task.Task;
 import org.jdbi.v3.core.Jdbi;
 import org.slf4j.Logger;
@@ -65,7 +65,7 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
       jdbi.useTransaction(txn -> {
         final var doc = new FindDocumentByExternalId(externalId).executeIn(txn);
         final var file = new FindDocumentFileByType(doc, typeName).executeIn(txn);
-        final var contents = new GetLatestFileContent(file).executeIn(txn);
+        final var contents = new GetLatestFileContents(file).executeIn(txn);
         final var indexResult = indexer.indexFile(file, contents.asUtf8String());
         indexResult.ifPresent(LOG::warn);
       });
@@ -108,7 +108,7 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
     private void indexFile(TextrepoFile file) {
       logger.debug("Indexing file: {}", file.getId());
       jdbi.useTransaction(txn -> {
-        final var contents = new GetLatestFileContent(file).executeIn(txn);
+        final var contents = new GetLatestFileContents(file).executeIn(txn);
         final var indexResult = indexer.indexFile(file, contents.asUtf8String());
         indexResult.ifPresent(LOG::warn);
         filesAffected++;

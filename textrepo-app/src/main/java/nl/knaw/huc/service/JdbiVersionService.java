@@ -64,9 +64,9 @@ public class JdbiVersionService implements VersionService {
       @Nonnull LocalDateTime time
   ) {
     contentsService.addContents(contents);
-    var latestVersionContent = contents.asUtf8String();
-    fileIndexService.indexFile(file, latestVersionContent);
-    customFacetIndexers.forEach(indexer -> indexer.indexFile(file, latestVersionContent));
+    var latestVersionContents = contents.asUtf8String();
+    fileIndexService.indexFile(file, latestVersionContents);
+    customFacetIndexers.forEach(indexer -> indexer.indexFile(file, latestVersionContents));
 
     var id = uuidGenerator.get();
     var newVersion = new Version(id, file.getId(), time, contents.getSha224());

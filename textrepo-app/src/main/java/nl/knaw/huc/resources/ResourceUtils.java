@@ -8,7 +8,7 @@ import java.net.URI;
 import java.util.UUID;
 
 public class ResourceUtils {
-  public static byte[] readContent(InputStream uploadedInputStream, int maxFileSize) {
+  public static byte[] readContents(InputStream uploadedInputStream, int maxFileSize) {
     if (uploadedInputStream == null) {
       throw new BadRequestException("File is missing");
     }

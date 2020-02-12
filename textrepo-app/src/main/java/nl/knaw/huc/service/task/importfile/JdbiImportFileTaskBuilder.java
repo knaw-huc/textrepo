@@ -60,7 +60,7 @@ class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
   }
 
   private Contents getContents() {
-    return Contents.fromContent(contents);
+    return Contents.fromBytes(contents);
   }
 
   private class JdbiImportDocumentTask implements Task {

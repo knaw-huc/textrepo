@@ -18,7 +18,7 @@ import java.util.function.Supplier;
 
 import static java.lang.String.format;
 import static java.time.LocalDateTime.now;
-import static nl.knaw.huc.core.Contents.fromContent;
+import static nl.knaw.huc.core.Contents.fromBytes;
 
 public class JdbiFileService implements FileService {
 
@@ -55,8 +55,8 @@ public class JdbiFileService implements FileService {
     return new TextrepoFile(fileId, typeId);
   }
 
-  public Version createVersion(TextrepoFile file, byte[] content) {
-    final var contents = fromContent(content);
+  public Version createVersion(TextrepoFile file, byte[] bytes) {
+    final var contents = fromBytes(bytes);
     return addFile(contents, file);
   }
 

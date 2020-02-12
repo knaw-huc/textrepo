@@ -31,9 +31,9 @@ import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
 public class VersionContentsResource {
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
-  private static final String POST_ERROR_MSG = "Not allowed to post content: create new version instead";
-  private static final String PUT_ERROR_MSG = "Not allowed to put content of version: create new version instead";
-  private static final String DELETE_ERROR_MSG = "Not allowed to delete content of version: delete version instead";
+  private static final String POST_ERROR_MSG = "Not allowed to post contents: post new version instead";
+  private static final String PUT_ERROR_MSG = "Not allowed to put contents of version: post new version instead";
+  private static final String DELETE_ERROR_MSG = "Not allowed to delete contents of version: delete version instead";
 
   private VersionContentsService contentsService;
 
@@ -52,15 +52,15 @@ public class VersionContentsResource {
   @GET
   @Timed
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Retrieve version content")
+  @ApiOperation(value = "Retrieve version contents")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultVersion.class, message = "OK")})
   public Response get(
       @PathParam("versionId") @NotNull @Valid UUID versionId
   ) {
-    logger.debug("get version content: versionId={}", versionId);
-    var content = contentsService.getByVersionId(versionId);
+    logger.debug("get version contents: versionId={}", versionId);
+    var contents = contentsService.getByVersionId(versionId);
     return Response
-        .ok(content.getContent(), APPLICATION_OCTET_STREAM)
+        .ok(contents.getContents(), APPLICATION_OCTET_STREAM)
         .header("Content-Disposition", "attachment;")
         .build();
   }

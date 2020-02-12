@@ -31,8 +31,8 @@ import static java.time.LocalDateTime.now;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
-import static nl.knaw.huc.core.Contents.fromContent;
-import static nl.knaw.huc.resources.ResourceUtils.readContent;
+import static nl.knaw.huc.core.Contents.fromBytes;
+import static nl.knaw.huc.resources.ResourceUtils.readContents;
 
 /**
  * TODO: deprecated, or move to /task?
@@ -66,7 +66,7 @@ public class FileContentsResource {
     LOG.debug("updateFileContents: fileId={}, file={}", fileId, fileDetail.getFileName());
     var resultFile = handleUpdate(
         fileId,
-        readContent(uploadedInputStream, maxPayloadSize),
+        readContents(uploadedInputStream, maxPayloadSize),
         fileDetail.getFileName()
     );
     if (resultFile == null) {
@@ -86,7 +86,7 @@ public class FileContentsResource {
     LOG.debug("getContents: fileId={}", fileId);
     var contents = fileContentsService.getLatestFileContents(fileId);
     return Response
-        .ok(contents.getContent(), APPLICATION_OCTET_STREAM)
+        .ok(contents.getContents(), APPLICATION_OCTET_STREAM)
         .header("Content-Disposition", "attachment;")
         .build();
   }
@@ -98,11 +98,11 @@ public class FileContentsResource {
    */
   private ResultContents handleUpdate(
       UUID fileId,
-      byte[] content,
+      byte[] bytes,
       String filename
   ) {
     LOG.debug("replacing contents: fileId={}", fileId);
-    var contents = fromContent(content);
+    var contents = fromBytes(bytes);
 
     final var startReplacing = now();
     var version = fileContentsService.replaceFileContents(fileId, contents, filename);

@@ -1,7 +1,7 @@
 -- Contents of a file is identified by its SHA-224.
 create table contents (
   sha224 char(56) primary key,
-  content bytea
+  contents bytea
 );
 
 -- Types of files in use (e.g., FoLia, Alto, PageXML, TEI, ...)

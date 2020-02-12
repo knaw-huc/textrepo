@@ -6,10 +6,10 @@ import org.jdbi.v3.core.Handle;
 
 import static java.util.Objects.requireNonNull;
 
-public class GetLatestFileContent implements ProvidesInTransaction<Contents> {
+public class GetLatestFileContents implements ProvidesInTransaction<Contents> {
   private final TextrepoFile file;
 
-  public GetLatestFileContent(TextrepoFile file) {
+  public GetLatestFileContents(TextrepoFile file) {
     this.file = requireNonNull(file);
   }
 

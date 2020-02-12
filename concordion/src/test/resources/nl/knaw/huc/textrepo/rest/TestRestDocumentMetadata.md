@@ -2,10 +2,9 @@
 
 ## Create, retrieve, update and delete document metadata
 
-### Set up
-
 [ ](- "#docId=createDocument()")
 
+A document has metadata: a map of key-value pairs. 
 To add document metadata we created a document first: [ ](- "c:echo=#docId")
 
 ### Create document metadata

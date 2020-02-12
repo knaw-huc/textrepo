@@ -27,10 +27,10 @@ public class JdbiContentsStorageTest {
   private static final ContentsStorage STORE = new JdbiContentsStorage(jdbi);
 
   private static final String sha224 = "55d4c44f5bc05762d8807f75f3f24b4095afa583ef70ac97eaf7afc6";
-  private static final String content = "hello test";
+  private static final String contents = "hello test";
   private static final Contents TEXT_REPO_CONTENTS = new Contents(
       sha224,
-      content.getBytes()
+      contents.getBytes()
   );
 
   @Before

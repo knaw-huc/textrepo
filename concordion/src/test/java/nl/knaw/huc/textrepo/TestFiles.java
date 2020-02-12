@@ -15,10 +15,10 @@ import static nl.knaw.huc.textrepo.util.TestUtils.postFileWithFilename;
 
 public class TestFiles extends AbstractConcordionTest {
 
-  public MultiValueResult upload(String content) throws MalformedURLException {
+  public MultiValueResult upload(String contents) throws MalformedURLException {
     var filename = "test-" + UUID.randomUUID() + ".txt";
     var endpoint = new URL(FILES_URL);
-    var response = postFileWithFilename(client(), endpoint, filename, content.getBytes());
+    var response = postFileWithFilename(client(), endpoint, filename, contents.getBytes());
 
     var locationHeader = getLocation(response);
     var optionalFileId = locationHeader.map(TestUtils::getFileId);
@@ -53,7 +53,7 @@ public class TestFiles extends AbstractConcordionTest {
     var response = request.get();
     return new MultiValueResult()
         .with("status", getStatus(response))
-        .with("entity", JsonPath.parse(response.readEntity(String.class)).read("$._source.content"));
+        .with("entity", JsonPath.parse(response.readEntity(String.class)).read("$._source.contents"));
   }
 
 }
