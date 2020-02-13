@@ -21,6 +21,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 public class TypesResourceTest {
@@ -51,12 +52,16 @@ public class TypesResourceTest {
   public void testAddType_createsType() {
     var expectedName = "test-type";
     var expectedMimetype = "application/xml";
-    var type = new FormType(expectedName, expectedMimetype);
+    var form = new FormType(expectedName, expectedMimetype);
+    var type = new Type(expectedName, expectedMimetype);
+    type.setId((short) 456);
+    when(typeService.create(any())).thenReturn(type);
+
     var response = resource
         .client()
         .target("/rest/types")
         .request()
-        .post(json(type));
+        .post(json(form));
 
     assertThat(response.getStatus()).isEqualTo(200);
 

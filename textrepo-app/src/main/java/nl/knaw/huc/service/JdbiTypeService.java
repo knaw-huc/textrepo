@@ -29,13 +29,11 @@ public class JdbiTypeService implements TypeService {
   }
 
   @Override
-  public short create(@Nonnull Type type) {
-    if (types().exists(type.getName())) {
-      throw new WebApplicationException("Duplicate type name: " + type.getName(), CONFLICT);
-    }
-    final var id = types().create(type);
-    LOGGER.trace("Type '{}' created with id: {}", type.getName(), id);
-    return id;
+  public Type create(@Nonnull Type type) {
+    throwWhenNameExists(type);
+    type.setId(types().create(type));
+    LOGGER.trace("Created type {}", type);
+    return type;
   }
 
   @Override
@@ -48,12 +46,32 @@ public class JdbiTypeService implements TypeService {
     return types()
         .get(typeId)
         .orElseThrow(() -> new RuntimeException(format(
-            "Could not find type for type id [%s]",
+            "Could not find type with id %s",
             typeId
         )));
   }
 
+  @Override
+  public Type upsert(Type type) {
+    throwWhenNameExists(type);
+    types().upsert(type);
+    LOGGER.trace("Upserted type {}", type);
+    return type;
+  }
+
+  @Override
+  public void delete(Short typeId) {
+    types().delete(typeId);
+    LOGGER.trace("Deleted type with id {}", typeId);
+  }
+
   private TypesDao types() {
     return jdbi.onDemand(TypesDao.class);
+  }
+
+  private void throwWhenNameExists(@Nonnull Type type) {
+    if (types().exists(type.getName())) {
+      throw new WebApplicationException("Duplicate type name: " + type.getName(), CONFLICT);
+    }
   }
 }

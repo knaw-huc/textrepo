@@ -2,6 +2,7 @@ package nl.knaw.huc.db;
 
 import nl.knaw.huc.core.Type;
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
+import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.customizer.BindBean;
 import org.jdbi.v3.sqlobject.statement.GetGeneratedKeys;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
@@ -29,4 +30,12 @@ public interface TypesDao {
   default boolean exists(String name) {
     return find(name).isPresent();
   }
+
+  @SqlUpdate("insert into types (id, name, mimetype) values (:id, :name, :mimetype) " +
+      "on conflict (id) do update set name = excluded.name, mimetype = excluded.mimetype")
+  void upsert(@BindBean Type type);
+
+  @SqlUpdate("delete from types where id = :typeId")
+  void delete(@Bind("typeId") Short typeId);
+
 }

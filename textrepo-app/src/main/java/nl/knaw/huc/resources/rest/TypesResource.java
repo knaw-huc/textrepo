@@ -20,6 +20,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import java.util.List;
@@ -49,8 +50,8 @@ public class TypesResource {
   ) {
     var type = new Type(form.getName(), form.getMimetype());
     logger.debug("Create type: type={}", type);
-    type.setId(typeService.create(type));
-    return Response.ok(new ResultType(type)).build();
+    var created = typeService.create(type);
+    return Response.ok(new ResultType(created)).build();
   }
 
   @GET
@@ -65,16 +66,28 @@ public class TypesResource {
   @Path("/{id}")
   @ApiOperation(value = PUT_ERROR_MSG)
   @ApiResponses(value = {@ApiResponse(code = 405, message = PUT_ERROR_MSG)})
-  public Response put() {
-    throw new MethodNotAllowedException(PUT_ERROR_MSG);
+  public Response put(
+      @NotNull @PathParam("id") Short id,
+      @NotNull @Valid FormType form
+  ) {
+    var type = new Type(form.getName(), form.getMimetype());
+    type.setId(id);
+    logger.debug("Put type: type={}", type);
+    typeService.upsert(type);
+    return Response.ok(new ResultType(type)).build();
   }
 
   @DELETE
+  @Path("/{id}")
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = DELETE_ERROR_MSG)
   @ApiResponses(value = {@ApiResponse(code = 405, message = DELETE_ERROR_MSG)})
-  public Response delete() {
-    throw new MethodNotAllowedException(DELETE_ERROR_MSG);
+  public Response delete(
+      @NotNull @PathParam("id") Short id
+  ) {
+    logger.debug("Delete type: id={}", id);
+    typeService.delete(id);
+    return Response.ok().build();
   }
 
 }
