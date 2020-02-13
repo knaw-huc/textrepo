@@ -1,14 +1,13 @@
 # Test `/rest/versions/{id}/contents`
 
-## Retrieve version contents
+A version has content.
 
+To retrieve the contents of a version we first create: 
+  
 [ ](- "#docId=createDocument()")
 [ ](- "#fileId=createFile(#docId)")
 [ ](- "#versionId=createVersion(#fileId)")
 
-A version has content.
-To retrieve the contents of a version we first create: 
-  
   - a document;
   - a file;
   - and a version: [ ](- "c:echo=#versionId");

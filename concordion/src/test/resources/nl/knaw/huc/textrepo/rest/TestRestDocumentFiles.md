@@ -1,11 +1,10 @@
 # Test `/rest/documents/{id}/files`
 
-## Retrieve files of a document
+A document can contain multiple types, and only one file per type. 
+
+To retrieve all files of a document we first create:
 
 [ ](- "createDocumentWithTwoFiles()")
-
-A document can contain multiple types, and only one file per type. 
-To retrieve all files of a document we first create:
 
  - a document: [ ](- "c:echo=getDocId()");
  - with a file of type `text`: [ ](- "c:echo=getTextFileId()");

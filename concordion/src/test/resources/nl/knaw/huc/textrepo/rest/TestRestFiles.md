@@ -1,12 +1,11 @@
 # Test `/rest/files`
 
-## Create, retrieve, update and delete files
+A document contains files, no more than one file per type.
 
 [ ](- "#docId=createDocument()")
 [ ](- "#typeId=getTypeId()")
 [ ](- "#fooTypeId=getFooTypeId()")
 
-A document contains files, no more than one file per type.
 To add a file we create a document first: [ ](- "c:echo=#docId")
 
 ### Create file

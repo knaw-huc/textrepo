@@ -1,11 +1,10 @@
 # Test `/rest/documents` collection
 
-## Retrieve documents by external ID
 To find documents we first create: 
   
   - a document with external ID: [`first-external-id`](- "#externalId1");
   - and a document with external ID: [`second-external-id`](- "#externalId2").
-
+  
 [ ](- "createDocument(#externalId1)")
 [ ](- "createDocument(#externalId2)")
 

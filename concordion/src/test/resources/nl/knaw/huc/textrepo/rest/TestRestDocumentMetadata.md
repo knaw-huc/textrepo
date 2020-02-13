@@ -1,11 +1,10 @@
 # Test `/rest/document/{id}/metadata`
 
-## Create, retrieve, update and delete document metadata
+A document has metadata: a map of key-value pairs. 
 
 [ ](- "#docId=createDocument()")
 
-A document has metadata: a map of key-value pairs. 
-To add document metadata we created a document first: [ ](- "c:echo=#docId")
+To add document metadata we first create a document: [ ](- "c:echo=#docId")
 
 ### Create document metadata
 When adding the following document metadata with a `PUT` to [`/rest/documents/{id}/metadata/{key}`](- "#createEndpoint")

@@ -1,7 +1,5 @@
 # Test `/rest/types`
 
-## Create, retrieve, update and delete types
-
 Every file has a type and a document contains only one file per type. 
 
 ### Create type

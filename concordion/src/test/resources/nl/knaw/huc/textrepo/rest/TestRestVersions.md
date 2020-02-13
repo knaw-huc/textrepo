@@ -1,13 +1,12 @@
 # Test `/rest/versions`
 
-## Create, retrieve, update and delete versions
+A file can have multiple versions.
 
+To add a version we first create:
+ 
 [ ](- "#docId=createDocument()")
 [ ](- "#fileId=createFile(#docId)")
 
-A file can have multiple versions.
-To add a version we first create:
- 
  - a document: [ ](- "c:echo=#docId")
  - a file: [ ](- "c:echo=#fileId")
 

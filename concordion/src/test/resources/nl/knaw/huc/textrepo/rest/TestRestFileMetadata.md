@@ -1,13 +1,12 @@
 # Test `/rest/file/{id}/metadata`
 
-## Create, retrieve, update and delete file metadata
+A file has metadata: a map of key-value pairs. 
+
+To add file metadata we first create: 
 
 [ ](- "createDocument()")
 [ ](- "#fileId=createFile()")
 
-A file has metadata: a map of key-value pairs. 
-To add file metadata we first create: 
-  
   - a document;
   - and a file: [ ](- "c:echo=#fileId").
 

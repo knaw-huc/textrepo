@@ -1,13 +1,13 @@
 # Test `/rest/contents/{sha}`
 
-## Retrieve version contents
+Every version has a sha of its contents. 
+
+To retrieve the contents of a version by its sha we first create: 
 
 [ ](- "#docId=createDocument()")
 [ ](- "#fileId=createFile(#docId)")
 [ ](- "#versionId=createVersion(#fileId)")
 [ ](- "#sha=getSha(#versionId)")
-
-Every version has a sha of its contents. To retrieve the contents of a version by its sha we first create: 
   
   - a document;
   - a file;

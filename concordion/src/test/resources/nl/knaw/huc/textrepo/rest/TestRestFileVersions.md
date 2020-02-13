@@ -1,15 +1,14 @@
 # Test `/rest/file/{id}/versions`
 
-## Retrieve file versions
+A file can have multiple versions.
+
+To view all versions of a file we first create: 
 
 [ ](- "#docId=createDocument()")
 [ ](- "#fileId=createFile(#docId)")
 [ ](- "#oldVersionId=createVersion(#fileId)")
 [ ](- "#newVersionId=createVersion(#fileId)")
 
-A file can have multiple versions.
-To view all versions of a file we first create: 
-  
   - a document;
   - a file: [ ](- "c:echo=#fileId");
   - an old version: [ ](- "c:echo=#oldVersionId");
