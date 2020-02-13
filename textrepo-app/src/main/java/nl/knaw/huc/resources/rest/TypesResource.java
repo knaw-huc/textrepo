@@ -98,9 +98,7 @@ public class TypesResource {
 
   @DELETE
   @Path("/{id}")
-  @Produces(APPLICATION_JSON)
-  @ApiOperation(value = DELETE_ERROR_MSG)
-  @ApiResponses(value = {@ApiResponse(code = 405, message = DELETE_ERROR_MSG)})
+  @ApiOperation(value = "Delete type")
   public Response delete(
       @NotNull @PathParam("id") Short id
   ) {
