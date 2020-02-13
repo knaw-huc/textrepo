@@ -11,8 +11,14 @@ public class Type {
   private final String name;
   private final String mimetype;
 
-  @ConstructorProperties({"name", "mimetype"})
   public Type(String name, String mimetype) {
+    this.name = name;
+    this.mimetype = mimetype;
+  }
+
+  @ConstructorProperties({"id", "name", "mimetype"})
+  public Type(short id, String name, String mimetype) {
+    this.id = id;
     this.name = name;
     this.mimetype = mimetype;
   }
