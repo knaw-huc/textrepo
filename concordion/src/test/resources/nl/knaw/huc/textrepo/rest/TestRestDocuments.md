@@ -22,7 +22,7 @@ Then:
  
 [ ](- "ext:embed=#createResult.body")
 
-### Get document
+### Retrieve document
 When retrieving the following document with a `GET` to [`/rest/documents/{id}`](- "#getEndpoint") 
 
  - where `{id}` is [ ](- "c:echo=#createResult.id"):
@@ -65,7 +65,7 @@ Then:
 
  - The response status should be: [200](- "?=#deleteResult.status").
 
-### Get document after deleting
+### Retrieve document after deleting
 When retrieving document [ ](- "c:echo=#createResult.id") with a `GET` to [`/rest/documents/{id}`](- "#getEndpoint"):
 
 [ ](- "#retrieveAfterDeleteResult=getAfterDelete(#getEndpoint, #createResult.id)")
