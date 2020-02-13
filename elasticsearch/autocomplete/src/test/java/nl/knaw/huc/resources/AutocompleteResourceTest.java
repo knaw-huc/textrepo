@@ -20,7 +20,7 @@ import java.io.IOException;
 import static java.lang.String.format;
 import static javax.ws.rs.client.Entity.entity;
 import static nl.knaw.huc.TestUtils.getResourceAsBytes;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class AutocompleteResourceTest {
 
