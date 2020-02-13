@@ -82,8 +82,9 @@ public class TypesResource {
 
   @PUT
   @Path("/{id}")
-  @ApiOperation(value = PUT_ERROR_MSG)
-  @ApiResponses(value = {@ApiResponse(code = 405, message = PUT_ERROR_MSG)})
+  @Consumes(APPLICATION_JSON)
+  @Produces(APPLICATION_JSON)
+  @ApiOperation(value = "Update type")
   public Response put(
       @NotNull @PathParam("id") Short id,
       @NotNull @Valid FormType form
