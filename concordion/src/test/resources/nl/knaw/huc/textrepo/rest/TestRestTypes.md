@@ -2,8 +2,7 @@
 
 ## Create, retrieve, update and delete types
 
-Type is the top level entity in the text repository. 
-A type can represent any physical type like a page or multiple pages, and contains all text files (plain text, xml, etc.) that describe this type.  
+Every file has a type and a document contains only one file per type. 
 
 ### Create type
 When creating the following type with a `POST` to [`/rest/types`](- "#createEndpoint"):
