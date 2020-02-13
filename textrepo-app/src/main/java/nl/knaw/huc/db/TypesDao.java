@@ -24,8 +24,9 @@ public interface TypesDao {
   @RegisterConstructorMapper(value = Type.class)
   Optional<Type> get(Short id);
 
-  @SqlQuery("select name from types")
-  List<String> list();
+  @SqlQuery("select id, name, mimetype from types")
+  @RegisterConstructorMapper(value = Type.class)
+  List<Type> list();
 
   default boolean exists(String name) {
     return find(name).isPresent();

@@ -6,7 +6,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public interface TypeService {
-  List<String> list();
+  List<Type> list();
 
   Type create(@Nonnull Type type);
 

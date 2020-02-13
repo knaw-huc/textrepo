@@ -25,6 +25,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 @Api(tags = {"types"})
@@ -57,9 +58,26 @@ public class TypesResource {
   @GET
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Retrieve types")
-  public List<String> get() {
+  public Response getAll() {
     logger.debug("Retrieve types");
-    return typeService.list();
+    var all = typeService
+        .list()
+        .stream()
+        .map(ResultType::new)
+        .collect(toList());
+    return Response.ok(all).build();
+  }
+
+  @GET
+  @Path("/{id}")
+  @Produces(APPLICATION_JSON)
+  @ApiOperation(value = "Retrieve types")
+  public Response get(
+      @NotNull @PathParam("id") Short id
+  ) {
+    logger.debug("Retrieve type: id={}", id);
+    var type = typeService.getType(id);
+    return Response.ok(new ResultType(type)).build();
   }
 
   @PUT
