@@ -44,7 +44,7 @@ public class TestRestFiles extends AbstractConcordionTest {
     var result = new CreateResult();
     result.status = response.getStatus();
     var body = response.readEntity(String.class);
-    result.id = JsonPath.parse(body).read("$.id");
+    result.id = jsonPath.parse(body).read("$.id");
     result.validUuid = TestUtils.isValidUuidMsg(result.id);
     result.body = asPrettyJson(body);
     return result;
@@ -67,7 +67,7 @@ public class TestRestFiles extends AbstractConcordionTest {
     result.status = response.getStatus();
     var body = response.readEntity(String.class);
     result.body = asPrettyJson(body);
-    var json = JsonPath.parse(body);
+    var json = jsonPath.parse(body);
     result.validUuid = TestUtils.isValidUuidMsg(json.read("$.id"));
     int resultTypeId = json.read("$.typeId");
     result.correctType = resultTypeId == textTypeId ? "correct type" : "" + resultTypeId + " != " + textTypeId;
@@ -95,7 +95,7 @@ public class TestRestFiles extends AbstractConcordionTest {
     var result = new UpdateResult();
     result.status = response.getStatus();
     result.body = asPrettyJson(body);
-    var json = JsonPath.parse(body);
+    var json = jsonPath.parse(body);
     int resultTypeId = json.read("$.typeId");
     result.updatedType = resultTypeId == fooTypeId ? "updated type" : "" + resultTypeId + " != " + typeId;
     return result;

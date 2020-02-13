@@ -1,6 +1,5 @@
 package nl.knaw.huc.textrepo.rest;
 
-import com.jayway.jsonpath.JsonPath;
 import nl.knaw.huc.textrepo.AbstractConcordionTest;
 import nl.knaw.huc.textrepo.util.RestUtils;
 import org.concordion.api.extension.Extensions;
@@ -36,7 +35,7 @@ public class TestRestContents extends AbstractConcordionTest {
 
     var response = request.get();
     var body = response.readEntity(String.class);
-    return JsonPath.parse(body).read("$.contentsSha");
+    return jsonPath.parse(body).read("$.contentsSha");
   }
 
   public static class RetrieveResult {

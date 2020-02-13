@@ -43,7 +43,7 @@ public class TestRestDocumentCollection extends AbstractConcordionTest {
     result.status = response.getStatus();
     var  body = response.readEntity(String.class);
     result.body = asPrettyJson(body);
-    var json = JsonPath.parse(body);
+    var json = jsonPath.parse(body);
     result.documentCount = json.read("$.length()");
     result.externalId = json.read("$[0].externalId");
     return result;
@@ -70,7 +70,7 @@ public class TestRestDocumentCollection extends AbstractConcordionTest {
     result.status = response.getStatus();
     var  body = response.readEntity(String.class);
     result.body = asPrettyJson(body);
-    var json = JsonPath.parse(body);
+    var json = jsonPath.parse(body);
     result.documentCount = json.read("$.length()");
     List<String> externalIds = newArrayList(
         json.read("$[0].externalId"),

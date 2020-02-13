@@ -53,9 +53,9 @@ public abstract class AbstractConcordionTest {
       .addOptions(SUPPRESS_EXCEPTIONS);
 
   /**
-   * Do not throw an exception but return null when node doesn't exist
+   * Do not throw an exception but return null when node doesn't exist:
    */
-  final static ParseContext jsonPath = JsonPath.using(jsonPathConf);
+  protected final static ParseContext jsonPath = JsonPath.using(jsonPathConf);
 
   @BeforeSpecification
   public void init() {

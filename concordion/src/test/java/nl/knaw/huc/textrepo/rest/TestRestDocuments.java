@@ -34,7 +34,7 @@ public class TestRestDocuments extends AbstractConcordionTest {
     result.status = response.getStatus();
     var body = response.readEntity(String.class);
     result.body = asPrettyJson(body);
-    result.id = JsonPath.parse(body).read("$.id");
+    result.id = jsonPath.parse(body).read("$.id");
     result.validUuid = TestUtils.isValidUuidMsg(result.id);
     return result;
   }
@@ -56,7 +56,7 @@ public class TestRestDocuments extends AbstractConcordionTest {
     result.status = response.getStatus();
     var  body = response.readEntity(String.class);
     result.body = asPrettyJson(body);
-    var json = JsonPath.parse(body);
+    var json = jsonPath.parse(body);
     result.validUuid = TestUtils.isValidUuidMsg(json.read("$.id"));
     result.externalId = json.read("$.externalId");
     return result;
@@ -78,7 +78,7 @@ public class TestRestDocuments extends AbstractConcordionTest {
     result.status = response.getStatus();
     var  body = response.readEntity(String.class);
     result.body = asPrettyJson(body);
-    var json = JsonPath.parse(body);
+    var json = jsonPath.parse(body);
     result.externalId = json.read("$.externalId");
     return result;
   }

@@ -24,7 +24,7 @@ public class JdbiTypeService implements TypeService {
   }
 
   @Override
-  public List<String> list() {
+  public List<Type> list() {
     return types().list();
   }
 

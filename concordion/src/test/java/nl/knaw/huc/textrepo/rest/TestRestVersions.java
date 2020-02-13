@@ -58,7 +58,7 @@ public class TestRestVersions extends AbstractConcordionTest {
     var result = new CreateResult();
     result.status = response.getStatus();
     var body = response.readEntity(String.class);
-    result.id = JsonPath.parse(body).read("$.id");
+    result.id = jsonPath.parse(body).read("$.id");
     result.validUuid = TestUtils.isValidUuidMsg(result.id);
     result.body = asPrettyJson(body);
     return result;
@@ -82,7 +82,7 @@ public class TestRestVersions extends AbstractConcordionTest {
     result.status = response.getStatus();
     var body = response.readEntity(String.class);
     result.body = asPrettyJson(body);
-    var json = JsonPath.parse(body);
+    var json = jsonPath.parse(body);
     result.validUuid = TestUtils.isValidUuidMsg(json.read("$.id"));
     String resultSha = json.read("$.contentsSha");
     result.validSha = resultSha.length() == 56 ? "valid sha224" : resultSha + " is not valid";
@@ -111,7 +111,7 @@ public class TestRestVersions extends AbstractConcordionTest {
     var result = new UpdateResult();
     result.status = response.getStatus();
     result.body = asPrettyJson(body);
-    var json = JsonPath.parse(body);
+    var json = jsonPath.parse(body);
     return result;
   }
 

@@ -61,7 +61,7 @@ public class TestRestFileMetadata extends AbstractConcordionTest {
     result.status = response.getStatus();
     var body = response.readEntity(String.class);
     result.body = asPrettyJson(body);
-    var json = JsonPath.parse(body);
+    var json = jsonPath.parse(body);
     result.value = json.read("$." + key.toString());
     return result;
   }
@@ -82,7 +82,7 @@ public class TestRestFileMetadata extends AbstractConcordionTest {
     result.status = response.getStatus();
     var body = response.readEntity(String.class);
     result.body = asPrettyJson(body);
-    var json = JsonPath.parse(body);
+    var json = jsonPath.parse(body);
     result.value = json.read("$.value");
     return result;
   }
