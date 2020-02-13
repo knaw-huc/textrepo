@@ -45,7 +45,7 @@ public class JdbiTypeService implements TypeService {
   public Type getType(Short typeId) {
     return types()
         .get(typeId)
-        .orElseThrow(() -> new RuntimeException(format(
+        .orElseThrow(() -> new NotFoundException(format(
             "Could not find type with id %s",
             typeId
         )));
