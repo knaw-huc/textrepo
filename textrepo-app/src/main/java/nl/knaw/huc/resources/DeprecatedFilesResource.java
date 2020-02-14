@@ -33,8 +33,6 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
 import static nl.knaw.huc.resources.ResourceUtils.locationOf;
 import static nl.knaw.huc.resources.ResourceUtils.readContents;
-import static nl.knaw.huc.resources.ZipHandling.handleZipFile;
-import static nl.knaw.huc.resources.ZipHandling.isZip;
 import static org.eclipse.jetty.util.StringUtil.isBlank;
 
 /**
@@ -59,7 +57,7 @@ public class DeprecatedFilesResource {
   @Timed
   @Consumes(MULTIPART_FORM_DATA)
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Create new file by uploading a file or create multiple files by uploading a zip")
+  @ApiOperation(value = "Create new file by uploading a file")
   @ApiResponses(value = {
       @ApiResponse(code = 201, message = "OK"),
       @ApiResponse(code = 200, response = MultipleLocations.class, message = "OK")})
@@ -74,13 +72,6 @@ public class DeprecatedFilesResource {
     }
 
     LOG.debug("addFile: type={}, filename={}", typeName, fileDetail.getFileName());
-
-    if (isZip(bodyPart, fileDetail)) {
-      var resultFiles = handleZipFile(inputStream, formContents -> handleNewFile(typeName, formContents));
-      return Response
-          .ok(new MultipleLocations(resultFiles))
-          .build();
-    }
 
     var resultFile = handleNewFile(
         typeName,

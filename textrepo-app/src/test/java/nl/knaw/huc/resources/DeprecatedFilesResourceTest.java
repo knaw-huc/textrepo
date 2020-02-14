@@ -113,80 +113,6 @@ public class DeprecatedFilesResourceTest {
   }
 
   @Test
-  public void testAddFile_addsZippedContents_whenZip() throws IOException {
-    var zipFilename = "hello-test.zip";
-    var zipFile = getResourceAsBytes("zip/" + zipFilename);
-
-    postTestContents(zipFile, zipFilename);
-
-    var zippedFile = ArgumentCaptor.forClass(String.class);
-    verify(fileIndexer).indexFile(ArgumentCaptor.forClass(TextrepoFile.class).capture(), zippedFile.capture());
-    assertThat(zippedFile.getValue()).isEqualToIgnoringWhitespace(contents);
-  }
-
-  @Test
-  public void testAddFile_addsMultipleFilesToIndex_whenZip() throws IOException {
-    var zipFilename = "multiple-hello-tests.zip";
-    var zipFile = getResourceAsBytes("zip/" + zipFilename);
-
-    postTestContents(zipFile, zipFilename);
-
-    verify(fileIndexer, times(2)).indexFile(any(TextrepoFile.class), any(String.class));
-  }
-
-  @Test
-  public void testAddFile_returnsLocationsByFile_whenZip() throws IOException {
-    var zipFilename = "multiple-hello-tests.zip";
-    var zipFile = getResourceAsBytes("zip/" + zipFilename);
-
-    var response = postTestContents(zipFile, zipFilename);
-    var body = response.readEntity(String.class);
-
-    var locations = new ObjectMapper().readValue(body, MultipleLocations.class).locations;
-
-    var file1 = locations.get("hello-test.txt");
-    assertThat(file1).isNotNull();
-    // check is valid uuid:
-    UUID.fromString(file1.toString().split("/")[2]);
-
-    var file2 = locations.get("hello-test2.txt");
-    assertThat(file2).isNotNull();
-    // check is valid uuid:
-    UUID.fromString(file2.toString().split("/")[2]);
-  }
-
-  @Test
-  public void testAddFile_skipsZippedDirectories_whenZip() throws IOException {
-    var zipFilename = "hello-test-in-dir.zip";
-    var zipFile = getResourceAsBytes("zip/" + zipFilename);
-
-    postTestContents(zipFile, zipFilename);
-
-    var zippedFile = ArgumentCaptor.forClass(String.class);
-    verify(fileIndexer, times(1)).indexFile(
-        ArgumentCaptor.forClass(TextrepoFile.class).capture(),
-        zippedFile.capture()
-    );
-    assertThat(zippedFile.getValue()).isEqualToIgnoringWhitespace(contents);
-  }
-
-  @Test
-  public void testAddFile_skipsHiddenFiles_whenZip() throws IOException {
-    var zipFilename = "mac-archive.zip";
-    var zipFile = getResourceAsBytes("zip/" + zipFilename);
-
-    postTestContents(zipFile, zipFilename);
-
-    var zippedContentsCaptor = ArgumentCaptor.forClass(String.class);
-    var zippedContents = getResourceAsString("zip/mac-archive-contents.xml");
-    verify(fileIndexer, times(1)).indexFile(
-        ArgumentCaptor.forClass(TextrepoFile.class).capture(),
-        zippedContentsCaptor.capture()
-    );
-    assertThat(zippedContentsCaptor.getValue()).isEqualToIgnoringWhitespace(zippedContents);
-  }
-
-  @Test
   public void testAddFile_addsFilenameMetadata() {
     postTestContents();
 
@@ -198,26 +124,6 @@ public class DeprecatedFilesResourceTest {
     var metadataEntry = this.metadataEntryCaptor.getValue();
     assertThat(metadataEntry.getKey()).isEqualTo("filename");
     assertThat(metadataEntry.getValue()).isEqualTo(filename);
-  }
-
-  @Test
-  public void testAddFile_addsFilenameMetadata_whenZip() throws IOException {
-    var zipFilename = "multiple-hello-tests.zip";
-    var zipFile = getResourceAsBytes("zip/" + zipFilename);
-
-    postTestContents(zipFile, zipFilename);
-
-    verify(FILE_METADATA_SERVICE, times(2)).insert(
-        uuidCaptor.capture(),
-        metadataEntryCaptor.capture()
-    );
-
-    var metadataEntries = this.metadataEntryCaptor.getAllValues();
-    assertThat(metadataEntries.size()).isEqualTo(2);
-    assertThat(metadataEntries.get(0).getKey()).isEqualTo("filename");
-    assertThat(metadataEntries.get(0).getValue()).isEqualTo("hello-test.txt");
-    assertThat(metadataEntries.get(1).getKey()).isEqualTo("filename");
-    assertThat(metadataEntries.get(1).getValue()).isEqualTo("hello-test2.txt");
   }
 
   @Test
