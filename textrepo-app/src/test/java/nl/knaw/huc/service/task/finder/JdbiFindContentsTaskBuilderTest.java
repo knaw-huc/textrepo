@@ -6,15 +6,15 @@ import org.junit.Test;
 import org.mockito.invocation.Invocation;
 
 import java.lang.reflect.Method;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockingDetails;
 import static org.mockito.Mockito.reset;
 
-public class JdbiFindFileTaskBuilderTest {
-  private static final UUID TEST_UUID = UUID.randomUUID();
+public class JdbiFindContentsTaskBuilderTest {
+  private static final String TEST_EXTERNAL_ID = "some/id";
+  private static final String TEST_TYPE_NAME = "some/type";
   private static final Jdbi JDBI = mock(Jdbi.class);
 
   @After
@@ -24,13 +24,18 @@ public class JdbiFindFileTaskBuilderTest {
 
   @Test
   public void testBuilderYieldsNonNulTask_whenBuilding() {
-    JdbiFindFileTaskBuilder sut = new JdbiFindFileTaskBuilder(JDBI);
-    assertThat(sut.forFile(TEST_UUID).build()).isNotNull();
+    FindContentsTaskBuilder sut = new JdbiFindContentsTaskBuilder(JDBI)
+        .forExternalId(TEST_EXTERNAL_ID)
+        .withType(TEST_TYPE_NAME);
+    assertThat(sut.build()).isNotNull();
   }
 
   @Test
   public void testBuilderYieldsTask_thatExecutesInSingleTransaction() {
-    new JdbiFindFileTaskBuilder(JDBI).forFile(TEST_UUID).build().run();
+    new JdbiFindContentsTaskBuilder(JDBI)
+        .forExternalId(TEST_EXTERNAL_ID)
+        .withType(TEST_TYPE_NAME)
+        .build().run();
 
     long numTransactionsStarted = mockingDetails(JDBI)
         .getInvocations()
