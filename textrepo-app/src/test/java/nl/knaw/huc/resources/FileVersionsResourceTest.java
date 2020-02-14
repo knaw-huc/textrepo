@@ -3,7 +3,8 @@ package nl.knaw.huc.resources;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import io.dropwizard.testing.junit.ResourceTestRule;
+import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
+import io.dropwizard.testing.junit5.ResourceExtension;
 import nl.knaw.huc.core.Version;
 import nl.knaw.huc.db.VersionsDao;
 import nl.knaw.huc.resources.rest.FileVersionsResource;
@@ -18,6 +19,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockitoAnnotations;
 
 import javax.ws.rs.core.Response;
@@ -36,7 +38,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(DropwizardExtensionsSupport.class)
 public class FileVersionsResourceTest {
+
   private static final UUID uuid = UUID.fromString("0defaced-cafe-babe-dada-deadbeefc2c6");
 
   private static final Jdbi jdbi = mock(Jdbi.class);
@@ -51,8 +55,7 @@ public class FileVersionsResourceTest {
 
   private static final VersionsDao VERSIONS_DAO = mock(VersionsDao.class);
 
-  @ClassRule
-  public static final ResourceTestRule resource = ResourceTestRule
+  public static final ResourceExtension resource = ResourceExtension
       .builder()
       .addProvider(MultiPartFeature.class)
       .addResource(new FileVersionsResource(versionService))

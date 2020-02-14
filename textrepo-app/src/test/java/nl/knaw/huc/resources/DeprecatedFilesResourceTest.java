@@ -1,9 +1,8 @@
 package nl.knaw.huc.resources;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.dropwizard.testing.junit.ResourceTestRule;
+import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
+import io.dropwizard.testing.junit5.ResourceExtension;
 import nl.knaw.huc.api.MetadataEntry;
-import nl.knaw.huc.api.MultipleLocations;
 import nl.knaw.huc.core.TextrepoFile;
 import nl.knaw.huc.db.FilesDao;
 import nl.knaw.huc.db.VersionsDao;
@@ -26,6 +25,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
@@ -39,17 +39,16 @@ import java.util.function.Supplier;
 import static com.google.common.collect.Lists.newArrayList;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
 import static nl.knaw.huc.resources.ResourceTestUtils.responsePart;
-import static nl.knaw.huc.resources.TestUtils.getResourceAsBytes;
-import static nl.knaw.huc.resources.TestUtils.getResourceAsString;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class DeprecatedFilesResourceTest {
+@ExtendWith(DropwizardExtensionsSupport.class)
+public class  DeprecatedFilesResourceTest {
+
   private static final String uuid = "b59c2b24-cafe-babe-9bb3-deadbeefc2c6";
   private static final String contents = "hello test";
   private String filename = "just-a-filename.txt";
@@ -70,7 +69,7 @@ public class DeprecatedFilesResourceTest {
   private static final FilesDao FILES_DAO = mock(FilesDao.class);
 
   @ClassRule
-  public static final ResourceTestRule resource = ResourceTestRule
+  public static final ResourceExtension resource = ResourceExtension
       .builder()
       .addProvider(MultiPartFeature.class)
       .addResource(new DeprecatedFilesResource(FILE_SERVICE, contents.length()))

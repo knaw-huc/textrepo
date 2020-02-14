@@ -1,16 +1,17 @@
 package nl.knaw.huc.resources;
 
-import io.dropwizard.testing.junit.ResourceTestRule;
+import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
+import io.dropwizard.testing.junit5.ResourceExtension;
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.resources.rest.ContentsResource;
 import nl.knaw.huc.service.ContentsService;
 import nl.knaw.huc.service.store.ContentsStorage;
 import org.apache.commons.io.IOUtils;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import javax.ws.rs.NotFoundException;
 import java.io.IOException;
@@ -25,6 +26,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(DropwizardExtensionsSupport.class)
 public class ContentsResourceTest {
   private static final ContentsStorage FILE_STORAGE = mock(ContentsStorage.class);
 
@@ -35,18 +37,17 @@ public class ContentsResourceTest {
       contents.getBytes()
   );
 
-  @ClassRule
-  public static final ResourceTestRule resource = ResourceTestRule
+  public static final ResourceExtension resource = ResourceExtension
       .builder()
       .addProvider(MultiPartFeature.class)
       .addResource(new ContentsResource(new ContentsService(FILE_STORAGE)))
       .build();
 
-  @Before
+  @BeforeEach
   public void setup() {
   }
 
-  @After
+  @AfterEach
   public void teardown() {
     reset(FILE_STORAGE);
   }

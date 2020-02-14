@@ -1,6 +1,7 @@
 package nl.knaw.huc.resources;
 
-import io.dropwizard.testing.junit.ResourceTestRule;
+import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
+import io.dropwizard.testing.junit5.ResourceExtension;
 import nl.knaw.huc.api.FormType;
 import nl.knaw.huc.core.Type;
 import nl.knaw.huc.resources.rest.TypesResource;
@@ -23,7 +24,9 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+@ExtendWith(DropwizardExtensionsSupport.class)
 public class TypesResourceTest {
 
   @Captor
@@ -31,8 +34,7 @@ public class TypesResourceTest {
 
   private static final JdbiTypeService typeService = mock(JdbiTypeService.class);
 
-  @ClassRule
-  public static final ResourceTestRule resource = ResourceTestRule
+  public static final ResourceExtension resource = ResourceExtension
       .builder()
       .addProvider(MultiPartFeature.class)
       .addResource(new TypesResource(typeService))

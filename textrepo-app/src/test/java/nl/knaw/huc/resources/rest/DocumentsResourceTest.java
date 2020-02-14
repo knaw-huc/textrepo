@@ -3,32 +3,30 @@ package nl.knaw.huc.resources.rest;
 import ch.qos.logback.classic.Level;
 import com.jayway.jsonpath.JsonPath;
 import io.dropwizard.logging.BootstrapLogging;
-import io.dropwizard.testing.junit.ResourceTestRule;
+import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
+import io.dropwizard.testing.junit5.ResourceExtension;
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.exceptions.MethodNotAllowedExceptionMapper;
-import nl.knaw.huc.resources.rest.DocumentsResource;
 import nl.knaw.huc.service.DocumentService;
-import nl.knaw.huc.service.FileService;
 import nl.knaw.huc.service.FileMetadataService;
+import nl.knaw.huc.service.FileService;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.jdbi.v3.core.Jdbi;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockitoAnnotations;
 
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(DropwizardExtensionsSupport.class)
 public class DocumentsResourceTest {
 
   private static final String TEST_EXTERNAL_ID = "test-external-id";
@@ -38,14 +36,13 @@ public class DocumentsResourceTest {
   private static final FileService fileService = mock(FileService.class);
   private static final FileMetadataService metadataService = mock(FileMetadataService.class);
 
-  // https://stackoverflow.com/questions/31730571/how-to-turn-on-tracing-in-a-unit-test-using-a-resourcetestrule
-  // Actually has to go /before/ ResourceTestRule these days as bootstrap()ing guarded against multiple calls.
+  // https://stackoverflow.com/questions/31730571/how-to-turn-on-tracing-in-a-unit-test-using-a-ResourceExtension
+  // Actually has to go /before/ ResourceExtension these days as bootstrap()ing guarded against multiple calls.
   static {
     BootstrapLogging.bootstrap(Level.DEBUG);
   }
 
-  @ClassRule
-  public static final ResourceTestRule resource = ResourceTestRule
+  public static final ResourceExtension resource = ResourceExtension
       .builder()
       .addProvider(MultiPartFeature.class)
       .addResource(new DocumentsResource(documentService))

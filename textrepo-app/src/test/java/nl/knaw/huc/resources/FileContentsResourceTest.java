@@ -1,6 +1,7 @@
 package nl.knaw.huc.resources;
 
-import io.dropwizard.testing.junit.ResourceTestRule;
+import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
+import io.dropwizard.testing.junit5.ResourceExtension;
 import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.core.TextrepoFile;
 import nl.knaw.huc.db.FilesDao;
@@ -22,6 +23,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
@@ -40,6 +42,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(DropwizardExtensionsSupport.class)
 public class FileContentsResourceTest {
   private static final String contents = "hello test";
   private String filename = "just-a-filename.txt";
@@ -68,8 +71,7 @@ public class FileContentsResourceTest {
   private static final VersionsDao VERSIONS_DAO = mock(VersionsDao.class);
   private static final FilesDao FILES_DAO = mock(FilesDao.class);
 
-  @ClassRule
-  public static final ResourceTestRule resource = ResourceTestRule
+  public static final ResourceExtension resource = ResourceExtension
       .builder()
       .addProvider(MultiPartFeature.class)
       .addResource(new FileContentsResource(FILE_CONTENTS_SERVICE, contents.length()))
