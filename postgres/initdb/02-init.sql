@@ -15,7 +15,8 @@ create table types (
 create table files (
   id uuid primary key,
   type_id smallserial not null,
-  foreign key (type_id) references types (id)
+  -- constraint name is used in textrepo-app:
+  constraint files_type_id_fkey foreign key (type_id) references types (id)
 );
 
 create index files_by_type_id on files (type_id);
