@@ -5,7 +5,6 @@ import nl.knaw.huc.db.FilesDao;
 import org.jdbi.v3.core.Handle;
 
 import javax.ws.rs.NotFoundException;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Supplier;
 
