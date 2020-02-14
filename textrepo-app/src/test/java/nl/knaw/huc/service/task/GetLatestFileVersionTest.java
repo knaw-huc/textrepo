@@ -4,9 +4,9 @@ import nl.knaw.huc.core.TextrepoFile;
 import nl.knaw.huc.core.Version;
 import nl.knaw.huc.db.VersionsDao;
 import org.jdbi.v3.core.Handle;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.NotFoundException;
 import java.util.Optional;
@@ -14,6 +14,7 @@ import java.util.Optional;
 import static java.time.LocalDateTime.now;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
@@ -27,19 +28,19 @@ public class GetLatestFileVersionTest {
   private static final String TEST_SHA = "blablasha";
   private static final Version TEST_VERSION = new Version(randomUUID(), TEST_FILE.getId(), now(), TEST_SHA);
 
-  @Before
+  @BeforeEach
   public void setUp() {
     when(TRANSACTION.attach(VersionsDao.class)).thenReturn(VERSIONS_DAO);
   }
 
-  @After
+  @AfterEach
   public void resetMocks() {
     reset(VERSIONS_DAO); // to reset verify counters
   }
 
-  @Test(expected = NullPointerException.class)
+  @Test
   public void testGetLatestFileVersion_rejectsNullQuery() {
-    new GetLatestFileVersion(null);
+    assertThrows(NullPointerException.class, () -> new GetLatestFileVersion(null));
   }
 
   @Test
@@ -56,9 +57,9 @@ public class GetLatestFileVersionTest {
     assertThat(suspect).isEqualTo(TEST_VERSION);
   }
 
-  @Test(expected = NotFoundException.class)
+  @Test
   public void testGetLatestFileVersion_throwsNotFound_whenVersionNotFound() {
     when(VERSIONS_DAO.findLatestByFileId(any())).thenReturn(Optional.empty());
-    new GetLatestFileVersion(TEST_FILE).executeIn(TRANSACTION);
+    assertThrows(NotFoundException.class, () -> new GetLatestFileVersion(TEST_FILE).executeIn(TRANSACTION));
   }
 }

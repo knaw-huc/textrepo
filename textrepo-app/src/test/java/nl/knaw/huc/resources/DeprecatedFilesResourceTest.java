@@ -21,10 +21,10 @@ import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.jdbi.v3.core.Jdbi;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -47,7 +47,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-public class  DeprecatedFilesResourceTest {
+public class DeprecatedFilesResourceTest {
 
   private static final String uuid = "b59c2b24-cafe-babe-9bb3-deadbeefc2c6";
   private static final String contents = "hello test";
@@ -81,7 +81,7 @@ public class  DeprecatedFilesResourceTest {
   @Captor
   private ArgumentCaptor<MetadataEntry> metadataEntryCaptor;
 
-  @Before
+  @BeforeEach
   public void setupMocks() {
     when(jdbi.onDemand(FilesDao.class)).thenReturn(FILES_DAO);
     when(jdbi.onDemand(VersionsDao.class)).thenReturn(VERSIONS_DAO);
@@ -89,7 +89,7 @@ public class  DeprecatedFilesResourceTest {
     MockitoAnnotations.initMocks(this);
   }
 
-  @After
+  @AfterEach
   public void resetMocks() {
     reset(jdbi, FILES_DAO, VERSIONS_DAO, fileIndexer, FILE_METADATA_SERVICE);
   }

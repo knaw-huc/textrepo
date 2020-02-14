@@ -9,10 +9,9 @@ import nl.knaw.huc.service.JdbiFileMetadataService;
 import nl.knaw.huc.service.FileMetadataService;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.jdbi.v3.core.Jdbi;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -53,13 +52,13 @@ public class FileMetadataResourceTest {
   @Captor
   private ArgumentCaptor<UUID> fileIdCaptor;
 
-  @Before
+  @BeforeEach
   public void setupMocks() {
     when(jdbi.onDemand(any())).thenReturn(FILE_METADATA_DAO);
     MockitoAnnotations.initMocks(this);
   }
 
-  @After
+  @AfterEach
   public void resetMocks() {
     reset(jdbi, FILE_METADATA_DAO);
   }

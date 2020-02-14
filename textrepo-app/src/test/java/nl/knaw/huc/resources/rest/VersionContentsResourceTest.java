@@ -7,8 +7,7 @@ import nl.knaw.huc.exceptions.MethodNotAllowedExceptionMapper;
 import nl.knaw.huc.service.VersionContentsService;
 import nl.knaw.huc.service.store.ContentsStorage;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.io.IOException;

@@ -3,15 +3,16 @@ package nl.knaw.huc.service.task;
 import nl.knaw.huc.core.TextrepoFile;
 import nl.knaw.huc.db.FilesDao;
 import org.jdbi.v3.core.Handle;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.NotFoundException;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
@@ -23,19 +24,19 @@ public class FindFileTest {
   private static final Handle TRANSACTION = mock(Handle.class);
   private static final TextrepoFile TEST_FILE = new TextrepoFile(UUID.randomUUID(), (short) 42);
 
-  @Before
+  @BeforeEach
   public void setup() {
     when(TRANSACTION.attach(FilesDao.class)).thenReturn(FILES_DAO);
   }
 
-  @After
+  @AfterEach
   public void resetMocks() {
     reset(FILES_DAO); // to reset verify() counters
   }
 
-  @Test(expected = NullPointerException.class)
+  @Test
   public void testFindFile_rejectsNullQuery() {
-    new FindFile(null);
+    assertThrows(NullPointerException.class, () -> new FindFile(null));
   }
 
   @Test
@@ -51,9 +52,9 @@ public class FindFileTest {
     assertThat(new FindFile(TEST_FILE.getId()).executeIn(TRANSACTION)).isEqualTo(TEST_FILE);
   }
 
-  @Test(expected = NotFoundException.class)
+  @Test
   public void testFindFile_throwsNotFound_whenFileNotFound() {
     when(FILES_DAO.find(any())).thenReturn(Optional.empty());
-    new FindFile(TEST_FILE.getId()).executeIn(TRANSACTION);
+    assertThrows(NotFoundException.class, () -> new FindFile(TEST_FILE.getId()).executeIn(TRANSACTION));
   }
 }

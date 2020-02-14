@@ -15,10 +15,9 @@ import nl.knaw.huc.service.index.ElasticCustomIndexer;
 import nl.knaw.huc.service.index.ElasticFileIndexer;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.jdbi.v3.core.Jdbi;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockitoAnnotations;
 
@@ -61,13 +60,13 @@ public class FileVersionsResourceTest {
       .addResource(new FileVersionsResource(versionService))
       .build();
 
-  @Before
+  @BeforeEach
   public void setupMocks() {
     when(jdbi.onDemand(any())).thenReturn(VERSIONS_DAO);
     MockitoAnnotations.initMocks(this);
   }
 
-  @After
+  @AfterEach
   public void resetMocks() {
     reset(jdbi, VERSIONS_DAO);
   }

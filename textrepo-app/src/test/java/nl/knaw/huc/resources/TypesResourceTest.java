@@ -7,10 +7,9 @@ import nl.knaw.huc.core.Type;
 import nl.knaw.huc.resources.rest.TypesResource;
 import nl.knaw.huc.service.JdbiTypeService;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
@@ -40,12 +39,12 @@ public class TypesResourceTest {
       .addResource(new TypesResource(typeService))
       .build();
 
-  @Before
+  @BeforeEach
   public void setUp() {
     MockitoAnnotations.initMocks(this);
   }
 
-  @After
+  @AfterEach
   public void resetMocks() {
     reset(typeService);
   }

@@ -8,11 +8,11 @@ import nl.knaw.huc.service.index.CustomIndexerException;
 import nl.knaw.huc.service.index.ElasticCustomIndexer;
 import nl.knaw.huc.service.index.ElasticsearchConfiguration;
 import nl.knaw.huc.service.index.FieldsConfiguration;
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
 import org.mockserver.integration.ClientAndServer;
 import org.mockserver.matchers.Times;
@@ -45,20 +45,21 @@ public class ElasticCustomIndexerTest {
   private Type testType = new Type("test-type", "test/mimetype");
   private TypeService typeServiceMock = mock(TypeService.class);
 
-  @BeforeClass
+  @BeforeAll
   public static void setUpClass() {
     mockServer = ClientAndServer.startClientAndServer(mockPort);
     mockIndexServer = ClientAndServer.startClientAndServer(mockIndexPort);
   }
 
-  @Before
+  @BeforeEach
   public void before() {
     mockServer.reset();
     mockIndexServer.reset();
     MockitoAnnotations.initMocks(this);
     when(typeServiceMock.getType(any())).thenReturn(testType);
   }
-  @After
+
+  @AfterEach
   public void resetMocks() {
     reset(typeServiceMock);
   }
@@ -114,7 +115,8 @@ public class ElasticCustomIndexerTest {
   }
 
   @Test
-  public void testInstantiatingElasticCustomFacetIndexer_requestsFieldUsingMultipart_whenTypeIsMultipart() throws IOException, CustomIndexerException {
+  public void testInstantiatingElasticCustomFacetIndexer_requestsFieldUsingMultipart_whenTypeIsMultipart()
+      throws IOException, CustomIndexerException {
     var expectedContentTypeHeader = "multipart/form-data;boundary=.*";
     var config = createCustomFacetIndexerConfiguration("multipart", testType.getMimetype());
     var fileId = UUID.randomUUID();

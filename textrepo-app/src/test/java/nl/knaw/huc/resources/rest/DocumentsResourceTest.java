@@ -12,9 +12,9 @@ import nl.knaw.huc.service.FileMetadataService;
 import nl.knaw.huc.service.FileService;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.jdbi.v3.core.Jdbi;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockitoAnnotations;
 
@@ -49,12 +49,12 @@ public class DocumentsResourceTest {
       .addResource(new MethodNotAllowedExceptionMapper())
       .build();
 
-  @Before
+  @BeforeEach
   public void setupMocks() {
     MockitoAnnotations.initMocks(this);
   }
 
-  @After
+  @AfterEach
   public void resetMocks() {
     reset(jdbi, fileService, documentService);
   }

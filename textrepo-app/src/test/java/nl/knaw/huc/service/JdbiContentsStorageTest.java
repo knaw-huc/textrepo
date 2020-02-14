@@ -5,15 +5,16 @@ import nl.knaw.huc.db.ContentsDao;
 import nl.knaw.huc.service.store.ContentsStorage;
 import nl.knaw.huc.service.store.JdbiContentsStorage;
 import org.jdbi.v3.core.Jdbi;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -33,12 +34,12 @@ public class JdbiContentsStorageTest {
       contents.getBytes()
   );
 
-  @Before
+  @BeforeEach
   public void setup() {
     when(jdbi.onDemand(any())).thenReturn(CONTENTS_DAO);
   }
 
-  @After
+  @AfterEach
   public void teardown() {
     reset(jdbi);
     reset(CONTENTS_DAO);
@@ -50,10 +51,10 @@ public class JdbiContentsStorageTest {
     verify(CONTENTS_DAO).insert(TEXT_REPO_CONTENTS);
   }
 
-  @Test(expected = WebApplicationException.class)
+  @Test
   public void testAddFile_throwsWebApplicationException_whenInternalErrorHappens() {
     doThrow(new RuntimeException("intended behaviour, please ignore")).when(CONTENTS_DAO).insert(any());
-    STORE.storeContents(TEXT_REPO_CONTENTS);
+    assertThrows(WebApplicationException.class, () -> STORE.storeContents(TEXT_REPO_CONTENTS));
   }
 
   @Test
@@ -62,9 +63,9 @@ public class JdbiContentsStorageTest {
     assertThat(STORE.getBySha(sha224)).isEqualTo(TEXT_REPO_CONTENTS);
   }
 
-  @Test(expected = NotFoundException.class)
+  @Test
   public void testGetBySha224_throwsNotFound_whenAbsent() {
     when(CONTENTS_DAO.findBySha224(any())).thenReturn(Optional.empty());
-    STORE.getBySha(sha224);
+    assertThrows(NotFoundException.class, () -> STORE.getBySha(sha224));
   }
 }

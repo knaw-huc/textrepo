@@ -19,10 +19,9 @@ import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.jdbi.v3.core.Jdbi;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -83,14 +82,14 @@ public class FileContentsResourceTest {
   @Captor
   private ArgumentCaptor<MetadataEntry> metadataEntryCaptor;
 
-  @Before
+  @BeforeEach
   public void setupMocks() {
     MockitoAnnotations.initMocks(this);
     when(jdbi.onDemand(VersionsDao.class)).thenReturn(VERSIONS_DAO);
     when(jdbi.onDemand(FilesDao.class)).thenReturn(FILES_DAO);
   }
 
-  @After
+  @AfterEach
   public void resetMocks() {
     reset(jdbi, VERSIONS_DAO, fileIndexer, FILE_METADATA_SERVICE, VERSIONS_DAO, FILES_DAO);
   }
