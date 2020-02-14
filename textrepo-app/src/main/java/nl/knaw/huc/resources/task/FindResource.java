@@ -2,8 +2,11 @@ package nl.knaw.huc.resources.task;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.service.task.TaskBuilderFactory;
 
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -23,9 +26,12 @@ public class FindResource {
 
   @GET
   @Produces(APPLICATION_OCTET_STREAM)
-  @ApiOperation(value = "Get latest contents of typed file for a document")
-  public Response findLatestVersion(@QueryParam("externalId") String documentId,
-                                    @QueryParam("typeName") String typeName) {
+  @ApiOperation(value = "Get latest contents of typed file for a document", response = byte[].class)
+  @ApiResponses(value = {
+      @ApiResponse(code = 200, message = "OK"),
+      @ApiResponse(code = 404, message = "Given type, document or supposed contents could not be found")})
+  public Response findLatestVersion(@NotNull @QueryParam("externalId") String documentId,
+                                    @NotNull @QueryParam("typeName") String typeName) {
     final var task = factory.getContentsFinderBuilder()
                             .forExternalId(documentId)
                             .withType(typeName)
