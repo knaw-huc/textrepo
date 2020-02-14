@@ -3,16 +3,20 @@ package nl.knaw.huc.service;
 import nl.knaw.huc.core.Type;
 import nl.knaw.huc.db.TypesDao;
 import org.jdbi.v3.core.Jdbi;
+import org.jdbi.v3.core.JdbiException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import java.util.List;
 
 import static java.lang.String.format;
 import static javax.ws.rs.core.Response.Status.CONFLICT;
+import static nl.knaw.huc.service.PsqlExceptionService.violatesConstraint;
 
 public class JdbiTypeService implements TypeService {
   private static final Logger LOGGER = LoggerFactory.getLogger(JdbiTypeService.class);
@@ -61,7 +65,14 @@ public class JdbiTypeService implements TypeService {
 
   @Override
   public void delete(Short typeId) {
-    types().delete(typeId);
+    try {
+      types().delete(typeId);
+    } catch (JdbiException ex) {
+      if (violatesConstraint(ex, "files_type_id_fkey")) {
+        throw new ForbiddenException(format("Cannot delete type: files of type %s still exist", typeId));
+      }
+      throw ex;
+    }
     LOGGER.trace("Deleted type with id {}", typeId);
   }
 
