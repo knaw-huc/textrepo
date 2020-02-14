@@ -1,6 +1,6 @@
 package nl.knaw.huc.service.task;
 
-import nl.knaw.huc.service.task.finder.FindFileTaskBuilder;
+import nl.knaw.huc.service.task.finder.FindContentsTaskBuilder;
 import nl.knaw.huc.service.task.importfile.ImportFileTaskBuilder;
 import nl.knaw.huc.service.task.indexfile.IndexFileTaskBuilder;
 
@@ -9,5 +9,5 @@ public interface TaskBuilderFactory {
 
   IndexFileTaskBuilder getDocumentIndexBuilder();
 
-  FindFileTaskBuilder getFileFinderBuilder();
+  FindContentsTaskBuilder getContentsFinderBuilder();
 }
