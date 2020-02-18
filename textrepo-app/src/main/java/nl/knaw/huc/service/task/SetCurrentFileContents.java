@@ -9,7 +9,6 @@ import org.jdbi.v3.core.Handle;
 
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import static java.time.LocalDateTime.now;
@@ -41,11 +40,11 @@ public class SetCurrentFileContents implements ProvidesInTransaction<Version> {
 
   private Optional<Version> latestVersionIfIdentical() {
     return versions().findLatestByFileId(file.getId())
-                     .filter(hasIdenticalContents());
+                     .filter(this::hasIdenticalContents);
   }
 
-  private Predicate<Version> hasIdenticalContents() {
-    return candidate -> candidate.getContentsSha().equals(contents.getSha224());
+  private boolean hasIdenticalContents(Version candidate) {
+    return candidate.getContentsSha().equals(contents.getSha224());
   }
 
   private Supplier<Version> createNewVersionWithContents() {
