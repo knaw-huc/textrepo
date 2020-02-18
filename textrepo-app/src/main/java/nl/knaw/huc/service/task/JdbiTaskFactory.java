@@ -3,10 +3,10 @@ package nl.knaw.huc.service.task;
 import nl.knaw.huc.service.index.FileIndexer;
 import nl.knaw.huc.service.task.finder.FindContentsTaskBuilder;
 import nl.knaw.huc.service.task.finder.JdbiFindContentsTaskBuilder;
-import nl.knaw.huc.service.task.importfile.ImportFileTaskBuilder;
-import nl.knaw.huc.service.task.importfile.JdbiImportFileTaskBuilder;
-import nl.knaw.huc.service.task.indexfile.IndexFileTaskBuilder;
-import nl.knaw.huc.service.task.indexfile.JdbiIndexFileTaskBuilder;
+import nl.knaw.huc.service.task.importer.ImportFileTaskBuilder;
+import nl.knaw.huc.service.task.importer.JdbiImportFileTaskBuilder;
+import nl.knaw.huc.service.task.indexer.IndexFileTaskBuilder;
+import nl.knaw.huc.service.task.indexer.JdbiIndexFileTaskBuilder;
 import org.jdbi.v3.core.Jdbi;
 
 import java.util.UUID;

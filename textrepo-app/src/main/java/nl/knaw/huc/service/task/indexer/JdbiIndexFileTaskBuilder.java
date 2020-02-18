@@ -1,4 +1,4 @@
-package nl.knaw.huc.service.task.indexfile;
+package nl.knaw.huc.service.task.indexer;
 
 import nl.knaw.huc.core.TextrepoFile;
 import nl.knaw.huc.db.FilesDao;

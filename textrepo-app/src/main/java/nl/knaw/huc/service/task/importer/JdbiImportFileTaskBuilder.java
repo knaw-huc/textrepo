@@ -1,4 +1,4 @@
-package nl.knaw.huc.service.task.importfile;
+package nl.knaw.huc.service.task.importer;
 
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.core.Version;
