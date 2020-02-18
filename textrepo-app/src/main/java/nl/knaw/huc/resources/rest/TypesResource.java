@@ -2,12 +2,9 @@ package nl.knaw.huc.resources.rest;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.FormType;
 import nl.knaw.huc.api.ResultType;
 import nl.knaw.huc.core.Type;
-import nl.knaw.huc.exceptions.MethodNotAllowedException;
 import nl.knaw.huc.service.TypeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +20,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
-import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -38,9 +34,6 @@ public class TypesResource {
   public TypesResource(TypeService typeService) {
     this.typeService = typeService;
   }
-
-  private static final String PUT_ERROR_MSG = "Putting types not supported at the moment";
-  private static final String DELETE_ERROR_MSG = "Deleting types not supported at the moment";
 
   @POST
   @Consumes(APPLICATION_JSON)
