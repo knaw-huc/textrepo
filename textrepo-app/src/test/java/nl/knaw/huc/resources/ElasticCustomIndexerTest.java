@@ -8,7 +8,7 @@ import nl.knaw.huc.service.index.CustomIndexerException;
 import nl.knaw.huc.service.index.ElasticCustomIndexer;
 import nl.knaw.huc.service.index.ElasticsearchConfiguration;
 import nl.knaw.huc.service.index.FieldsConfiguration;
-import org.junit.AfterClass;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -64,7 +64,7 @@ public class ElasticCustomIndexerTest {
     reset(typeServiceMock);
   }
 
-  @AfterClass
+  @AfterAll
   public static void tearDown() {
     mockServer.stop();
     mockIndexServer.stop();

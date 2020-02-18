@@ -1,8 +1,8 @@
 package nl.knaw.huc.service.task.finder;
 
 import org.jdbi.v3.core.Jdbi;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.invocation.Invocation;
 
 import java.lang.reflect.Method;
@@ -17,7 +17,7 @@ public class JdbiFindContentsTaskBuilderTest {
   private static final String TEST_TYPE_NAME = "some/type";
   private static final Jdbi JDBI = mock(Jdbi.class);
 
-  @After
+  @AfterEach
   public void resetMocks() {
     reset(JDBI);
   }
