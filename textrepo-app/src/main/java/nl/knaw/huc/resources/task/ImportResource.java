@@ -49,8 +49,7 @@ public class ImportResource {
       @NotNull @FormDataParam("contents") InputStream uploadedInputStream,
       @NotNull @FormDataParam("contents") FormDataContentDisposition fileDetail
   ) {
-    final var announcedSize = fileDetail.getSize();
-    LOG.debug("ImportFile: externalId={}, type={}, size={}", externalId, type, announcedSize);
+    LOG.debug("ImportFile: externalId={}, type={}", externalId, type);
 
     final var builder = factory.getDocumentImportBuilder();
     final var importTask = builder.forExternalId(externalId)
