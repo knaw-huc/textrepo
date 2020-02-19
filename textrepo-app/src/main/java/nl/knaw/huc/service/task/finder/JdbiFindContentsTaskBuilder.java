@@ -8,6 +8,8 @@ import nl.knaw.huc.service.task.GetVersionContent;
 import nl.knaw.huc.service.task.Task;
 import org.jdbi.v3.core.Jdbi;
 
+import java.util.Objects;
+
 public class JdbiFindContentsTaskBuilder implements FindContentsTaskBuilder {
   private final Jdbi jdbi;
 
@@ -15,18 +17,18 @@ public class JdbiFindContentsTaskBuilder implements FindContentsTaskBuilder {
   private String typeName;
 
   public JdbiFindContentsTaskBuilder(Jdbi jdbi) {
-    this.jdbi = jdbi;
+    this.jdbi = Objects.requireNonNull(jdbi);
   }
 
   @Override
   public FindContentsTaskBuilder forExternalId(String externalId) {
-    this.externalId = externalId;
+    this.externalId = Objects.requireNonNull(externalId);
     return this;
   }
 
   @Override
   public FindContentsTaskBuilder withType(String typeName) {
-    this.typeName = typeName;
+    this.typeName = Objects.requireNonNull(typeName);
     return this;
   }
 
