@@ -5,7 +5,6 @@ import nl.knaw.huc.core.TextrepoFile;
 import nl.knaw.huc.db.DocumentFilesDao;
 import nl.knaw.huc.db.FilesDao;
 import nl.knaw.huc.db.TypesDao;
-import nl.knaw.huc.service.task.ProvidesInTransaction;
 import org.jdbi.v3.core.Handle;
 
 import javax.ws.rs.NotFoundException;
