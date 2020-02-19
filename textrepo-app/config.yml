@@ -31,7 +31,7 @@ elasticsearch:
 customFacetIndexers:
 - mapping: https://demo.docere.diginfra.net/api/projects/gheys/mapping
   fields:
-    url: https://demo.gekaaptebrieven.diginfra.net/api/projects/gekaaptebrieven/documents/x/fields
+    url: https://demo.docere.diginfra.net/api/projects/docere/documents/x/fields
     type: urlencoded
   mimetypes:
     - application/xml
