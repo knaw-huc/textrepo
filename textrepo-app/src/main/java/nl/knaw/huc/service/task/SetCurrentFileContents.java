@@ -27,7 +27,7 @@ public class SetCurrentFileContents implements ProvidesInTransaction<Version> {
       TextrepoFile file,
       Contents contents
   ) {
-    this.versionIdGenerator = versionIdGenerator;
+    this.versionIdGenerator = requireNonNull(versionIdGenerator);
     this.file = requireNonNull(file);
     this.contents = requireNonNull(contents);
   }
