@@ -35,7 +35,7 @@ public class SetCurrentFileContents implements ProvidesInTransaction<Version> {
   @Override
   public Version executeIn(Handle transaction) {
     this.transaction = requireNonNull(transaction);
-    return latestVersionIfIdentical().orElseGet(createNewVersionWithContents());
+    return latestVersionIfIdentical().orElseGet(this::createNewVersionWithContents);
   }
 
   private Optional<Version> latestVersionIfIdentical() {
@@ -47,14 +47,12 @@ public class SetCurrentFileContents implements ProvidesInTransaction<Version> {
     return candidate.getContentsSha().equals(contents.getSha224());
   }
 
-  private Supplier<Version> createNewVersionWithContents() {
-    return () -> {
-      var id = versionIdGenerator.get();
-      final var version = new Version(id, file.getId(), now(), contents.getSha224());
-      contents().insert(contents);
-      versions().insert(version);
-      return version;
-    };
+  private Version createNewVersionWithContents() {
+    final var id = versionIdGenerator.get();
+    final var version = new Version(id, file.getId(), now(), contents.getSha224());
+    contents().insert(contents);
+    versions().insert(version);
+    return version;
   }
 
   private VersionsDao versions() {
