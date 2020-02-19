@@ -29,7 +29,7 @@ elasticsearch:
   contentsField: contents
 
 customFacetIndexers:
-- mapping: https://demo.gekaaptebrieven.diginfra.net/api/projects/gekaaptebrieven/mapping
+- mapping: https://demo.docere.diginfra.net/api/projects/gheys/mapping
   fields:
     url: https://demo.gekaaptebrieven.diginfra.net/api/projects/gekaaptebrieven/documents/x/fields
     type: urlencoded
