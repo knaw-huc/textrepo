@@ -13,6 +13,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
 
 @Path("/task/latest")
@@ -25,7 +26,7 @@ public class FindResource {
   }
 
   @GET
-  @Produces(APPLICATION_OCTET_STREAM)
+  @Produces({APPLICATION_JSON, APPLICATION_OCTET_STREAM})
   @ApiOperation(value = "Get latest contents of typed file for a document", response = byte[].class)
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "OK"),
