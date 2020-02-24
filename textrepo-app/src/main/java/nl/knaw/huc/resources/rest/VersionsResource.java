@@ -42,7 +42,7 @@ public class VersionsResource {
   private static final String PUT_ERROR_MSG = "Not allowed to update a version: create a new version using POST";
 
   private final VersionService versionService;
-  private int maxPayloadSize;
+  private final int maxPayloadSize;
 
   public VersionsResource(VersionService versionService, int maxPayloadSize) {
     this.versionService = versionService;
