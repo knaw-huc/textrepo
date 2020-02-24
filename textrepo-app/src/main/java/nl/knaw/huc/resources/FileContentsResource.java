@@ -77,7 +77,7 @@ public class FileContentsResource {
 
   @GET
   @Timed
-  @Produces(APPLICATION_OCTET_STREAM)
+  @Produces({APPLICATION_JSON, APPLICATION_OCTET_STREAM})
   @ApiOperation(value = "Download latest file contents")
   @ApiResponses(value = {@ApiResponse(code = 200, response = byte[].class, message = "OK")})
   public Response getContents(

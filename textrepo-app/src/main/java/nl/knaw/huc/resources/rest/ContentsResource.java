@@ -17,6 +17,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
 
 @Api(tags = {"contents"})
@@ -33,7 +34,7 @@ public class ContentsResource {
   @GET
   @Path("/{sha}")
   @Timed
-  @Produces(APPLICATION_OCTET_STREAM)
+  @Produces({APPLICATION_JSON, APPLICATION_OCTET_STREAM})
   @ApiOperation(value = "Retrieve contents")
   @ApiResponses(value = {@ApiResponse(code = 200, response = byte[].class, message = "OK")})
   public Response get(
