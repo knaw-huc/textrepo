@@ -28,7 +28,7 @@ create table versions (
   contents_sha char(56) not null,
   created_at timestamp with time zone not null,
   unique (file_id, created_at),
-  foreign key (file_id) references files (id),
+  foreign key (file_id) references files (id) on delete cascade,
   foreign key (contents_sha) references contents (sha224)
 );
 
@@ -69,5 +69,6 @@ create table files_metadata (
   file_id uuid not null,
   key varchar not null,
   value text,
-  primary key (file_id, key)
+  primary key (file_id, key),
+  foreign key (file_id) references files (id) on delete cascade
 );

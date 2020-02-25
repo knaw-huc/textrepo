@@ -21,6 +21,7 @@ import nl.knaw.huc.resources.rest.FilesResource;
 import nl.knaw.huc.resources.rest.TypesResource;
 import nl.knaw.huc.resources.rest.VersionContentsResource;
 import nl.knaw.huc.resources.rest.VersionsResource;
+import nl.knaw.huc.resources.task.DeleteDocumentResource;
 import nl.knaw.huc.resources.task.FindResource;
 import nl.knaw.huc.resources.task.ImportResource;
 import nl.knaw.huc.resources.task.IndexResource;
@@ -116,6 +117,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
         new ImportResource(taskBuilderFactory, maxPayloadSize),
         new IndexResource(taskBuilderFactory),
         new FindResource(taskBuilderFactory),
+        new DeleteDocumentResource(taskBuilderFactory),
         new DeprecatedFilesResource(fileService, maxPayloadSize),
         new FilesResource(fileService),
         new DocumentFilesResource(documentFilesService),

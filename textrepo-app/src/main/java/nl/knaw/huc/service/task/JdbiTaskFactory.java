@@ -1,6 +1,8 @@
 package nl.knaw.huc.service.task;
 
 import nl.knaw.huc.service.index.FileIndexer;
+import nl.knaw.huc.service.task.deleter.DeleteDocumentTaskBuilder;
+import nl.knaw.huc.service.task.deleter.JdbiDeleteDocumentTaskBuilder;
 import nl.knaw.huc.service.task.finder.FindContentsTaskBuilder;
 import nl.knaw.huc.service.task.finder.JdbiFindContentsTaskBuilder;
 import nl.knaw.huc.service.task.importer.ImportFileTaskBuilder;
@@ -47,5 +49,10 @@ public class JdbiTaskFactory implements TaskBuilderFactory {
   @Override
   public FindContentsTaskBuilder getContentsFinderBuilder() {
     return new JdbiFindContentsTaskBuilder(jdbi);
+  }
+
+  @Override
+  public DeleteDocumentTaskBuilder getDocumentDeleteBuilder() {
+    return new JdbiDeleteDocumentTaskBuilder(jdbi);
   }
 }
