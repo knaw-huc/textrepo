@@ -13,10 +13,12 @@ import org.slf4j.LoggerFactory;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.io.InputStream;
 
@@ -38,22 +40,24 @@ public class ImportResource {
   }
 
   @POST
-  @Path("documents/{externalId}/{type}")
+  @Path("documents/{externalId}/{typeName}")
   @Consumes(MULTIPART_FORM_DATA)
   @Produces(APPLICATION_JSON)
-  @ApiOperation("Import file as the current version for {type} of document referenced by {externalId}")
+  @ApiOperation("Import file as the current version for {typeName} of document referenced by {externalId}")
   @ApiResponses(value = {@ApiResponse(code = 201, message = "CREATED")})
   public Response importDocumentContentsForFileWithType(
       @NotBlank @PathParam("externalId") String externalId,
-      @NotBlank @PathParam("type") String type,
+      @NotBlank @PathParam("typeName") String typeName,
+      @QueryParam("allowNewDocument") @DefaultValue("false") boolean allowNewDocument,
       @NotNull @FormDataParam("contents") InputStream uploadedInputStream,
       @NotNull @FormDataParam("contents") FormDataContentDisposition fileDetail
   ) {
-    LOG.debug("ImportFile: externalId={}, type={}", externalId, type);
+    LOG.debug("ImportFile: allowNewDocument={}, externalId={}, typeName={}", allowNewDocument, externalId, typeName);
 
     final var builder = factory.getDocumentImportBuilder();
-    final var importTask = builder.forExternalId(externalId)
-                                  .withType(type)
+    final var importTask = builder.allowNewDocument(allowNewDocument)
+                                  .forExternalId(externalId)
+                                  .withTypeName(typeName)
                                   .forFilename(fileDetail.getFileName())
                                   .withContents(readContents(uploadedInputStream, maxPayloadSize))
                                   .build();
