@@ -29,7 +29,8 @@ create table versions (
   created_at timestamp with time zone not null,
   unique (file_id, created_at),
   foreign key (file_id) references files (id) on delete cascade,
-  foreign key (contents_sha) references contents (sha224)
+  -- constraint name is used in textrepo-app:
+  constraint versions_contents_sha_fkey foreign key (contents_sha) references contents (sha224)
 );
 
 create index version_by_file_id on versions (file_id);
