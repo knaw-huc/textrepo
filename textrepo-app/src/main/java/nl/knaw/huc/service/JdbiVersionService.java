@@ -95,15 +95,12 @@ public class JdbiVersionService implements VersionService {
 
   @Override
   public void delete(UUID id) {
-    var version = versions().find(id).orElse(null);
+    var version = versions().find(id);
     versions().delete(id);
-    if (version != null) {
-      tryDeletingContents(id, version);
-    }
+    version.ifPresent(v -> tryDeletingContents(id, v.getContentsSha()));
   }
 
-  private void tryDeletingContents(@Nonnull UUID id, @Nonnull Version version) {
-    var sha = version.getContentsSha();
+  private void tryDeletingContents(@Nonnull UUID id, String sha) {
     try {
       contents().delete(sha);
       logger.info("Deleted contents of version {} by sha {}", id, sha);
