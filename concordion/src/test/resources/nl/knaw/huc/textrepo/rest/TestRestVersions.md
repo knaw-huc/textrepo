@@ -10,7 +10,7 @@ To add a version we first create:
  - a document: [ ](- "c:echo=#docId")
  - a file: [ ](- "c:echo=#fileId")
 
-### Create version
+## Create version
 When creating the following version with a `POST` to [`/rest/versions`](- "#createEndpoint"):
 
 [```new content```](- "#newContent")
@@ -25,7 +25,7 @@ Then:
  
 [ ](- "ext:embed=#createResult.body")
 
-### Retrieve version
+## Retrieve version
 When retrieving the following version with a `GET` to [`/rest/versions/{id}`](- "#getEndpoint") 
 
  - where `{id}` is [ ](- "c:echo=#createResult.id"):
@@ -42,7 +42,7 @@ Then:
 
 [ ](- "ext:embed=#retrieveResult.body")
 
-### Update version
+## Update version
 When updating version [ ](- "c:echo=#createResult.id") with a `PUT` to [`/rest/versions/{id}`](- "#updateEndpoint"):
 
 [ ](- "#updateResult=update(#createEndpoint, #newContent, #createResult.id)")
@@ -54,7 +54,7 @@ Then:
 
 [ ](- "ext:embed=#updateResult.body")
 
-### Delete version
+## Delete version
 When deleting version [ ](- "c:echo=#createResult.id") with a `DELETE` to [`/rest/versions/{id}`](- "#deleteEndpoint"):
 
 [ ](- "#deleteResult=delete(#deleteEndpoint, #createResult.id)")
@@ -63,7 +63,7 @@ Then:
 
  - The response status should be: [200](- "?=#deleteResult.status").
 
-### Retrieve version after deleting
+## Retrieve version after deleting
 When retrieving version [ ](- "c:echo=#createResult.id") with a `GET` to [`/rest/versions/{id}`](- "#getEndpoint"):
 
 [ ](- "#retrieveAfterDeleteResult=getAfterDelete(#getEndpoint, #createResult.id)")
