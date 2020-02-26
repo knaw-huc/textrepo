@@ -100,6 +100,9 @@ public class JdbiVersionService implements VersionService {
     version.ifPresent(v -> tryDeletingContents(id, v.getContentsSha()));
   }
 
+  /**
+   * Deletes contents when its sha is not linked to any version
+   */
   private void tryDeletingContents(@Nonnull UUID id, String sha) {
     try {
       contents().delete(sha);
