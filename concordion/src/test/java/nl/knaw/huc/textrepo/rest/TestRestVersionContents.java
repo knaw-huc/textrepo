@@ -46,4 +46,19 @@ public class TestRestVersionContents extends AbstractConcordionTest {
     return result;
   }
 
+  public static class DeleteResult {
+    public int status;
+  }
+
+  public DeleteResult delete(Object endpoint, Object id) {
+    final var response = client
+        .target(replaceUrlParams(endpoint, id))
+        .request()
+        .delete();
+
+    var result = new DeleteResult();
+    result.status = response.getStatus();
+    return result;
+  }
+
 }
