@@ -25,4 +25,7 @@ public interface ContentsDao {
   @RegisterConstructorMapper(value = Contents.class)
   Optional<Contents> findByVersionId(UUID versionId);
 
+  @SqlUpdate("delete from contents where sha224 = ?;")
+  void delete(String contentsSha);
+
 }

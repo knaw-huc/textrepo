@@ -15,6 +15,7 @@ public class ContentsService {
   }
 
   public Contents getBySha(String sha) {
-    return contentsStorage.getBySha(sha);
+    return contentsStorage.get(sha);
   }
+
 }

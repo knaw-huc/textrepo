@@ -3,11 +3,15 @@ package nl.knaw.huc.service;
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.core.TextrepoFile;
 import nl.knaw.huc.core.Version;
+import nl.knaw.huc.db.ContentsDao;
 import nl.knaw.huc.db.FilesDao;
 import nl.knaw.huc.db.VersionsDao;
 import nl.knaw.huc.service.index.ElasticCustomIndexer;
 import nl.knaw.huc.service.index.FileIndexer;
 import org.jdbi.v3.core.Jdbi;
+import org.jdbi.v3.core.JdbiException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.ws.rs.NotFoundException;
@@ -18,13 +22,16 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 import static java.lang.String.format;
+import static nl.knaw.huc.service.PsqlExceptionService.violatesConstraint;
 
 public class JdbiVersionService implements VersionService {
+
   private final Jdbi jdbi;
   private final ContentsService contentsService;
   private FileIndexer fileIndexService;
   private List<ElasticCustomIndexer> customFacetIndexers;
   private Supplier<UUID> uuidGenerator;
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   public JdbiVersionService(
       Jdbi jdbi,
@@ -88,7 +95,25 @@ public class JdbiVersionService implements VersionService {
 
   @Override
   public void delete(UUID id) {
+    var version = versions().find(id).orElse(null);
     versions().delete(id);
+    if (version != null) {
+      tryDeletingContents(id, version);
+    }
+  }
+
+  private void tryDeletingContents(@Nonnull UUID id, @Nonnull Version version) {
+    var sha = version.getContentsSha();
+    try {
+      contents().delete(sha);
+      logger.info("Deleted contents of version {} by sha {}", id, sha);
+    } catch (JdbiException ex) {
+      if (violatesConstraint(ex, "versions_contents_sha_fkey")) {
+        logger.info("Not deleting contents of version {} because sha {} is still in use", id, sha);
+      } else {
+        throw ex;
+      }
+    }
   }
 
   private FilesDao files() {
@@ -97,6 +122,10 @@ public class JdbiVersionService implements VersionService {
 
   private VersionsDao versions() {
     return jdbi.onDemand(VersionsDao.class);
+  }
+
+  private ContentsDao contents() {
+    return jdbi.onDemand(ContentsDao.class);
   }
 
 }

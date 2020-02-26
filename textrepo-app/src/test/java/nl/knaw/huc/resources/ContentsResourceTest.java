@@ -54,7 +54,7 @@ public class ContentsResourceTest {
 
   @Test
   public void testGetFileBySha224_returnsFileContents_whenFileExists() throws IOException {
-    when(FILE_STORAGE.getBySha(eq(sha224))).thenReturn(TEXT_REPO_CONTENTS);
+    when(FILE_STORAGE.get(eq(sha224))).thenReturn(TEXT_REPO_CONTENTS);
 
     var response = resource.client().target("/rest/contents/" + sha224).request().get();
     var inputStream = response.readEntity(InputStream.class);
@@ -74,7 +74,7 @@ public class ContentsResourceTest {
 
   @Test
   public void testGetFileBySha224_returns404NotFound_whenNoSuchSha224Exists() {
-    when(FILE_STORAGE.getBySha(any())).thenThrow(new NotFoundException("File not found"));
+    when(FILE_STORAGE.get(any())).thenThrow(new NotFoundException("File not found"));
 
     var response = resource.client().target("/rest/contents/" + sha224).request().get();
     assertThat(response.getStatus()).isEqualTo(404);

@@ -60,12 +60,12 @@ public class JdbiContentsStorageTest {
   @Test
   public void testGetBySha224_returnsFile_whenPresent() {
     when(CONTENTS_DAO.findBySha224(sha224)).thenReturn(Optional.of(TEXT_REPO_CONTENTS));
-    assertThat(STORE.getBySha(sha224)).isEqualTo(TEXT_REPO_CONTENTS);
+    assertThat(STORE.get(sha224)).isEqualTo(TEXT_REPO_CONTENTS);
   }
 
   @Test
   public void testGetBySha224_throwsNotFound_whenAbsent() {
     when(CONTENTS_DAO.findBySha224(any())).thenReturn(Optional.empty());
-    assertThrows(NotFoundException.class, () -> STORE.getBySha(sha224));
+    assertThrows(NotFoundException.class, () -> STORE.get(sha224));
   }
 }

@@ -21,7 +21,7 @@ public class JdbiContentsStorage implements ContentsStorage {
   @Override
   public void storeContents(Contents contents) {
     try {
-      getContentsDao().insert(contents);
+      contents().insert(contents);
     } catch (Exception e) {
       logger.warn("Failed to insert contents: {}", e.getMessage());
       throw new WebApplicationException(e);
@@ -29,13 +29,13 @@ public class JdbiContentsStorage implements ContentsStorage {
   }
 
   @Override
-  public Contents getBySha(String sha) {
-    return getContentsDao()
+  public Contents get(String sha) {
+    return contents()
         .findBySha224(sha)
         .orElseThrow(() -> new NotFoundException("Contents not found"));
   }
 
-  private ContentsDao getContentsDao() {
+  private ContentsDao contents() {
     return jdbi.onDemand(ContentsDao.class);
   }
 
