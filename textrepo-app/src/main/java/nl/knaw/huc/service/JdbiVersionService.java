@@ -22,6 +22,7 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 import static java.lang.String.format;
+import static nl.knaw.huc.service.PsqlExceptionService.Constraint.VERSIONS_CONTENTS_SHA;
 import static nl.knaw.huc.service.PsqlExceptionService.violatesConstraint;
 
 public class JdbiVersionService implements VersionService {
@@ -108,7 +109,7 @@ public class JdbiVersionService implements VersionService {
       contents().delete(sha);
       logger.info("Deleted contents of version {} by sha {}", id, sha);
     } catch (JdbiException ex) {
-      if (violatesConstraint(ex, "versions_contents_sha_fkey")) {
+      if (violatesConstraint(ex, VERSIONS_CONTENTS_SHA)) {
         logger.info("Not deleting contents of version {} because sha {} is still in use", id, sha);
       } else {
         throw ex;
