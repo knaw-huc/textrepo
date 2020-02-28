@@ -88,7 +88,7 @@ public class FileVersionsResourceTest {
     var mapper = new ObjectMapper();
     // To read date time field:
     mapper.registerModule(new JavaTimeModule());
-    List<Version> actual = mapper.readValue(responseJson, new TypeReference<List<Version>>() {
+    List<Version> actual = mapper.readValue(responseJson, new TypeReference<>() {
     });
     assertThat(actual.size()).isEqualTo(2);
     assertThat(actual.get(0).getFileId()).isEqualTo(uuid);

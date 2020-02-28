@@ -16,6 +16,7 @@ import java.util.List;
 
 import static java.lang.String.format;
 import static javax.ws.rs.core.Response.Status.CONFLICT;
+import static nl.knaw.huc.service.PsqlExceptionService.Constraint.FILES_TYPE_ID;
 import static nl.knaw.huc.service.PsqlExceptionService.violatesConstraint;
 
 public class JdbiTypeService implements TypeService {
@@ -68,7 +69,7 @@ public class JdbiTypeService implements TypeService {
     try {
       types().delete(typeId);
     } catch (JdbiException ex) {
-      if (violatesConstraint(ex, "files_type_id_fkey")) {
+      if (violatesConstraint(ex, FILES_TYPE_ID)) {
         throw new ForbiddenException(format("Cannot delete type: files of type %s still exist", typeId));
       }
       throw ex;
