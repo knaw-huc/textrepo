@@ -3,6 +3,6 @@ logging:
   loggers:
     nl.knaw.huc: DEBUG
     org.hibernate: ERROR
-minKeywordLength: 3
+minKeywordLength: 5
 keywordDelimiters: " \t\n\r\f,.:;?![]'="
 mappingFile: ./autocomplete-mapping.json

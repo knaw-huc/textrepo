@@ -94,11 +94,9 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     var metadataService = new JdbiFileMetadataService(jdbi);
     var typeService = new JdbiTypeService(jdbi);
     var customIndexers = createElasticCustomFacetIndexers(config, typeService);
-    var fileIndexService = new ElasticFileIndexer(config.getElasticsearch());
     var taskBuilderFactory = new JdbiTaskFactory(jdbi)
-        .withIdGenerator(uuidGenerator)
-        .withFileIndexer(fileIndexService);
-    var versionService = new JdbiVersionService(jdbi, contentsService, fileIndexService, customIndexers, uuidGenerator);
+        .withIdGenerator(uuidGenerator);
+    var versionService = new JdbiVersionService(jdbi, contentsService, customIndexers, uuidGenerator);
     var versionContentsService = new JdbiVersionContentsService(jdbi);
     var fileService = new JdbiFileService(jdbi, typeService, versionService, metadataService, uuidGenerator);
     var documentFilesService = new JdbiDocumentFilesService(jdbi);
@@ -126,9 +124,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     );
 
     environment.jersey().register(new MethodNotAllowedExceptionMapper());
-
     resources.forEach((resource) -> environment.jersey().register(resource));
-    environment.lifecycle().manage(fileIndexService);
     customIndexers.forEach(ci -> environment.lifecycle().manage(ci));
   }
 

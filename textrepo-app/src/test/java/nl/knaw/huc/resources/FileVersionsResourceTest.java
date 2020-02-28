@@ -47,7 +47,6 @@ public class FileVersionsResourceTest {
   private static final VersionService versionService = new JdbiVersionService(
       jdbi,
       mock(ContentsService.class),
-      mock(ElasticFileIndexer.class),
       newArrayList(mock(ElasticCustomIndexer.class)),
       UUID::randomUUID
   );

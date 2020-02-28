@@ -3,6 +3,7 @@ package nl.knaw.huc.textrepo.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.text.StringSubstitutor;
+import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
@@ -24,13 +25,14 @@ import static java.lang.String.format;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static javax.ws.rs.client.Entity.entity;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
-import static nl.knaw.huc.textrepo.Config.TEXT_TYPE;
 import static nl.knaw.huc.textrepo.Config.HOST;
+import static nl.knaw.huc.textrepo.Config.TEXT_TYPE;
 
 public class TestUtils {
 
   static final Logger logger = LoggerFactory.getLogger(TestUtils.class);
   static final ObjectMapper mapper = new ObjectMapper();
+  private static Client client = JerseyClientBuilder.newClient();
 
   public static String isValidUuidMsg(String fileId) {
     try {
@@ -158,6 +160,14 @@ public class TestUtils {
 
   public static URI replaceUrlParams(Object endpoint, Object... params) {
     return UriBuilder.fromPath(HOST + endpoint.toString()).build(params);
+  }
+
+  public static String getByUrl(String url) {
+    return client
+        .target(url)
+        .request()
+        .get()
+        .readEntity(String.class);
   }
 
 }

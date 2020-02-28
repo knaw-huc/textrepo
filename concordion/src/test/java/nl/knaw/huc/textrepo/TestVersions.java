@@ -1,13 +1,15 @@
 package nl.knaw.huc.textrepo;
 
-import com.jayway.jsonpath.JsonPath;
 import nl.knaw.huc.textrepo.util.TestUtils;
 
 import javax.ws.rs.core.Response;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
 
 import static nl.knaw.huc.textrepo.Config.HTTP_APP_HOST;
+import static nl.knaw.huc.textrepo.util.IndexUtils.getIndexedAutocompleteDoc;
+import static nl.knaw.huc.textrepo.util.TestUtils.getByUrl;
 import static nl.knaw.huc.textrepo.util.TestUtils.getFileId;
 import static nl.knaw.huc.textrepo.util.TestUtils.getLocation;
 import static nl.knaw.huc.textrepo.util.TestUtils.putFileWithFilename;
@@ -44,7 +46,9 @@ public class TestVersions extends AbstractConcordionTest {
     result.version1Sha = jsonPath.parse(jsonVersions).read("$[0].contentsSha");
     result.version2Sha = jsonPath.parse(jsonVersions).read("$[1].contentsSha");
 
-    result.indexContentAfterUpdate = getIndexedFile(result.fileId);
+    var list = getIndexedAutocompleteDoc(result.fileId);
+    Collections.sort(list);
+    result.indexContentAfterUpdate = String.join(" ", list);
     return result;
   }
 
@@ -70,19 +74,6 @@ public class TestVersions extends AbstractConcordionTest {
   private String getVersions(String fileId) {
     var url = String.format("%s/rest/files/%s/versions", APP_HOST, fileId);
     return getByUrl(url);
-  }
-
-  private String getIndexedFile(String fileId) {
-    var url = ES_HOST + "/files/_doc/" + fileId;
-    return JsonPath.parse(getByUrl(url)).read("$._source.contents");
-  }
-
-  private String getByUrl(String url) {
-    return client()
-        .target(url)
-        .request()
-        .get()
-        .readEntity(String.class);
   }
 
 }

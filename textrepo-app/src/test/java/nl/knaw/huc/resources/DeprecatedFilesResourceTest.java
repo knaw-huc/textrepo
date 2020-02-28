@@ -59,7 +59,7 @@ public class DeprecatedFilesResourceTest {
   private static final TypeService typeService = mock(TypeService.class);
   private static final ElasticCustomIndexer facetIndexer = mock(ElasticCustomIndexer.class);
   private static final VersionService versions =
-      new JdbiVersionService(jdbi, contentsService, fileIndexer, newArrayList(facetIndexer), UUID::randomUUID);
+      new JdbiVersionService(jdbi, contentsService, newArrayList(facetIndexer), UUID::randomUUID);
   @SuppressWarnings("unchecked")
   private static final Supplier<UUID> idGenerator = mock(Supplier.class);
   private static final FileService FILE_SERVICE =
@@ -97,16 +97,6 @@ public class DeprecatedFilesResourceTest {
     final var response = postTestContents();
     assertThat(response.getStatus()).isEqualTo(201);
     assertThat(response.getHeaderString("Location")).endsWith("files/" + uuid + "/latest");
-  }
-
-  @Test
-  public void testAddFile_addsContentsWithFileIdToIndex() {
-    postTestContents();
-    var file = ArgumentCaptor.forClass(TextrepoFile.class);
-    var latestVersionContents = ArgumentCaptor.forClass(String.class);
-    verify(fileIndexer).indexFile(file.capture(), latestVersionContents.capture());
-    assertThat(file.getValue()).isOfAnyClassIn(TextrepoFile.class);
-    assertThat(latestVersionContents.getValue()).isEqualTo(contents);
   }
 
   @Test
@@ -159,6 +149,5 @@ public class DeprecatedFilesResourceTest {
 
     return request.post(entity);
   }
-
 
 }

@@ -26,7 +26,7 @@ public class AutocompleteResourceTest {
 
   @ClassRule
   public static DropwizardAppRule<AutocompleteConfiguration> RULE =
-      new DropwizardAppRule<>(AutocompleteApplication.class, System.getProperty("user.dir") + "/config.yml");
+      new DropwizardAppRule<>(AutocompleteApplication.class, System.getProperty("user.dir") + "/src/test/resources/test-config.yml");
 
   @Before
   public void setUp() {

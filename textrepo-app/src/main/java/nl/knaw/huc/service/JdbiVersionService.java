@@ -28,7 +28,6 @@ public class JdbiVersionService implements VersionService {
 
   private final Jdbi jdbi;
   private final ContentsService contentsService;
-  private FileIndexer fileIndexService;
   private List<ElasticCustomIndexer> customFacetIndexers;
   private Supplier<UUID> uuidGenerator;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -36,13 +35,11 @@ public class JdbiVersionService implements VersionService {
   public JdbiVersionService(
       Jdbi jdbi,
       ContentsService contentsService,
-      FileIndexer fileIndexService,
       List<ElasticCustomIndexer> customFacetIndexers,
       Supplier<UUID> uuidGenerator
   ) {
     this.jdbi = jdbi;
     this.contentsService = contentsService;
-    this.fileIndexService = fileIndexService;
     this.customFacetIndexers = customFacetIndexers;
     this.uuidGenerator = uuidGenerator;
   }
@@ -72,7 +69,6 @@ public class JdbiVersionService implements VersionService {
   ) {
     contentsService.addContents(contents);
     var latestVersionContents = contents.asUtf8String();
-    fileIndexService.indexFile(file, latestVersionContents);
     customFacetIndexers.forEach(indexer -> indexer.indexFile(file, latestVersionContents));
 
     var id = uuidGenerator.get();

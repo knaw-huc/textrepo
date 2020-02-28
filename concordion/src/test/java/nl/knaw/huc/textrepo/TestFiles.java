@@ -1,14 +1,15 @@
 package nl.knaw.huc.textrepo;
 
-import com.jayway.jsonpath.JsonPath;
 import nl.knaw.huc.textrepo.util.TestUtils;
 import org.concordion.api.MultiValueResult;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.UUID;
 
 import static nl.knaw.huc.textrepo.Config.FILES_URL;
+import static nl.knaw.huc.textrepo.util.IndexUtils.getIndexedAutocompleteDoc;
 import static nl.knaw.huc.textrepo.util.TestUtils.getLocation;
 import static nl.knaw.huc.textrepo.util.TestUtils.getStatus;
 import static nl.knaw.huc.textrepo.util.TestUtils.postFileWithFilename;
@@ -49,11 +50,15 @@ public class TestFiles extends AbstractConcordionTest {
 
   public MultiValueResult index(Object param) {
     var fileId = (String) param;
-    var request = client().target(ES_HOST + "/files/_doc/" + fileId).request();
+    var request = client().target(ES_HOST + "/autocomplete/_doc/" + fileId).request();
     var response = request.get();
+    var list = getIndexedAutocompleteDoc(fileId);
+    Collections.sort(list);
+    var entity = String.join(" ", list);
+
     return new MultiValueResult()
         .with("status", getStatus(response))
-        .with("entity", JsonPath.parse(response.readEntity(String.class)).read("$._source.contents"));
+        .with("entity", entity);
   }
 
 }
