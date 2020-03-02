@@ -43,16 +43,16 @@ import static org.elasticsearch.common.xcontent.XContentType.JSON;
  */
 public class MappedIndexer implements Indexer {
 
-  private final CustomIndexerConfiguration config;
+  private final MappedIndexerConfiguration config;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final Client requestClient = JerseyClientBuilder.newClient();
   private final TypeService typeService;
   private final TextRepoElasticClient client;
 
   public MappedIndexer(
-      CustomIndexerConfiguration config,
+      MappedIndexerConfiguration config,
       TypeService typeService
-  ) throws CustomIndexerException {
+  ) throws IndexerException {
     this.config = config;
     this.typeService = typeService;
     this.client = new TextRepoElasticClient(config.elasticsearch);
@@ -63,7 +63,7 @@ public class MappedIndexer implements Indexer {
     }
   }
 
-  private void createIndex(CustomIndexerConfiguration config) throws CustomIndexerException {
+  private void createIndex(MappedIndexerConfiguration config) throws IndexerException {
     logger.info("Creating es index [{}]", config.elasticsearch.index);
     var response = getMapping(config);
     var mappingResult = response.readEntity(String.class);
@@ -109,7 +109,7 @@ public class MappedIndexer implements Indexer {
     return sendRequest(file.getId(), esFacets);
   }
 
-  private Response getMapping(CustomIndexerConfiguration config) throws CustomIndexerException {
+  private Response getMapping(MappedIndexerConfiguration config) throws IndexerException {
     Response response;
     try {
       response = requestClient
@@ -118,7 +118,7 @@ public class MappedIndexer implements Indexer {
           .get();
       return response;
     } catch (ProcessingException ex) {
-      throw new CustomIndexerException(format("Could not fetch mapping from %s", config.mapping), ex);
+      throw new IndexerException(format("Could not fetch mapping from %s", config.mapping), ex);
     }
   }
 

@@ -3,8 +3,8 @@ package nl.knaw.huc.resources;
 import nl.knaw.huc.core.TextrepoFile;
 import nl.knaw.huc.core.Type;
 import nl.knaw.huc.service.TypeService;
-import nl.knaw.huc.service.index.CustomIndexerConfiguration;
-import nl.knaw.huc.service.index.CustomIndexerException;
+import nl.knaw.huc.service.index.MappedIndexerConfiguration;
+import nl.knaw.huc.service.index.IndexerException;
 import nl.knaw.huc.service.index.MappedIndexer;
 import nl.knaw.huc.service.index.ElasticsearchConfiguration;
 import nl.knaw.huc.service.index.FieldsConfiguration;
@@ -71,7 +71,7 @@ public class MappedIndexerTest {
   }
 
   @Test
-  public void testInstantiationElasticCustomFacetIndexer_requestsMapping() throws IOException, CustomIndexerException {
+  public void testInstantiationElasticCustomFacetIndexer_requestsMapping() throws IOException, IndexerException {
     var config = createCustomFacetIndexerConfiguration("urlencoded", testType.getMimetype());
     var getMappingRequest = request()
         .withMethod("GET")
@@ -91,7 +91,7 @@ public class MappedIndexerTest {
   }
 
   @Test
-  public void testIndexFile_requestsFields() throws IOException, CustomIndexerException {
+  public void testIndexFile_requestsFields() throws IOException, IndexerException {
     var config = createCustomFacetIndexerConfiguration("urlencoded", testType.getMimetype());
     mockMappingResponse();
     mockCreatingIndexResponse(config);
@@ -116,7 +116,7 @@ public class MappedIndexerTest {
 
   @Test
   public void testInstantiatingElasticCustomFacetIndexer_requestsFieldUsingMultipart_whenTypeIsMultipart()
-      throws IOException, CustomIndexerException {
+      throws IOException, IndexerException {
     var expectedContentTypeHeader = "multipart/form-data;boundary=.*";
     var config = createCustomFacetIndexerConfiguration("multipart", testType.getMimetype());
     var fileId = UUID.randomUUID();
@@ -135,7 +135,7 @@ public class MappedIndexerTest {
     mockServer.verify(postDocToFieldsRequest, once());
   }
 
-  private void mockPuttingFileResponse(CustomIndexerConfiguration config, UUID fileId) throws IOException {
+  private void mockPuttingFileResponse(MappedIndexerConfiguration config, UUID fileId) throws IOException {
     var putFileRequest = request()
         .withMethod("PUT")
         .withPath(format("/%s/_doc/%s", config.elasticsearch.index, fileId))
@@ -178,7 +178,7 @@ public class MappedIndexerTest {
     );
   }
 
-  private void mockCreatingIndexResponse(CustomIndexerConfiguration config) throws IOException {
+  private void mockCreatingIndexResponse(MappedIndexerConfiguration config) throws IOException {
     var putIndexRequest = request()
         .withMethod("PUT")
         .withPath("/" + config.elasticsearch.index)
@@ -198,11 +198,11 @@ public class MappedIndexerTest {
 
   }
 
-  private CustomIndexerConfiguration createCustomFacetIndexerConfiguration(String type, String mimetype) {
+  private MappedIndexerConfiguration createCustomFacetIndexerConfiguration(String type, String mimetype) {
     var mockMappingUrl = "http://localhost:" + mockPort + mockMappingEndpoint;
     var mockFieldsUrl = "http://localhost:" + mockPort + mockFieldsEndpoint;
     var mockEsUrl = "localhost:" + mockIndexPort;
-    var config = new CustomIndexerConfiguration();
+    var config = new MappedIndexerConfiguration();
     config.elasticsearch = new ElasticsearchConfiguration();
     config.elasticsearch.contentsField = "does-not-matter";
     config.elasticsearch.hosts = newArrayList(mockEsUrl);

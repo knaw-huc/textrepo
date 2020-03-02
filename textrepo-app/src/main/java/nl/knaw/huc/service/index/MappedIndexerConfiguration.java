@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-public class CustomIndexerConfiguration {
+public class MappedIndexerConfiguration {
 
   /**
    * GET Endpoint to request es index mapping that is used to create custom index
