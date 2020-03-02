@@ -33,7 +33,7 @@ public class TextRepositoryConfiguration extends Configuration {
 
   @Valid
   @NotNull
-  private List<CustomIndexerConfiguration> customFacetIndexers = new ArrayList<>();
+  private List<CustomIndexerConfiguration> indexers = new ArrayList<>();
 
   @JsonProperty("jerseyClient")
   public JerseyClientConfiguration getJerseyClientConfiguration() {
@@ -76,13 +76,13 @@ public class TextRepositoryConfiguration extends Configuration {
     this.swaggerBundleConfiguration = swaggerBundleConfiguration;
   }
 
-  @JsonProperty("customFacetIndexers")
+  @JsonProperty("indexers")
   public List<CustomIndexerConfiguration> getCustomFacetIndexers() {
-    return customFacetIndexers;
+    return indexers;
   }
 
-  @JsonProperty("customFacetIndexers")
-  public void setCustomFacetIndexers(List<CustomIndexerConfiguration> customFacetIndexers) {
-    this.customFacetIndexers = customFacetIndexers;
+  @JsonProperty("indexers")
+  public void setCustomFacetIndexers(List<CustomIndexerConfiguration> indexers) {
+    this.indexers = indexers;
   }
 }

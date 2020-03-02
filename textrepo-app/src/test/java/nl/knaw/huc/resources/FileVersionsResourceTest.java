@@ -11,8 +11,7 @@ import nl.knaw.huc.resources.rest.FileVersionsResource;
 import nl.knaw.huc.service.ContentsService;
 import nl.knaw.huc.service.JdbiVersionService;
 import nl.knaw.huc.service.VersionService;
-import nl.knaw.huc.service.index.ElasticCustomIndexer;
-import nl.knaw.huc.service.index.ElasticFileIndexer;
+import nl.knaw.huc.service.index.MappedFileIndexer;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.jdbi.v3.core.Jdbi;
 import org.junit.jupiter.api.AfterEach;
@@ -47,7 +46,7 @@ public class FileVersionsResourceTest {
   private static final VersionService versionService = new JdbiVersionService(
       jdbi,
       mock(ContentsService.class),
-      newArrayList(mock(ElasticCustomIndexer.class)),
+      newArrayList(mock(MappedFileIndexer.class)),
       UUID::randomUUID
   );
 

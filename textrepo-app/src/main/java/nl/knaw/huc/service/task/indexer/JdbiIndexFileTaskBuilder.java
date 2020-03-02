@@ -66,7 +66,7 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
         final var doc = new FindDocumentByExternalId(externalId).executeIn(txn);
         final var file = new FindDocumentFileByType(doc, typeName).executeIn(txn);
         final var contents = new GetLatestFileContents(file).executeIn(txn);
-        final var indexResult = indexer.indexFile(file, contents.asUtf8String());
+        final var indexResult = indexer.index(file, contents.asUtf8String());
         indexResult.ifPresent(LOG::warn);
         return indexResult.orElse("Ok");
       });
@@ -112,7 +112,7 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
       logger.debug("Indexing file: {}", file.getId());
       jdbi.useTransaction(txn -> {
         final var contents = new GetLatestFileContents(file).executeIn(txn);
-        final var indexResult = indexer.indexFile(file, contents.asUtf8String());
+        final var indexResult = indexer.index(file, contents.asUtf8String());
         indexResult.ifPresent(LOG::warn);
         filesAffected++;
       });

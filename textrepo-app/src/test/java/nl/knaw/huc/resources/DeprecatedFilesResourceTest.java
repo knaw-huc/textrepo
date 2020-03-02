@@ -3,7 +3,6 @@ package nl.knaw.huc.resources;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.testing.junit5.ResourceExtension;
 import nl.knaw.huc.api.MetadataEntry;
-import nl.knaw.huc.core.TextrepoFile;
 import nl.knaw.huc.db.FilesDao;
 import nl.knaw.huc.db.VersionsDao;
 import nl.knaw.huc.service.ContentsService;
@@ -13,8 +12,7 @@ import nl.knaw.huc.service.JdbiFileService;
 import nl.knaw.huc.service.JdbiVersionService;
 import nl.knaw.huc.service.TypeService;
 import nl.knaw.huc.service.VersionService;
-import nl.knaw.huc.service.index.ElasticCustomIndexer;
-import nl.knaw.huc.service.index.ElasticFileIndexer;
+import nl.knaw.huc.service.index.MappedFileIndexer;
 import nl.knaw.huc.service.store.ContentsStorage;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
@@ -54,10 +52,9 @@ public class DeprecatedFilesResourceTest {
 
   private static final ContentsService contentsService = new ContentsService(mock(ContentsStorage.class));
   private static final Jdbi jdbi = mock(Jdbi.class);
-  private static final ElasticFileIndexer fileIndexer = mock(ElasticFileIndexer.class);
   private static final FileMetadataService FILE_METADATA_SERVICE = mock(FileMetadataService.class);
   private static final TypeService typeService = mock(TypeService.class);
-  private static final ElasticCustomIndexer facetIndexer = mock(ElasticCustomIndexer.class);
+  private static final MappedFileIndexer facetIndexer = mock(MappedFileIndexer.class);
   private static final VersionService versions =
       new JdbiVersionService(jdbi, contentsService, newArrayList(facetIndexer), UUID::randomUUID);
   @SuppressWarnings("unchecked")
@@ -89,7 +86,7 @@ public class DeprecatedFilesResourceTest {
 
   @AfterEach
   public void resetMocks() {
-    reset(jdbi, FILES_DAO, VERSIONS_DAO, fileIndexer, FILE_METADATA_SERVICE);
+    reset(jdbi, FILES_DAO, VERSIONS_DAO, FILE_METADATA_SERVICE);
   }
 
   @Test

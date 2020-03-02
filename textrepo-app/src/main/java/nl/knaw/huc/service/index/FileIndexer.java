@@ -6,7 +6,7 @@ import javax.annotation.Nonnull;
 import java.util.Optional;
 
 public interface FileIndexer {
-  Optional<String> indexFile(
+  Optional<String> index(
       @Nonnull TextrepoFile file,
       @Nonnull String latestVersionContents
   );

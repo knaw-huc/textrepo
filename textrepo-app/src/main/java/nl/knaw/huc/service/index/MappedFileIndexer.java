@@ -30,9 +30,17 @@ import static javax.ws.rs.client.Entity.entity;
 import static org.elasticsearch.common.xcontent.XContentType.JSON;
 
 /**
- * Custom indexers are configured in config.yml
+ * MappedFileIndexer creates its index in elasticsearch:
+ *  - as defined by its es-mapping which can be retrieved at its `mapping` endpoint
+ * MappedFileIndexer adds new files to its index:
+ *  - convert file contents to an es-doc at its `fields` endpoint
+ *  - sends index-request with es-doc to its index
+ * MappedFileIndexer depends on its REST-service with two endpoints:
+ *  - GET `mapping`
+ *  - POST `fields` (using urlencoded or multipart)
+ * MappedFileIndexer is configured in config.yml
  */
-public class ElasticCustomIndexer implements FileIndexer, Managed {
+public class MappedFileIndexer implements FileIndexer, Managed {
 
   private final CustomIndexerConfiguration config;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -40,12 +48,12 @@ public class ElasticCustomIndexer implements FileIndexer, Managed {
   private final Client requestClient = JerseyClientBuilder.newClient();
   private final TypeService typeService;
 
-  public ElasticCustomIndexer(
+  public MappedFileIndexer(
       CustomIndexerConfiguration config,
-      TypeService typeService
+      TypeService typeService, ElasticFileIndexer indexer
   ) throws CustomIndexerException {
     this.config = config;
-    indexer = new ElasticFileIndexer(config.elasticsearch);
+    this.indexer = indexer;
     this.typeService = typeService;
     createIndex(config);
     if (config.fields.type.equals("multipart")) {
@@ -83,7 +91,7 @@ public class ElasticCustomIndexer implements FileIndexer, Managed {
   }
 
   @Override
-  public Optional<String> indexFile(@Nonnull TextrepoFile file, @Nonnull String latestVersionContents) {
+  public Optional<String> index(@Nonnull TextrepoFile file, @Nonnull String latestVersionContents) {
     var mimetype = typeService.getType(file.getTypeId()).getMimetype();
     if (!mimetypeSupported(mimetype)) {
       return Optional.empty();
@@ -92,12 +100,12 @@ public class ElasticCustomIndexer implements FileIndexer, Managed {
     var response = getFields(latestVersionContents, mimetype);
     var esFacets = response.readEntity(String.class);
 
-    Optional<String> fieldStatusComplaint = checkFieldStatus(response, esFacets);
+    var fieldStatusComplaint = checkFieldStatus(response, esFacets);
     if (fieldStatusComplaint.isPresent()) {
       return fieldStatusComplaint;
     }
 
-    return index(file.getId(), esFacets);
+    return sendRequest(file.getId(), esFacets);
   }
 
   private Response getMapping(CustomIndexerConfiguration config) throws CustomIndexerException {
@@ -157,6 +165,23 @@ public class ElasticCustomIndexer implements FileIndexer, Managed {
     return request.post(entity);
   }
 
+  private Optional<String> sendRequest(@Nonnull UUID fileId, String esFacets) {
+    var indexRequest = new IndexRequest(config.elasticsearch.index)
+        .id(fileId.toString())
+        .source(esFacets, JSON);
+    var response = indexer.indexRequest(indexRequest);
+    var status = response.status().getStatus();
+    if (status == 201) {
+      logger.debug("Successfully added file [{}] to index [{}]", fileId, config.elasticsearch.index);
+      return Optional.empty();
+    } else {
+      final var msg = format("Response of adding file %s to index %s was: %d - %s",
+          fileId, config.elasticsearch.index, status, response.toString());
+      logger.error(msg);
+      return Optional.of(msg);
+    }
+  }
+
 
   private boolean mimetypeSupported(String mimetype) {
     if (!config.mimetypes.contains(mimetype)) {
@@ -176,23 +201,6 @@ public class ElasticCustomIndexer implements FileIndexer, Managed {
       return Optional.of(msg);
     }
     return Optional.empty();
-  }
-
-  private Optional<String> index(@Nonnull UUID fileId, String esFacets) {
-    var indexRequest = new IndexRequest(config.elasticsearch.index)
-        .id(fileId.toString())
-        .source(esFacets, JSON);
-    var response = indexer.indexRequest(indexRequest);
-    var status = response.status().getStatus();
-    if (status == 201) {
-      logger.debug("Successfully added file [{}] to index [{}]", fileId, config.elasticsearch.index);
-      return Optional.empty();
-    } else {
-      final var msg = format("Response of adding file %s to index %s was: %d - %s",
-          fileId, config.elasticsearch.index, status, response.toString());
-      logger.error(msg);
-      return Optional.of(msg);
-    }
   }
 
   @Override

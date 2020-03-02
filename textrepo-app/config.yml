@@ -20,7 +20,7 @@ logging:
     # Filter out flood of warnings when Swagger tries to load classes through reflection:
     org.reflections.Reflections: ERROR
 
-customFacetIndexers:
+indexers:
 - mapping: https://demo.docere.diginfra.net/api/projects/gheys/mapping
   fields:
     url: https://demo.docere.diginfra.net/api/projects/docere/documents/x/fields

@@ -5,7 +5,8 @@ import nl.knaw.huc.core.Type;
 import nl.knaw.huc.service.TypeService;
 import nl.knaw.huc.service.index.CustomIndexerConfiguration;
 import nl.knaw.huc.service.index.CustomIndexerException;
-import nl.knaw.huc.service.index.ElasticCustomIndexer;
+import nl.knaw.huc.service.index.MappedFileIndexer;
+import nl.knaw.huc.service.index.ElasticFileIndexer;
 import nl.knaw.huc.service.index.ElasticsearchConfiguration;
 import nl.knaw.huc.service.index.FieldsConfiguration;
 import org.junit.jupiter.api.AfterAll;
@@ -33,7 +34,7 @@ import static org.mockserver.model.HttpResponse.response;
 import static org.mockserver.model.JsonSchemaBody.jsonSchema;
 import static org.mockserver.verify.VerificationTimes.once;
 
-public class ElasticCustomIndexerTest {
+public class MappedFileIndexerTest {
 
   private static ClientAndServer mockServer;
   private static final int mockPort = 1080;
@@ -84,7 +85,7 @@ public class ElasticCustomIndexerTest {
         .withBody(jsonSchema(getResourceAsString("mapping/test.schema.json")));
     mockCreatingIndexResponse(config.elasticsearch.index, putIndexRequest);
 
-    new ElasticCustomIndexer(config, typeServiceMock);
+    new MappedFileIndexer(config, typeServiceMock, new ElasticFileIndexer(config.elasticsearch));
 
     mockServer.verify(getMappingRequest, once());
     mockIndexServer.verify(putIndexRequest, once());
@@ -95,7 +96,7 @@ public class ElasticCustomIndexerTest {
     var config = createCustomFacetIndexerConfiguration("urlencoded", testType.getMimetype());
     mockMappingResponse();
     mockCreatingIndexResponse(config);
-    var indexer = new ElasticCustomIndexer(config, typeServiceMock);
+    var indexer = new MappedFileIndexer(config, typeServiceMock, new ElasticFileIndexer(config.elasticsearch));
     var file = new TextrepoFile(UUID.randomUUID(), (short) 43);
     var postDoc2FieldsRequest = request()
         .withMethod("POST")
@@ -108,7 +109,7 @@ public class ElasticCustomIndexerTest {
         .withBody(jsonSchema(getResourceAsString("fields/fields.schema.json")));
     mockIndexFieldsResponse(putFileRequest);
 
-    indexer.indexFile(file, getResourceAsString("fields/file.xml"));
+    indexer.index(file, getResourceAsString("fields/file.xml"));
 
     mockServer.verify(postDoc2FieldsRequest, once());
     mockIndexServer.verify(putFileRequest, once());
@@ -123,14 +124,14 @@ public class ElasticCustomIndexerTest {
     mockPuttingFileResponse(config, fileId);
     mockCreatingIndexResponse(config);
     mockMappingResponse();
-    var indexer = new ElasticCustomIndexer(config, typeServiceMock);
+    var indexer = new MappedFileIndexer(config, typeServiceMock, new ElasticFileIndexer(config.elasticsearch));
     var postDocToFieldsRequest = request()
         .withMethod("POST")
         .withPath(mockFieldsEndpoint)
         .withHeader("Content-Type", expectedContentTypeHeader);
     mockDoc2FieldsResponse(postDocToFieldsRequest);
 
-    indexer.indexFile(new TextrepoFile(fileId, (short) 43), getResourceAsString("fields/file.xml"));
+    indexer.index(new TextrepoFile(fileId, (short) 43), getResourceAsString("fields/file.xml"));
 
     mockServer.verify(postDocToFieldsRequest, once());
   }
