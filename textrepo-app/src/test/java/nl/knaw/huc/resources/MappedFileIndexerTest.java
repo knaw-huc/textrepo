@@ -6,7 +6,6 @@ import nl.knaw.huc.service.TypeService;
 import nl.knaw.huc.service.index.CustomIndexerConfiguration;
 import nl.knaw.huc.service.index.CustomIndexerException;
 import nl.knaw.huc.service.index.MappedFileIndexer;
-import nl.knaw.huc.service.index.ElasticFileIndexer;
 import nl.knaw.huc.service.index.ElasticsearchConfiguration;
 import nl.knaw.huc.service.index.FieldsConfiguration;
 import org.junit.jupiter.api.AfterAll;
@@ -85,7 +84,7 @@ public class MappedFileIndexerTest {
         .withBody(jsonSchema(getResourceAsString("mapping/test.schema.json")));
     mockCreatingIndexResponse(config.elasticsearch.index, putIndexRequest);
 
-    new MappedFileIndexer(config, typeServiceMock, new ElasticFileIndexer(config.elasticsearch));
+    new MappedFileIndexer(config, typeServiceMock);
 
     mockServer.verify(getMappingRequest, once());
     mockIndexServer.verify(putIndexRequest, once());
@@ -96,7 +95,7 @@ public class MappedFileIndexerTest {
     var config = createCustomFacetIndexerConfiguration("urlencoded", testType.getMimetype());
     mockMappingResponse();
     mockCreatingIndexResponse(config);
-    var indexer = new MappedFileIndexer(config, typeServiceMock, new ElasticFileIndexer(config.elasticsearch));
+    var indexer = new MappedFileIndexer(config, typeServiceMock);
     var file = new TextrepoFile(UUID.randomUUID(), (short) 43);
     var postDoc2FieldsRequest = request()
         .withMethod("POST")
@@ -124,7 +123,7 @@ public class MappedFileIndexerTest {
     mockPuttingFileResponse(config, fileId);
     mockCreatingIndexResponse(config);
     mockMappingResponse();
-    var indexer = new MappedFileIndexer(config, typeServiceMock, new ElasticFileIndexer(config.elasticsearch));
+    var indexer = new MappedFileIndexer(config, typeServiceMock);
     var postDocToFieldsRequest = request()
         .withMethod("POST")
         .withPath(mockFieldsEndpoint)

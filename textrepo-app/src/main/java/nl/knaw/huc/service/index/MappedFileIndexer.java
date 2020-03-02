@@ -5,6 +5,7 @@ import nl.knaw.huc.core.TextrepoFile;
 import nl.knaw.huc.service.TypeService;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.glassfish.jersey.client.JerseyClientBuilder;
@@ -17,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.ws.rs.ProcessingException;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -40,21 +42,22 @@ import static org.elasticsearch.common.xcontent.XContentType.JSON;
  *  - POST `fields` (using urlencoded or multipart)
  * MappedFileIndexer is configured in config.yml
  */
-public class MappedFileIndexer implements FileIndexer, Managed {
+public class MappedFileIndexer implements FileIndexer {
 
   private final CustomIndexerConfiguration config;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
-  private final ElasticFileIndexer indexer;
   private final Client requestClient = JerseyClientBuilder.newClient();
   private final TypeService typeService;
+  private final TextRepoElasticClient client;
 
   public MappedFileIndexer(
       CustomIndexerConfiguration config,
-      TypeService typeService, ElasticFileIndexer indexer
+      TypeService typeService
   ) throws CustomIndexerException {
     this.config = config;
-    this.indexer = indexer;
     this.typeService = typeService;
+    this.client = new TextRepoElasticClient(config.elasticsearch);
+
     createIndex(config);
     if (config.fields.type.equals("multipart")) {
       requestClient.register(MultiPartFeature.class);
@@ -74,7 +77,6 @@ public class MappedFileIndexer implements FileIndexer, Managed {
       return;
     }
 
-    var client = new TextRepoElasticClient(config.elasticsearch);
     var request = new CreateIndexRequest(config.elasticsearch.index)
         .source(mappingResult, JSON);
 
@@ -169,7 +171,7 @@ public class MappedFileIndexer implements FileIndexer, Managed {
     var indexRequest = new IndexRequest(config.elasticsearch.index)
         .id(fileId.toString())
         .source(esFacets, JSON);
-    var response = indexer.indexRequest(indexRequest);
+    var response = indexRequest(indexRequest);
     var status = response.status().getStatus();
     if (status == 201) {
       logger.debug("Successfully added file [{}] to index [{}]", fileId, config.elasticsearch.index);
@@ -182,6 +184,13 @@ public class MappedFileIndexer implements FileIndexer, Managed {
     }
   }
 
+  private IndexResponse indexRequest(IndexRequest indexRequest) {
+    try {
+      return client.getClient().index(indexRequest, RequestOptions.DEFAULT);
+    } catch (Exception ex) {
+      throw new WebApplicationException("Could not index in Elasticsearch", ex);
+    }
+  }
 
   private boolean mimetypeSupported(String mimetype) {
     if (!config.mimetypes.contains(mimetype)) {
@@ -201,15 +210,6 @@ public class MappedFileIndexer implements FileIndexer, Managed {
       return Optional.of(msg);
     }
     return Optional.empty();
-  }
-
-  @Override
-  public void start() {
-  }
-
-  @Override
-  public void stop() throws Exception {
-    indexer.stop();
   }
 
 }
