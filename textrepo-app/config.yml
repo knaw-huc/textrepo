@@ -20,14 +20,6 @@ logging:
     # Filter out flood of warnings when Swagger tries to load classes through reflection:
     org.reflections.Reflections: ERROR
 
-elasticsearch:
-  # Hosts must be a list of hosts in the Elasticsearch cluster.
-  # The format is <hostname> or <hostname>:<port>. The port defaults to 9200.
-  hosts:
-    - elasticsearch:9200
-  index: files
-  contentsField: contents
-
 customFacetIndexers:
 - mapping: https://demo.docere.diginfra.net/api/projects/gheys/mapping
   fields:
