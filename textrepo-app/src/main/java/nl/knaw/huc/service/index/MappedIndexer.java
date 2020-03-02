@@ -1,6 +1,5 @@
 package nl.knaw.huc.service.index;
 
-import io.dropwizard.lifecycle.Managed;
 import nl.knaw.huc.core.TextrepoFile;
 import nl.knaw.huc.service.TypeService;
 import org.elasticsearch.ElasticsearchStatusException;
@@ -42,7 +41,7 @@ import static org.elasticsearch.common.xcontent.XContentType.JSON;
  *  - POST `fields` (using urlencoded or multipart)
  * MappedFileIndexer is configured in config.yml
  */
-public class MappedFileIndexer implements FileIndexer {
+public class MappedIndexer implements Indexer {
 
   private final CustomIndexerConfiguration config;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -50,7 +49,7 @@ public class MappedFileIndexer implements FileIndexer {
   private final TypeService typeService;
   private final TextRepoElasticClient client;
 
-  public MappedFileIndexer(
+  public MappedIndexer(
       CustomIndexerConfiguration config,
       TypeService typeService
   ) throws CustomIndexerException {

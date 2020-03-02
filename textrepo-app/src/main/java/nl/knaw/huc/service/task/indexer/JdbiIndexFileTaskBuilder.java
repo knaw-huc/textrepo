@@ -3,7 +3,7 @@ package nl.knaw.huc.service.task.indexer;
 import nl.knaw.huc.core.TextrepoFile;
 import nl.knaw.huc.db.FilesDao;
 import nl.knaw.huc.db.TypesDao;
-import nl.knaw.huc.service.index.FileIndexer;
+import nl.knaw.huc.service.index.Indexer;
 import nl.knaw.huc.service.task.FindDocumentByExternalId;
 import nl.knaw.huc.service.task.FindDocumentFileByType;
 import nl.knaw.huc.service.task.GetLatestFileContents;
@@ -21,12 +21,12 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
   private static final Logger LOG = LoggerFactory.getLogger(JdbiIndexFileTaskBuilder.class);
 
   private final Jdbi jdbi;
-  private final FileIndexer indexer;
+  private final Indexer indexer;
 
   private String externalId;
   private String typeName;
 
-  public JdbiIndexFileTaskBuilder(Jdbi jdbi, FileIndexer indexer) {
+  public JdbiIndexFileTaskBuilder(Jdbi jdbi, Indexer indexer) {
     this.jdbi = requireNonNull(jdbi);
     this.indexer = requireNonNull(indexer);
   }

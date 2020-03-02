@@ -12,7 +12,7 @@ import nl.knaw.huc.service.JdbiFileService;
 import nl.knaw.huc.service.JdbiVersionService;
 import nl.knaw.huc.service.TypeService;
 import nl.knaw.huc.service.VersionService;
-import nl.knaw.huc.service.index.MappedFileIndexer;
+import nl.knaw.huc.service.index.MappedIndexer;
 import nl.knaw.huc.service.store.ContentsStorage;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
@@ -54,7 +54,7 @@ public class DeprecatedFilesResourceTest {
   private static final Jdbi jdbi = mock(Jdbi.class);
   private static final FileMetadataService FILE_METADATA_SERVICE = mock(FileMetadataService.class);
   private static final TypeService typeService = mock(TypeService.class);
-  private static final MappedFileIndexer facetIndexer = mock(MappedFileIndexer.class);
+  private static final MappedIndexer facetIndexer = mock(MappedIndexer.class);
   private static final VersionService versions =
       new JdbiVersionService(jdbi, contentsService, newArrayList(facetIndexer), UUID::randomUUID);
   @SuppressWarnings("unchecked")

@@ -37,7 +37,7 @@ import nl.knaw.huc.service.JdbiVersionContentsService;
 import nl.knaw.huc.service.JdbiVersionService;
 import nl.knaw.huc.service.TypeService;
 import nl.knaw.huc.service.index.CustomIndexerException;
-import nl.knaw.huc.service.index.MappedFileIndexer;
+import nl.knaw.huc.service.index.MappedIndexer;
 import nl.knaw.huc.service.store.JdbiContentsStorage;
 import nl.knaw.huc.service.task.JdbiTaskFactory;
 import org.jdbi.v3.core.Jdbi;
@@ -137,16 +137,16 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     return jdbi;
   }
 
-  private ArrayList<MappedFileIndexer> createElasticCustomFacetIndexers(
+  private ArrayList<MappedIndexer> createElasticCustomFacetIndexers(
       TextRepositoryConfiguration config,
       TypeService typeService
   ) {
-    var customIndexers = new ArrayList<MappedFileIndexer>();
+    var customIndexers = new ArrayList<MappedIndexer>();
 
     for (var customIndexerConfig : config.getCustomFacetIndexers()) {
       try {
         logger.info("Creating indexer [{}]", customIndexerConfig.elasticsearch.index);
-        var customFacetIndexer = new MappedFileIndexer(customIndexerConfig, typeService);
+        var customFacetIndexer = new MappedIndexer(customIndexerConfig, typeService);
         customIndexers.add(customFacetIndexer);
       } catch (CustomIndexerException ex) {
         logger.error("Could not create indexer [{}]", customIndexerConfig.elasticsearch.index, ex);

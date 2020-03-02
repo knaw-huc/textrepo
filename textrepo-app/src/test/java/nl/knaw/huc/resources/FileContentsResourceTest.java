@@ -11,7 +11,7 @@ import nl.knaw.huc.service.JdbiFileContentsService;
 import nl.knaw.huc.service.JdbiVersionService;
 import nl.knaw.huc.service.FileMetadataService;
 import nl.knaw.huc.service.VersionService;
-import nl.knaw.huc.service.index.MappedFileIndexer;
+import nl.knaw.huc.service.index.MappedIndexer;
 import nl.knaw.huc.service.store.ContentsStorage;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
@@ -49,7 +49,7 @@ public class FileContentsResourceTest {
   private static final Jdbi jdbi = mock(Jdbi.class);
   private static final ContentsService CONTENTS_SERVICE = new ContentsService(mock(ContentsStorage.class));
   private static final FileMetadataService FILE_METADATA_SERVICE = mock(FileMetadataService.class);
-  private static final MappedFileIndexer customFacetIndexer = mock(MappedFileIndexer.class);
+  private static final MappedIndexer customFacetIndexer = mock(MappedIndexer.class);
 
   private static final VersionService versionService = new JdbiVersionService(
       jdbi, CONTENTS_SERVICE,

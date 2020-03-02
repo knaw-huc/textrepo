@@ -5,7 +5,7 @@ import nl.knaw.huc.core.TextrepoFile;
 import javax.annotation.Nonnull;
 import java.util.Optional;
 
-public interface FileIndexer {
+public interface Indexer {
   Optional<String> index(
       @Nonnull TextrepoFile file,
       @Nonnull String latestVersionContents

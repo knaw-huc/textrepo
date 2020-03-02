@@ -6,7 +6,7 @@ import nl.knaw.huc.core.Version;
 import nl.knaw.huc.db.ContentsDao;
 import nl.knaw.huc.db.FilesDao;
 import nl.knaw.huc.db.VersionsDao;
-import nl.knaw.huc.service.index.MappedFileIndexer;
+import nl.knaw.huc.service.index.MappedIndexer;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.JdbiException;
 import org.slf4j.Logger;
@@ -28,14 +28,14 @@ public class JdbiVersionService implements VersionService {
 
   private final Jdbi jdbi;
   private final ContentsService contentsService;
-  private List<MappedFileIndexer> indexers;
+  private List<MappedIndexer> indexers;
   private Supplier<UUID> uuidGenerator;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   public JdbiVersionService(
       Jdbi jdbi,
       ContentsService contentsService,
-      List<MappedFileIndexer> indexers,
+      List<MappedIndexer> indexers,
       Supplier<UUID> uuidGenerator
   ) {
     this.jdbi = jdbi;
