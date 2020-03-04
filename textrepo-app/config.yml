@@ -32,7 +32,7 @@ indexers:
     contentsField: contents
     hosts:
       - elasticsearch:9200
-- mapping: http://autocomplete-indexer:8080/autocomplete/mapping
+- mapping: http://full-text-indexer:8080/full-text/mapping
   fields:
     url: http://autocomplete-indexer:8080/autocomplete/fields
     type: multipart
@@ -40,7 +40,7 @@ indexers:
     - application/xml
     - text/plain
   elasticsearch:
-    index: autocomplete
+    index: full-text
     contentsField: contents
     hosts:
       - elasticsearch:9200

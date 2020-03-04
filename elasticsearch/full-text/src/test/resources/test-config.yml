@@ -1,0 +1,3 @@
+mappingFile: ./full-text-mapping.json
+supportedMimetypes:
+  - text/plain
