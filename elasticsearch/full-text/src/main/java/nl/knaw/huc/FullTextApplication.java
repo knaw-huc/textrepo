@@ -23,7 +23,7 @@ public class FullTextApplication extends Application<FullTextConfiguration> {
 
   @Override
   public String getName() {
-    return "Autocomplete";
+    return "Full-text";
   }
 
   @Override

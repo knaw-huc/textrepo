@@ -63,6 +63,19 @@ services:
               "--",
               "java", "-jar", "/indexer/autocomplete.jar", "server", "config.yml"]
 
+  full-text-indexer:
+    container_name: tr_full-text
+    image: knawhuc/textrepo-full-text-indexer:latest
+    build: ./elasticsearch/full-text
+    ports:
+      - 8080
+    networks:
+      - textrepo_network
+    command: ["/utils/wait-for-it.sh", "elasticsearch:9200",
+              "--timeout=0",
+              "--",
+              "java", "-jar", "/indexer/full-text.jar", "server", "config.yml"]
+
   textrepo-app:
     container_name: tr_textrepo
     image: knawhuc/textrepo-app:latest

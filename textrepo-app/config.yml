@@ -32,9 +32,21 @@ indexers:
     contentsField: contents
     hosts:
       - elasticsearch:9200
-- mapping: http://full-text-indexer:8080/full-text/mapping
+- mapping: http://autocomplete-indexer:8080/autocomplete/mapping
   fields:
     url: http://autocomplete-indexer:8080/autocomplete/fields
+    type: multipart
+  mimetypes:
+    - application/xml
+    - text/plain
+  elasticsearch:
+    index: autocomplete
+    contentsField: contents
+    hosts:
+      - elasticsearch:9200
+- mapping: http://full-text-indexer:8080/full-text/mapping
+  fields:
+    url: http://full-text-indexer:8080/full-text/fields
     type: multipart
   mimetypes:
     - application/xml
