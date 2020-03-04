@@ -15,7 +15,7 @@ public class Config {
   public static final String POSTGRES_DB = requireNonBlank(getenv("POSTGRES_DB"));
   public static final String POSTGRES_USER = requireNonBlank(getenv("POSTGRES_USER"));
   public static final String POSTGRES_HOST = requireNonBlank(getenv("POSTGRES_HOST"));
-  public static final String FILE_INDEX = requireNonBlank(getenv("FILE_INDEX"));
+  public static final String FULL_TEXT_INDEX = requireNonBlank(getenv("FULL_TEXT_INDEX"));
   public static final String CUSTOM_INDEX = requireNonBlank(getenv("CUSTOM_INDEX"));
   public static final String AUTOCOMPLETE_INDEX = requireNonBlank(getenv("AUTOCOMPLETE_INDEX"));
 
@@ -24,7 +24,7 @@ public class Config {
   public static final String TYPES_URL = HOST + "/rest/types";
 
   public static final List<String> INDICES = newArrayList(
-      FILE_INDEX,
+      FULL_TEXT_INDEX,
       CUSTOM_INDEX,
       AUTOCOMPLETE_INDEX
   );

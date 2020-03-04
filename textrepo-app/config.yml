@@ -28,7 +28,7 @@ indexers:
   mimetypes:
     - application/xml
   elasticsearch:
-    index: custom-facet
+    index: docere
     contentsField: contents
     hosts:
       - elasticsearch:9200
