@@ -23,12 +23,12 @@ public class PageParams implements Paginated {
   }
 
   @Override
-  public int getLimit() {
+  public Integer getLimit() {
     return limit;
   }
 
   @Override
-  public int getOffset() {
+  public Integer getOffset() {
     return offset;
   }
 }

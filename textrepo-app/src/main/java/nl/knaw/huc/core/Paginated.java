@@ -3,7 +3,7 @@ package nl.knaw.huc.core;
 
 public interface Paginated {
 
-  int getLimit();
+  Integer getLimit();
 
-  int getOffset();
+  Integer getOffset();
 }

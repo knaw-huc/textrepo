@@ -10,18 +10,18 @@ public class FormPageParams implements Paginated {
   private final int defaultLimit = 0;
 
   @QueryParam("limit")
-  private int limit;
+  private Integer limit;
 
   @QueryParam("offset")
-  private int offset;
+  private Integer offset;
 
   @Override
-  public int getLimit() {
+  public Integer getLimit() {
     return limit;
   }
 
   @Override
-  public int getOffset() {
+  public Integer getOffset() {
     return offset;
   }
 

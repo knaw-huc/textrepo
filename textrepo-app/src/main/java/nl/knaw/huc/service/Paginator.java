@@ -21,10 +21,10 @@ public class Paginator {
    * Use form params, or set defaults
    */
   public PageParams withDefaults(FormPageParams form) {
-    var limit = form.getLimit() == 0 ?
+    var limit = form.getLimit() == null ?
         config.defaultLimit :
         form.getLimit();
-    var offset = form.getOffset() == 0 ?
+    var offset = form.getOffset() == null ?
         config.defaultOffset :
         form.getOffset();
     return new PageParams(limit, offset);
