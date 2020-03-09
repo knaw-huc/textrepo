@@ -2,6 +2,8 @@ package nl.knaw.huc.service;
 
 import nl.knaw.huc.PaginationConfiguration;
 import nl.knaw.huc.api.FormPageParams;
+import nl.knaw.huc.api.ResultPage;
+import nl.knaw.huc.api.ResultPageParams;
 import nl.knaw.huc.core.Page;
 import nl.knaw.huc.core.PageParams;
 
@@ -30,12 +32,20 @@ public class Paginator {
     return new PageParams(limit, offset);
   }
 
-  public static <T, U> Page<U> mapPage(Page<T> page, Function<T, U> mapper) {
-    var converted = page.getContent()
+  public static <T, U> ResultPage<U> mapResult(Page<T> page, Function<T, U> mapper) {
+    var resultContent = page.getContent()
         .stream()
         .map(mapper)
         .collect(toList());
-    return new Page<>(converted, page.getTotal(), page.getParams());
+    var resultParams = new ResultPageParams(
+        page.getParams().getLimit(),
+        page.getParams().getOffset()
+    );
+    return new ResultPage<>(
+        resultContent,
+        page.getTotal(),
+        resultParams
+    );
   }
 
 }

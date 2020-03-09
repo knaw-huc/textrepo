@@ -1,9 +1,6 @@
 package nl.knaw.huc.core;
 
 import java.util.List;
-import java.util.function.Function;
-
-import static java.util.stream.Collectors.toList;
 
 public class Page<T> {
 
