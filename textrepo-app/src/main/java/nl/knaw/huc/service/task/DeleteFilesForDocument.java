@@ -1,11 +1,11 @@
 package nl.knaw.huc.service.task;
 
 import nl.knaw.huc.core.Document;
+import nl.knaw.huc.core.PageParams;
 import nl.knaw.huc.db.ContentsDao;
 import nl.knaw.huc.db.DocumentFilesDao;
 import nl.knaw.huc.db.FilesDao;
 import nl.knaw.huc.db.VersionsDao;
-import nl.knaw.huc.service.PsqlExceptionService;
 import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.JdbiException;
 import org.slf4j.Logger;
@@ -27,7 +27,7 @@ public class DeleteFilesForDocument implements ProvidesInTransaction<String> {
 
   @Override
   public String executeIn(Handle transaction) {
-    final StringBuilder buf = new StringBuilder();
+    final var buf = new StringBuilder();
     final var documentFilesDao = transaction.attach(DocumentFilesDao.class);
     final var filesDao = transaction.attach(FilesDao.class);
     final var versionsDao = transaction.attach(VersionsDao.class);

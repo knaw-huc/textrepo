@@ -35,6 +35,10 @@ public class TextRepositoryConfiguration extends Configuration {
   @NotNull
   private List<MappedIndexerConfiguration> indexers = new ArrayList<>();
 
+  @Valid
+  @NotNull
+  private PaginationConfiguration pagination = new PaginationConfiguration();
+
   @JsonProperty("jerseyClient")
   public JerseyClientConfiguration getJerseyClientConfiguration() {
     return jerseyClient;
@@ -84,5 +88,15 @@ public class TextRepositoryConfiguration extends Configuration {
   @JsonProperty("indexers")
   public void setCustomFacetIndexers(List<MappedIndexerConfiguration> indexers) {
     this.indexers = indexers;
+  }
+
+  @JsonProperty("pagination")
+  public PaginationConfiguration getPagination() {
+    return pagination;
+  }
+
+  @JsonProperty("pagination")
+  public void setPagination(PaginationConfiguration pagination) {
+    this.pagination = pagination;
   }
 }

@@ -35,6 +35,7 @@ import nl.knaw.huc.service.JdbiFileService;
 import nl.knaw.huc.service.JdbiTypeService;
 import nl.knaw.huc.service.JdbiVersionContentsService;
 import nl.knaw.huc.service.JdbiVersionService;
+import nl.knaw.huc.service.Paginator;
 import nl.knaw.huc.service.TypeService;
 import nl.knaw.huc.service.index.IndexerException;
 import nl.knaw.huc.service.index.MappedIndexer;
@@ -102,6 +103,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     var fileContentsService = new JdbiFileContentsService(jdbi, contentsService, versionService, metadataService);
     var documentService = new JdbiDocumentService(jdbi, uuidGenerator);
     var documentMetadataService = new JdbiDocumentMetadataService(jdbi);
+    var paginator = new Paginator(config.getPagination());
 
     var resources = Arrays.asList(
         new ContentsResource(contentsService),
@@ -117,7 +119,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
         new DeleteDocumentResource(taskBuilderFactory),
         new DeprecatedFilesResource(fileService, maxPayloadSize),
         new FilesResource(fileService),
-        new DocumentFilesResource(documentFilesService),
+        new DocumentFilesResource(documentFilesService, paginator),
         new VersionsResource(versionService, maxPayloadSize),
         new VersionContentsResource(versionContentsService)
     );

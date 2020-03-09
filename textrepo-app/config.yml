@@ -60,3 +60,7 @@ indexers:
 swagger:
   resourcePackage: nl.knaw.huc.resources
   contextRoot: /textrepo
+
+pagination:
+  defaultOffset: 0
+  defaultLimit: 10
