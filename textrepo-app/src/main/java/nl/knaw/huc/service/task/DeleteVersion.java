@@ -6,7 +6,7 @@ import org.jdbi.v3.core.Handle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DeleteVersion implements InTransactionProvider<Void> {
+public class DeleteVersion implements InTransactionRunner {
   private static final Logger LOG = LoggerFactory.getLogger(DeleteVersion.class);
 
   private final Version version;
@@ -16,9 +16,9 @@ public class DeleteVersion implements InTransactionProvider<Void> {
   }
 
   @Override
-  public Void executeIn(Handle transaction) {
+  public void executeIn(Handle transaction) {
     LOG.debug("Deleting version: {}", version);
     transaction.attach(VersionsDao.class).delete(version.getId());
-    return new DeleteContents(version.getContentsSha()).executeIn(transaction);
+    new DeleteContents(version.getContentsSha()).executeIn(transaction);
   }
 }

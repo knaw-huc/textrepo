@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import static nl.knaw.huc.service.PsqlExceptionService.Constraint.VERSIONS_CONTENTS_SHA;
 import static nl.knaw.huc.service.PsqlExceptionService.violatesConstraint;
 
-public class DeleteContents implements InTransactionProvider<Void> {
+public class DeleteContents implements InTransactionRunner {
   private static final Logger LOG = LoggerFactory.getLogger(DeleteContents.class);
 
   private final String contentsSha;
@@ -19,7 +19,7 @@ public class DeleteContents implements InTransactionProvider<Void> {
   }
 
   @Override
-  public Void executeIn(Handle transaction) {
+  public void executeIn(Handle transaction) {
     try {
       transaction.attach(ContentsDao.class).delete(contentsSha);
     } catch (JdbiException ex) {
@@ -29,6 +29,5 @@ public class DeleteContents implements InTransactionProvider<Void> {
         throw (ex);
       }
     }
-    return null;
   }
 }

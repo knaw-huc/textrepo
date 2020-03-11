@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 
-public class DeleteFile implements InTransactionProvider<Void> {
+public class DeleteFile implements InTransactionRunner {
   private static final Logger LOG = LoggerFactory.getLogger(DeleteFile.class);
 
   private final TextrepoFile file;
@@ -22,7 +22,7 @@ public class DeleteFile implements InTransactionProvider<Void> {
   }
 
   @Override
-  public Void executeIn(Handle transaction) {
+  public void executeIn(Handle transaction) {
     this.transaction = Objects.requireNonNull(transaction);
 
     final var fileId = file.getId();
@@ -33,7 +33,6 @@ public class DeleteFile implements InTransactionProvider<Void> {
 
     LOG.debug("Deleting file: {}", file);
     transaction.attach(FilesDao.class).delete(fileId);
-    return null;
   }
 
   private void deleteVersion(Version version) {

@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 
-public class DeleteFilesForDocument implements InTransactionProvider<Void> {
+public class DeleteFilesForDocument implements InTransactionRunner {
   private static final Logger LOG = LoggerFactory.getLogger(DeleteFilesForDocument.class);
 
   private final Document doc;
@@ -18,12 +18,11 @@ public class DeleteFilesForDocument implements InTransactionProvider<Void> {
   }
 
   @Override
-  public Void executeIn(Handle transaction) {
+  public void executeIn(Handle transaction) {
     LOG.debug("Removing all files for document: {}, externalId: [{}]", doc.getId(), doc.getExternalId());
     transaction.attach(DocumentFilesDao.class)
                .findFilesByDocumentId(doc.getId())
                .forEach(f -> new DeleteFile(f).executeIn(transaction));
-    return null;
   }
 
 }
