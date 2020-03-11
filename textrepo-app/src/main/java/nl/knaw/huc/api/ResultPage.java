@@ -8,12 +8,12 @@ public class ResultPage<T> {
 
   private List<T> items;
   private int total;
-  private ResultPageParams params;
+  private ResultPageParams page;
 
-  public ResultPage(List<T> items, int total, ResultPageParams params) {
+  public ResultPage(List<T> items, int total, ResultPageParams page) {
     this.items = items;
     this.total = total;
-    this.params = params;
+    this.page = page;
   }
 
   @JsonProperty
@@ -27,7 +27,7 @@ public class ResultPage<T> {
   }
 
   @JsonProperty
-  public ResultPageParams getParams() {
-    return params;
+  public ResultPageParams getPage() {
+    return page;
   }
 }

@@ -120,8 +120,8 @@ public class DocumentsResourceTest {
     assertThat(response.getStatus()).isEqualTo(200);
     var body = JsonPath.parse(response.readEntity(String.class));
     assertThat(body.read("$.items.length()", Integer.class)).isEqualTo(0);
-    assertThat(body.read("$.params.offset", Integer.class)).isEqualTo(offset);
-    assertThat(body.read("$.params.limit", Integer.class)).isEqualTo(limit);
+    assertThat(body.read("$.page.offset", Integer.class)).isEqualTo(offset);
+    assertThat(body.read("$.page.limit", Integer.class)).isEqualTo(limit);
     assertThat(body.read("$.total", Integer.class)).isEqualTo(total);
 
     // Check service call:
