@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
-public class HaveDocumentByExternalId implements ProvidesInTransaction<Document> {
+public class HaveDocumentByExternalId implements InTransactionProvider<Document> {
   private final Supplier<UUID> idGenerator;
   private final String externalId;
 

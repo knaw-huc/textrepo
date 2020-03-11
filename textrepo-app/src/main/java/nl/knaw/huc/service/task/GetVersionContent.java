@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
-public class GetVersionContent implements ProvidesInTransaction<Contents> {
+public class GetVersionContent implements InTransactionProvider<Contents> {
   private static final Logger LOG = LoggerFactory.getLogger(GetVersionContent.class);
 
   private final Version version;

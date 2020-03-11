@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import static nl.knaw.huc.service.PsqlExceptionService.Constraint.VERSIONS_CONTENTS_SHA;
 import static nl.knaw.huc.service.PsqlExceptionService.violatesConstraint;
 
-public class DeleteContents implements ProvidesInTransaction<Void> {
+public class DeleteContents implements InTransactionProvider<Void> {
   private static final Logger LOG = LoggerFactory.getLogger(DeleteContents.class);
 
   private final String contentsSha;

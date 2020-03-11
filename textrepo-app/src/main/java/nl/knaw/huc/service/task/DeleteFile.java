@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 
-public class DeleteFile implements ProvidesInTransaction<Void> {
+public class DeleteFile implements InTransactionProvider<Void> {
   private static final Logger LOG = LoggerFactory.getLogger(DeleteFile.class);
 
   private final TextrepoFile file;

@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
-public class HaveFileForDocumentByType implements ProvidesInTransaction<TextrepoFile> {
+public class HaveFileForDocumentByType implements InTransactionProvider<TextrepoFile> {
   private final Supplier<UUID> idGenerator;
   private final Document doc;
   private final String typeName;

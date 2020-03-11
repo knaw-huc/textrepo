@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
-public class FindDocumentByExternalId implements ProvidesInTransaction<Document> {
+public class FindDocumentByExternalId implements InTransactionProvider<Document> {
   private final String externalId;
 
   public FindDocumentByExternalId(String externalId) {

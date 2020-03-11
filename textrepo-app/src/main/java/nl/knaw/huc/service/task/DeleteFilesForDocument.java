@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 
-public class DeleteFilesForDocument implements ProvidesInTransaction<Void> {
+public class DeleteFilesForDocument implements InTransactionProvider<Void> {
   private static final Logger LOG = LoggerFactory.getLogger(DeleteFilesForDocument.class);
 
   private final Document doc;

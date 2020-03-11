@@ -6,7 +6,7 @@ import org.jdbi.v3.core.Handle;
 
 import static java.util.Objects.requireNonNull;
 
-public class GetLatestFileContents implements ProvidesInTransaction<Contents> {
+public class GetLatestFileContents implements InTransactionProvider<Contents> {
   private final TextrepoFile file;
 
   public GetLatestFileContents(TextrepoFile file) {

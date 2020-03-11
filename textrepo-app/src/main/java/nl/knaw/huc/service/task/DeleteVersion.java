@@ -6,7 +6,7 @@ import org.jdbi.v3.core.Handle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DeleteVersion implements ProvidesInTransaction<Void> {
+public class DeleteVersion implements InTransactionProvider<Void> {
   private static final Logger LOG = LoggerFactory.getLogger(DeleteVersion.class);
 
   private final Version version;
