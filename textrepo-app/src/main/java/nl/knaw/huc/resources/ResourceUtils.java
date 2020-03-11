@@ -22,9 +22,9 @@ public class ResourceUtils {
     }
   }
 
-  public static URI locationOf(UUID uuid) {
+  public static <T> URI locationOf(UUID uuid, Class<T> resource) {
     return UriBuilder
-        .fromResource(DeprecatedFilesResource.class)
+        .fromResource(resource)
         .path("{uuid}/latest")
         .build(uuid);
   }

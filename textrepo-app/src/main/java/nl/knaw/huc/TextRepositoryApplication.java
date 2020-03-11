@@ -9,8 +9,6 @@ import io.dropwizard.setup.Environment;
 import io.federecio.dropwizard.swagger.SwaggerBundle;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import nl.knaw.huc.exceptions.MethodNotAllowedExceptionMapper;
-import nl.knaw.huc.resources.DeprecatedFilesResource;
-import nl.knaw.huc.resources.FileContentsResource;
 import nl.knaw.huc.resources.rest.ContentsResource;
 import nl.knaw.huc.resources.rest.DocumentFilesResource;
 import nl.knaw.huc.resources.rest.DocumentMetadataResource;
@@ -108,7 +106,6 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     var resources = Arrays.asList(
         new ContentsResource(contentsService),
         new TypesResource(typeService),
-        new FileContentsResource(fileContentsService, maxPayloadSize),
         new FileMetadataResource(metadataService),
         new FileVersionsResource(versionService, paginator),
         new DocumentsResource(documentService, paginator),
@@ -117,7 +114,6 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
         new IndexResource(taskBuilderFactory),
         new FindResource(taskBuilderFactory),
         new DeleteDocumentResource(taskBuilderFactory),
-        new DeprecatedFilesResource(fileService, maxPayloadSize),
         new FilesResource(fileService),
         new DocumentFilesResource(documentFilesService, paginator),
         new VersionsResource(versionService, maxPayloadSize),
