@@ -28,8 +28,8 @@ public class DeleteDocumentResource {
     LOG.debug("deleteDocument: externalId={}", externalId);
 
     final var task = factory.getDocumentDeleteBuilder().forExternalId(externalId).build();
-    final var msg = task.run();
+    final var doc = task.run();
 
-    return Response.ok(msg).build();
+    return Response.ok(doc).build();
   }
 }

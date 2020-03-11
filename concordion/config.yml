@@ -2,6 +2,7 @@ logging:
   level: INFO
   loggers:
     nl.knaw.huc: DEBUG
+    com.jayway.jsonpath.internal.path.CompiledPath: WARN
 # prevent unneeded exception log "[Fatal Error] :1:1: Content is not allowed in prolog"
 log4j.logger.com.itko.lisa.vse.stateful.common.datahandler.XMLPayloadParserDataProtocolHandler=FATAL
 

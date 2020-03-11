@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
-public class GetLatestFileVersion implements ProvidesInTransaction<Version> {
+public class GetLatestFileVersion implements InTransactionProvider<Version> {
   private static final Logger LOG = LoggerFactory.getLogger(GetLatestFileVersion.class);
 
   private final TextrepoFile file;

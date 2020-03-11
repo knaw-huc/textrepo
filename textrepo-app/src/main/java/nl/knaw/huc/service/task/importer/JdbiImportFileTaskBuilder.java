@@ -6,7 +6,7 @@ import nl.knaw.huc.core.Version;
 import nl.knaw.huc.service.task.FindDocumentByExternalId;
 import nl.knaw.huc.service.task.HaveDocumentByExternalId;
 import nl.knaw.huc.service.task.HaveFileForDocumentByType;
-import nl.knaw.huc.service.task.ProvidesInTransaction;
+import nl.knaw.huc.service.task.InTransactionProvider;
 import nl.knaw.huc.service.task.SetCurrentFileContents;
 import nl.knaw.huc.service.task.SetFileProvenance;
 import nl.knaw.huc.service.task.Task;
@@ -69,7 +69,7 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
 
   @Override
   public Task<Version> build() {
-    final ProvidesInTransaction<Document> documentFinder;
+    final InTransactionProvider<Document> documentFinder;
     if (allowNewDocument) {
       documentFinder = new HaveDocumentByExternalId(documentIdGenerator, externalId);
     } else {
@@ -79,12 +79,12 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
   }
 
   private class JdbiImportDocumentTask implements Task<Version> {
-    private final ProvidesInTransaction<Document> documentFinder;
+    private final InTransactionProvider<Document> documentFinder;
     private final String typeName;
     private final String filename;
     private final Contents contents;
 
-    private JdbiImportDocumentTask(ProvidesInTransaction<Document> documentFinder,
+    private JdbiImportDocumentTask(InTransactionProvider<Document> documentFinder,
                                    String typeName, String filename, Contents contents) {
       this.documentFinder = documentFinder;
       this.typeName = typeName;

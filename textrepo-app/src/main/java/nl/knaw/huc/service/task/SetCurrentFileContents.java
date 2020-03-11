@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 import static java.time.LocalDateTime.now;
 import static java.util.Objects.requireNonNull;
 
-public class SetCurrentFileContents implements ProvidesInTransaction<Version> {
+public class SetCurrentFileContents implements InTransactionProvider<Version> {
 
   private Supplier<UUID> versionIdGenerator;
   private final TextrepoFile file;

@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
-public class FindDocumentFileByType implements ProvidesInTransaction<TextrepoFile> {
+public class FindDocumentFileByType implements InTransactionProvider<TextrepoFile> {
   private final Document document;
   private final String typeName;
 
