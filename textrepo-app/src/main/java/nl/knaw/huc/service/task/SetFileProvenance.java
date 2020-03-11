@@ -7,7 +7,7 @@ import org.jdbi.v3.core.Handle;
 
 import static java.util.Objects.requireNonNull;
 
-public class SetFileProvenance implements ProvidesInTransaction<MetadataEntry> {
+public class SetFileProvenance implements InTransactionProvider<MetadataEntry> {
   private final TextrepoFile file;
   private final String filename;
 

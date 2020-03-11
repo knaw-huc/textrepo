@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
-public class FindFile implements ProvidesInTransaction<TextrepoFile> {
+public class FindFile implements InTransactionProvider<TextrepoFile> {
   private final UUID fileId;
 
   public FindFile(UUID fileId) {
