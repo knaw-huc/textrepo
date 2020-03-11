@@ -44,8 +44,8 @@ public class TestRestDocumentCollection extends AbstractConcordionTest {
     var  body = response.readEntity(String.class);
     result.body = asPrettyJson(body);
     var json = jsonPath.parse(body);
-    result.documentCount = json.read("$.length()");
-    result.externalId = json.read("$[0].externalId");
+    result.documentCount = json.read("$.items.length()");
+    result.externalId = json.read("$.items[0].externalId");
     return result;
   }
 
@@ -71,13 +71,43 @@ public class TestRestDocumentCollection extends AbstractConcordionTest {
     var  body = response.readEntity(String.class);
     result.body = asPrettyJson(body);
     var json = jsonPath.parse(body);
-    result.documentCount = json.read("$.length()");
+    result.documentCount = json.read("$.items.length()");
     List<String> externalIds = newArrayList(
-        json.read("$[0].externalId"),
-        json.read("$[1].externalId")
+        json.read("$.items[0].externalId"),
+        json.read("$.items[1].externalId")
     );
     var expectedExternalIds = newArrayList("first-external-id", "second-external-id");
     result.externalIds = externalIds.containsAll(expectedExternalIds) ? "first and second" : "ids missing";
+    return result;
+  }
+
+  public static class PaginateResult {
+    public int status;
+    public String body;
+    public int documentCount;
+    public String externalDocumentId;
+    public int total;
+  }
+
+  public PaginateResult paginate(Object endpoint, String offset, String limit) {
+    var url = UriBuilder
+        .fromPath(HOST + endpoint.toString())
+        .queryParam("offset", offset)
+        .queryParam("limit", limit)
+        .build();
+    final var response = client
+        .target(url)
+        .request()
+        .get();
+
+    var result = new PaginateResult();
+    result.status = response.getStatus();
+    var  body = response.readEntity(String.class);
+    result.body = asPrettyJson(body);
+    var json = jsonPath.parse(body);
+    result.documentCount = json.read("$.items.length()");
+    result.externalDocumentId = json.read("$.items[0].externalId");
+    result.total = json.read("$.total", Integer.class);
     return result;
   }
 

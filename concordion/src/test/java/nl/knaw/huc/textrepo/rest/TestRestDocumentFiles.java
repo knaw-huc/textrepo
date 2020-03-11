@@ -58,12 +58,12 @@ public class TestRestDocumentFiles extends AbstractConcordionTest {
     var body = response.readEntity(String.class);
     result.body = asPrettyJson(body);
     var json = jsonPath.parse(body);
-    result.count = json.read("$.content.length()");
+    result.count = json.read("$.items.length()");
 
-    var typeId1 = (int) json.read("$.content[?(@.id == \"" + textFileId + "\")].typeId", JSONArray.class).get(0);
+    var typeId1 = (int) json.read("$.items[?(@.id == \"" + textFileId + "\")].typeId", JSONArray.class).get(0);
     result.type1 = typeId1 == textTypeId ? "text" : format("[%d] != text type id [%d]", typeId1, textTypeId);
 
-    var typeId2 = (int) json.read("$.content[?(@.id == \"" + fooFileId + "\")].typeId", JSONArray.class).get(0);
+    var typeId2 = (int) json.read("$.items[?(@.id == \"" + fooFileId + "\")].typeId", JSONArray.class).get(0);
     result.type2 = typeId2 == fooTypeId ? "foo" : format("[%d] != foo type id [%d]", typeId2, fooTypeId);
 
     return result;

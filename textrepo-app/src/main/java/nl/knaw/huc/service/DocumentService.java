@@ -1,8 +1,9 @@
 package nl.knaw.huc.service;
 
 import nl.knaw.huc.core.Document;
+import nl.knaw.huc.core.Page;
+import nl.knaw.huc.core.PageParams;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -15,5 +16,5 @@ public interface DocumentService {
 
   void delete(UUID docId);
 
-  List<Document> getAll(String externalId);
+  Page<Document> getAll(String externalId, PageParams pageParams);
 }

@@ -8,9 +8,9 @@ To find documents we first create:
 [ ](- "createDocument(#externalId1)")
 [ ](- "createDocument(#externalId2)")
 
-## Find single document
+## Find single document by external ID
 An external ID should be unique. 
-So when we search documents with a `PUT` to [`/rest/documents`](- "#searchEndpoint")
+So when we search documents with a `GET` to [`/rest/documents`](- "#searchEndpoint")
 
  - with query param: [`externalId`](- "#queryParam") and value: [`first-external-id`](- "#queryParamValue").
 
@@ -25,9 +25,8 @@ Then:
  
 [ ](- "ext:embed=#searchSingle.body")
 
-## Find multiple documents
-An external ID should be unique. 
-So when we search documents with a `PUT` to [`/rest/documents`](- "#searchEndpoint")
+## Find documents by external ID
+When we search documents with a `GET` to [`/rest/documents`](- "#searchEndpoint")
 
  - with query param: [`externalId`](- "#queryParam") and value: [`ext`](- "#queryParamValue").
 
@@ -41,3 +40,37 @@ Then:
  - Full response:
  
 [ ](- "ext:embed=#searchSingle.body")
+
+## Request first page
+When we request all documents with a `GET` to [`/rest/documents`](- "#searchEndpoint")
+
+ - with limit: [`1`](- "#limit") and offset: [`0`](- "#offset").
+
+[ ](- "#firstPage=paginate(#searchEndpoint, #offset, #limit)")
+
+Then:
+
+ - The response status should be: [200](- "?=#firstPage.status");
+ - The items array should contain [1](- "?=#firstPage.documentCount") document;
+ - Its external ID should be [`first-external-id`](- "?=#firstPage.externalDocumentId") document;
+ - Total should be [2](- "?=#firstPage.total");
+ - Full response:
+ 
+[ ](- "ext:embed=#firstPage.body")
+
+## Request second page
+When we request all documents with a `GET` to [`/rest/documents`](- "#searchEndpoint")
+
+ - with limit: [`1`](- "#limit") and offset: [`1`](- "#offset").
+
+[ ](- "#secondPage=paginate(#searchEndpoint, #offset, #limit)")
+
+Then:
+
+ - The response status should be: [200](- "?=#secondPage.status");
+ - The items array should contain [1](- "?=#secondPage.documentCount") document;
+ - Its external ID should be [`second-external-id`](- "?=#secondPage.externalDocumentId") document;
+ - Total should be [2](- "?=#secondPage.total");
+ - Full response:
+ 
+[ ](- "ext:embed=#secondPage.body")

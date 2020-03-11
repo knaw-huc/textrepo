@@ -1,13 +1,16 @@
 package nl.knaw.huc.service;
 
 import nl.knaw.huc.core.Document;
+import nl.knaw.huc.core.Page;
+import nl.knaw.huc.core.PageParams;
 import nl.knaw.huc.db.DocumentsDao;
 import org.jdbi.v3.core.Jdbi;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
+
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class JdbiDocumentService implements DocumentService {
   private final Jdbi jdbi;
@@ -43,11 +46,15 @@ public class JdbiDocumentService implements DocumentService {
 
   /**
    * get all documents filtered by externalId
-   * Atm only filtered by externalId
    */
   @Override
-  public List<Document> getAll(String externalId) {
-    return documents().getByExternalIdLike("%" + externalId + "%");
+  public Page<Document> getAll(String externalId, PageParams pageParams) {
+    externalId = isBlank(externalId) ?
+        null :
+        "%" + externalId + "%";
+    var docs = documents().getByExternalIdLike(externalId, pageParams);
+    var total = documents().countByExternalIdLike(externalId);
+    return new Page<>(docs, total, pageParams);
   }
 
   private DocumentsDao documents() {

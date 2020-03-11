@@ -5,14 +5,17 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.FormDocument;
+import nl.knaw.huc.api.FormPageParams;
 import nl.knaw.huc.api.ResultDocument;
+import nl.knaw.huc.api.ResultPage;
 import nl.knaw.huc.core.Document;
-import nl.knaw.huc.exceptions.MethodNotAllowedException;
 import nl.knaw.huc.service.DocumentService;
+import nl.knaw.huc.service.Paginator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
+import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -28,7 +31,7 @@ import java.util.UUID;
 
 import static java.util.stream.Collectors.toList;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static org.apache.commons.lang3.StringUtils.isBlank;
+import static nl.knaw.huc.service.Paginator.mapResult;
 
 @Api(tags = {"documents"})
 @Path("/rest/documents")
@@ -36,11 +39,13 @@ public class DocumentsResource {
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final DocumentService documentService;
+  private Paginator paginator;
 
   public DocumentsResource(
-      DocumentService documentService
-  ) {
+      DocumentService documentService,
+      Paginator paginator) {
     this.documentService = documentService;
+    this.paginator = paginator;
   }
 
   @POST
@@ -61,21 +66,16 @@ public class DocumentsResource {
   @ApiOperation(value = "Retrieve document")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultDocument.class, message = "OK")})
   public Response get(
-      @QueryParam("externalId") String externalId
+      @QueryParam("externalId") String externalId,
+      @BeanParam FormPageParams pageParams
   ) {
     logger.debug("get documents");
 
-    if (isBlank(externalId)) {
-      throw new MethodNotAllowedException("Query param 'externalId' is required at the moment.");
-    }
+    var docs = documentService.getAll(externalId, paginator.withDefaults(pageParams));
 
-    var docs = documentService.getAll(externalId);
-
-    return Response.ok(docs
-        .stream()
-        .map(ResultDocument::new)
-        .collect(toList())
-    ).build();
+    return Response
+        .ok(mapResult(docs, ResultDocument::new))
+        .build();
   }
 
   @GET
