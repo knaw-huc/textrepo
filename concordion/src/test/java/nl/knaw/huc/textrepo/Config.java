@@ -1,5 +1,8 @@
 package nl.knaw.huc.textrepo;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
@@ -8,16 +11,15 @@ import static java.lang.System.getenv;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class Config {
-
-  public static final String HTTP_ES_HOST = "http://" + requireNonBlank(getenv("ES_HOST"));
-  public static final String HTTP_APP_HOST = "http://" + requireNonBlank(getenv("APP_HOST"));
-  public static final String POSTGRES_PASSWORD = requireNonBlank(getenv("POSTGRES_PASSWORD"));
-  public static final String POSTGRES_DB = requireNonBlank(getenv("POSTGRES_DB"));
-  public static final String POSTGRES_USER = requireNonBlank(getenv("POSTGRES_USER"));
-  public static final String POSTGRES_HOST = requireNonBlank(getenv("POSTGRES_HOST"));
-  public static final String FULL_TEXT_INDEX = requireNonBlank(getenv("FULL_TEXT_INDEX"));
-  public static final String CUSTOM_INDEX = requireNonBlank(getenv("CUSTOM_INDEX"));
-  public static final String AUTOCOMPLETE_INDEX = requireNonBlank(getenv("AUTOCOMPLETE_INDEX"));
+  public static final String HTTP_ES_HOST = "http://" + requireNonBlank("ES_HOST");
+  public static final String HTTP_APP_HOST = "http://" + requireNonBlank("APP_HOST");
+  public static final String POSTGRES_PASSWORD = requireNonBlank("POSTGRES_PASSWORD");
+  public static final String POSTGRES_DB = requireNonBlank("POSTGRES_DB");
+  public static final String POSTGRES_USER = requireNonBlank("POSTGRES_USER");
+  public static final String POSTGRES_HOST = requireNonBlank("POSTGRES_HOST");
+  public static final String FULL_TEXT_INDEX = requireNonBlank("FULL_TEXT_INDEX");
+  public static final String CUSTOM_INDEX = requireNonBlank("CUSTOM_INDEX");
+  public static final String AUTOCOMPLETE_INDEX = requireNonBlank("AUTOCOMPLETE_INDEX");
 
   public static final String HOST = HTTP_APP_HOST;
   public static final String FILES_URL = HOST + "/files";
@@ -35,10 +37,11 @@ public class Config {
   public static final String FOO_MIMETYPE = "foo/bar";
 
   private static String requireNonBlank(String field) {
-    if (isBlank(field)) {
+    final var value = getenv(field);
+    if (isBlank(value)) {
       throw new RuntimeException(format("Env var [%s] is not set", field));
     }
-    return field;
+    return value;
   }
 
 }
