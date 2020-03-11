@@ -1,5 +1,6 @@
 package nl.knaw.huc.service.task.deleter;
 
+import nl.knaw.huc.core.Document;
 import nl.knaw.huc.service.task.DeleteDocument;
 import nl.knaw.huc.service.task.FindDocumentByExternalId;
 import nl.knaw.huc.service.task.Task;
@@ -23,11 +24,11 @@ public class JdbiDeleteDocumentTaskBuilder implements DeleteDocumentTaskBuilder 
   }
 
   @Override
-  public Task<String> build() {
+  public Task<Document> build() {
     return new DeleteDocumentTask(externalId);
   }
 
-  private class DeleteDocumentTask implements Task<String> {
+  private class DeleteDocumentTask implements Task<Document> {
     private final String externalId;
 
     private DeleteDocumentTask(String externalId) {
@@ -35,12 +36,12 @@ public class JdbiDeleteDocumentTaskBuilder implements DeleteDocumentTaskBuilder 
     }
 
     @Override
-    public String run() {
-      jdbi.useTransaction(transaction -> {
+    public Document run() {
+      return jdbi.inTransaction(transaction -> {
         final var doc = new FindDocumentByExternalId(externalId).executeIn(transaction);
         new DeleteDocument(doc).executeIn(transaction);
+        return doc;
       });
-      return "";
     }
   }
 }
