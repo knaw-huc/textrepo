@@ -1,6 +1,8 @@
 package nl.knaw.huc.service;
 
 import nl.knaw.huc.core.Contents;
+import nl.knaw.huc.core.Page;
+import nl.knaw.huc.core.PageParams;
 import nl.knaw.huc.core.TextrepoFile;
 import nl.knaw.huc.core.Version;
 import nl.knaw.huc.db.ContentsDao;
@@ -78,8 +80,10 @@ public class JdbiVersionService implements VersionService {
   }
 
   @Override
-  public List<Version> getAll(UUID fileId) {
-    return versions().findByFileId(fileId);
+  public Page<Version> getAll(UUID fileId, PageParams pageParams) {
+    var items = versions().findByFileId(fileId, pageParams);
+    var total = versions().countByFileId(fileId);
+    return new Page<>(items, total, pageParams);
   }
 
   @Override

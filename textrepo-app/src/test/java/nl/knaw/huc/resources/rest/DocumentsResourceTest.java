@@ -47,9 +47,6 @@ public class DocumentsResourceTest {
   private static final Jdbi jdbi = mock(Jdbi.class);
   private static final DocumentService documentService = mock(DocumentService.class);
   private static final FileService fileService = mock(FileService.class);
-  private static final FileMetadataService metadataService = mock(FileMetadataService.class);
-  private static final int TEST_LIMIT = 10;
-  private static final int TEST_OFFSET = 0;
 
   @Captor
   private ArgumentCaptor<PageParams> pageParamsCaptor;
@@ -60,8 +57,9 @@ public class DocumentsResourceTest {
     BootstrapLogging.bootstrap(Level.DEBUG);
   }
 
-  private static Paginator paginator = createPaginator();
-
+  private static final int TEST_LIMIT = 10;
+  private static final int TEST_OFFSET = 0;
+  private static final Paginator paginator = createPaginator();
   private static Paginator createPaginator() {
     var config = new PaginationConfiguration();
     config.defaultOffset = TEST_OFFSET;

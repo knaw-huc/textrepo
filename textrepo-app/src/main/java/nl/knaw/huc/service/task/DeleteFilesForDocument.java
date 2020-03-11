@@ -1,7 +1,6 @@
 package nl.knaw.huc.service.task;
 
 import nl.knaw.huc.core.Document;
-import nl.knaw.huc.core.PageParams;
 import nl.knaw.huc.db.ContentsDao;
 import nl.knaw.huc.db.DocumentFilesDao;
 import nl.knaw.huc.db.FilesDao;

@@ -84,9 +84,9 @@ public class TestRestDocumentCollection extends AbstractConcordionTest {
   public static class PaginateResult {
     public int status;
     public String body;
-    public int documentCount;
-    public String externalDocumentId;
+    public int itemCount;
     public int total;
+    public String externalDocumentId;
   }
 
   public PaginateResult paginate(Object endpoint, String offset, String limit) {
@@ -105,7 +105,7 @@ public class TestRestDocumentCollection extends AbstractConcordionTest {
     var  body = response.readEntity(String.class);
     result.body = asPrettyJson(body);
     var json = jsonPath.parse(body);
-    result.documentCount = json.read("$.items.length()");
+    result.itemCount = json.read("$.items.length()");
     result.externalDocumentId = json.read("$.items[0].externalId");
     result.total = json.read("$.total", Integer.class);
     return result;

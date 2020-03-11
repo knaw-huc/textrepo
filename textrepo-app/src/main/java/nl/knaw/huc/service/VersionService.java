@@ -1,12 +1,13 @@
 package nl.knaw.huc.service;
 
 import nl.knaw.huc.core.Contents;
+import nl.knaw.huc.core.Page;
+import nl.knaw.huc.core.PageParams;
 import nl.knaw.huc.core.TextrepoFile;
 import nl.knaw.huc.core.Version;
 
 import javax.annotation.Nonnull;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -26,7 +27,7 @@ public interface VersionService {
       @Nonnull LocalDateTime time
   );
 
-  List<Version> getAll(UUID fileId);
+  Page<Version> getAll(UUID fileId, PageParams pageParams);
 
   Version get(UUID id);
 

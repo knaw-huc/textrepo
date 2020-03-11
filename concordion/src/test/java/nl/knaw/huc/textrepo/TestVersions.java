@@ -43,8 +43,8 @@ public class TestVersions extends AbstractConcordionTest {
 
     var jsonVersions = getVersions(result.fileId);
 
-    result.version1Sha = jsonPath.parse(jsonVersions).read("$[0].contentsSha");
-    result.version2Sha = jsonPath.parse(jsonVersions).read("$[1].contentsSha");
+    result.version1Sha = jsonPath.parse(jsonVersions).read("$.items[0].contentsSha");
+    result.version2Sha = jsonPath.parse(jsonVersions).read("$.items[1].contentsSha");
 
     var list = getIndexedAutocompleteDoc(result.fileId);
     Collections.sort(list);

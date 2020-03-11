@@ -1,5 +1,6 @@
 package nl.knaw.huc.db;
 
+import nl.knaw.huc.core.PageParams;
 import nl.knaw.huc.core.Version;
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
@@ -26,6 +27,15 @@ public interface VersionsDao {
       "from versions where file_id = ? order by created_at asc")
   @RegisterConstructorMapper(value = Version.class)
   List<Version> findByFileId(UUID fileId);
+
+  @SqlQuery("select id, file_id, created_at, contents_sha " +
+      "from versions where file_id = :fileId " +
+      "order by created_at asc limit :limit offset :offset")
+  @RegisterConstructorMapper(value = Version.class)
+  List<Version> findByFileId(@Bind("fileId") UUID fileId, @BindBean PageParams pageParams);
+
+  @SqlQuery("select count(*) from versions where file_id = :fileId")
+  int countByFileId(@Bind("fileId") UUID fileId);
 
   @SqlQuery("select id, file_id, created_at, contents_sha " +
       "from versions where id = ? order by created_at asc")

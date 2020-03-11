@@ -44,14 +44,14 @@ Then:
 ## Request first page
 When we request all documents with a `GET` to [`/rest/documents`](- "#searchEndpoint")
 
- - with limit: [`1`](- "#limit") and offset: [`0`](- "#offset").
+ - with query paramter `limit`: [`1`](- "#limit") and `offset`: [`0`](- "#offset").
 
 [ ](- "#firstPage=paginate(#searchEndpoint, #offset, #limit)")
 
 Then:
 
  - The response status should be: [200](- "?=#firstPage.status");
- - The items array should contain [1](- "?=#firstPage.documentCount") document;
+ - The items array should contain [1](- "?=#firstPage.itemCount") document;
  - Its external ID should be [`first-external-id`](- "?=#firstPage.externalDocumentId") document;
  - Total should be [2](- "?=#firstPage.total");
  - Full response:
@@ -61,14 +61,14 @@ Then:
 ## Request second page
 When we request all documents with a `GET` to [`/rest/documents`](- "#searchEndpoint")
 
- - with limit: [`1`](- "#limit") and offset: [`1`](- "#offset").
+ - with query parameter `limit`: [`1`](- "#limit") and `offset`: [`1`](- "#offset").
 
 [ ](- "#secondPage=paginate(#searchEndpoint, #offset, #limit)")
 
 Then:
 
  - The response status should be: [200](- "?=#secondPage.status");
- - The items array should contain [1](- "?=#secondPage.documentCount") document;
+ - The items array should contain [1](- "?=#secondPage.itemCount") document;
  - Its external ID should be [`second-external-id`](- "?=#secondPage.externalDocumentId") document;
  - Total should be [2](- "?=#secondPage.total");
  - Full response:

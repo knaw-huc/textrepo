@@ -110,7 +110,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
         new TypesResource(typeService),
         new FileContentsResource(fileContentsService, maxPayloadSize),
         new FileMetadataResource(metadataService),
-        new FileVersionsResource(versionService),
+        new FileVersionsResource(versionService, paginator),
         new DocumentsResource(documentService, paginator),
         new DocumentMetadataResource(documentMetadataService),
         new ImportResource(taskBuilderFactory, maxPayloadSize),
