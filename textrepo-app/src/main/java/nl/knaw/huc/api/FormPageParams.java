@@ -7,8 +7,6 @@ import javax.ws.rs.QueryParam;
 
 public class FormPageParams implements Paginated {
 
-  private final int defaultLimit = 0;
-
   @QueryParam("limit")
   private Integer limit;
 
