@@ -1,20 +1,14 @@
 package nl.knaw.huc.textrepo.rest;
 
-import com.jayway.jsonpath.JsonPath;
 import net.minidev.json.JSONArray;
 import nl.knaw.huc.textrepo.AbstractConcordionTest;
 import nl.knaw.huc.textrepo.util.RestUtils;
-import org.concordion.api.extension.Extensions;
-import org.concordion.api.option.ConcordionOptions;
-import org.concordion.ext.EmbedExtension;
 
 import static java.lang.String.format;
 import static nl.knaw.huc.textrepo.util.TestUtils.asPrettyJson;
 import static nl.knaw.huc.textrepo.util.TestUtils.replaceUrlParams;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
-@Extensions(EmbedExtension.class)
-@ConcordionOptions(declareNamespaces = {"ext", "urn:concordion-extensions:2010"})
 public class TestRestDocumentFiles extends AbstractConcordionTest {
 
   private String docId;

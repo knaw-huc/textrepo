@@ -143,6 +143,9 @@ public class TestUtils {
     return response.getStatus() + " " + response.getStatusInfo();
   }
 
+  /**
+   * Return formatted json within pre-tags
+   */
   public static String asPrettyJson(String string) {
     var result = "";
     try {

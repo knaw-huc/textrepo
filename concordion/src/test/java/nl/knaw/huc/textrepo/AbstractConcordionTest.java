@@ -6,6 +6,9 @@ import com.jayway.jsonpath.ParseContext;
 import org.concordion.api.AfterSpecification;
 import org.concordion.api.BeforeSpecification;
 import org.concordion.api.FullOGNL;
+import org.concordion.api.extension.Extensions;
+import org.concordion.api.option.ConcordionOptions;
+import org.concordion.ext.EmbedExtension;
 import org.concordion.integration.junit4.ConcordionRunner;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.junit.runner.RunWith;
@@ -33,6 +36,8 @@ import static nl.knaw.huc.textrepo.util.RestUtils.createType;
 
 @FullOGNL
 @RunWith(ConcordionRunner.class)
+@Extensions(EmbedExtension.class)
+@ConcordionOptions(declareNamespaces = {"ext", "urn:concordion-extensions:2010"})
 public abstract class AbstractConcordionTest {
 
   final Logger logger = LoggerFactory.getLogger(this.getClass());

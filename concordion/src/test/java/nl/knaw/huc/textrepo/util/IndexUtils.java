@@ -84,14 +84,4 @@ public class IndexUtils {
     sleepMs(100);
   }
 
-  public static List<String> getIndexedAutocompleteDoc(String fileId) {
-    var url = HTTP_ES_HOST + "/autocomplete/_doc/" + fileId;
-    var parsed = JsonPath.parse(getByUrl(url));
-    return asList(
-        parsed.read("$._source.suggest[0].input", String.class),
-        parsed.read("$._source.suggest[1].input", String.class)
-    );
-
-  }
-
 }

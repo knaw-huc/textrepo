@@ -1,11 +1,7 @@
 package nl.knaw.huc.textrepo.rest;
 
-import com.jayway.jsonpath.JsonPath;
 import nl.knaw.huc.textrepo.AbstractConcordionTest;
 import nl.knaw.huc.textrepo.util.RestUtils;
-import org.concordion.api.extension.Extensions;
-import org.concordion.api.option.ConcordionOptions;
-import org.concordion.ext.EmbedExtension;
 
 import javax.ws.rs.core.UriBuilder;
 import java.util.List;
@@ -14,8 +10,6 @@ import static com.google.common.collect.Lists.newArrayList;
 import static nl.knaw.huc.textrepo.Config.HOST;
 import static nl.knaw.huc.textrepo.util.TestUtils.asPrettyJson;
 
-@Extensions(EmbedExtension.class)
-@ConcordionOptions(declareNamespaces={"ext", "urn:concordion-extensions:2010"})
 public class TestRestDocumentCollection extends AbstractConcordionTest {
 
   public void createDocument(String externalId) {

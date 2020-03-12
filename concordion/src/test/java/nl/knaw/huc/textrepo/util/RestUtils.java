@@ -51,12 +51,12 @@ public class RestUtils {
     return JsonPath.parse(body).read("$.id");
   }
 
-  public static String createVersion(String fileId, String content) {
+  public static String createVersion(String fileId, String contents) {
     var multiPart = new FormDataMultiPart()
         .field("fileId", fileId)
         .field(
             "contents",
-            content,
+            contents,
             APPLICATION_OCTET_STREAM_TYPE
         );
 

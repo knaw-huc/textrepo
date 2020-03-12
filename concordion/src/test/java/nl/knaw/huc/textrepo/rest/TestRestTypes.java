@@ -1,9 +1,6 @@
 package nl.knaw.huc.textrepo.rest;
 
 import nl.knaw.huc.textrepo.AbstractConcordionTest;
-import org.concordion.api.extension.Extensions;
-import org.concordion.api.option.ConcordionOptions;
-import org.concordion.ext.EmbedExtension;
 
 import static javax.ws.rs.client.Entity.entity;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
@@ -11,8 +8,6 @@ import static nl.knaw.huc.textrepo.Config.HOST;
 import static nl.knaw.huc.textrepo.util.TestUtils.asPrettyJson;
 import static nl.knaw.huc.textrepo.util.TestUtils.replaceUrlParams;
 
-@Extensions(EmbedExtension.class)
-@ConcordionOptions(declareNamespaces={"ext", "urn:concordion-extensions:2010"})
 public class TestRestTypes extends AbstractConcordionTest {
 
   public static class CreateResult {
@@ -31,8 +26,6 @@ public class TestRestTypes extends AbstractConcordionTest {
     var result = new CreateResult();
     result.status = response.getStatus();
     var body = response.readEntity(String.class);
-    System.out.println("type status: " + result.status);
-    System.out.println("type body: " + body);
     result.body = asPrettyJson(body);
     result.id = jsonPath.parse(body).read("$.id", Integer.class);
     result.hasId = result.id != 0 ? "valid ID" : "ID should not be 0";

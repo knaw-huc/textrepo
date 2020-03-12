@@ -10,7 +10,7 @@ To retrieve the contents of a version we first create:
 
   - a document;
   - a file;
-  - and a version: [ ](- "c:echo=#versionId");
+  - and a version: [ ](- "c:echo=#versionId").
 
 ## Retrieve contents
 When retrieving the contents of a file with a `GET` to [`/rest/versions/{id}/contents`](- "#getEndpoint") 
