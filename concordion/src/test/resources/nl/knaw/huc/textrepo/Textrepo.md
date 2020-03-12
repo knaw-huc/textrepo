@@ -1,8 +1,5 @@
 # Text Repository Acceptance Tests
 
- - [Files](./TestFiles.md "c:run")
- - [File handling](./TestFileHandling.md "c:run")
- - [Versions](./TestVersions.md "c:run")
  - [Custom indexer](./TestCustomIndexer.md "c:run")
 
 ## Rest API
