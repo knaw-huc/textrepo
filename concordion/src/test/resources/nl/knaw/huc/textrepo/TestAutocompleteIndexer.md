@@ -1,4 +1,4 @@
-# TestCustomIndexer
+# Test Autocomplete Indexer
 
 The autocomplete indexer indexes every file using elasticsearchs Completion Suggester. 
 New file versions will overwrite older versions in the es index. 

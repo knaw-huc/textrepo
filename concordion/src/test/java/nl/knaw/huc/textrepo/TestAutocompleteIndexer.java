@@ -13,7 +13,7 @@ import static nl.knaw.huc.textrepo.util.TestUtils.asPrettyJson;
 import static nl.knaw.huc.textrepo.util.TestUtils.isValidUuid;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
-public class TestCustomIndexer extends AbstractConcordionTest {
+public class TestAutocompleteIndexer extends AbstractConcordionTest {
 
   private final String esQuery = "{\n" +
       "  \"suggest\": {\n" +

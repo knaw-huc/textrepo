@@ -1,6 +1,6 @@
 # Text Repository Acceptance Tests
 
- - [Custom indexer](./TestCustomIndexer.md "c:run")
+ - [Autocomplete indexer](TestAutocompleteIndexer.md "c:run")
 
 ## Rest API
 
