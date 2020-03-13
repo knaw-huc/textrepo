@@ -44,7 +44,7 @@ Then:
 ## Request first page
 When we request all documents with a `GET` to [`/rest/documents`](- "#searchEndpoint")
 
- - with query paramter `limit`: [`1`](- "#limit") and `offset`: [`0`](- "#offset").
+ - with query parameter `limit`: [`1`](- "#limit") and `offset`: [`0`](- "#offset").
 
 [ ](- "#firstPage=paginate(#searchEndpoint, #offset, #limit)")
 
