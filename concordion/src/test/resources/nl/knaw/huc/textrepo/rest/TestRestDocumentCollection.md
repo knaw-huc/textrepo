@@ -10,11 +10,11 @@ To find documents we first create:
 
 ## Find single document by external ID
 An external ID should be unique. 
-When we search documents with a `GET` to [`/rest/documents`](- "#searchEndpoint")
+When we search documents with a `GET` to [`/rest/documents`](- "#searchEndpoint")`?`[`externalId={externalId}`](- "#queryParam")
 
- - with query param: [`externalId`](- "#queryParam") and value: [`first-external-id`](- "#queryParamValue").
+ - where `{externalId}` is [ ](- "c:echo=#externalId1").
 
-[ ](- "#searchSingle=search(#searchEndpoint, #queryParam, #queryParamValue)")
+[ ](- "#searchSingle=search(#searchEndpoint, #queryParam, #externalId1)")
 
 Then:
 
@@ -26,11 +26,11 @@ Then:
 [ ](- "ext:embed=#searchSingle.body")
 
 ## Partial or non-existent external ID
-When we search documents with a `GET` to [`/rest/documents`](- "#searchEndpoint")
+When we search documents with a `GET` to [`/rest/documents`](- "#searchEndpoint")`?`[`externalId={externalId}`](- "#queryParam")
 
- - with query param: [`externalId`](- "#queryParam") and a non-existant external ID: [`external`](- "#queryParamValue").
+ - where `{externalId}` is non-existant external ID [`ext`](- "#partial").
 
-[ ](- "#searchSingle=searchMultiple(#searchEndpoint, #queryParam, #queryParamValue)")
+[ ](- "#searchSingle=search(#searchEndpoint, #queryParam, #partial)")
 
 Then:
 

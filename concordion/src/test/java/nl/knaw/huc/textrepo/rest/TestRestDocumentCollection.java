@@ -4,11 +4,10 @@ import nl.knaw.huc.textrepo.AbstractConcordionTest;
 import nl.knaw.huc.textrepo.util.RestUtils;
 
 import javax.ws.rs.core.UriBuilder;
-import java.util.List;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static nl.knaw.huc.textrepo.Config.HOST;
 import static nl.knaw.huc.textrepo.util.TestUtils.asPrettyJson;
+import static nl.knaw.huc.textrepo.util.TestUtils.replaceUrlParams;
 
 public class TestRestDocumentCollection extends AbstractConcordionTest {
 
@@ -24,10 +23,11 @@ public class TestRestDocumentCollection extends AbstractConcordionTest {
   }
 
   public SearchResult search(Object endpoint, String queryParam, String queryParamValue) {
-    var url = UriBuilder
-        .fromPath(HOST + endpoint.toString())
-        .queryParam(queryParam, queryParamValue)
-        .build();
+    var url = HOST + endpoint.toString()
+        + "?"
+        + queryParam.replace("{externalId}", queryParamValue);
+    System.out.println("document url:" + url);
+
     final var response = client
         .target(url)
         .request()
@@ -37,41 +37,10 @@ public class TestRestDocumentCollection extends AbstractConcordionTest {
     result.status = response.getStatus();
     var  body = response.readEntity(String.class);
     result.body = asPrettyJson(body);
+    System.out.println("document body:" + body);
     var json = jsonPath.parse(body);
     result.documentCount = json.read("$.items.length()");
     result.externalId = json.read("$.items[0].externalId");
-    return result;
-  }
-
-  public static class SearchMultipleResult {
-    public int status;
-    public String body;
-    public int documentCount;
-    public String externalIds;
-  }
-
-  public SearchMultipleResult searchMultiple(Object endpoint, String queryParam, String queryParamValue) {
-    var url = UriBuilder
-        .fromPath(HOST + endpoint.toString())
-        .queryParam(queryParam, queryParamValue)
-        .build();
-    final var response = client
-        .target(url)
-        .request()
-        .get();
-
-    var result = new SearchMultipleResult();
-    result.status = response.getStatus();
-    var  body = response.readEntity(String.class);
-    result.body = asPrettyJson(body);
-    var json = jsonPath.parse(body);
-    result.documentCount = json.read("$.items.length()");
-    List<String> externalIds = newArrayList(
-        json.read("$.items[0].externalId"),
-        json.read("$.items[1].externalId")
-    );
-    var expectedExternalIds = newArrayList("first-external-id", "second-external-id");
-    result.externalIds = externalIds.containsAll(expectedExternalIds) ? "first and second" : "ids missing";
     return result;
   }
 
