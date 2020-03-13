@@ -49,9 +49,7 @@ public class JdbiDocumentService implements DocumentService {
    */
   @Override
   public Page<Document> getAll(String externalId, PageParams pageParams) {
-    externalId = isBlank(externalId) ?
-        null :
-        "%" + externalId + "%";
+    externalId = isBlank(externalId) ? null : externalId;
     var docs = documents().getByExternalIdLike(externalId, pageParams);
     var total = documents().countByExternalIdLike(externalId);
     return new Page<>(docs, total, pageParams);

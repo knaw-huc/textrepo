@@ -35,7 +35,8 @@ public class JdbiFindContentsTaskBuilderTest {
     new JdbiFindContentsTaskBuilder(JDBI)
         .forExternalId(TEST_EXTERNAL_ID)
         .withType(TEST_TYPE_NAME)
-        .build().run();
+        .build()
+        .run();
 
     long numTransactionsStarted = mockingDetails(JDBI)
         .getInvocations()

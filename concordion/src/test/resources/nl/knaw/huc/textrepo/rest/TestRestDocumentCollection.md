@@ -10,7 +10,7 @@ To find documents we first create:
 
 ## Find single document by external ID
 An external ID should be unique. 
-So when we search documents with a `GET` to [`/rest/documents`](- "#searchEndpoint")
+When we search documents with a `GET` to [`/rest/documents`](- "#searchEndpoint")
 
  - with query param: [`externalId`](- "#queryParam") and value: [`first-external-id`](- "#queryParamValue").
 
@@ -25,18 +25,17 @@ Then:
  
 [ ](- "ext:embed=#searchSingle.body")
 
-## Find documents by external ID
+## Partial or non-existent external ID
 When we search documents with a `GET` to [`/rest/documents`](- "#searchEndpoint")
 
- - with query param: [`externalId`](- "#queryParam") and value: [`ext`](- "#queryParamValue").
+ - with query param: [`externalId`](- "#queryParam") and a non-existant external ID: [`external`](- "#queryParamValue").
 
 [ ](- "#searchSingle=searchMultiple(#searchEndpoint, #queryParam, #queryParamValue)")
 
 Then:
 
  - The response status should be: [200](- "?=#searchSingle.status");
- - The response array should contain [2](- "?=#searchSingle.documentCount") document;
- - The response array should contain [first and second](- "?=#searchSingle.externalIds") external IDs;
+ - The response array should contain [0](- "?=#searchSingle.documentCount") document;
  - Full response:
  
 [ ](- "ext:embed=#searchSingle.body")
