@@ -35,7 +35,7 @@ When we search documents with a `GET` to [`/rest/documents`](- "#searchEndpoint"
 Then:
 
  - The response status should be: [200](- "?=#searchSingle.status");
- - The response array should contain [2](- "?=#searchSingle.documentCount") document;
+ - The response array should contain [2](- "?=#searchSingle.documentCount") documents;
  - The response array should contain [first and second](- "?=#searchSingle.externalIds") external IDs;
  - Full response:
  
