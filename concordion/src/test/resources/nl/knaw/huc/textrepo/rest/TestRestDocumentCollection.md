@@ -10,11 +10,11 @@ To find documents we first create:
 
 ## Find single document by external ID
 An external ID should be unique. 
-When we search documents with a `GET` to [`/rest/documents`](- "#searchEndpoint")`?`[`externalId={externalId}`](- "#queryParam")
+When we search documents with a `GET` to [`/rest/documents?externalId={externalId}`](- "#searchEndpoint")
 
- - where `{externalId}` is [ ](- "c:echo=#externalId1").
+ - where `{externalId}` is [ ](- "ext:embed=code(#externalId1)").
 
-[ ](- "#searchSingle=search(#searchEndpoint, #queryParam, #externalId1)")
+[ ](- "#searchSingle=search(#searchEndpoint, #externalId1)")
 
 Then:
 
@@ -26,11 +26,11 @@ Then:
 [ ](- "ext:embed=#searchSingle.body")
 
 ## Partial or non-existent external ID
-When we search documents with a `GET` to [`/rest/documents`](- "#searchEndpoint")`?`[`externalId={externalId}`](- "#queryParam")
+When we search documents with a `GET` to [`/rest/documents?externalId={externalId}`](- "#searchEndpoint")
 
  - where `{externalId}` is non-existant external ID [`ext`](- "#partial").
 
-[ ](- "#searchSingle=search(#searchEndpoint, #queryParam, #partial)")
+[ ](- "#searchSingle=search(#searchEndpoint, #partial)")
 
 Then:
 

@@ -5,8 +5,10 @@ import nl.knaw.huc.textrepo.util.RestUtils;
 
 import javax.ws.rs.core.UriBuilder;
 
+import static java.util.Map.of;
 import static nl.knaw.huc.textrepo.Config.HOST;
 import static nl.knaw.huc.textrepo.util.TestUtils.asPrettyJson;
+import static nl.knaw.huc.textrepo.util.TestUtils.createUrlQueryParams;
 
 public class TestRestDocumentCollection extends AbstractConcordionTest {
 
@@ -21,11 +23,8 @@ public class TestRestDocumentCollection extends AbstractConcordionTest {
     public String externalId;
   }
 
-  public SearchResult search(Object endpoint, String queryParam, String queryParamValue) {
-    var url = HOST + endpoint.toString()
-        + "?"
-        + queryParam.replace("{externalId}", queryParamValue);
-    System.out.println("document url:" + url);
+  public SearchResult search(Object endpoint, String externalId) {
+    var url = createUrlQueryParams(endpoint, of("{externalId}", externalId));
 
     final var response = client
         .target(url)
@@ -36,7 +35,6 @@ public class TestRestDocumentCollection extends AbstractConcordionTest {
     result.status = response.getStatus();
     var  body = response.readEntity(String.class);
     result.body = asPrettyJson(body);
-    System.out.println("document body:" + body);
     var json = jsonPath.parse(body);
     result.documentCount = json.read("$.items.length()");
     result.externalId = json.read("$.items[0].externalId");
