@@ -2,6 +2,7 @@ package nl.knaw.huc.textrepo.rest;
 
 import nl.knaw.huc.textrepo.AbstractConcordionTest;
 import nl.knaw.huc.textrepo.util.RestUtils;
+import nl.knaw.huc.textrepo.util.TestUtils;
 
 import javax.ws.rs.core.UriBuilder;
 
@@ -50,11 +51,7 @@ public class TestRestDocumentCollection extends AbstractConcordionTest {
   }
 
   public PaginateResult paginate(Object endpoint, String offset, String limit) {
-    var url = UriBuilder
-        .fromPath(HOST + endpoint.toString())
-        .queryParam("offset", offset)
-        .queryParam("limit", limit)
-        .build();
+    var url = createUrlQueryParams(endpoint, of("{offset}", offset, "{limit}", limit));
     final var response = client
         .target(url)
         .request()

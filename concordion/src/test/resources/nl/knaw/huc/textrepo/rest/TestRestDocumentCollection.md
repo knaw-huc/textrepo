@@ -41,9 +41,9 @@ Then:
 [ ](- "ext:embed=#searchSingle.body")
 
 ## Request first page
-When we request all documents with a `GET` to [`/rest/documents`](- "#searchEndpoint")
+When we request all documents with a `GET` to [`/rest/documents?offset={offset}&limit={limit}`](- "#searchEndpoint")
 
- - with query parameter `limit`: [`1`](- "#limit") and `offset`: [`0`](- "#offset").
+ - where `{offset}` is [`0`](- "#offset") and `{limit}` is [`1`](- "#limit").
 
 [ ](- "#firstPage=paginate(#searchEndpoint, #offset, #limit)")
 
@@ -58,9 +58,9 @@ Then:
 [ ](- "ext:embed=#firstPage.body")
 
 ## Request second page
-When we request all documents with a `GET` to [`/rest/documents`](- "#searchEndpoint")
+When we request all documents with a `GET` to [`/rest/documents?offset={offset}&limit={limit}`](- "#searchEndpoint")
 
- - with query parameter `limit`: [`1`](- "#limit") and `offset`: [`1`](- "#offset").
+ - where `{offset}` is [`1`](- "#offset") and `{limit}` is [`1`](- "#limit").
 
 [ ](- "#secondPage=paginate(#searchEndpoint, #offset, #limit)")
 
