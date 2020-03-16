@@ -3,10 +3,10 @@ package nl.knaw.huc.textrepo.rest;
 import nl.knaw.huc.textrepo.AbstractConcordionTest;
 import nl.knaw.huc.textrepo.util.RestUtils;
 
-import javax.ws.rs.core.UriBuilder;
-
+import static java.util.Map.of;
 import static nl.knaw.huc.textrepo.util.TestUtils.asPrettyJson;
 import static nl.knaw.huc.textrepo.util.TestUtils.replaceUrlParams;
+import static nl.knaw.huc.textrepo.util.TestUtils.createUrlQueryParams;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 public class TestRestFileVersions extends AbstractConcordionTest {
@@ -54,12 +54,13 @@ public class TestRestFileVersions extends AbstractConcordionTest {
   }
 
   public PaginateResult paginate(Object endpoint, String fileId, String offset, String limit) {
-    var url = UriBuilder
-        .fromPath(replaceUrlParams(endpoint, fileId).toString())
-        .queryParam("offset", offset)
-        .queryParam("limit", limit)
-        .build();
-    final var response = client
+    var url = createUrlQueryParams(endpoint, of(
+        "{id}", fileId,
+        "{offset}", offset,
+        "{limit}", limit
+    ));
+
+    var response = client
         .target(url)
         .request()
         .get();

@@ -2,9 +2,6 @@ package nl.knaw.huc.textrepo.rest;
 
 import nl.knaw.huc.textrepo.AbstractConcordionTest;
 import nl.knaw.huc.textrepo.util.RestUtils;
-import org.concordion.api.extension.Extensions;
-import org.concordion.api.option.ConcordionOptions;
-import org.concordion.ext.EmbedExtension;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
 import static nl.knaw.huc.textrepo.util.TestUtils.asCodeBlock;

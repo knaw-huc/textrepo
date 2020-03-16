@@ -7,7 +7,6 @@ import javax.ws.rs.core.UriBuilder;
 
 import static nl.knaw.huc.textrepo.Config.HOST;
 import static nl.knaw.huc.textrepo.util.TestUtils.asPrettyJson;
-import static nl.knaw.huc.textrepo.util.TestUtils.replaceUrlParams;
 
 public class TestRestDocumentCollection extends AbstractConcordionTest {
 

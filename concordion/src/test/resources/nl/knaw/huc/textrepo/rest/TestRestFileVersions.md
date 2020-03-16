@@ -10,14 +10,14 @@ To view all versions of a file we first create:
 [ ](- "#newVersionId=createVersion(#fileId)")
 
   - a document;
-  - a file: [ ](- "c:echo=#fileId");
-  - an old version: [ ](- "c:echo=#oldVersionId");
-  - and a new version: [ ](- "c:echo=#newVersionId").
+  - a file: [ ](- "ext:embed=code(#fileId)");
+  - an old version: [ ](- "ext:embed=code(#oldVersionId)");
+  - and a new version: [ ](- "ext:embed=code(#newVersionId)").
 
 ### Retrieve file versions
 When retrieving the versions of a file with a `GET` to [`/rest/files/{id}/versions`](- "#getEndpoint") 
 
- - where `{id}` is [ ](- "c:echo=#fileId"):
+ - where `{id}` is [ ](- "ext:embed=code(#fileId)"):
 
 [ ](- "#retrieveResult=retrieve(#getEndpoint, #fileId)")
 
@@ -30,10 +30,10 @@ Then:
 [ ](- "ext:embed=#retrieveResult.body")
 
 ### Paginate file versions
-When retrieving the versions of a file with a `GET` to [`/rest/files/{id}/versions`](- "#getEndpoint") 
+When retrieving the versions of a file with a `GET` to [`/rest/files/{id}/versions?offset={offset}&limit={limit}`](- "#getEndpoint") 
 
- - where `{id}` is [ ](- "c:echo=#fileId");
- - where query parameter `limit` is [`1`](- "#limit") and `offset` is [`0`](- "#offset").
+ - where `{id}` is [ ](- "ext:embed=code(#fileId)");
+ - where `{offset}` is [`0`](- "#offset") and `{limit}` is [`1`](- "#limit").
 
 [ ](- "#paginateResult=paginate(#getEndpoint, #fileId, #offset, #limit)")
 

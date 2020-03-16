@@ -15,6 +15,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map;
 import java.util.Optional;
@@ -163,6 +164,18 @@ public class TestUtils {
 
   public static URI replaceUrlParams(Object endpoint, Object... params) {
     return UriBuilder.fromPath(HOST + endpoint.toString()).build(params);
+  }
+
+  public static URI createUrlQueryParams(Object endpoint, Map<String, String> params) {
+    var url = HOST + endpoint;
+    for (var p : params.entrySet()) {
+      url = url.replace(p.getKey(), p.getValue());
+    }
+    try {
+      return new URI(url);
+    } catch (URISyntaxException ex) {
+      throw new RuntimeException("Could not create URI with query params from: " + url, ex);
+    }
   }
 
   public static String getByUrl(String url) {
