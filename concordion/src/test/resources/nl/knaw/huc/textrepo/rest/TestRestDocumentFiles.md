@@ -27,3 +27,22 @@ Then:
 
 [ ](- "ext:embed=#retrieveResult.body")
 
+
+### Paginate file versions
+Results are divided in pages using offset and limit.
+
+When retrieving the versions of a file with a `GET` to [`/rest/documents/{id}/files?offset={offset}&limit={limit}`](- "#getEndpoint") 
+
+ - where `{id}` is [ ](- "ext:embed=code(getDocId())");
+ - where `{offset}` is [`0`](- "#offset") and `{limit}` is [`1`](- "#limit").
+
+[ ](- "#paginateResult=paginate(#getEndpoint, getDocId(), #offset, #limit, getTextFileId())")
+
+Then:
+
+ - The response status should be: [200](- "?=#paginateResult.status");
+ - The response should only contain the [text](- "?=#paginateResult.hasOld") file;
+ - Total should be [2](- "?=#paginateResult.total");
+ - Full response:
+
+[ ](- "ext:embed=#paginateResult.body")
