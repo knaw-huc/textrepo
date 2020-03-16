@@ -52,7 +52,8 @@ When we request all documents with a `GET` to [`/rest/documents?offset={offset}&
 Then:
 
  - The response status should be: [200](- "?=#firstPage.status");
- - It should contain only the [first](- "?=#firstPage.itemCount") document;
+ - The items array should contain [1](- "?=#firstPage.itemCount") document;
+ - Its external ID should be [`first-external-id`](- "?=#firstPage.externalDocumentId") document;
  - Total should be [2](- "?=#firstPage.total");
  - Full response:
  

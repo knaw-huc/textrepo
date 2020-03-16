@@ -2,12 +2,8 @@ package nl.knaw.huc.textrepo.rest;
 
 import nl.knaw.huc.textrepo.AbstractConcordionTest;
 import nl.knaw.huc.textrepo.util.RestUtils;
-import nl.knaw.huc.textrepo.util.TestUtils;
-
-import javax.ws.rs.core.UriBuilder;
 
 import static java.util.Map.of;
-import static nl.knaw.huc.textrepo.Config.HOST;
 import static nl.knaw.huc.textrepo.util.TestUtils.asPrettyJson;
 import static nl.knaw.huc.textrepo.util.TestUtils.createUrlQueryParams;
 
