@@ -3,6 +3,7 @@ package nl.knaw.huc.textrepo.rest;
 import nl.knaw.huc.textrepo.AbstractConcordionTest;
 import nl.knaw.huc.textrepo.util.RestUtils;
 
+import static java.lang.String.format;
 import static java.util.Map.of;
 import static nl.knaw.huc.textrepo.util.TestUtils.asPrettyJson;
 import static nl.knaw.huc.textrepo.util.TestUtils.replaceUrlParams;
@@ -29,7 +30,7 @@ public class TestRestFileVersions extends AbstractConcordionTest {
     public String twoVersions;
   }
 
-  public RetrieveResult retrieve(Object endpoint, Object id) {
+  public RetrieveResult retrieve(Object endpoint, Object id, Object oldVersion, Object newVersion) {
     final var response = client
         .target(replaceUrlParams(endpoint, id))
         .request()
@@ -41,19 +42,21 @@ public class TestRestFileVersions extends AbstractConcordionTest {
     result.body = asPrettyJson(body);
     var json = jsonPath.parse(body);
     var length = json.read("$.items.length()", Integer.class);
-    result.twoVersions = "" + length;
+    var hasOld = json.read("$.items[0].id", String.class).equals(oldVersion);
+    var hasNew = json.read("$.items[1].id", String.class).equals(newVersion);
+    result.twoVersions = hasOld && hasNew ? "old and new" : format("old [%s] and new [%s]", hasOld, hasNew);
     return result;
   }
 
   public static class PaginateResult {
     public int status;
     public String body;
-    public int itemCount;
+    public String hasOld;
     public String externalDocumentId;
     public int total;
   }
 
-  public PaginateResult paginate(Object endpoint, String fileId, String offset, String limit) {
+  public PaginateResult paginate(Object endpoint, String fileId, String offset, String limit, String oldVersion) {
     var url = createUrlQueryParams(endpoint, of(
         "{id}", fileId,
         "{offset}", offset,
@@ -70,7 +73,8 @@ public class TestRestFileVersions extends AbstractConcordionTest {
     var  body = response.readEntity(String.class);
     result.body = asPrettyJson(body);
     var json = jsonPath.parse(body);
-    result.itemCount = json.read("$.items.length()");
+    var versionId = json.read("$.items[0].id", String.class);
+    result.hasOld = versionId.equals(oldVersion) ? "old" : format("[%s] isn't [%s]", versionId, oldVersion);
     result.externalDocumentId = json.read("$.items[0].externalId");
     result.total = json.read("$.total", Integer.class);
     return result;

@@ -4,10 +4,10 @@
 
 ## Rest API
 
+ - [Document collection](rest/TestRestDocumentCollection.md "c:run")
  - [Documents](rest/TestRestDocuments.md "c:run")
  - [Document metadata](rest/TestRestDocumentMetadata.md "c:run")
  - [Document files](rest/TestRestDocumentFiles.md "c:run")
- - [Document collection](rest/TestRestDocumentCollection.md "c:run")
  - [Types](rest/TestRestTypes.md "c:run")
  - [Files](rest/TestRestFiles.md "c:run")
  - [File metadata](rest/TestRestFileMetadata.md "c:run")

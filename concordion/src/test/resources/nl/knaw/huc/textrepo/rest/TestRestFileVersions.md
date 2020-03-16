@@ -19,28 +19,30 @@ When retrieving the versions of a file with a `GET` to [`/rest/files/{id}/versio
 
  - where `{id}` is [ ](- "ext:embed=code(#fileId)"):
 
-[ ](- "#retrieveResult=retrieve(#getEndpoint, #fileId)")
+[ ](- "#retrieveResult=retrieve(#getEndpoint, #fileId, #oldVersionId, #newVersionId)")
 
 Then:
 
  - The response status should be: [200](- "?=#retrieveResult.status");
- - The response should contain [2](- "?=#retrieveResult.twoVersions") versions;
+ - The response should contain both the [old and new](- "?=#retrieveResult.twoVersions") version;
  - Full response:
 
 [ ](- "ext:embed=#retrieveResult.body")
 
 ### Paginate file versions
+Results are divided in pages using offset and limit.
+
 When retrieving the versions of a file with a `GET` to [`/rest/files/{id}/versions?offset={offset}&limit={limit}`](- "#getEndpoint") 
 
  - where `{id}` is [ ](- "ext:embed=code(#fileId)");
  - where `{offset}` is [`0`](- "#offset") and `{limit}` is [`1`](- "#limit").
 
-[ ](- "#paginateResult=paginate(#getEndpoint, #fileId, #offset, #limit)")
+[ ](- "#paginateResult=paginate(#getEndpoint, #fileId, #offset, #limit, #oldVersionId)")
 
 Then:
 
  - The response status should be: [200](- "?=#paginateResult.status");
- - The response should contain [1](- "?=#paginateResult.itemCount") version;
+ - The response should only contain the [old](- "?=#paginateResult.hasOld") version;
  - Total should be [2](- "?=#paginateResult.total");
  - Full response:
 

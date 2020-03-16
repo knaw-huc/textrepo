@@ -40,7 +40,9 @@ Then:
  
 [ ](- "ext:embed=#searchSingle.body")
 
-## Request first page
+## Paginate documents
+Results are divided in pages using offset and limit.
+
 When we request all documents with a `GET` to [`/rest/documents?offset={offset}&limit={limit}`](- "#searchEndpoint")
 
  - where `{offset}` is [`0`](- "#offset") and `{limit}` is [`1`](- "#limit").
@@ -50,8 +52,7 @@ When we request all documents with a `GET` to [`/rest/documents?offset={offset}&
 Then:
 
  - The response status should be: [200](- "?=#firstPage.status");
- - The items array should contain [1](- "?=#firstPage.itemCount") document;
- - Its external ID should be [`first-external-id`](- "?=#firstPage.externalDocumentId") document;
+ - It should contain only the [first](- "?=#firstPage.itemCount") document;
  - Total should be [2](- "?=#firstPage.total");
  - Full response:
  
