@@ -16,12 +16,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-class ElasticsearchHealthCheckTest {
+public class ElasticsearchHealthCheckTest {
 
   private static ClientAndServer mockServer;
   private static final int mockPort = 1080;
@@ -50,6 +49,27 @@ class ElasticsearchHealthCheckTest {
 
     assertThat(result.isHealthy()).isEqualTo(false);
     assertThat(result.getMessage()).contains("Health status: unknown;");
+  }
+
+  @Test
+  public void check_returnsUnhealthyResult_whenEsHealthStatusRed() throws IOException {
+    var indexName = "test-index-name";
+    var host = "localhost:" + mockPort;
+    var endpoint = "/_cluster/health/" + indexName;
+    mockServer.when(request()
+        .withMethod("GET")
+        .withPath(endpoint)
+    ).respond(response()
+        .withStatusCode(200)
+        .withHeader("Content-Type", "application/json")
+        .withBody(TestUtils.getResourceAsString("health/unhealthyEsIndexResponse.json"))
+    );
+    var toTest = createElasticsearchHealthCheck(host, indexName);
+
+    var result = toTest.check();
+
+    assertThat(result.isHealthy()).isEqualTo(false);
+    assertThat(result.getMessage()).contains("Health status: RED");
   }
 
   @Test
