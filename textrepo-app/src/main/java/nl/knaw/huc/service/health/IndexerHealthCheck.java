@@ -4,6 +4,8 @@ import com.codahale.metrics.health.HealthCheck;
 import org.glassfish.jersey.client.JerseyClient;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 
+import javax.ws.rs.core.Response;
+
 import static java.lang.String.format;
 
 public class IndexerHealthCheck extends HealthCheck {
@@ -18,11 +20,22 @@ public class IndexerHealthCheck extends HealthCheck {
 
   @Override
   protected Result check() {
-    var response = this.client.target(this.mapping).request().get();
-    if (response.getStatus() == 200) {
-      return Result.healthy("Mapping endpoint is up");
+    Response response;
+    try {
+      response = this.client.target(this.mapping).request().get();
+    } catch (Exception ex) {
+      return HealthCheck.Result.unhealthy(format(
+          "Http status of mapping endpoint: unknown; reason: %s: %s",
+          ex.getClass().getName(), ex.getMessage()
+      ));
     }
-    return Result.unhealthy(format("Mapping endpoint returned status [%d]", response.getStatus()));
+    if (response.getStatus() == 200) {
+      return Result.healthy("Http status of mapping endpoint: 200");
+    }
+    return Result.unhealthy(format(
+        "Http status of mapping endpoint: %d; reason: %s",
+        response.getStatus(), response.readEntity(String.class)
+    ));
   }
 
 }
