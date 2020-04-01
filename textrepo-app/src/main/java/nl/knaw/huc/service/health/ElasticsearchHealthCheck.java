@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
+import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static org.elasticsearch.client.RequestOptions.DEFAULT;
 import static org.elasticsearch.cluster.health.ClusterHealthStatus.GREEN;
@@ -36,9 +37,10 @@ public class ElasticsearchHealthCheck extends HealthCheck {
           .cluster()
           .health(request, DEFAULT);
     } catch (IOException ex) {
-      var msg = "Could not request health of elasticsearch index";
-      logger.error(msg, ex);
-      return HealthCheck.Result.unhealthy(msg + "; reason: " + ex.getClass().getName() + ": " + ex.getMessage());
+      return HealthCheck.Result.unhealthy(format(
+          "Health status: unknown; reason: %s: %s",
+          ex.getClass().getName(), ex.getMessage()
+      ));
     }
 
     var allowed = asList(GREEN, YELLOW);
