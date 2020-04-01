@@ -38,13 +38,13 @@ public class ElasticsearchHealthCheck extends HealthCheck {
     } catch (IOException ex) {
       var msg = "Could not request health of elasticsearch index";
       logger.error(msg, ex);
-      return HealthCheck.Result.unhealthy(msg + ": " + ex.getMessage());
+      return HealthCheck.Result.unhealthy(msg + "; reason: " + ex.getClass().getName() + ": " + ex.getMessage());
     }
 
     var allowed = asList(GREEN, YELLOW);
     if (allowed.contains(response.getStatus())) {
-      return HealthCheck.Result.healthy("Elasticsearch cluster health status: " + response.getStatus());
+      return HealthCheck.Result.healthy("Health status: " + response.getStatus());
     }
-    return HealthCheck.Result.unhealthy("Not up");
+    return HealthCheck.Result.unhealthy("Health status: " + response.getStatus() + "; reason: " + response.status());
   }
 }
