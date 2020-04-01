@@ -22,7 +22,7 @@ import javax.ws.rs.core.Response;
 import java.util.UUID;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static nl.knaw.huc.service.Paginator.mapResult;
+import static nl.knaw.huc.service.Paginator.toResult;
 
 @Api(tags = {"files", "versions"})
 @Path("/rest/files/{fileId}/versions")
@@ -49,10 +49,10 @@ public class FileVersionsResource {
   ) {
     logger.debug("get versions of file: fileId={}", fileId);
     var results = versionService
-        .getAll(fileId, paginator.withDefaults(pageParams));
+        .getAll(fileId, paginator.fromForm(pageParams));
     return Response
         .ok()
-        .entity(mapResult(results, ResultVersion::new))
+        .entity(toResult(results, ResultVersion::new))
         .build();
   }
 

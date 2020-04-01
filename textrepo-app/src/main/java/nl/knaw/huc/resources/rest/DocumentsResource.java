@@ -7,7 +7,6 @@ import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.FormDocument;
 import nl.knaw.huc.api.FormPageParams;
 import nl.knaw.huc.api.ResultDocument;
-import nl.knaw.huc.api.ResultPage;
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.service.DocumentService;
 import nl.knaw.huc.service.Paginator;
@@ -29,9 +28,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.util.UUID;
 
-import static java.util.stream.Collectors.toList;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static nl.knaw.huc.service.Paginator.mapResult;
+import static nl.knaw.huc.service.Paginator.toResult;
 
 @Api(tags = {"documents"})
 @Path("/rest/documents")
@@ -71,10 +69,10 @@ public class DocumentsResource {
   ) {
     logger.debug("get documents");
 
-    var docs = documentService.getAll(externalId, paginator.withDefaults(pageParams));
+    var docs = documentService.getAll(externalId, paginator.fromForm(pageParams));
 
     return Response
-        .ok(mapResult(docs, ResultDocument::new))
+        .ok(toResult(docs, ResultDocument::new))
         .build();
   }
 

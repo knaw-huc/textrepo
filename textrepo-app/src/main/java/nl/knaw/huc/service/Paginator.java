@@ -22,7 +22,7 @@ public class Paginator {
   /**
    * Use form params, or set defaults
    */
-  public PageParams withDefaults(FormPageParams form) {
+  public PageParams fromForm(FormPageParams form) {
     var limit = form.getLimit() == null ?
         config.defaultLimit :
         form.getLimit();
@@ -32,7 +32,7 @@ public class Paginator {
     return new PageParams(limit, offset);
   }
 
-  public static <T, U> ResultPage<U> mapResult(Page<T> page, Function<T, U> mapper) {
+  public static <T, U> ResultPage<U> toResult(Page<T> page, Function<T, U> mapper) {
     var resultContent = page.getItems()
         .stream()
         .map(mapper)

@@ -23,7 +23,7 @@ import javax.ws.rs.core.Response;
 import java.util.UUID;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static nl.knaw.huc.service.Paginator.mapResult;
+import static nl.knaw.huc.service.Paginator.toResult;
 
 @Api(tags = {"documents"})
 @Path("/rest/documents/{docId}/files")
@@ -50,8 +50,8 @@ public class DocumentFilesResource {
       @BeanParam FormPageParams pageParams
   ) {
     logger.debug("get files for document: docId={}", docId);
-    final var page = documentFilesService.getFilesByDocumentId(docId, paginator.withDefaults(pageParams));
-    var result = mapResult(page, (TextrepoFile file) -> new ResultTextrepoFile(docId, file));
+    final var page = documentFilesService.getFilesByDocumentId(docId, paginator.fromForm(pageParams));
+    var result = toResult(page, (TextrepoFile file) -> new ResultTextrepoFile(docId, file));
     return Response
         .ok(result)
         .build();

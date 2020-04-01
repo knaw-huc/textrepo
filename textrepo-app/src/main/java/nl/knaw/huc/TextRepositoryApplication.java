@@ -1,5 +1,6 @@
 package nl.knaw.huc;
 
+import com.codahale.metrics.health.HealthCheck;
 import io.dropwizard.Application;
 import io.dropwizard.forms.MultiPartBundle;
 import io.dropwizard.jdbi3.JdbiFactory;
@@ -27,7 +28,6 @@ import nl.knaw.huc.service.ContentsService;
 import nl.knaw.huc.service.JdbiDocumentFilesService;
 import nl.knaw.huc.service.JdbiDocumentMetadataService;
 import nl.knaw.huc.service.JdbiDocumentService;
-import nl.knaw.huc.service.JdbiFileContentsService;
 import nl.knaw.huc.service.JdbiFileMetadataService;
 import nl.knaw.huc.service.JdbiFileService;
 import nl.knaw.huc.service.JdbiTypeService;
@@ -35,8 +35,11 @@ import nl.knaw.huc.service.JdbiVersionContentsService;
 import nl.knaw.huc.service.JdbiVersionService;
 import nl.knaw.huc.service.Paginator;
 import nl.knaw.huc.service.TypeService;
+import nl.knaw.huc.service.health.ElasticsearchHealthCheck;
+import nl.knaw.huc.service.health.IndexerHealthCheck;
 import nl.knaw.huc.service.index.IndexerException;
 import nl.knaw.huc.service.index.MappedIndexer;
+import nl.knaw.huc.service.index.TextRepoElasticClient;
 import nl.knaw.huc.service.store.JdbiContentsStorage;
 import nl.knaw.huc.service.task.JdbiTaskFactory;
 import org.jdbi.v3.core.Jdbi;
@@ -47,8 +50,12 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Supplier;
+
+import static java.util.stream.Collectors.toMap;
 
 public class TextRepositoryApplication extends Application<TextRepositoryConfiguration> {
 
@@ -84,21 +91,25 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
   public void run(TextRepositoryConfiguration config, Environment environment) {
     final Supplier<UUID> uuidGenerator = UUID::randomUUID;
 
-    final int maxPayloadSize = 10 * 1024 * 1024; // TODO: arbitrary, get from configuration and figure out sane default
+    final var maxPayloadSize = 10 * 1024 * 1024; // TODO: arbitrary, get from configuration and figure out sane default
 
     var jdbi = createJdbi(config, environment);
     var contentsStoreService = new JdbiContentsStorage(jdbi);
     var contentsService = new ContentsService(contentsStoreService);
     var metadataService = new JdbiFileMetadataService(jdbi);
     var typeService = new JdbiTypeService(jdbi);
-    var customIndexers = createElasticCustomFacetIndexers(config, typeService);
+
+    var indexers = createElasticCustomFacetIndexers(config, typeService);
+    var healthChecks = new HashMap<String, HealthCheck>();
+    healthChecks.putAll(createElasticsearchHealthChecks(config));
+    healthChecks.putAll(createIndexerHealthChecks(config));
+
     var taskBuilderFactory = new JdbiTaskFactory(jdbi)
         .withIdGenerator(uuidGenerator);
-    var versionService = new JdbiVersionService(jdbi, contentsService, customIndexers, uuidGenerator);
+    var versionService = new JdbiVersionService(jdbi, contentsService, indexers, uuidGenerator);
     var versionContentsService = new JdbiVersionContentsService(jdbi);
     var fileService = new JdbiFileService(jdbi, typeService, versionService, metadataService, uuidGenerator);
     var documentFilesService = new JdbiDocumentFilesService(jdbi);
-    var fileContentsService = new JdbiFileContentsService(jdbi, contentsService, versionService, metadataService);
     var documentService = new JdbiDocumentService(jdbi, uuidGenerator);
     var documentMetadataService = new JdbiDocumentMetadataService(jdbi);
     var paginator = new Paginator(config.getPagination());
@@ -122,6 +133,27 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
 
     environment.jersey().register(new MethodNotAllowedExceptionMapper());
     resources.forEach((resource) -> environment.jersey().register(resource));
+    healthChecks.forEach((name, check) -> environment.healthChecks().register(name, check));
+  }
+
+  private Map<String, HealthCheck> createElasticsearchHealthChecks(TextRepositoryConfiguration config) {
+    return config
+        .getCustomFacetIndexers()
+        .stream()
+        .collect(toMap(
+            ix -> ix.elasticsearch.index,
+            ix -> new ElasticsearchHealthCheck(ix.elasticsearch.index, new TextRepoElasticClient(ix.elasticsearch)))
+        );
+  }
+
+  private Map<String, HealthCheck> createIndexerHealthChecks(TextRepositoryConfiguration config) {
+    return config
+        .getCustomFacetIndexers()
+        .stream()
+        .collect(toMap(
+            ix -> ix.elasticsearch.index,
+            ix -> new IndexerHealthCheck(ix.mapping))
+        );
   }
 
   private Jdbi createJdbi(TextRepositoryConfiguration config, Environment environment) {

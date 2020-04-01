@@ -32,13 +32,13 @@ import static org.elasticsearch.common.xcontent.XContentType.JSON;
 
 /**
  * MappedFileIndexer creates its index in elasticsearch:
- *  - as defined by its es-mapping which can be retrieved at its `mapping` endpoint
+ * - as defined by its es-mapping which can be retrieved at its `mapping` endpoint
  * MappedFileIndexer adds new files to its index:
- *  - convert file contents to an es-doc at its `fields` endpoint
- *  - sends index-request with es-doc to its index
- * MappedFileIndexer depends on its REST-service with two endpoints:
- *  - GET `mapping`
- *  - POST `fields` (using urlencoded or multipart)
+ * - convert file contents to an es-doc at its `fields` endpoint
+ * - sends index-request with es-doc to its index
+ * MappedFileIndexer depends on a REST-service with the following two endpoints:
+ * - GET `mapping`
+ * - POST `fields` (using urlencoded or multipart)
  * MappedFileIndexer is configured in config.yml
  */
 public class MappedIndexer implements Indexer {

@@ -60,11 +60,6 @@ public class TextRepositoryConfiguration extends Configuration {
   }
 
   @JsonProperty("elasticsearch")
-  public ElasticsearchConfiguration getElasticsearch() {
-    return elasticsearch;
-  }
-
-  @JsonProperty("elasticsearch")
   public void setElasticsearch(ElasticsearchConfiguration elasticsearch) {
     this.elasticsearch = elasticsearch;
   }
