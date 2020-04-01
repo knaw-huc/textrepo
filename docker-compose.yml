@@ -82,6 +82,7 @@ services:
     build: ./textrepo-app
     ports:
     - 8080
+    - 8081
     networks:
     - textrepo_network
     command: ["/utils/wait-for-it.sh", "autocomplete-indexer:8080",
