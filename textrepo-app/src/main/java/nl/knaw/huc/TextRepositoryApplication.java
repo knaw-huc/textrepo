@@ -141,7 +141,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
         .getCustomFacetIndexers()
         .stream()
         .collect(toMap(
-            ix -> ix.elasticsearch.index,
+            ix -> ix.elasticsearch.index + "-es-index",
             ix -> new ElasticsearchHealthCheck(ix.elasticsearch.index, new TextRepoElasticClient(ix.elasticsearch)))
         );
   }
@@ -151,7 +151,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
         .getCustomFacetIndexers()
         .stream()
         .collect(toMap(
-            ix -> ix.elasticsearch.index,
+            ix -> ix.elasticsearch.index + "-indexer-service",
             ix -> new IndexerHealthCheck(ix.mapping))
         );
   }
