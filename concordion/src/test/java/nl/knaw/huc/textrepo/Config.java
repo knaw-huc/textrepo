@@ -1,8 +1,5 @@
 package nl.knaw.huc.textrepo;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
@@ -13,6 +10,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 public class Config {
   public static final String HTTP_ES_HOST = "http://" + requireNonBlank("ES_HOST");
   public static final String HTTP_APP_HOST = "http://" + requireNonBlank("APP_HOST");
+  public static final String HTTP_APP_HOST_ADMIN = "http://" + requireNonBlank("APP_HOST_ADMIN");
   public static final String POSTGRES_PASSWORD = requireNonBlank("POSTGRES_PASSWORD");
   public static final String POSTGRES_DB = requireNonBlank("POSTGRES_DB");
   public static final String POSTGRES_USER = requireNonBlank("POSTGRES_USER");

@@ -49,9 +49,6 @@ public abstract class AbstractConcordionTest {
     return client;
   }
 
-  final static String APP_HOST = HTTP_APP_HOST;
-  final static String ES_HOST = HTTP_ES_HOST;
-
   private final static Configuration jsonPathConf = Configuration
       .defaultConfiguration()
       .addOptions(DEFAULT_PATH_LEAF_TO_NULL)
