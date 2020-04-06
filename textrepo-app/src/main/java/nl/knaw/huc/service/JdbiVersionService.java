@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.ws.rs.NotFoundException;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -80,8 +81,8 @@ public class JdbiVersionService implements VersionService {
   }
 
   @Override
-  public Page<Version> getAll(UUID fileId, PageParams pageParams) {
-    var items = versions().findByFileId(fileId, pageParams);
+  public Page<Version> getAll(UUID fileId, PageParams pageParams, Date createdAfter) {
+    var items = versions().findByFileId(fileId, pageParams, createdAfter);
     var total = versions().countByFileId(fileId);
     return new Page<>(items, total, pageParams);
   }

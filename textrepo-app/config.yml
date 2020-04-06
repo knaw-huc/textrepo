@@ -64,3 +64,5 @@ swagger:
 pagination:
   defaultOffset: 0
   defaultLimit: 10
+
+dateFormat: yyyy-MM-dd'T'HH:mm:ss

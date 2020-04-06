@@ -8,6 +8,7 @@ import org.jdbi.v3.sqlobject.customizer.BindBean;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -32,7 +33,7 @@ public interface VersionsDao {
       "from versions where file_id = :fileId " +
       "order by created_at asc limit :limit offset :offset")
   @RegisterConstructorMapper(value = Version.class)
-  List<Version> findByFileId(@Bind("fileId") UUID fileId, @BindBean PageParams pageParams);
+  List<Version> findByFileId(@Bind("fileId") UUID fileId, @BindBean PageParams pageParams, Date createdAfter);
 
   @SqlQuery("select count(*) from versions where file_id = :fileId")
   int countByFileId(@Bind("fileId") UUID fileId);

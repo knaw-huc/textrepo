@@ -118,7 +118,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
         new ContentsResource(contentsService),
         new TypesResource(typeService),
         new FileMetadataResource(metadataService),
-        new FileVersionsResource(versionService, paginator),
+        new FileVersionsResource(versionService, paginator, config.getDateFormat()),
         new DocumentsResource(documentService, paginator),
         new DocumentMetadataResource(documentMetadataService),
         new ImportResource(taskBuilderFactory, maxPayloadSize),

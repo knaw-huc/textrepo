@@ -64,7 +64,7 @@ public class FileMetadataResourceTest {
   }
 
   @Test
-  public void testGetVersions_returnsVersions() throws IOException {
+  public void testPutMetadata_putsMetadata() throws IOException {
     var key = "gene";
     var value = "FOXP2";
     var metadata = new MetadataEntry(key, value);

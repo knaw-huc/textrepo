@@ -8,6 +8,7 @@ import nl.knaw.huc.core.Version;
 
 import javax.annotation.Nonnull;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,7 +28,7 @@ public interface VersionService {
       @Nonnull LocalDateTime time
   );
 
-  Page<Version> getAll(UUID fileId, PageParams pageParams);
+  Page<Version> getAll(UUID fileId, PageParams pageParams, Date createdAfter);
 
   Version get(UUID id);
 

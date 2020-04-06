@@ -13,16 +13,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static nl.knaw.huc.service.Paginator.toResult;
+import static org.eclipse.jetty.util.StringUtil.isBlank;
 
 @Api(tags = {"files", "versions"})
 @Path("/rest/files/{fileId}/versions")
@@ -32,10 +38,16 @@ public class FileVersionsResource {
 
   private VersionService versionService;
   private Paginator paginator;
+  private final SimpleDateFormat dateFormat;
 
-  public FileVersionsResource(VersionService versionService, Paginator paginator) {
+  public FileVersionsResource(
+      VersionService versionService,
+      Paginator paginator,
+      String dateFormat
+  ) {
     this.versionService = versionService;
     this.paginator = paginator;
+    this.dateFormat = new SimpleDateFormat(dateFormat);
   }
 
   @GET
@@ -45,15 +57,27 @@ public class FileVersionsResource {
   @ApiResponses({@ApiResponse(code = 200, responseContainer = "Map", response = ResultVersion.class, message = "OK")})
   public Response getVersions(
       @PathParam("fileId") @Valid UUID fileId,
-      @BeanParam FormPageParams pageParams
+      @BeanParam FormPageParams pageParams,
+      @QueryParam("createdAfter") String createdAfter
   ) {
-    logger.debug("get versions of file: fileId={}", fileId);
+    logger.debug("get versions of file: fileId={}; pageParams={}; createdAfter={}", fileId, pageParams, createdAfter);
     var results = versionService
-        .getAll(fileId, paginator.fromForm(pageParams));
+        .getAll(fileId, paginator.fromForm(pageParams), toDate(createdAfter));
     return Response
         .ok()
         .entity(toResult(results, ResultVersion::new))
         .build();
+  }
+
+  private Date toDate(String dateString) {
+    if (isBlank(dateString)) {
+      return null;
+    }
+    try {
+      return dateFormat.parse(dateString);
+    } catch (ParseException ex) {
+      throw new BadRequestException("Date format should be: " + dateFormat.toPattern());
+    }
   }
 
 }
