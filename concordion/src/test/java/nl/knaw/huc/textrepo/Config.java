@@ -20,7 +20,6 @@ public class Config {
   public static final String AUTOCOMPLETE_INDEX = requireNonBlank("AUTOCOMPLETE_INDEX");
 
   public static final String HOST = HTTP_APP_HOST;
-  public static final String FILES_URL = HOST + "/files";
   public static final String TYPES_URL = HOST + "/rest/types";
 
   public static final List<String> INDICES = newArrayList(
