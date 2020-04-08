@@ -1,6 +1,7 @@
 package nl.knaw.huc;
 
 import com.codahale.metrics.health.HealthCheck;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import io.dropwizard.Application;
 import io.dropwizard.forms.MultiPartBundle;
 import io.dropwizard.jdbi3.JdbiFactory;
@@ -48,6 +49,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -134,6 +137,12 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     environment.jersey().register(new MethodNotAllowedExceptionMapper());
     resources.forEach((resource) -> environment.jersey().register(resource));
     healthChecks.forEach((name, check) -> environment.healthChecks().register(name, check));
+
+    var objectMapper = environment.getObjectMapper();
+    objectMapper.setDateFormat(new SimpleDateFormat(config.getDateFormat()));
+    var module = new SimpleModule();
+    module.addSerializer(LocalDateTime.class, new DatetimeSerializer(config.getDateFormat()));
+    objectMapper.registerModule(module);
   }
 
   private Map<String, HealthCheck> createElasticsearchHealthChecks(TextRepositoryConfiguration config) {
