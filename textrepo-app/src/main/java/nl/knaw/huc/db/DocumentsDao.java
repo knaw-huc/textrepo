@@ -25,13 +25,13 @@ public interface DocumentsDao {
   Optional<Document> getByExternalId(String externalId);
 
   @SqlQuery("select id, external_id from documents " +
-      "where (:externalId is NULL or external_id like :externalId) " +
+      "where (:externalId is null or external_id like :externalId) " +
       "limit :limit offset :offset")
   @RegisterConstructorMapper(value = Document.class)
   List<Document> getByExternalIdLike(@Bind("externalId") String externalId, @BindBean PageParams pageParams);
 
   @SqlQuery("select count(*) from documents " +
-      "where (:externalId is NULL or external_id like :externalId)")
+      "where (:externalId is null or external_id like :externalId)")
   int countByExternalIdLike(@Bind("externalId") String externalId);
 
   @SqlUpdate("insert into documents (id, external_id) values (:id, :externalId) " +
