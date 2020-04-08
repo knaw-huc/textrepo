@@ -8,8 +8,10 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
 import java.time.Month;
 import java.time.Year;
+import java.time.format.DateTimeFormatter;
 
 import static java.time.LocalDate.now;
+import static java.time.format.DateTimeFormatter.ofPattern;
 import static javax.ws.rs.client.Entity.entity;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
@@ -80,10 +82,8 @@ public class TestRestVersions extends AbstractConcordionTest {
     result.validUuid = TestUtils.isValidUuidMsg(json.read("$.id"));
     String resultSha = json.read("$.contentsSha");
     result.validSha = resultSha.length() == 56 ? "valid sha224" : resultSha + " is not valid";
-    var yearValid = json.read("$.createdAt[0]", Integer.class).equals(Year.now().getValue());
-    var monthValid = json.read("$.createdAt[1]", Integer.class).equals(Month.from(now()).getValue());
-    var dayValid = json.read("$.createdAt[2]", Integer.class).equals(now().getDayOfMonth());
-    result.validTimestamp = yearValid && monthValid && dayValid
+    var dateValid = json.read("$.createdAt", String.class).contains(now().format(ofPattern("yyyy-MM-dd")));
+    result.validTimestamp = dateValid
         ? "valid timestamp"
         : json.read("$.createdAt", String.class) + " is not valid";
     return result;

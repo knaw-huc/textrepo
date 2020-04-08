@@ -49,3 +49,28 @@ Then:
 [ ](- "ext:embed=#paginateResult.body")
 
 
+### Filter with 'createdAfter'
+The query parameter `createdAfter` filters out any versions that where created before the specified date. 
+
+To test this filter we create a new version after a certain delay.
+[ ](- "#delayedVersionId=createVersionWithDelay(#fileId)")
+
+
+When retrieving the versions of a file with a `GET` to [`/rest/files/{id}/versions?createdAfter={date}`](- "#getEndpoint")
+[ ](- "#date=getCreatedAt(#delayedVersionId)")
+
+ - where `{id}` is [ ](- "ext:embed=code(#fileId)");
+ - where `{date}` is [ ](- "ext:embed=code(#date)").
+
+[ ](- "#paginateResult=filterByCreatedAfter(#getEndpoint, #fileId, #date, #delayedVersionId)")
+
+Then:
+
+ - The response status should be: [200](- "?=#paginateResult.status");
+ - The response should only contain the [new](- "?=#paginateResult.hasNew") version;
+ - Total should be [1](- "?=#paginateResult.total");
+ - Full response:
+
+[ ](- "ext:embed=#paginateResult.body")
+
+
