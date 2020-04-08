@@ -55,6 +55,8 @@ OLD_VERSION_ID=$(curl "$HOST/versions" \
   -F "contents=@$OLD_CONTENT" | jq -r '.id')
 echo "Created old version with id: $OLD_VERSION_ID"
 
+sleep 2s
+
 NEW_VERSION_ID=$(curl "$HOST/versions" \
   -F "fileId=$TEXT_FILE_ID" \
   -F "contents=@$NEW_CONTENT" | jq -r '.id')

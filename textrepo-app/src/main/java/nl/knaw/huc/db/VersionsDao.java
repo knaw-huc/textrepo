@@ -31,12 +31,22 @@ public interface VersionsDao {
 
   @SqlQuery("select id, file_id, created_at, contents_sha " +
       "from versions where file_id = :fileId " +
+      "and (:createdAfter\\:\\:timestamp is null or created_at >= :createdAfter\\:\\:timestamp) " +
       "order by created_at asc limit :limit offset :offset")
   @RegisterConstructorMapper(value = Version.class)
-  List<Version> findByFileId(@Bind("fileId") UUID fileId, @BindBean PageParams pageParams, Date createdAfter);
+  List<Version> findByFileId(
+      @Bind("fileId") UUID fileId,
+      @BindBean PageParams pageParams,
+      @Bind("createdAfter") Date createdAfter
+  );
 
-  @SqlQuery("select count(*) from versions where file_id = :fileId")
-  int countByFileId(@Bind("fileId") UUID fileId);
+  @SqlQuery("select count(*) from versions " +
+      "where file_id = :fileId " +
+      "and (:createdAfter\\:\\:timestamp is null or created_at >= :createdAfter\\:\\:timestamp)")
+  int countByFileId(
+      @Bind("fileId") UUID fileId,
+      @Bind("createdAfter") Date createdAfter
+  );
 
   @SqlQuery("select id, file_id, created_at, contents_sha " +
       "from versions where id = ? order by created_at asc")

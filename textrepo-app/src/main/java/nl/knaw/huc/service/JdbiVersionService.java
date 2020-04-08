@@ -83,7 +83,7 @@ public class JdbiVersionService implements VersionService {
   @Override
   public Page<Version> getAll(UUID fileId, PageParams pageParams, Date createdAfter) {
     var items = versions().findByFileId(fileId, pageParams, createdAfter);
-    var total = versions().countByFileId(fileId);
+    var total = versions().countByFileId(fileId, createdAfter);
     return new Page<>(items, total, pageParams);
   }
 
