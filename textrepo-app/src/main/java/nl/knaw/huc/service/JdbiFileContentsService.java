@@ -51,7 +51,7 @@ public class JdbiFileContentsService implements FileContentsService {
     var version = versionService
         .findLatestVersion(fileId)
         .filter(v -> v.getContentsSha().equals(currentSha224)) // already the current file for this file
-        .orElseGet(() -> versionService.createNewVersion(fileId, contents, now()));
+        .orElseGet(() -> versionService.createNewVersion(fileId, contents));
 
     fileMetadataService.upsert(fileId, new MetadataEntry("filename", filename));
 

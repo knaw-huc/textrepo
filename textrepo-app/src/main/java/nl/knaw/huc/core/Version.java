@@ -1,6 +1,5 @@
 package nl.knaw.huc.core;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 
 import java.beans.ConstructorProperties;
@@ -13,11 +12,15 @@ public class Version {
   private LocalDateTime createdAt;
   private String contentsSha;
 
-  @ConstructorProperties({"id", "file_id", "created_at", "contents_sha"})
-  public Version(UUID id, UUID fileId, LocalDateTime createdAt, String contentsSha) {
+  @ConstructorProperties({"id", "file_id", "contents_sha", "created_at"})
+  public Version(UUID id, UUID fileId, String contentsSha, LocalDateTime createdAt) {
+    this(id, fileId, contentsSha);
+    this.createdAt = createdAt;
+  }
+
+  public Version(UUID id, UUID fileId, String contentsSha) {
     this.id = id;
     this.fileId = fileId;
-    this.createdAt = createdAt;
     this.contentsSha = contentsSha;
   }
 

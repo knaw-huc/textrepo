@@ -62,7 +62,7 @@ public class VersionsResource {
   ) {
     logger.debug("post version: fileId={}", fileId);
     var contents = fromBytes(readContents(inputStream, maxPayloadSize));
-    var version = versionService.createNewVersion(fileId, contents, now());
+    var version = versionService.createNewVersion(fileId, contents);
     return Response.ok(new ResultVersion(version)).build();
   }
 

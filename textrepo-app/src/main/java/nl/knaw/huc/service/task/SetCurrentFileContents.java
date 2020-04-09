@@ -49,7 +49,7 @@ public class SetCurrentFileContents implements InTransactionProvider<Version> {
 
   private Version createNewVersionWithContents() {
     final var id = versionIdGenerator.get();
-    final var version = new Version(id, file.getId(), now(), contents.getSha224());
+    final var version = new Version(id, file.getId(), contents.getSha224(), now());
     contents().insert(contents);
     versions().insert(version);
     return version;

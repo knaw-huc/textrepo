@@ -17,14 +17,7 @@ public interface VersionService {
 
   Version createNewVersion(
       @Nonnull UUID fileId,
-      @Nonnull Contents contents,
-      @Nonnull LocalDateTime createdAt
-  );
-
-  Version createNewVersion(
-      @Nonnull TextrepoFile file,
-      @Nonnull Contents contents,
-      @Nonnull LocalDateTime time
+      @Nonnull Contents contents
   );
 
   Page<Version> getAll(UUID fileId, PageParams pageParams, LocalDateTime createdAfter);

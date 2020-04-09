@@ -16,9 +16,11 @@ import java.util.UUID;
 
 public interface VersionsDao {
 
-  @SqlUpdate("insert into versions (id, file_id, created_at, contents_sha) " +
-      "values (:id, :fileId, :createdAt, :contentsSha)")
-  void insert(@BindBean Version version);
+  @SqlQuery("insert into versions (id, file_id, contents_sha) " +
+      "values (:id, :fileId, :contentsSha) " +
+      "returning *")
+  @RegisterConstructorMapper(value = Version.class)
+  Version insert(@BindBean Version version);
 
   @SqlQuery("select id, file_id, created_at, contents_sha " +
       "from versions where file_id = ? order by created_at desc limit 1")

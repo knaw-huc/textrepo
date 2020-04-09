@@ -95,10 +95,10 @@ public class FileVersionsResourceTest {
   public void testGetVersions_returnsVersions() {
     List<Version> versions = new ArrayList<>();
     var sha1 = "fcd01d3b5648843931feb9ef4468250ac1a968a41add37f663af3bb0";
-    var version1 = new Version(UUID.randomUUID(), uuid, LocalDateTime.now(), sha1);
+    var version1 = new Version(UUID.randomUUID(), uuid, sha1, LocalDateTime.now());
     versions.add(version1);
     var sha2 = "d476f2f6e00deaa918dfbec79545412134e02095f870269175b89376";
-    var version2 = new Version(UUID.randomUUID(), uuid, LocalDateTime.now(), sha2);
+    var version2 = new Version(UUID.randomUUID(), uuid, sha2, LocalDateTime.now());
     versions.add(version2);
     when(VERSIONS_DAO.findByFileId(any(), any(PageParams.class), any())).thenReturn(versions);
 
@@ -122,10 +122,10 @@ public class FileVersionsResourceTest {
     var past = new SimpleDateFormat(dateFormat).format(new Date());
     List<Version> versions = new ArrayList<>();
     var sha1 = "fcd01d3b5648843931feb9ef4468250ac1a968a41add37f663af3bb0";
-    var version1 = new Version(UUID.randomUUID(), uuid, LocalDateTime.now(), sha1);
+    var version1 = new Version(UUID.randomUUID(), uuid, sha1, LocalDateTime.now());
     versions.add(version1);
     var sha2 = "d476f2f6e00deaa918dfbec79545412134e02095f870269175b89376";
-    var version2 = new Version(UUID.randomUUID(), uuid, LocalDateTime.now(), sha2);
+    var version2 = new Version(UUID.randomUUID(), uuid, sha2, LocalDateTime.now());
     versions.add(version2);
     when(VERSIONS_DAO.findByFileId(any(), any(PageParams.class), any())).thenReturn(versions);
 

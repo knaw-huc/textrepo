@@ -17,8 +17,10 @@ public interface DocumentsDao {
   /**
    * Postgres sets created_at to now()
    */
-  @SqlUpdate("insert into documents (id, external_id) values (:id, :externalId)")
-  void insert(@BindBean Document document);
+  @SqlQuery("insert into documents (id, external_id) values (:id, :externalId) " +
+      "returning *")
+  @RegisterConstructorMapper(value = Document.class)
+  Document insert(@BindBean Document document);
 
   @SqlQuery("select id, external_id, created_at from documents where id = ?")
   @RegisterConstructorMapper(value = Document.class)
@@ -38,9 +40,11 @@ public interface DocumentsDao {
       "where (:externalId is null or external_id like :externalId)")
   int countByExternalIdLike(@Bind("externalId") String externalId);
 
-  @SqlUpdate("insert into documents (id, external_id) values (:id, :externalId) " +
-      "on conflict (id) do update set external_id = excluded.external_id")
-  void upsert(@BindBean Document document);
+  @SqlQuery("insert into documents (id, external_id) values (:id, :externalId) " +
+      "on conflict (id) do update set external_id = excluded.external_id " +
+      "returning *")
+  @RegisterConstructorMapper(value = Document.class)
+  Document upsert(@BindBean Document document);
 
   @SqlUpdate("delete from documents where id = ?")
   void delete(UUID id);

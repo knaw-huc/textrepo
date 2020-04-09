@@ -26,7 +26,7 @@ create table versions (
   id uuid primary key,
   file_id uuid not null,
   contents_sha char(56) not null,
-  created_at timestamp with time zone not null,
+  created_at timestamp with time zone not null default now(),
   unique (file_id, created_at),
   foreign key (file_id) references files (id) on delete cascade,
   -- constraint name is used in textrepo-app:

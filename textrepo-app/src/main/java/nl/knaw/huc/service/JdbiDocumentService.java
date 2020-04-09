@@ -31,17 +31,12 @@ public class JdbiDocumentService implements DocumentService {
   @Override
   public Document create(Document document) {
     document.setId(uuidGenerator.get());
-    documents().insert(document);
-    return document;
+    return documents().insert(document);
   }
 
   @Override
   public Document update(Document document) {
-    documents().upsert(document);
-
-    return this
-        .get(document.getId())
-        .orElseThrow(() -> new RuntimeException(format("Could not find document %s after upsert", document.getId())));
+    return documents().upsert(document);
   }
 
   @Override
