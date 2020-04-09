@@ -13,18 +13,22 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface DocumentsDao {
+
+  /**
+   * Postgres sets created_at to now()
+   */
   @SqlUpdate("insert into documents (id, external_id) values (:id, :externalId)")
   void insert(@BindBean Document document);
 
-  @SqlQuery("select id, external_id from documents where id = ?")
+  @SqlQuery("select id, external_id, created_at from documents where id = ?")
   @RegisterConstructorMapper(value = Document.class)
   Optional<Document> get(UUID id);
 
-  @SqlQuery("select id, external_id from documents where external_id = ?")
+  @SqlQuery("select id, external_id, created_at from documents where external_id = ?")
   @RegisterConstructorMapper(value = Document.class)
   Optional<Document> getByExternalId(String externalId);
 
-  @SqlQuery("select id, external_id from documents " +
+  @SqlQuery("select id, external_id, created_at from documents " +
       "where (:externalId is null or external_id like :externalId) " +
       "limit :limit offset :offset")
   @RegisterConstructorMapper(value = Document.class)

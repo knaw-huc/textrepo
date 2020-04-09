@@ -11,6 +11,7 @@ import javax.ws.rs.NotFoundException;
 import java.util.Optional;
 import java.util.UUID;
 
+import static java.time.LocalDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -23,7 +24,7 @@ public class FindDocumentByExternalIdTest {
   private static final DocumentsDao DOCUMENTS_DAO = mock(DocumentsDao.class);
   private static final Handle TRANSACTION = mock(Handle.class);
   private static final String TEST_EXTERNAL_ID = "/some/external/ID{maybe=0xCAFEBABE}";
-  private static final Document TEST_DOCUMENT = new Document(UUID.randomUUID(), TEST_EXTERNAL_ID);
+  private static final Document TEST_DOCUMENT = new Document(UUID.randomUUID(), TEST_EXTERNAL_ID, now());
 
   @BeforeEach
   public void setUp() {

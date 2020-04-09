@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 
+import static java.time.LocalDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -87,7 +88,7 @@ public class DocumentsResourceTest {
   @Test
   public void getDocument_shouldAlsoReturnExternalId() {
     var docId = UUID.randomUUID();
-    when(documentService.get(docId)).thenReturn(Optional.of(new Document(docId, TEST_EXTERNAL_ID)));
+    when(documentService.get(docId)).thenReturn(Optional.of(new Document(docId, TEST_EXTERNAL_ID, now())));
     var response = resource
         .client()
         .register(MultiPartFeature.class)

@@ -6,10 +6,12 @@ import nl.knaw.huc.core.PageParams;
 import nl.knaw.huc.db.DocumentsDao;
 import org.jdbi.v3.core.Jdbi;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
 
+import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class JdbiDocumentService implements DocumentService {
@@ -36,7 +38,10 @@ public class JdbiDocumentService implements DocumentService {
   @Override
   public Document update(Document document) {
     documents().upsert(document);
-    return document;
+
+    return this
+        .get(document.getId())
+        .orElseThrow(() -> new RuntimeException(format("Could not find document %s after upsert", document.getId())));
   }
 
   @Override
