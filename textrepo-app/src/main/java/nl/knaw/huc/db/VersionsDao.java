@@ -8,6 +8,7 @@ import org.jdbi.v3.sqlobject.customizer.BindBean;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +38,7 @@ public interface VersionsDao {
   List<Version> findByFileId(
       @Bind("fileId") UUID fileId,
       @BindBean PageParams pageParams,
-      @Bind("createdAfter") Date createdAfter
+      @Bind("createdAfter") LocalDateTime createdAfter
   );
 
   @SqlQuery("select count(*) from versions " +
@@ -45,7 +46,7 @@ public interface VersionsDao {
       "and (:createdAfter\\:\\:timestamp is null or created_at >= :createdAfter\\:\\:timestamp)")
   int countByFileId(
       @Bind("fileId") UUID fileId,
-      @Bind("createdAfter") Date createdAfter
+      @Bind("createdAfter") LocalDateTime createdAfter
   );
 
   @SqlQuery("select id, file_id, created_at, contents_sha " +

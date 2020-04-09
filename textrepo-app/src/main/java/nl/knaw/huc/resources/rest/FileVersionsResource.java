@@ -21,9 +21,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.UUID;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -38,16 +38,18 @@ public class FileVersionsResource {
 
   private VersionService versionService;
   private Paginator paginator;
-  private final SimpleDateFormat dateFormat;
+  private final DateTimeFormatter dateTimeFormatter;
+  private final String dateTimePattern;
 
   public FileVersionsResource(
       VersionService versionService,
       Paginator paginator,
-      String dateFormat
+      String dateTimePattern
   ) {
     this.versionService = versionService;
     this.paginator = paginator;
-    this.dateFormat = new SimpleDateFormat(dateFormat);
+    this.dateTimeFormatter = DateTimeFormatter.ofPattern(dateTimePattern);
+    this.dateTimePattern = dateTimePattern;
   }
 
   @GET
@@ -69,14 +71,14 @@ public class FileVersionsResource {
         .build();
   }
 
-  private Date toDate(String dateString) {
+  private LocalDateTime toDate(String dateString) {
     if (isBlank(dateString)) {
       return null;
     }
     try {
-      return dateFormat.parse(dateString);
-    } catch (ParseException ex) {
-      throw new BadRequestException("Date format should be: " + dateFormat.toPattern());
+      return LocalDateTime.parse(dateString, dateTimeFormatter);
+    } catch (DateTimeParseException ex) {
+      throw new BadRequestException("Date format should be: " + dateTimePattern);
     }
   }
 
