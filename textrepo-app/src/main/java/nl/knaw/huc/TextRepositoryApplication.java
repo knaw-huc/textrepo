@@ -121,7 +121,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
         new ContentsResource(contentsService),
         new TypesResource(typeService),
         new FileMetadataResource(metadataService),
-        new FileVersionsResource(versionService, paginator, config.getDateFormat()),
+        new FileVersionsResource(versionService, paginator),
         new DocumentsResource(documentService, paginator),
         new DocumentMetadataResource(documentMetadataService),
         new ImportResource(taskBuilderFactory, maxPayloadSize),
@@ -143,6 +143,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     var module = new SimpleModule();
     module.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(config.getDateFormat()));
     objectMapper.registerModule(module);
+    environment.jersey().register(new LocalDateTimeParamConverterProvider(config.getDateFormat()));
   }
 
   private Map<String, HealthCheck> createElasticsearchHealthChecks(TextRepositoryConfiguration config) {

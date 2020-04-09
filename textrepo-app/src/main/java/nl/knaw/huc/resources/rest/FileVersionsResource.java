@@ -38,18 +38,13 @@ public class FileVersionsResource {
 
   private VersionService versionService;
   private Paginator paginator;
-  private final DateTimeFormatter dateTimeFormatter;
-  private final String dateTimePattern;
 
   public FileVersionsResource(
       VersionService versionService,
-      Paginator paginator,
-      String dateTimePattern
+      Paginator paginator
   ) {
     this.versionService = versionService;
     this.paginator = paginator;
-    this.dateTimeFormatter = DateTimeFormatter.ofPattern(dateTimePattern);
-    this.dateTimePattern = dateTimePattern;
   }
 
   @GET
@@ -60,26 +55,15 @@ public class FileVersionsResource {
   public Response getVersions(
       @PathParam("fileId") @Valid UUID fileId,
       @BeanParam FormPageParams pageParams,
-      @QueryParam("createdAfter") String createdAfter
+      @QueryParam("createdAfter") LocalDateTime createdAfter
   ) {
     logger.debug("get versions of file: fileId={}; pageParams={}; createdAfter={}", fileId, pageParams, createdAfter);
     var results = versionService
-        .getAll(fileId, paginator.fromForm(pageParams), toDate(createdAfter));
+        .getAll(fileId, paginator.fromForm(pageParams), createdAfter);
     return Response
         .ok()
         .entity(toResult(results, ResultVersion::new))
         .build();
-  }
-
-  private LocalDateTime toDate(String dateString) {
-    if (isBlank(dateString)) {
-      return null;
-    }
-    try {
-      return LocalDateTime.parse(dateString, dateTimeFormatter);
-    } catch (DateTimeParseException ex) {
-      throw new BadRequestException("Date format should be: " + dateTimePattern);
-    }
   }
 
 }

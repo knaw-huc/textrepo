@@ -3,6 +3,7 @@ package nl.knaw.huc.resources.rest;
 import com.jayway.jsonpath.JsonPath;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.testing.junit5.ResourceExtension;
+import nl.knaw.huc.LocalDateTimeParamConverterProvider;
 import nl.knaw.huc.PaginationConfiguration;
 import nl.knaw.huc.core.PageParams;
 import nl.knaw.huc.core.Version;
@@ -22,17 +23,12 @@ import org.mockito.MockitoAnnotations;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static java.time.LocalTime.now;
-import static java.util.concurrent.TimeUnit.MICROSECONDS;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -52,6 +48,7 @@ public class FileVersionsResourceTest {
   private static final int TEST_LIMIT = 10;
   private static final int TEST_OFFSET = 0;
   private static final Paginator paginator = createPaginator();
+
   private static Paginator createPaginator() {
     var config = new PaginationConfiguration();
     config.defaultOffset = TEST_OFFSET;
@@ -77,9 +74,10 @@ public class FileVersionsResourceTest {
 
     resource = ResourceExtension
         .builder()
-          .addProvider(MultiPartFeature.class)
-          .addResource(new FileVersionsResource(versionService, paginator, dateFormat))
-          .build();
+        .addProvider(MultiPartFeature.class)
+        .addProvider(() -> new LocalDateTimeParamConverterProvider(dateFormat))
+        .addResource(new FileVersionsResource(versionService, paginator))
+        .build();
   }
 
   @BeforeEach
