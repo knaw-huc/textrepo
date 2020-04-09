@@ -1,6 +1,5 @@
 package nl.knaw.huc.core;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 
 import java.beans.ConstructorProperties;
@@ -17,22 +16,18 @@ public class TextrepoFile {
     this.typeId = typeId;
   }
 
-  @JsonProperty
   public UUID getId() {
     return id;
   }
 
-  @JsonProperty
   public Short getTypeId() {
     return typeId;
   }
 
-  @JsonProperty
   public void setId(UUID id) {
     this.id = id;
   }
 
-  @JsonProperty
   public void setTypeId(Short typeId) {
     this.typeId = typeId;
   }

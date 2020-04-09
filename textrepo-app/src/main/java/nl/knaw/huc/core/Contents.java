@@ -1,7 +1,5 @@
 package nl.knaw.huc.core;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 
@@ -28,17 +26,14 @@ public class Contents {
     this.contents = contents;
   }
 
-  @JsonProperty
   public String getSha224() {
     return sha224;
   }
 
-  @JsonProperty
   public byte[] getContents() {
     return contents;
   }
 
-  @JsonIgnore
   public String asUtf8String() {
     return new String(contents, StandardCharsets.UTF_8);
   }
