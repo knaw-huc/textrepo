@@ -55,26 +55,26 @@ public class JdbiVersionService implements VersionService {
   public Version createNewVersion(
       @Nonnull UUID fileId,
       @Nonnull Contents contents,
-      @Nonnull LocalDateTime time
+      @Nonnull LocalDateTime createdAt
   ) {
     var file = files()
         .find(fileId)
         .orElseThrow(() -> new NotFoundException(format("Could not create new version: file %s not found", fileId)));
-    return createNewVersion(file, contents, time);
+    return createNewVersion(file, contents, createdAt);
   }
 
   @Override
   public Version createNewVersion(
       @Nonnull TextrepoFile file,
       @Nonnull Contents contents,
-      @Nonnull LocalDateTime time
+      @Nonnull LocalDateTime createdAt
   ) {
     contentsService.addContents(contents);
     var latestVersionContents = contents.asUtf8String();
     indexers.forEach(indexer -> indexer.index(file, latestVersionContents));
 
     var id = uuidGenerator.get();
-    var newVersion = new Version(id, file.getId(), time, contents.getSha224());
+    var newVersion = new Version(id, file.getId(), createdAt, contents.getSha224());
     versions().insert(newVersion);
     return newVersion;
   }

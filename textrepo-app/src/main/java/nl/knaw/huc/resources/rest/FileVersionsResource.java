@@ -51,7 +51,7 @@ public class FileVersionsResource {
   @Timed
   @Produces(APPLICATION_JSON)
   @ApiOperation("Retrieve file versions")
-  @ApiResponses({@ApiResponse(code = 200, responseContainer = "Map", response = ResultVersion.class, message = "OK")})
+  @ApiResponses({@ApiResponse(code = 200, response = ResultVersion.class, message = "OK")})
   public Response getVersions(
       @PathParam("fileId") @Valid UUID fileId,
       @BeanParam FormPageParams pageParams,

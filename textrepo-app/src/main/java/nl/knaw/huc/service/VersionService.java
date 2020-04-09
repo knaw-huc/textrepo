@@ -18,7 +18,7 @@ public interface VersionService {
   Version createNewVersion(
       @Nonnull UUID fileId,
       @Nonnull Contents contents,
-      @Nonnull LocalDateTime time
+      @Nonnull LocalDateTime createdAt
   );
 
   Version createNewVersion(
