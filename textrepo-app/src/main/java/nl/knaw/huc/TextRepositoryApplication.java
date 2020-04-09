@@ -141,7 +141,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     var objectMapper = environment.getObjectMapper();
     objectMapper.setDateFormat(new SimpleDateFormat(config.getDateFormat()));
     var module = new SimpleModule();
-    module.addSerializer(LocalDateTime.class, new DatetimeSerializer(config.getDateFormat()));
+    module.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(config.getDateFormat()));
     objectMapper.registerModule(module);
   }
 

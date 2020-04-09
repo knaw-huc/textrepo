@@ -11,11 +11,11 @@ import java.time.format.DateTimeParseException;
 import static java.lang.String.format;
 import static java.time.format.DateTimeFormatter.ofPattern;
 
-public class DatetimeSerializer extends JsonSerializer<LocalDateTime> {
+public class LocalDateTimeSerializer extends JsonSerializer<LocalDateTime> {
 
   private String dateFormat;
 
-  public DatetimeSerializer(String dateFormat) {
+  public LocalDateTimeSerializer(String dateFormat) {
     this.dateFormat = dateFormat;
   }
 
