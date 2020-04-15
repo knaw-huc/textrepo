@@ -79,7 +79,7 @@ Then:
 ### Filter with 'createdAfter'
 The query parameter `createdAfter` filters out any documents that where created before the specified date. 
 
-To test this filter we create a new version after a certain delay.
+To test this filter we create a new document after a certain delay.
 [ ](- "#delayedDocumentId=createDocumentWithDelay()")
 
 
