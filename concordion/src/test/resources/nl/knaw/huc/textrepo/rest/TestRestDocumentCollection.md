@@ -75,3 +75,27 @@ Then:
  - Full response:
  
 [ ](- "ext:embed=#secondPage.body")
+
+### Filter with 'createdAfter'
+The query parameter `createdAfter` filters out any documents that where created before the specified date. 
+
+To test this filter we create a new version after a certain delay.
+[ ](- "#delayedDocumentId=createDocumentWithDelay()")
+
+
+When retrieving the documents with a `GET` to [`/rest/documents?createdAfter={date}`](- "#getEndpoint")
+[ ](- "#date=getCreatedAt(#delayedDocumentId)")
+
+ - where `{date}` is [ ](- "ext:embed=code(#date)").
+
+[ ](- "#paginateResult=filterByCreatedAfter(#getEndpoint, #date, #delayedDocumentId)")
+
+Then:
+
+ - The response status should be: [200](- "?=#paginateResult.status");
+ - The response should only contain the [new](- "?=#paginateResult.hasNew") document;
+ - Total should be [1](- "?=#paginateResult.total");
+ - Full response:
+
+[ ](- "ext:embed=#paginateResult.body")
+

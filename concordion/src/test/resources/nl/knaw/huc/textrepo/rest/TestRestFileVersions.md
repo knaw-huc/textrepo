@@ -48,7 +48,6 @@ Then:
 
 [ ](- "ext:embed=#paginateResult.body")
 
-
 ### Filter with 'createdAfter'
 The query parameter `createdAfter` filters out any versions that where created before the specified date. 
 

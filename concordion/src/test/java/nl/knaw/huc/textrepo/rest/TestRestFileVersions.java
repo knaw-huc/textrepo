@@ -36,12 +36,11 @@ public class TestRestFileVersions extends AbstractConcordionTest {
   }
 
   public String getCreatedAt(String newVersionId) {
-    final var response = client
+    var response = client
         .target(HOST + "/rest/versions/" + newVersionId)
         .request()
         .get();
-    String s = response.readEntity(String.class);
-    System.out.println("response getCreatedAt: " + s);
+    var s = response.readEntity(String.class);
     return jsonPath
         .parse(s)
         .read("$.createdAt", String.class);
@@ -111,7 +110,6 @@ public class TestRestFileVersions extends AbstractConcordionTest {
   }
 
   public CreatedAfterResult filterByCreatedAfter(String endpoint, String fileId, String date, String newVersion) {
-    System.out.printf("endpoint + fileId + date: %s + %s + %s", endpoint, fileId, date);
     var url = createUrlQueryParams(endpoint, of(
         "{id}", fileId,
         "{date}", date
