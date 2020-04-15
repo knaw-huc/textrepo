@@ -26,6 +26,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -65,11 +66,12 @@ public class DocumentsResource {
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultDocument.class, message = "OK")})
   public Response get(
       @QueryParam("externalId") String externalId,
+      @QueryParam("createdAfter") LocalDateTime createdAfter,
       @BeanParam FormPageParams pageParams
   ) {
     logger.debug("get documents");
 
-    var docs = documentService.getAll(externalId, paginator.fromForm(pageParams));
+    var docs = documentService.getAll(externalId, createdAfter, paginator.fromForm(pageParams));
 
     return Response
         .ok(toResult(docs, ResultDocument::new))

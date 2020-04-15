@@ -48,10 +48,10 @@ public class JdbiDocumentService implements DocumentService {
    * get all documents filtered by externalId
    */
   @Override
-  public Page<Document> getAll(String externalId, PageParams pageParams) {
+  public Page<Document> getAll(String externalId, LocalDateTime createdAfter, PageParams pageParams) {
     externalId = isBlank(externalId) ? null : externalId;
-    var docs = documents().getByExternalIdLike(externalId, pageParams);
-    var total = documents().countByExternalIdLike(externalId);
+    var docs = documents().findBy(externalId, createdAfter, pageParams);
+    var total = documents().countBy(externalId, createdAfter);
     return new Page<>(docs, total, pageParams);
   }
 

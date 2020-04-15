@@ -4,6 +4,7 @@ import nl.knaw.huc.core.Document;
 import nl.knaw.huc.core.Page;
 import nl.knaw.huc.core.PageParams;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -16,5 +17,5 @@ public interface DocumentService {
 
   void delete(UUID docId);
 
-  Page<Document> getAll(String externalId, PageParams pageParams);
+  Page<Document> getAll(String externalId, LocalDateTime createdAfter, PageParams pageParams);
 }

@@ -8,6 +8,7 @@ import org.jdbi.v3.sqlobject.customizer.BindBean;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -32,13 +33,20 @@ public interface DocumentsDao {
 
   @SqlQuery("select id, external_id, created_at from documents " +
       "where (:externalId is null or external_id like :externalId) " +
+      "and (:createdAfter\\:\\:timestamp is null or created_at >= :createdAfter\\:\\:timestamp) " +
       "limit :limit offset :offset")
   @RegisterConstructorMapper(value = Document.class)
-  List<Document> getByExternalIdLike(@Bind("externalId") String externalId, @BindBean PageParams pageParams);
+  List<Document> findBy(
+      @Bind("externalId") String externalId,
+      @Bind("createdAfter") LocalDateTime createdAfter,
+      @BindBean PageParams pageParams
+  );
 
   @SqlQuery("select count(*) from documents " +
-      "where (:externalId is null or external_id like :externalId)")
-  int countByExternalIdLike(@Bind("externalId") String externalId);
+      "where (:externalId is null or external_id like :externalId) " +
+      "and (:createdAfter\\:\\:timestamp is null or created_at >= :createdAfter\\:\\:timestamp)"
+  )
+  int countBy(@Bind("externalId") String externalId, @Bind("createdAfter") LocalDateTime createdAfter);
 
   @SqlQuery("insert into documents (id, external_id) values (:id, :externalId) " +
       "on conflict (id) do update set external_id = excluded.external_id " +

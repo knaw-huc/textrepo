@@ -5,14 +5,13 @@ import com.jayway.jsonpath.JsonPath;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.testing.junit5.ResourceExtension;
+import nl.knaw.huc.LocalDateTimeParamConverterProvider;
 import nl.knaw.huc.PaginationConfiguration;
-import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.core.Page;
 import nl.knaw.huc.core.PageParams;
 import nl.knaw.huc.exceptions.MethodNotAllowedExceptionMapper;
 import nl.knaw.huc.service.DocumentService;
-import nl.knaw.huc.service.FileMetadataService;
 import nl.knaw.huc.service.FileService;
 import nl.knaw.huc.service.Paginator;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -25,6 +24,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
@@ -32,7 +33,7 @@ import java.util.UUID;
 import static java.time.LocalDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
@@ -52,6 +53,9 @@ public class DocumentsResourceTest {
   @Captor
   private ArgumentCaptor<PageParams> pageParamsCaptor;
 
+  @Captor
+  private ArgumentCaptor<LocalDateTime> createdAfterCaptor;
+
   // https://stackoverflow.com/questions/31730571/how-to-turn-on-tracing-in-a-unit-test-using-a-ResourceExtension
   // Actually has to go /before/ ResourceExtension these days as bootstrap()ing guarded against multiple calls.
   static {
@@ -61,6 +65,7 @@ public class DocumentsResourceTest {
   private static final int TEST_LIMIT = 10;
   private static final int TEST_OFFSET = 0;
   private static final Paginator paginator = createPaginator();
+
   private static Paginator createPaginator() {
     var config = new PaginationConfiguration();
     config.defaultOffset = TEST_OFFSET;
@@ -68,9 +73,12 @@ public class DocumentsResourceTest {
     return new Paginator(config);
   }
 
+  private final static String dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS";
+
   public static final ResourceExtension resource = ResourceExtension
       .builder()
       .addProvider(MultiPartFeature.class)
+      .addProvider(() -> new LocalDateTimeParamConverterProvider(dateFormat))
       .addResource(new DocumentsResource(documentService, paginator))
       .addResource(new MethodNotAllowedExceptionMapper())
       .build();
@@ -105,7 +113,7 @@ public class DocumentsResourceTest {
     var offset = 2;
     var limit = 7;
     var total = 12;
-    when(documentService.getAll(isNull(), any(PageParams.class)))
+    when(documentService.getAll(isNull(), isNull(), any(PageParams.class)))
         .thenReturn(new Page<>(new ArrayList<>(), total, new PageParams(limit, offset)));
 
     // Request:
@@ -115,6 +123,16 @@ public class DocumentsResourceTest {
         .target("/rest/documents?offset=" + offset + "&limit=" + limit)
         .request().get();
 
+    // Check service call:
+    verify(documentService, times(1)).getAll(
+        isNull(),
+        any(),
+        pageParamsCaptor.capture()
+    );
+    var pageParams = pageParamsCaptor.getValue();
+    assertThat(pageParams.getLimit()).isEqualTo(limit);
+    assertThat(pageParams.getOffset()).isEqualTo(offset);
+
     // Check response:
     assertThat(response.getStatus()).isEqualTo(200);
     var body = JsonPath.parse(response.readEntity(String.class));
@@ -123,14 +141,40 @@ public class DocumentsResourceTest {
     assertThat(body.read("$.page.limit", Integer.class)).isEqualTo(limit);
     assertThat(body.read("$.total", Integer.class)).isEqualTo(total);
 
+  }
+  @Test
+  public void getDocuments_createsAndReturnsPage_filtersByCreationDate() {
+    var now = now();
+    var expectedDateTime = now.format(DateTimeFormatter.ofPattern(dateFormat));
+
+    var expectedTotal = 5;
+    when(documentService.getAll(isNull(), any(LocalDateTime.class), any(PageParams.class)))
+        .thenReturn(new Page<>(new ArrayList<>(), expectedTotal, new PageParams(TEST_LIMIT, TEST_OFFSET)));
+
+    // Request:
+    var response = resource
+        .client()
+        .register(MultiPartFeature.class)
+        .target("/rest/documents?createdAfter=" + expectedDateTime)
+        .request().get();
+
     // Check service call:
     verify(documentService, times(1)).getAll(
         isNull(),
+        createdAfterCaptor.capture(),
         pageParamsCaptor.capture()
     );
+
     var pageParams = pageParamsCaptor.getValue();
-    assertThat(pageParams.getLimit()).isEqualTo(limit);
-    assertThat(pageParams.getOffset()).isEqualTo(offset);
+    assertThat(pageParams.getLimit()).isEqualTo(TEST_LIMIT);
+    assertThat(pageParams.getOffset()).isEqualTo(TEST_OFFSET);
+
+    var createdAfter = createdAfterCaptor.getValue();
+    var receivedDateTime = createdAfter.format(DateTimeFormatter.ofPattern(dateFormat));
+    assertThat(receivedDateTime).isEqualTo(expectedDateTime);
+
+    // Check response:
+    assertThat(response.getStatus()).isEqualTo(200);
   }
 
 }
