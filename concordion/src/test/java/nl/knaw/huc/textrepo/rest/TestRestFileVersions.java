@@ -28,7 +28,7 @@ public class TestRestFileVersions extends AbstractConcordionTest {
 
   public String createVersionWithDelay(String fileId) throws InterruptedException {
     SECONDS.sleep(2);
-    return RestUtils.createVersion(fileId, "random-content-" + randomAlphabetic(10));
+    return this.createVersion(fileId);
   }
 
   public String getLastVersionCreatedAt() {
@@ -64,9 +64,9 @@ public class TestRestFileVersions extends AbstractConcordionTest {
     result.body = asPrettyJson(body);
     var json = jsonPath.parse(body);
     var length = json.read("$.items.length()", Integer.class);
-    var hasOld = json.read("$.items[0].id", String.class).equals(oldVersion);
-    var hasNew = json.read("$.items[1].id", String.class).equals(newVersion);
-    result.twoVersions = hasOld && hasNew ? "old and new" : format("old [%s] and new [%s]", hasOld, hasNew);
+    var hasOld = json.read("$.items[0].id", String.class).equals(newVersion);
+    var hasNew = json.read("$.items[1].id", String.class).equals(oldVersion);
+    result.twoVersions = hasOld && hasNew ? "new and then the old" : format("old [%s] and new [%s]", hasOld, hasNew);
     return result;
   }
 
@@ -78,7 +78,7 @@ public class TestRestFileVersions extends AbstractConcordionTest {
     public int total;
   }
 
-  public PaginateResult paginate(Object endpoint, String fileId, String offset, String limit, String oldVersion) {
+  public PaginateResult paginate(Object endpoint, String fileId, String offset, String limit, String newVersion) {
     var url = createUrlQueryParams(endpoint, of(
         "{id}", fileId,
         "{offset}", offset,
@@ -96,7 +96,7 @@ public class TestRestFileVersions extends AbstractConcordionTest {
     result.body = asPrettyJson(body);
     var json = jsonPath.parse(body);
     var versionId = json.read("$.items[0].id", String.class);
-    result.hasOld = versionId.equals(oldVersion) ? "old" : format("[%s] isn't [%s]", versionId, oldVersion);
+    result.hasOld = versionId.equals(newVersion) ? "new" : format("[%s] isn't [%s]", versionId, newVersion);
     result.externalDocumentId = json.read("$.items[0].externalId");
     result.total = json.read("$.total", Integer.class);
     return result;

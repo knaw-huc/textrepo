@@ -34,6 +34,7 @@ public interface DocumentsDao {
   @SqlQuery("select id, external_id, created_at from documents " +
       "where (:externalId is null or external_id like :externalId) " +
       "and (:createdAfter\\:\\:timestamp is null or created_at >= :createdAfter\\:\\:timestamp) " +
+      "order by created_at desc " +
       "limit :limit offset :offset")
   @RegisterConstructorMapper(value = Document.class)
   List<Document> findBy(

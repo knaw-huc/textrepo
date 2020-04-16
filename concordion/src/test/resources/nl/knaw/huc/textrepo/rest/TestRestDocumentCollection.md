@@ -41,7 +41,7 @@ Then:
 [ ](- "ext:embed=#searchSingle.body")
 
 ## Paginate documents
-Results are divided in pages using offset and limit.
+Results are divided in pages using offset and limit and are sorted by creation date, newest documents first.
 
 When we request all documents with a `GET` to [`/rest/documents?offset={offset}&limit={limit}`](- "#searchEndpoint")
 
@@ -53,7 +53,7 @@ Then:
 
  - The response status should be: [200](- "?=#firstPage.status");
  - The items array should contain [1](- "?=#firstPage.itemCount") document;
- - Its external ID should be [`first-external-id`](- "?=#firstPage.externalDocumentId") document;
+ - Its external ID should be [`second-external-id`](- "?=#firstPage.externalDocumentId") document;
  - Total should be [2](- "?=#firstPage.total");
  - Full response:
  
@@ -70,7 +70,7 @@ Then:
 
  - The response status should be: [200](- "?=#secondPage.status");
  - The items array should contain [1](- "?=#secondPage.itemCount") document;
- - Its external ID should be [`second-external-id`](- "?=#secondPage.externalDocumentId") document;
+ - Its external ID should be [`first-external-id`](- "?=#secondPage.externalDocumentId") document;
  - Total should be [2](- "?=#secondPage.total");
  - Full response:
  

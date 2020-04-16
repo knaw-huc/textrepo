@@ -35,7 +35,8 @@ public interface VersionsDao {
   @SqlQuery("select id, file_id, created_at, contents_sha " +
       "from versions where file_id = :fileId " +
       "and (:createdAfter\\:\\:timestamp is null or created_at >= :createdAfter\\:\\:timestamp) " +
-      "order by created_at asc limit :limit offset :offset")
+      "order by created_at desc " +
+      "limit :limit offset :offset")
   @RegisterConstructorMapper(value = Version.class)
   List<Version> findByFileId(
       @Bind("fileId") UUID fileId,

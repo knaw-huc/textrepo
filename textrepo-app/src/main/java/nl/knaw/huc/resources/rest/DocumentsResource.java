@@ -62,7 +62,7 @@ public class DocumentsResource {
 
   @GET
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Retrieve document")
+  @ApiOperation(value = "Retrieve documents, newest first")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultDocument.class, message = "OK")})
   public Response get(
       @QueryParam("externalId") String externalId,
