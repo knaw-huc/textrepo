@@ -3,10 +3,9 @@
 Indexing
 ========
 
-The |tr| contains a number of default elasticsearch indexes which are populated by the |tr| itself.
-Users can search documents in the index, but should create, update or delete documents.
-All modifications of the index should be handled by the |tr| itself.
-When you want to edit a index document, edit the appropriate file instead using the |tr| REST-API.
+The |tr| creates and updates elasticsearch indexes as defined in `config.yml`.
+
+Changing the index should be done by creating adding new versions to the appropriate |tr| files using the REST-API.
 
 Searching
 ---------
@@ -31,16 +30,16 @@ An indexer is a remote service with a mapping-endpoint to request `elasticsearch
 - Generated documents should match the requirements of the mapping
 - Each |tr| file results in a index document
 
-When a file version is added, the |tr| adds or updates all appropriate indexed documents:
+When a file version is added, the |tr| adds or updates all appropriate indexed documents. Workflow:
 
 - |tr| retrieves file type of new file version
 - For each index: can it handle this file type?
-- No? Skip
-- Yes? `POST` contents of new vrsion to `fields`-endpoint. `Content-Type` header contains mimetype of file.
-- Response of `fields`-endpoint is used by |tr| to create or update index document
+- No? Skip.
+- Yes? `POST` the contents of new version to `fields`-endpoint. `Content-Type` header contains mimetype of file.
+- Response of `fields`-endpoint is used by |tr| to create a new or update the corresponding index document
 
-Config.yml
-----------
+Configuration
+-------------
 Custom indexers can be configured in the `config.yml` of |tr| under `indexers`.
 One empty index example: ::
 

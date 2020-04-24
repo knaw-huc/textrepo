@@ -10,8 +10,8 @@ Run locally
 
 To start and stop the |tr|: ::
 
-  ./scripts/stop.sh
   ./scripts/start.sh
+  ./scripts/stop.sh
 
 Note: These scripts are quite rigorous and all data will be lost when restarting, so *use for development purposes only*.
 

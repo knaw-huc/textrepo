@@ -42,4 +42,3 @@ See the `indexing <indexing.html>`_ page.
 Nginx
 -----
 As a reverse proxy it exposes the relevant parts of all the service endpoints. See exposed endpoints below.
-
