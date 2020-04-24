@@ -6,18 +6,24 @@ Basic Usage
 Run locally
 -----------
 
-|tr| can be started using `docker-compose up --build`. However, in order to prevent any unexpected behaviour due misconfigured ports, volumes, etc, the `./scripts` directory also contains a `start.sh` and a `stop.sh` script to facilitate starting and stopping the docker-compose services.
-These scripts are quite rigorous and all data will be lost when restarting, so *use for development purposes only*.
+|tr| can be started using `docker-compose up --build`. However, in order to prevent any unexpected behaviour due misconfigured ports, volumes, etc, the `./scripts` directory also contains some example scripts.
 
-When you do not want to rebuild, use: `docker-compose up`.
+To start and stop the |tr|: ::
+
+  ./scripts/stop.sh
+  ./scripts/start.sh
+
+Note: These scripts are quite rigorous and all data will be lost when restarting, so *use for development purposes only*.
+
+When you do not want to rebuild docker images, use: `docker-compose up`.
 
 Explore locally
 ---------------
-After running the docker-compose setup:
+After running the docker-compose setup, you can:
 
-- Look at some of the basic use cases creating with concordion integration test `results <http://localhost:8080/concordion/nl/knaw/huc/textrepo/Textrepo.html>`_
+- Find basic use cases in the integration test `results <http://localhost:8080/concordion/nl/knaw/huc/textrepo/Textrepo.html>`_
+- Add some test data: `./scripts/populate.sh`
 - Explore REST-API of |tr| using `swaggger <http://localhost:8080/textrepo/swagger>`_
-- Populate the |tr| with some minimal data, run: `./scripts/populate.sh`
 - Search in `full-text <http://localhost:8080/index/full-text>`_ and `autocomplete <http://localhost:8080/index/autocomplete>`_ indexes
 
 FAQ
