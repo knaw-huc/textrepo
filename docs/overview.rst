@@ -3,7 +3,7 @@
 Overview
 ========
 
-The |tr| was born out of the desire to archive and unlock text corpora of its various files and formats in a durable and consistent way.
+The |tr| was born out of the desire to archive and unlock text corpora and their various files and formats in a durable and consistent way.
 
 Domain model
 ************
