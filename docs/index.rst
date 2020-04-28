@@ -11,7 +11,7 @@ Features
 - Store texts in a uniform domain model
    - Keep track of file versions
    - Link all file types to the same source document
-   - Add metadata to documents and files
+   - Store metadata about documents and files
 - Use Rest API to create, read, update and delete your texts
 - Search files using stock and custom `elasticsearch <https://www.elastic.co/elasticsearch/>`_ indexes
 - Explore API with `concordion <https://concordion.org/>`_ and `swagger <https://swagger.io/>`_
