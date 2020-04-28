@@ -25,7 +25,7 @@ The |tr| is build around a number of core concepts that allow it to represent te
 
 File types
 **********
-The |tr| is build to contain 'human readable' file types that can be processed by elasticsearch, like plain text, json, and xml.
+The |tr| is built to contain 'human readable' file types that can be processed by elasticsearch, like plain text, json, and xml.
 
 Work in progress
 ****************
