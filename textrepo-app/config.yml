@@ -29,7 +29,6 @@ indexers:
     - application/xml
   elasticsearch:
     index: docere
-    contentsField: contents
     hosts:
       - elasticsearch:9200
 - mapping: http://autocomplete-indexer:8080/autocomplete/mapping
@@ -41,7 +40,6 @@ indexers:
     - text/plain
   elasticsearch:
     index: autocomplete
-    contentsField: contents
     hosts:
       - elasticsearch:9200
 - mapping: http://full-text-indexer:8080/full-text/mapping
@@ -53,7 +51,6 @@ indexers:
     - text/plain
   elasticsearch:
     index: full-text
-    contentsField: contents
     hosts:
       - elasticsearch:9200
 

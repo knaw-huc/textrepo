@@ -2,51 +2,20 @@
 
 Repository to store texts, including their metadata and versions.
 
-## Development
+Documentation can be found at [readthedocs](http://textrepo.readthedocs.io/en/latest/).
 
-On first run:
-```
-docker build -t textrepo-builder -f Dockerfile.builder .
-```
+## License
 
-Build, start and stop:
-```
-./scripts/start.sh
-./scripts/stop.sh
-```
+Copyright 2020 Koninklijke Nederlandse Akademie van Wetenschappen
 
-### Elasticsearch
-If you run into this Elasticsearch warning:
-```
-max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]
-```
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-you may have to
-```
-sysctl -w vm.max_map_count=262144
-```
+    http://www.apache.org/licenses/LICENSE-2.0
 
-(see https://github.com/docker-library/elasticsearch/issues/111)
-
-### Kubernetes
-Run:
-```
-kubectl apply\
- -f kubernetes/01-postgres.yml\
- -f kubernetes/02-elasticsearch.yml\
- -f kubernetes/03-textrepo-app.yaml\
- -f kubernetes/04-nginx.yml\
- -f kubernetes/05-concordion.yml
-```
-
-## Documentation
-
-### Local 
-
-Text Repository REST-endpoint are documented with [Swagger](http://localhost:8080/textrepo/swagger).
-
-Custom indexers, REST-endpoints and healtch checks are documented with [Concordion integration tests](http://localhost:8080/concordion/nl/knaw/huc/textrepo/Textrepo.html).
-
-### Online
-See: [readthedocs](http://textrepo.readthedocs.io/en/latest/) (WIP)
-
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
