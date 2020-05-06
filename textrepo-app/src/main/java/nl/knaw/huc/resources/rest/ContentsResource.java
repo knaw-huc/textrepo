@@ -48,6 +48,8 @@ public class ContentsResource {
 
     final var contents = contentsService.getBySha(sha);
 
+    logger.debug("got contents: contents={}", contents);
+
     return Response
         .ok(contents.getContents(), APPLICATION_OCTET_STREAM)
         .header("Content-Disposition", "attachment;")

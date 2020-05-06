@@ -1,11 +1,14 @@
 package nl.knaw.huc.core;
 
+import com.google.common.base.MoreObjects;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 
 import javax.annotation.Nonnull;
 import java.beans.ConstructorProperties;
 import java.nio.charset.StandardCharsets;
+
+import static nl.knaw.huc.service.ContentsService.abbreviate;
 
 /**
  * Contents of a file, identified by its sha224-hash
@@ -36,5 +39,14 @@ public class Contents {
 
   public String asUtf8String() {
     return new String(contents, StandardCharsets.UTF_8);
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects
+        .toStringHelper(this)
+        .add("sha224", sha224)
+        .add("contents", abbreviate(this.contents))
+        .toString();
   }
 }

@@ -34,4 +34,16 @@ public class ContentsServiceTest {
     when(STORE.get(SHA224)).thenReturn(FILE);
     assertThat(SERVICE_UNDER_TEST.getBySha(SHA224)).isEqualTo(FILE);
   }
+
+  @Test
+  public void abbreviate_shouldAbbreviateCorrect() {
+    var complete = ("Ontfangen een Missive van den Resident Mauritius , geschreven te Ontfangen een Missive van den " +
+        "Nihil actum est .Hamburgh den dertienden deser loopende maandt , houdende advertentie").getBytes();
+
+    var abbreviated = "Ontfangen een Missive van den Resident Mauritius[..]den deser loopende maandt , " +
+        "houdende advertentie";
+
+    assertThat(ContentsService.abbreviate(complete)).isEqualTo(abbreviated);
+  }
+
 }
