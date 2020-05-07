@@ -19,12 +19,9 @@ logging:
     # Filter out flood of warnings when Swagger tries to load classes through reflection:
     org.reflections.Reflections: ERROR
   appenders:
-    - type: console
-      # %X contains MDC:
-      logFormat: "%-5p - %X - [%d{ISO8601,UTC}] %c: %m%n%rEx"
     - type: file
       # %X contains MDC:
-      logFormat: "%-5p - %X - [%d{ISO8601,UTC}] %c: %m%n%rEx"
+      logFormat: "%-5p [%X] [%d{ISO8601,UTC}] %c: %m%n%rEx"
       Appender: false
       currentLogFilename: ./target/testlog.log
       archivedLogFilenamePattern: ./logs/example-%d.log.gz

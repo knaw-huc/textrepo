@@ -34,6 +34,7 @@ import nl.knaw.huc.service.JdbiFileService;
 import nl.knaw.huc.service.JdbiTypeService;
 import nl.knaw.huc.service.JdbiVersionContentsService;
 import nl.knaw.huc.service.JdbiVersionService;
+import nl.knaw.huc.service.LoggingApplicationEventListener;
 import nl.knaw.huc.service.Paginator;
 import nl.knaw.huc.service.TypeService;
 import nl.knaw.huc.service.health.ElasticsearchHealthCheck;
@@ -144,6 +145,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     module.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(config.getDateFormat()));
     objectMapper.registerModule(module);
     environment.jersey().register(new LocalDateTimeParamConverterProvider(config.getDateFormat()));
+    environment.jersey().register(new LoggingApplicationEventListener(uuidGenerator));
   }
 
   private Map<String, HealthCheck> createElasticsearchHealthChecks(TextRepositoryConfiguration config) {

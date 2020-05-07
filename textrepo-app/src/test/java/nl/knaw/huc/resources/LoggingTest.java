@@ -16,6 +16,7 @@ import nl.knaw.huc.core.Page;
 import nl.knaw.huc.core.PageParams;
 import nl.knaw.huc.resources.rest.DocumentsResource;
 import nl.knaw.huc.service.DocumentService;
+import nl.knaw.huc.service.LoggingApplicationEventListener;
 import nl.knaw.huc.service.Paginator;
 import org.apache.commons.io.FileUtils;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -90,7 +91,9 @@ public class LoggingTest {
   }
 
   @Test
-  public void documentResource_shouldLogRequestId_perRequest() throws InterruptedException, IOException {
+  public void documentResource_shouldLogUniqueRequestIdSetByLoggingRequestEventListener_whenMultipleRequestFired()
+      throws InterruptedException, IOException
+  {
 
     var documents = new ArrayList<Document>();
     documents.add(new Document(null, null, null));
@@ -107,7 +110,7 @@ public class LoggingTest {
 
     // Requests:
     var testExternalIds = Collections.synchronizedCollection(new ArrayList<String>());
-    var requestsToPerform = 10;
+    var requestsToPerform = 100;
     for (var i = 0; i < requestsToPerform; i++) {
       new Thread(() -> {
         var externalId = UUID.randomUUID().toString();
@@ -183,7 +186,7 @@ public class LoggingTest {
     public void run(TextRepositoryConfiguration config, Environment environment) {
       environment.jersey().register(new LocalDateTimeParamConverterProvider(config.getDateFormat()));
       environment.jersey().register(new DocumentsResource(documentService, paginator));
-
+      environment.jersey().register(new LoggingApplicationEventListener(UUID::randomUUID));
       environment.jersey().register(this);
     }
 

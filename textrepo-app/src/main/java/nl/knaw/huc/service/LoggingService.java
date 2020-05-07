@@ -3,14 +3,21 @@ package nl.knaw.huc.service;
 import org.slf4j.MDC;
 
 import java.util.UUID;
+import java.util.function.Supplier;
 
 public class LoggingService {
 
-  public static void startRequest() {
-    MDC.put("request", "" + UUID.randomUUID());
+  private Supplier<UUID> uuidGenerator;
+
+  public LoggingService(Supplier<UUID> uuidGenerator) {
+    this.uuidGenerator = uuidGenerator;
   }
 
-  public static void stopRequest() {
+  public void startRequest() {
+    MDC.put("request", "" + uuidGenerator.get());
+  }
+
+  public void stopRequest() {
     MDC.clear();
   }
 }
