@@ -1,5 +1,7 @@
 package nl.knaw.huc.core;
 
+import com.google.common.base.MoreObjects;
+
 import java.beans.ConstructorProperties;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -43,5 +45,15 @@ public class Document {
 
   public LocalDateTime getCreatedAt() {
     return createdAt;
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects
+        .toStringHelper(this)
+        .add("id", id)
+        .add("externalId", externalId)
+        .add("createdAt", createdAt)
+        .toString();
   }
 }

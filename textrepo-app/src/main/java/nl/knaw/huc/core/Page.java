@@ -1,5 +1,7 @@
 package nl.knaw.huc.core;
 
+import com.google.common.base.MoreObjects;
+
 import java.util.List;
 
 public class Page<T> {
@@ -12,6 +14,16 @@ public class Page<T> {
     this.items = items;
     this.total = total;
     this.params = params;
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects
+        .toStringHelper(this)
+        .add("items", items)
+        .add("total", total)
+        .add("params", params)
+        .toString();
   }
 
   public List<T> getItems() {

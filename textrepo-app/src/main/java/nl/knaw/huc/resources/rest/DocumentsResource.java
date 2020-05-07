@@ -31,6 +31,8 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static nl.knaw.huc.service.LoggingService.startRequest;
+import static nl.knaw.huc.service.LoggingService.stopRequest;
 import static nl.knaw.huc.service.Paginator.toResult;
 
 @Api(tags = {"documents"})
@@ -71,13 +73,13 @@ public class DocumentsResource {
       @QueryParam("createdAfter") LocalDateTime createdAfter,
       @BeanParam FormPageParams pageParams
   ) {
-    MDC.put("request", "" + UUID.randomUUID());
+    startRequest();
     logger.debug("get documents: externalId={}; createdAfter={}; pageParams={}", externalId, createdAfter, pageParams);
 
     var docs = documentService.getAll(externalId, createdAfter, paginator.fromForm(pageParams));
 
-    logger.debug("got documents: externalId={}", externalId);
-    MDC.clear();
+    logger.debug("got documents: page={}", docs);
+    stopRequest();
 
     return Response
         .ok(toResult(docs, ResultDocument::new))
@@ -92,10 +94,13 @@ public class DocumentsResource {
   public Response get(
       @PathParam("id") @Valid UUID id
   ) {
+    startRequest();
     logger.debug("get document: id={}", id);
     final var doc = documentService
         .get(id)
         .orElseThrow(NotFoundException::new);
+    logger.debug("got document: document={}", doc);
+    stopRequest();
     return Response
         .ok(new ResultDocument(doc))
         .build();
@@ -111,8 +116,11 @@ public class DocumentsResource {
       @PathParam("id") @Valid UUID id,
       @Valid FormDocument form
   ) {
+    startRequest();
     logger.debug("update document: id={}; form={}", id, form);
     var doc = documentService.update(new Document(id, form.getExternalId()));
+    logger.debug("updated document: document={}", doc);
+    stopRequest();
     return Response.ok(new ResultDocument(doc)).build();
   }
 
@@ -123,8 +131,11 @@ public class DocumentsResource {
   public Response delete(
       @PathParam("id") @Valid UUID id
   ) {
+    startRequest();
     logger.debug("delete document: id={}", id);
     documentService.delete(id);
+    logger.debug("deleted document");
+    stopRequest();
     return Response.ok().build();
   }
 

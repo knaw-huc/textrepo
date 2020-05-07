@@ -36,6 +36,7 @@ import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.time.LocalDateTime.now;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -91,8 +92,18 @@ public class LoggingTest {
   @Test
   public void documentResource_shouldLogRequestId_perRequest() throws InterruptedException, IOException {
 
-    var page = new Page<Document>(Collections.emptyList(), 0, new PageParams(0, 10));
+    var documents = new ArrayList<Document>();
+    documents.add(new Document(null, null, null));
+    var page = new Page<>(documents, 0, new PageParams(0, 10));
     when(documentService.getAll(anyString(), isNull(), any())).thenReturn(page);
+    when(
+        documentService.getAll(anyString(), isNull(), any())
+    ).thenAnswer(invocation -> {
+      var items = new ArrayList<Document>();
+      var doc = new Document(UUID.randomUUID(), invocation.getArgument(0, String.class), now());
+      items.add(doc);
+      return new Page<>(items, 1, new PageParams(10, 0));
+    });
 
     // Requests:
     var testExternalIds = Collections.synchronizedCollection(new ArrayList<String>());
