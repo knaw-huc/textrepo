@@ -26,8 +26,8 @@ public class ContentsService {
   /**
    * Abbreviate byte[] to String of 100 chars, replacing the middle with [..]
    *
-   * Similar to org.apache.commons.lang3.StringUtils.StringUtils.abbreviateMiddle
-   * without having to convert byte[] to String
+   * <p>Like org.apache.commons.lang3.StringUtils.StringUtils.abbreviateMiddle
+   * but then without having to convert byte[] to String
    */
   public static String abbreviateMiddle(@Nonnull byte[] contents) {
     var replacement = "[..]";
