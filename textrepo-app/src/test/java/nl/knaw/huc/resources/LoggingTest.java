@@ -20,7 +20,7 @@ import nl.knaw.huc.service.Paginator;
 import org.apache.commons.io.FileUtils;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,7 +88,7 @@ public class LoggingTest {
     reset(documentService, paginator);
   }
 
-  @RepeatedTest(10)
+  @Test
   public void documentResource_shouldLogRequestId_perRequest() throws InterruptedException, IOException {
 
     var page = new Page<Document>(Collections.emptyList(), 0, new PageParams(0, 10));
@@ -96,7 +96,7 @@ public class LoggingTest {
 
     // Requests:
     var testExternalIds = Collections.synchronizedCollection(new ArrayList<String>());
-    var requestsToPerform = 100;
+    var requestsToPerform = 10;
     for (var i = 0; i < requestsToPerform; i++) {
       new Thread(() -> {
         var externalId = UUID.randomUUID().toString();
@@ -116,17 +116,17 @@ public class LoggingTest {
     var testlogFile = logFile;
     var logging = FileUtils.readFileToString(testlogFile, "UTF-8");
 
-    testExternalIds.forEach((testExternalId) -> {
-      assertThat(logging).contains(testExternalId);
-    });
+    testExternalIds.forEach((testExternalId) ->
+        assertThat(logging).contains(testExternalId)
+    );
 
-    // Logs marking start of request ('get documents'):
+    // Logs marking start of request (i.e. 'get documents'):
     var getDocumentsRegex = "DEBUG.*request=([a-f0-9-]{36}).*(get documents).*externalId=([a-f0-9-]{36})";
     var getLines = getLinesByRegex(logging, getDocumentsRegex);
     var getIds = new HashMap<String, String>();
     getLines.forEach((line) -> getIds.put(line.group(1), line.group(3)));
 
-    // Logs marking end of a request ('got documents'):
+    // Logs marking end of a request (i.e. 'got documents'):
     var gotDocumentsRegex = "DEBUG.*request=([a-f0-9-]{36}).*(got documents).*externalId=([a-f0-9-]{36})";
     var gotLines = getLinesByRegex(logging, gotDocumentsRegex);
     var gotIds = new HashMap<String, String>();
@@ -141,9 +141,9 @@ public class LoggingTest {
     testExternalIds.forEach((testExternalId) -> assertThat(gotIds).containsValue(testExternalId));
 
     // Test request ID remains linked to external ID:
-    getIds.forEach((requestId, externalId) -> {
-      assertThat(gotIds.get(requestId)).isEqualTo(externalId);
-    });
+    getIds.forEach((requestId, externalId) ->
+        assertThat(gotIds.get(requestId)).isEqualTo(externalId)
+    );
   }
 
   private List<MatchResult> getLinesByRegex(String logging, String getDocumentsRegex) {
