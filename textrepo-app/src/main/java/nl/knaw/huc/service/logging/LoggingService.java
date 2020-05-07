@@ -1,4 +1,4 @@
-package nl.knaw.huc.service;
+package nl.knaw.huc.service.logging;
 
 import org.slf4j.MDC;
 

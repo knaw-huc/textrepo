@@ -1,4 +1,4 @@
-package nl.knaw.huc;
+package nl.knaw.huc.service.datetime;
 
 import javax.ws.rs.ext.ParamConverter;
 import javax.ws.rs.ext.ParamConverterProvider;

@@ -1,4 +1,4 @@
-package nl.knaw.huc;
+package nl.knaw.huc.service.datetime;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ext.ParamConverter;

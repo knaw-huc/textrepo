@@ -3,7 +3,7 @@ package nl.knaw.huc.resources.rest;
 import com.jayway.jsonpath.JsonPath;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.testing.junit5.ResourceExtension;
-import nl.knaw.huc.LocalDateTimeParamConverterProvider;
+import nl.knaw.huc.service.datetime.LocalDateTimeParamConverterProvider;
 import nl.knaw.huc.PaginationConfiguration;
 import nl.knaw.huc.core.PageParams;
 import nl.knaw.huc.core.Version;
