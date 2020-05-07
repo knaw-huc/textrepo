@@ -59,10 +59,6 @@ public class TextRepositoryConfiguration extends Configuration {
     return database;
   }
 
-  @JsonProperty("elasticsearch")
-  public void setElasticsearch(ElasticsearchConfiguration elasticsearch) {
-  }
-
   @JsonProperty("swagger")
   public SwaggerBundleConfiguration getSwaggerBundleConfiguration() {
     return swaggerBundleConfiguration;

@@ -12,6 +12,7 @@ import nl.knaw.huc.service.DocumentService;
 import nl.knaw.huc.service.Paginator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 import javax.validation.Valid;
 import javax.ws.rs.BeanParam;
@@ -42,7 +43,8 @@ public class DocumentsResource {
 
   public DocumentsResource(
       DocumentService documentService,
-      Paginator paginator) {
+      Paginator paginator
+  ) {
     this.documentService = documentService;
     this.paginator = paginator;
   }
@@ -69,9 +71,13 @@ public class DocumentsResource {
       @QueryParam("createdAfter") LocalDateTime createdAfter,
       @BeanParam FormPageParams pageParams
   ) {
-    logger.debug("get documents");
+    MDC.put("request", "" + UUID.randomUUID());
+    logger.debug("get documents: externalId={}; createdAfter={}; pageParams={}", externalId, createdAfter, pageParams);
 
     var docs = documentService.getAll(externalId, createdAfter, paginator.fromForm(pageParams));
+
+    logger.debug("got documents: externalId={}", externalId);
+    MDC.clear();
 
     return Response
         .ok(toResult(docs, ResultDocument::new))
