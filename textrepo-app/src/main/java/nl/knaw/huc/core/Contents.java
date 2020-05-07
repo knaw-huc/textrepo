@@ -8,7 +8,7 @@ import javax.annotation.Nonnull;
 import java.beans.ConstructorProperties;
 import java.nio.charset.StandardCharsets;
 
-import static nl.knaw.huc.service.ContentsService.abbreviate;
+import static nl.knaw.huc.service.ContentsService.abbreviateMiddle;
 
 /**
  * Contents of a file, identified by its sha224-hash
@@ -46,7 +46,7 @@ public class Contents {
     return MoreObjects
         .toStringHelper(this)
         .add("sha224", sha224)
-        .add("contents", abbreviate(this.contents))
+        .add("contents", abbreviateMiddle(this.contents))
         .toString();
   }
 }

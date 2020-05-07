@@ -3,6 +3,8 @@ package nl.knaw.huc.service;
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.service.store.ContentsStorage;
 
+import javax.annotation.Nonnull;
+
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.copyOfRange;
 
@@ -21,9 +23,20 @@ public class ContentsService {
     return contentsStorage.get(sha);
   }
 
-  public static String abbreviate(byte[] contents) {
+  /**
+   * Abbreviate byte[] to String of 100 chars, replacing the middle with [..]
+   *
+   * Similar to org.apache.commons.lang3.StringUtils.StringUtils.abbreviateMiddle
+   * without having to convert byte[] to String
+   */
+  public static String abbreviateMiddle(@Nonnull byte[] contents) {
     var replacement = "[..]";
     var lengthStartEnd = 48;
+
+    if (contents.length <= 2 * lengthStartEnd + replacement.length()) {
+      return new String(contents);
+    }
+
     var start = new String(copyOfRange(contents, 0, lengthStartEnd), UTF_8);
     var end = new String(copyOfRange(contents, contents.length - lengthStartEnd, contents.length), UTF_8);
     return start + replacement + end;

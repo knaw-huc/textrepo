@@ -5,6 +5,7 @@ import nl.knaw.huc.service.store.ContentsStorage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import static nl.knaw.huc.service.ContentsService.abbreviateMiddle;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
@@ -43,7 +44,7 @@ public class ContentsServiceTest {
     var abbreviated = "Ontfangen een Missive van den Resident Mauritius[..]den deser loopende maandt , " +
         "houdende advertentie";
 
-    assertThat(ContentsService.abbreviate(complete)).isEqualTo(abbreviated);
+    assertThat(abbreviateMiddle(complete)).isEqualTo(abbreviated);
   }
 
 }
