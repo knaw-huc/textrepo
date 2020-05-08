@@ -59,6 +59,7 @@ public class VersionContentsResource {
   ) {
     logger.debug("get version contents: versionId={}", versionId);
     var contents = contentsService.getByVersionId(versionId);
+    logger.debug("got version contents: {}", contents);
     return Response
         .ok(contents.getContents(), APPLICATION_OCTET_STREAM)
         .header("Content-Disposition", "attachment;")

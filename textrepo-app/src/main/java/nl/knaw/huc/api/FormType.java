@@ -2,6 +2,7 @@ package nl.knaw.huc.api;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.MoreObjects;
 
 import javax.validation.constraints.NotBlank;
 
@@ -28,5 +29,14 @@ public class FormType {
 
   public String getMimetype() {
     return mimetype;
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects
+        .toStringHelper(this)
+        .add("name", name)
+        .add("mimetype", mimetype)
+        .toString();
   }
 }

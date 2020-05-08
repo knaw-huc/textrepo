@@ -57,12 +57,12 @@ public class VersionsResource {
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultVersion.class, message = "OK")})
   public Response post(
       @FormDataParam("fileId") UUID fileId,
-      @FormDataParam("contents") InputStream inputStream,
-      @FormDataParam("contents") FormDataContentDisposition fileDetail
+      @FormDataParam("contents") InputStream inputStream
   ) {
-    logger.debug("post version: fileId={}", fileId);
+    logger.debug("create version: fileId={}", fileId);
     var contents = fromBytes(readContents(inputStream, maxPayloadSize));
     var version = versionService.createNewVersion(fileId, contents);
+    logger.debug("created version: {}", version);
     return Response.ok(new ResultVersion(version)).build();
   }
 
@@ -77,6 +77,7 @@ public class VersionsResource {
   ) {
     logger.debug("get version: id={}", id);
     var version = versionService.get(id);
+    logger.debug("got version: {}", version);
     return Response.ok(new ResultVersion(version)).build();
   }
 
@@ -102,6 +103,7 @@ public class VersionsResource {
   ) {
     logger.debug("delete version: id={}", id);
     versionService.delete(id);
+    logger.debug("deleted version", id);
     return Response.ok().build();
   }
 

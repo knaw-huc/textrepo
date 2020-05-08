@@ -57,7 +57,7 @@ public class DocumentsResource {
   public Response post(
       @Valid FormDocument form
   ) {
-    logger.debug("create document: form={}", form);
+    logger.debug("create document: {}", form);
     var doc = documentService.create(new Document(null, form.getExternalId()));
     logger.debug("created document: {}", doc);
     return Response.ok(new ResultDocument(doc)).build();

@@ -49,6 +49,7 @@ public class FilesResource {
   ) {
     logger.debug("create file: form={}", form);
     var file = fileService.insert(form.getDocId(), new TextrepoFile(null, form.getTypeId()));
+    logger.debug("created file: {}", file);
     return Response.ok(new ResultTextrepoFile(form.getDocId(), file)).build();
   }
 
@@ -64,6 +65,7 @@ public class FilesResource {
     logger.debug("get file: id={}", id);
     var file = fileService.get(id);
     var docId = fileService.getDocumentId(file.getId());
+    logger.debug("got file: {}", file);
     return Response.ok(new ResultTextrepoFile(docId, file)).build();
   }
 
@@ -77,8 +79,9 @@ public class FilesResource {
       @PathParam("id") @Valid UUID id,
       @Valid FormTextrepoFile form
   ) {
-    logger.debug("upsert file: id={}; form={}", id, form);
+    logger.debug("Create or update file: id={}; form={}", id, form);
     var file = fileService.upsert(form.getDocId(), new TextrepoFile(id, form.getTypeId()));
+    logger.debug("Created or updated file: {}", file);
     return Response.ok(new ResultTextrepoFile(form.getDocId(), file)).build();
   }
 
@@ -91,6 +94,7 @@ public class FilesResource {
   ) {
     logger.debug("delete file: id={}", id);
     fileService.delete(id);
+    logger.debug("deleted file");
     return Response.ok().build();
   }
 

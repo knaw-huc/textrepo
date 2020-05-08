@@ -45,6 +45,7 @@ public class TypesResource {
     var type = new Type(form.getName(), form.getMimetype());
     logger.debug("Create type: type={}", type);
     var created = typeService.create(type);
+    logger.debug("Created type: {}", created);
     return Response.ok(new ResultType(created)).build();
   }
 
@@ -52,12 +53,13 @@ public class TypesResource {
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Retrieve types")
   public Response getAll() {
-    logger.debug("Retrieve types");
+    logger.debug("Retrieve all types");
     var all = typeService
         .list()
         .stream()
         .map(ResultType::new)
         .collect(toList());
+    logger.debug("Retrieved all types: {}", all);
     return Response.ok(all).build();
   }
 
@@ -70,6 +72,7 @@ public class TypesResource {
   ) {
     logger.debug("Retrieve type: id={}", id);
     var type = typeService.getType(id);
+    logger.debug("Retrieved type: {}", type);
     return Response.ok(new ResultType(type)).build();
   }
 
@@ -77,15 +80,16 @@ public class TypesResource {
   @Path("/{id}")
   @Consumes(APPLICATION_JSON)
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Update type")
+  @ApiOperation(value = "Create or update type")
   public Response put(
       @NotNull @PathParam("id") Short id,
       @NotNull @Valid FormType form
   ) {
+    logger.debug("Create or update type: id={}; type={}", id, form);
     var type = new Type(form.getName(), form.getMimetype());
     type.setId(id);
-    logger.debug("Put type: type={}", type);
     typeService.upsert(type);
+    logger.debug("Created or updated type: {}", type);
     return Response.ok(new ResultType(type)).build();
   }
 
@@ -97,6 +101,7 @@ public class TypesResource {
   ) {
     logger.debug("Delete type: id={}", id);
     typeService.delete(id);
+    logger.debug("Deleted type");
     return Response.ok().build();
   }
 

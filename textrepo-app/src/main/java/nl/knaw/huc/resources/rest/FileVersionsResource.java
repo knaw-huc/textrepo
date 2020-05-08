@@ -60,6 +60,7 @@ public class FileVersionsResource {
     logger.debug("get versions of file: fileId={}; pageParams={}; createdAfter={}", fileId, pageParams, createdAfter);
     var results = versionService
         .getAll(fileId, paginator.fromForm(pageParams), createdAfter);
+    logger.debug("got versions of file: {}", results);
     return Response
         .ok()
         .entity(toResult(results, ResultVersion::new))

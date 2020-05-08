@@ -11,6 +11,11 @@ import java.time.format.DateTimeParseException;
 import static java.lang.String.format;
 import static java.time.format.DateTimeFormatter.ofPattern;
 
+/**
+ * Converts LocalDateTime result to json datetime format
+ *
+ * <p>Datetime pattern is configured in config.yml
+ */
 public class LocalDateTimeSerializer extends JsonSerializer<LocalDateTime> {
 
   private String dateFormat;

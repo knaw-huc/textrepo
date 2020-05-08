@@ -58,8 +58,10 @@ public class DocumentMetadataResource {
   public Map<String, String> get(
       @PathParam("docId") @NotNull @Valid UUID docId
   ) {
-    logger.debug("get metadata: docId={}", docId);
-    return documentMetadataService.getByDocId(docId);
+    logger.debug("get document metadata: docId={}", docId);
+    var metadata = documentMetadataService.getByDocId(docId);
+    logger.debug("got document metadata: {}", metadata);
+    return metadata;
   }
 
   @PUT

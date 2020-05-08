@@ -36,6 +36,7 @@ public class FormTextrepoFile {
   public String toString() {
     return MoreObjects
         .toStringHelper(this)
+        .add("docId", docId)
         .add("typeId", typeId)
         .toString();
   }
