@@ -9,17 +9,16 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
-import nl.knaw.huc.service.datetime.LocalDateTimeParamConverterProvider;
 import nl.knaw.huc.TextRepositoryConfiguration;
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.core.Page;
 import nl.knaw.huc.core.PageParams;
 import nl.knaw.huc.resources.rest.DocumentsResource;
 import nl.knaw.huc.service.DocumentService;
-import nl.knaw.huc.service.logging.LoggingApplicationEventListener;
 import nl.knaw.huc.service.Paginator;
+import nl.knaw.huc.service.datetime.LocalDateTimeParamConverterProvider;
+import nl.knaw.huc.service.logging.LoggingApplicationEventListener;
 import org.apache.commons.io.FileUtils;
-import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,10 +28,8 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 import java.util.regex.MatchResult;
@@ -53,7 +50,10 @@ import static org.mockito.Mockito.when;
 @ExtendWith(DropwizardExtensionsSupport.class)
 public class LoggingTest {
 
+  private static File configFile = new File("src/test/resources/logging/config.yml");
   private static File logFile = new File("target/testlog.log");
+  private static String endpoint = "http://localhost:8765/rest/documents";
+
   private static DocumentService documentService = mock(DocumentService.class);
   private static Paginator paginator = mock(Paginator.class);
 
@@ -73,7 +73,6 @@ public class LoggingTest {
           "dw"
       );
 
-      var configFile = new File("src/test/resources/logging/config.yml");
       var textRepositoryConfiguration = factory.build(configFile);
       application = new DropwizardAppExtension<>(TestApp.class, textRepositoryConfiguration);
 
@@ -94,8 +93,7 @@ public class LoggingTest {
 
   @Test
   public void documentResource_shouldLogUniqueRequestIdSetByLoggingRequestEventListener_whenMultipleRequestFired()
-      throws InterruptedException, IOException
-  {
+      throws InterruptedException, IOException {
 
     var documents = new ArrayList<Document>();
     documents.add(new Document(null, null, null));
@@ -113,6 +111,7 @@ public class LoggingTest {
     // Requests:
     var testExternalIds = Collections.synchronizedCollection(new ArrayList<String>());
     var requestsToPerform = 100;
+    assertThat(application.client().target(endpoint).request()).isNotNull();
     for (var i = 0; i < requestsToPerform; i++) {
       new Thread(() -> {
         var externalId = UUID.randomUUID().toString();
@@ -176,8 +175,7 @@ public class LoggingTest {
   private void performGet(String externalId) {
     application
         .client()
-        .register(MultiPartFeature.class)
-        .target("http://localhost:8765/rest/documents?externalId=" + externalId)
+        .target(endpoint + "?externalId=" + externalId)
         .request()
         .get();
   }
