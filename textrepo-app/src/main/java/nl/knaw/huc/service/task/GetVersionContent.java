@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 import static java.util.Objects.requireNonNull;
 
 public class GetVersionContent implements InTransactionProvider<Contents> {
-  private static final Logger LOG = LoggerFactory.getLogger(GetVersionContent.class);
+  private static final Logger log = LoggerFactory.getLogger(GetVersionContent.class);
 
   private final Version version;
 
@@ -32,7 +32,7 @@ public class GetVersionContent implements InTransactionProvider<Contents> {
     return () -> {
       final var message = String.format("No contents found for version of file %s, sha224=%s",
           version.getFileId(), latest.getContentsSha());
-      LOG.warn(message);
+      log.warn(message);
       return new NotFoundException(message);
     };
   }

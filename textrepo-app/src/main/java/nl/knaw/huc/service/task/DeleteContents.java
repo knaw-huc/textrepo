@@ -10,7 +10,8 @@ import static nl.knaw.huc.service.PsqlExceptionService.Constraint.VERSIONS_CONTE
 import static nl.knaw.huc.service.PsqlExceptionService.violatesConstraint;
 
 public class DeleteContents implements InTransactionRunner {
-  private static final Logger LOG = LoggerFactory.getLogger(DeleteContents.class);
+
+  private static final Logger log = LoggerFactory.getLogger(DeleteContents.class);
 
   private final String contentsSha;
 
@@ -24,7 +25,7 @@ public class DeleteContents implements InTransactionRunner {
       transaction.attach(ContentsDao.class).delete(contentsSha);
     } catch (JdbiException ex) {
       if (violatesConstraint(ex, VERSIONS_CONTENTS_SHA)) {
-        LOG.debug("Not deleting contents because {} is still in use", contentsSha);
+        log.debug("Not deleting contents because {} is still in use", contentsSha);
       } else {
         throw (ex);
       }

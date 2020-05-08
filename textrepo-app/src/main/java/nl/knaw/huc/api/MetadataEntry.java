@@ -1,6 +1,7 @@
 package nl.knaw.huc.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.MoreObjects;
 
 import java.beans.ConstructorProperties;
 
@@ -32,5 +33,14 @@ public class MetadataEntry {
   @JsonProperty
   public void setValue(String value) {
     this.value = value;
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects
+        .toStringHelper(this)
+        .add("key", key)
+        .add("value", value)
+        .toString();
   }
 }

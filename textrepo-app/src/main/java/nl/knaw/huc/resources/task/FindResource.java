@@ -40,13 +40,13 @@ public class FindResource {
       @NotNull @QueryParam("externalId") String documentId,
       @NotNull @QueryParam("typeName") String typeName
   ) {
-    log.debug("find latest version contents: documentId={}; typeName={}", documentId, typeName);
+    log.debug("Find latest version contents: documentId={}; typeName={}", documentId, typeName);
     final var task = factory.getContentsFinderBuilder()
                             .forExternalId(documentId)
                             .withType(typeName)
                             .build();
     final var bytes = task.run().getContents();
-    log.debug("find latest version contents: {}", abbreviateMiddle(bytes));
+    log.debug("Find latest version contents: {}", abbreviateMiddle(bytes));
     return Response
         .ok(bytes, APPLICATION_OCTET_STREAM)
         .header("Content-Disposition", "attachment;")

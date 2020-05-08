@@ -57,9 +57,9 @@ public class FileMetadataResource {
   public Response get(
       @PathParam("fileId") @NotNull @Valid UUID fileId
   ) {
-    log.debug("get file metadata: fileId={}", fileId);
+    log.debug("Get file metadata: fileId={}", fileId);
     var metadata = fileMetadataService.getMetadata(fileId);
-    log.debug("got file metadata: {}", metadata);
+    log.debug("Got file metadata: {}", metadata);
     return Response.ok(metadata).build();
   }
 
@@ -75,10 +75,10 @@ public class FileMetadataResource {
       @PathParam("key") @NotNull String key,
       @NotBlank String value
   ) {
-    log.debug("update or create file metadata: fileId={}, key={}, value={}", fileId, key, value);
+    log.debug("Update or create file metadata: fileId={}, key={}, value={}", fileId, key, value);
     var entry = new MetadataEntry(key, value);
     fileMetadataService.upsert(fileId, entry);
-    log.debug("updated or created file metadata");
+    log.debug("Updated or created file metadata");
     return Response.ok(new ResultFileMetadataEntry(fileId, entry)).build();
   }
 
@@ -93,9 +93,9 @@ public class FileMetadataResource {
       @PathParam("fileId") @NotNull @Valid UUID fileId,
       @PathParam("key") @NotBlank String key
   ) {
-    log.debug("delete file metadata: fileId={}, key={}", fileId, key);
+    log.debug("Delete file metadata: fileId={}, key={}", fileId, key);
     fileMetadataService.delete(fileId, key);
-    log.debug("deleted file metadata");
+    log.debug("Deleted file metadata");
     return Response.ok().build();
   }
 

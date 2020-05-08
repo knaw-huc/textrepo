@@ -28,27 +28,27 @@ public class IndexResource {
       @PathParam("externalId") String externalId,
       @PathParam("type") String type
   ) {
-    log.debug("index document: externalId={}; type={}", externalId, type);
+    log.debug("Index document: externalId={}; type={}", externalId, type);
     final var task = factory
         .getDocumentIndexBuilder()
         .forExternalId(externalId)
         .withType(type)
         .build();
     task.run();
-    log.debug("indexed document");
+    log.debug("Indexed document");
     return Response.accepted().build();
   }
 
   @POST
   @Path("/files/{type}")
   public Response indexAll(@PathParam("type") String type) {
-    log.debug("index all files of type: type={}", type);
+    log.debug("Index all files of type: type={}", type);
     final var task = factory
         .getDocumentIndexBuilder()
         .withType(type)
         .build();
     task.run();
-    log.debug("indexed all files of type");
+    log.debug("Indexed all files of type");
     return Response.accepted().build();
   }
 }

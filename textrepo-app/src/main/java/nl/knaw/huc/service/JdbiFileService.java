@@ -47,7 +47,7 @@ public class JdbiFileService implements FileService {
       @Nonnull String type,
       @Nonnull String filename
   ) {
-    log.trace("creating file of type: {}", type);
+    log.trace("Creating file of type: {}", type);
     final var fileId = fileIdGenerator.get();
     final var typeId = typeService.getId(type);
     files().insert(fileId, typeId);

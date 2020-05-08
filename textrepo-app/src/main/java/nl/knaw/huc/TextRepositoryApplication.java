@@ -189,11 +189,11 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
 
     for (var customIndexerConfig : config.getCustomFacetIndexers()) {
       try {
-        log.info("Creating indexer [{}]", customIndexerConfig.elasticsearch.index);
+        log.info("Create index: {}", customIndexerConfig.elasticsearch.index);
         var customFacetIndexer = new MappedIndexer(customIndexerConfig, typeService);
         customIndexers.add(customFacetIndexer);
       } catch (IndexerException ex) {
-        log.error("Could not create indexer [{}]", customIndexerConfig.elasticsearch.index, ex);
+        log.error("Could not create indexer: {}", customIndexerConfig.elasticsearch.index, ex);
       }
     }
     return customIndexers;

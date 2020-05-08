@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 import static java.util.Objects.requireNonNull;
 
 public class GetLatestFileVersion implements InTransactionProvider<Version> {
-  private static final Logger LOG = LoggerFactory.getLogger(GetLatestFileVersion.class);
+  private static final Logger log = LoggerFactory.getLogger(GetLatestFileVersion.class);
 
   private final TextrepoFile file;
 
@@ -31,7 +31,7 @@ public class GetLatestFileVersion implements InTransactionProvider<Version> {
   private Supplier<NotFoundException> noLatestVersionFound(TextrepoFile file) {
     return () -> {
       final var message = String.format("No latest version found for file: %s", file.getId());
-      LOG.warn(message);
+      log.warn(message);
       return new NotFoundException(message);
     };
   }

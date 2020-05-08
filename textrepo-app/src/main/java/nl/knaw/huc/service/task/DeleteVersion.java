@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DeleteVersion implements InTransactionRunner {
-  private static final Logger LOG = LoggerFactory.getLogger(DeleteVersion.class);
+  private static final Logger log = LoggerFactory.getLogger(DeleteVersion.class);
 
   private final Version version;
 
@@ -17,7 +17,7 @@ public class DeleteVersion implements InTransactionRunner {
 
   @Override
   public void executeIn(Handle transaction) {
-    LOG.debug("Deleting version: {}", version);
+    log.debug("Deleting version: {}", version);
     transaction.attach(VersionsDao.class).delete(version.getId());
     new DeleteContents(version.getContentsSha()).executeIn(transaction);
   }

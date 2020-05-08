@@ -47,9 +47,9 @@ public class FilesResource {
   public Response post(
       @Valid FormTextrepoFile form
   ) {
-    log.debug("create file: form={}", form);
+    log.debug("Create file: form={}", form);
     var file = fileService.insert(form.getDocId(), new TextrepoFile(null, form.getTypeId()));
-    log.debug("created file: {}", file);
+    log.debug("Created file: {}", file);
     return Response.ok(new ResultTextrepoFile(form.getDocId(), file)).build();
   }
 
@@ -62,10 +62,10 @@ public class FilesResource {
   public Response get(
       @PathParam("id") @NotNull @Valid UUID id
   ) {
-    log.debug("get file: id={}", id);
+    log.debug("Get file: id={}", id);
     var file = fileService.get(id);
     var docId = fileService.getDocumentId(file.getId());
-    log.debug("got file: {}", file);
+    log.debug("Got file: {}", file);
     return Response.ok(new ResultTextrepoFile(docId, file)).build();
   }
 
@@ -92,9 +92,9 @@ public class FilesResource {
   public Response delete(
       @PathParam("id") @Valid UUID id
   ) {
-    log.debug("delete file: id={}", id);
+    log.debug("Delete file: id={}", id);
     fileService.delete(id);
-    log.debug("deleted file");
+    log.debug("Deleted file");
     return Response.ok().build();
   }
 

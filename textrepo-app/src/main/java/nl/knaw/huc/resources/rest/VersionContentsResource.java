@@ -57,9 +57,9 @@ public class VersionContentsResource {
   public Response get(
       @PathParam("versionId") @NotNull @Valid UUID versionId
   ) {
-    log.debug("get version contents: versionId={}", versionId);
+    log.debug("Get version contents: versionId={}", versionId);
     var contents = contentsService.getByVersionId(versionId);
-    log.debug("got version contents: {}", contents);
+    log.debug("Got version contents: {}", contents);
     return Response
         .ok(contents.getContents(), APPLICATION_OCTET_STREAM)
         .header("Content-Disposition", "attachment;")

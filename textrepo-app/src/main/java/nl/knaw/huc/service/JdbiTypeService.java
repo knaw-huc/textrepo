@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
@@ -20,7 +19,7 @@ import static nl.knaw.huc.service.PsqlExceptionService.Constraint.FILES_TYPE_ID;
 import static nl.knaw.huc.service.PsqlExceptionService.violatesConstraint;
 
 public class JdbiTypeService implements TypeService {
-  private static final Logger LOGGER = LoggerFactory.getLogger(JdbiTypeService.class);
+  private static final Logger log = LoggerFactory.getLogger(JdbiTypeService.class);
 
   private final Jdbi jdbi;
 
@@ -37,7 +36,7 @@ public class JdbiTypeService implements TypeService {
   public Type create(@Nonnull Type type) {
     throwWhenNameExists(type);
     type.setId(types().create(type));
-    LOGGER.trace("Created type {}", type);
+    log.trace("Created type {}", type);
     return type;
   }
 
@@ -60,7 +59,7 @@ public class JdbiTypeService implements TypeService {
   public Type upsert(Type type) {
     throwWhenNameExists(type);
     types().upsert(type);
-    LOGGER.trace("Upserted type {}", type);
+    log.trace("Upserted type {}", type);
     return type;
   }
 
@@ -74,7 +73,7 @@ public class JdbiTypeService implements TypeService {
       }
       throw ex;
     }
-    LOGGER.trace("Deleted type with id {}", typeId);
+    log.trace("Deleted type with id {}", typeId);
   }
 
   private TypesDao types() {

@@ -58,9 +58,9 @@ public class DocumentMetadataResource {
   public Map<String, String> get(
       @PathParam("docId") @NotNull @Valid UUID docId
   ) {
-    log.debug("get document metadata: docId={}", docId);
+    log.debug("Get document metadata: docId={}", docId);
     var metadata = documentMetadataService.getByDocId(docId);
-    log.debug("got document metadata: {}", metadata);
+    log.debug("Got document metadata: {}", metadata);
     return metadata;
   }
 
@@ -76,9 +76,10 @@ public class DocumentMetadataResource {
       @PathParam("key") @NotBlank String key,
       String value
   ) {
-    log.debug("update metadata: docId={}, key={}, value={}", docId, key, value);
+    log.debug("Update metadata: docId={}, key={}, value={}", docId, key, value);
     var entry = new MetadataEntry(key, value);
     documentMetadataService.upsert(docId, entry);
+    log.debug("Updated metadata: docId={}, entry={}", docId, entry);
     return Response.ok(new ResultDocumentMetadataEntry(docId, entry)).build();
   }
 
@@ -93,8 +94,9 @@ public class DocumentMetadataResource {
       @PathParam("docId") @NotNull @Valid UUID docId,
       @PathParam("key") @NotBlank String key
   ) {
-    log.debug("delete metadata: docId={}, key={}", docId, key);
+    log.debug("Delete metadata: docId={}, key={}", docId, key);
     documentMetadataService.delete(docId, key);
+    log.debug("Deleted metadata");
     return Response.ok().build();
   }
 

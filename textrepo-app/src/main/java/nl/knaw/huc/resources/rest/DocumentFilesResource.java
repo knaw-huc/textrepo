@@ -49,12 +49,12 @@ public class DocumentFilesResource {
       @PathParam("docId") @Valid UUID docId,
       @BeanParam FormPageParams pageParams
   ) {
-    log.debug("get document files: docId={}; pageParams={}", docId, pageParams);
+    log.debug("Get document files: docId={}; pageParams={}", docId, pageParams);
 
     final var page = documentFilesService.getFilesByDocumentId(docId, paginator.fromForm(pageParams));
     var result = toResult(page, (TextrepoFile file) -> new ResultTextrepoFile(docId, file));
 
-    log.debug("got document files: {}", page);
+    log.debug("Got document files: {}", page);
     return Response
         .ok(result)
         .build();

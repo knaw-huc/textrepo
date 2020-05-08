@@ -9,7 +9,8 @@ import org.slf4j.LoggerFactory;
 import static java.util.Objects.requireNonNull;
 
 public class DeleteDocument implements InTransactionRunner {
-  private static final Logger LOG = LoggerFactory.getLogger(DeleteDocument.class);
+
+  private static final Logger log = LoggerFactory.getLogger(DeleteDocument.class);
 
   private final Document doc;
 
@@ -21,7 +22,7 @@ public class DeleteDocument implements InTransactionRunner {
   public void executeIn(Handle transaction) {
     new DeleteFilesForDocument(doc).executeIn(transaction);
 
-    LOG.debug("Deleting document: {}, externalId: [{}]", doc.getId(), doc.getExternalId());
+    log.debug("Deleting document: {}, externalId: [{}]", doc.getId(), doc.getExternalId());
     transaction.attach(DocumentsDao.class)
                .delete(doc.getId());
   }

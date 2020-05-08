@@ -58,10 +58,10 @@ public class VersionsResource {
       @FormDataParam("fileId") UUID fileId,
       @FormDataParam("contents") InputStream inputStream
   ) {
-    log.debug("create version: fileId={}", fileId);
+    log.debug("Create version: fileId={}", fileId);
     var contents = fromBytes(readContents(inputStream, maxPayloadSize));
     var version = versionService.createNewVersion(fileId, contents);
-    log.debug("created version: {}", version);
+    log.debug("Created version: {}", version);
     return Response.ok(new ResultVersion(version)).build();
   }
 
@@ -74,9 +74,9 @@ public class VersionsResource {
   public Response get(
       @PathParam("id") @NotNull @Valid UUID id
   ) {
-    log.debug("get version: id={}", id);
+    log.debug("Get version: id={}", id);
     var version = versionService.get(id);
-    log.debug("got version: {}", version);
+    log.debug("Got version: {}", version);
     return Response.ok(new ResultVersion(version)).build();
   }
 
@@ -100,9 +100,9 @@ public class VersionsResource {
   public Response delete(
       @PathParam("id") @Valid UUID id
   ) {
-    log.debug("delete version: id={}", id);
+    log.debug("Delete version: id={}", id);
     versionService.delete(id);
-    log.debug("deleted version", id);
+    log.debug("Deleted version");
     return Response.ok().build();
   }
 

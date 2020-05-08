@@ -48,7 +48,7 @@ public class ResourceUtils {
       }
 
       if (++numRead > maxAllowedSize) {
-        throw new PayloadTooLargeException("Max. allowed size: " + maxAllowedSize);
+        throw new PayloadTooLargeException("max. allowed size: " + maxAllowedSize);
       }
 
       return c;

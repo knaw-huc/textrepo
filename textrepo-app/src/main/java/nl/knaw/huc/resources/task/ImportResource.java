@@ -37,7 +37,7 @@ public class ImportResource {
   public ImportResource(TaskBuilderFactory factory, int maxPayloadSize) {
     this.factory = factory;
     this.maxPayloadSize = maxPayloadSize;
-    log.debug("ImportFileResource configured with maxPayloadSize={}", maxPayloadSize);
+    log.info("ImportFileResource configured with maxPayloadSize={}", maxPayloadSize);
   }
 
   @POST
@@ -54,7 +54,7 @@ public class ImportResource {
       @NotNull @FormDataParam("contents") FormDataContentDisposition fileDetail
   ) {
     log.debug(
-        "import document contents for file with type: " +
+        "Import document contents for file with type: " +
         "externalId={}, " +
         "typeName={}, " +
         "allowNewDocument={}",
@@ -70,7 +70,7 @@ public class ImportResource {
                                   .build();
 
     importTask.run();
-    log.debug("imported document contents for file with type");
+    log.debug("Imported document contents");
     return Response.ok().build();
   }
 }

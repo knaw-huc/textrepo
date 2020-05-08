@@ -56,9 +56,9 @@ public class DocumentsResource {
   public Response post(
       @Valid FormDocument form
   ) {
-    log.debug("create document: {}", form);
+    log.debug("Create document: {}", form);
     var doc = documentService.create(new Document(null, form.getExternalId()));
-    log.debug("created document: {}", doc);
+    log.debug("Created document: {}", doc);
     return Response.ok(new ResultDocument(doc)).build();
   }
 
@@ -71,9 +71,9 @@ public class DocumentsResource {
       @QueryParam("createdAfter") LocalDateTime createdAfter,
       @BeanParam FormPageParams pageParams
   ) {
-    log.debug("get documents: externalId={}; createdAfter={}; pageParams={}", externalId, createdAfter, pageParams);
+    log.debug("Get documents: externalId={}; createdAfter={}; pageParams={}", externalId, createdAfter, pageParams);
     var docs = documentService.getAll(externalId, createdAfter, paginator.fromForm(pageParams));
-    log.debug("got documents: {}", docs);
+    log.debug("Got documents: {}", docs);
     return Response
         .ok(toResult(docs, ResultDocument::new))
         .build();
@@ -87,11 +87,11 @@ public class DocumentsResource {
   public Response get(
       @PathParam("id") @Valid UUID id
   ) {
-    log.debug("get document: id={}", id);
+    log.debug("Get document: id={}", id);
     final var doc = documentService
         .get(id)
         .orElseThrow(NotFoundException::new);
-    log.debug("got document: {}", doc);
+    log.debug("Got document: {}", doc);
     return Response
         .ok(new ResultDocument(doc))
         .build();
@@ -107,9 +107,9 @@ public class DocumentsResource {
       @PathParam("id") @Valid UUID id,
       @Valid FormDocument form
   ) {
-    log.debug("update document: id={}; form={}", id, form);
+    log.debug("Update document: id={}; form={}", id, form);
     var doc = documentService.update(new Document(id, form.getExternalId()));
-    log.debug("updated document: {}", doc);
+    log.debug("Updated document: {}", doc);
     return Response.ok(new ResultDocument(doc)).build();
   }
 
@@ -120,9 +120,9 @@ public class DocumentsResource {
   public Response delete(
       @PathParam("id") @Valid UUID id
   ) {
-    log.debug("delete document: id={}", id);
+    log.debug("Delete document: id={}", id);
     documentService.delete(id);
-    log.debug("deleted document");
+    log.debug("Deleted document");
     return Response.ok().build();
   }
 

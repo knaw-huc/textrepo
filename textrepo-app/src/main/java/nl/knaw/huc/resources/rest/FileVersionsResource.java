@@ -53,10 +53,10 @@ public class FileVersionsResource {
       @BeanParam FormPageParams pageParams,
       @QueryParam("createdAfter") LocalDateTime createdAfter
   ) {
-    log.debug("get versions of file: fileId={}; pageParams={}; createdAfter={}", fileId, pageParams, createdAfter);
+    log.debug("Get versions of file: fileId={}; pageParams={}; createdAfter={}", fileId, pageParams, createdAfter);
     var results = versionService
         .getAll(fileId, paginator.fromForm(pageParams), createdAfter);
-    log.debug("got versions of file: {}", results);
+    log.debug("Got versions of file: {}", results);
     return Response
         .ok()
         .entity(toResult(results, ResultVersion::new))
