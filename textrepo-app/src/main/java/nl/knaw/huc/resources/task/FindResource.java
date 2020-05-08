@@ -5,6 +5,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.service.task.TaskBuilderFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.GET;
@@ -15,11 +17,13 @@ import javax.ws.rs.core.Response;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
+import static nl.knaw.huc.service.ContentsService.abbreviateMiddle;
 
 @Path("/task/latest")
 @Api(tags = {"task", "latest"})
 public class FindResource {
   private final TaskBuilderFactory factory;
+  private static final Logger logger = LoggerFactory.getLogger(FindResource.class);
 
   public FindResource(TaskBuilderFactory factory) {
     this.factory = factory;
@@ -31,15 +35,19 @@ public class FindResource {
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "OK"),
       @ApiResponse(code = 404, message = "Given type, document or supposed contents could not be found")})
-  public Response findLatestVersion(@NotNull @QueryParam("externalId") String documentId,
-                                    @NotNull @QueryParam("typeName") String typeName) {
+  public Response findLatestVersion(
+      @NotNull @QueryParam("externalId") String documentId,
+      @NotNull @QueryParam("typeName") String typeName
+  ) {
+    logger.debug("find latest version contents: documentId={}; typeName={}", documentId, typeName);
     final var task = factory.getContentsFinderBuilder()
                             .forExternalId(documentId)
                             .withType(typeName)
                             .build();
-    final var contents = task.run();
+    final var bytes = task.run().getContents();
+    logger.debug("find latest version contents: {}", abbreviateMiddle(bytes));
     return Response
-        .ok(contents.getContents(), APPLICATION_OCTET_STREAM)
+        .ok(bytes, APPLICATION_OCTET_STREAM)
         .header("Content-Disposition", "attachment;")
         .build();
   }

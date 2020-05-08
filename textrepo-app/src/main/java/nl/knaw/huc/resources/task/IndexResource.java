@@ -23,24 +23,31 @@ public class IndexResource {
 
   @POST
   @Path("/document/{externalId}/{type}")
-  public Response indexDocument(@PathParam("externalId") String externalId, @PathParam("type") String type) {
-    LOG.debug("Indexing document: {}, type: {}", externalId, type);
-    final var task = factory.getDocumentIndexBuilder()
-                            .forExternalId(externalId)
-                            .withType(type)
-                            .build();
+  public Response indexDocument(
+      @PathParam("externalId") String externalId,
+      @PathParam("type") String type
+  ) {
+    LOG.debug("index document: externalId={}; type={}", externalId, type);
+    final var task = factory
+        .getDocumentIndexBuilder()
+        .forExternalId(externalId)
+        .withType(type)
+        .build();
     task.run();
+    LOG.debug("indexed document");
     return Response.accepted().build();
   }
 
   @POST
   @Path("/files/{type}")
   public Response indexAll(@PathParam("type") String type) {
-    LOG.debug("Indexing ALL files of type: {}", type);
-    final var task = factory.getDocumentIndexBuilder()
-                            .withType(type)
-                            .build();
+    LOG.debug("index all files of type: type={}", type);
+    final var task = factory
+        .getDocumentIndexBuilder()
+        .withType(type)
+        .build();
     task.run();
+    LOG.debug("indexed all files of type");
     return Response.accepted().build();
   }
 }

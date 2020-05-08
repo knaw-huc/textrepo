@@ -52,7 +52,13 @@ public class ImportResource {
       @NotNull @FormDataParam("contents") InputStream uploadedInputStream,
       @NotNull @FormDataParam("contents") FormDataContentDisposition fileDetail
   ) {
-    LOG.debug("ImportFile: allowNewDocument={}, externalId={}, typeName={}", allowNewDocument, externalId, typeName);
+    LOG.debug(
+        "import document contents for file with type: " +
+        "externalId={}, " +
+        "typeName={}, " +
+        "allowNewDocument={}",
+        externalId, typeName, allowNewDocument
+    );
 
     final var builder = factory.getDocumentImportBuilder();
     final var importTask = builder.allowNewDocument(allowNewDocument)
@@ -62,9 +68,8 @@ public class ImportResource {
                                   .withContents(readContents(uploadedInputStream, maxPayloadSize))
                                   .build();
 
-    // TODO: what would be a good (generic) return value for a task?
     importTask.run();
-
+    LOG.debug("imported document contents for file with type");
     return Response.ok().build();
   }
 }

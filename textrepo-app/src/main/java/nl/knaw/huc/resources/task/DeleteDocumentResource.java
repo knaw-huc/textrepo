@@ -25,11 +25,12 @@ public class DeleteDocumentResource {
   public Response deleteDocument(
       @NotBlank @PathParam("externalId") String externalId
   ) {
-    LOG.debug("deleteDocument: externalId={}", externalId);
+    LOG.debug("delete document: externalId={}", externalId);
 
     final var task = factory.getDocumentDeleteBuilder().forExternalId(externalId).build();
     final var doc = task.run();
 
+    LOG.debug("deleted document");
     return Response.ok(doc).build();
   }
 }
