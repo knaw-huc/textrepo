@@ -29,8 +29,10 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 import java.util.regex.MatchResult;
@@ -135,29 +137,34 @@ public class LoggingTest {
     );
 
     // Logs marking start of request (i.e. 'get documents'):
-    var getDocumentsRegex = "DEBUG.*request=([a-f0-9-]{36}).*(get documents).*externalId=([a-f0-9-]{36})";
-    var getLines = getLinesByRegex(logging, getDocumentsRegex);
-    var getIds = new HashMap<String, String>();
-    getLines.forEach((line) -> getIds.put(line.group(1), line.group(3)));
+    var startGetDocumentsRegex = "DEBUG.*request=([a-f0-9-]{36}).*(get documents).*externalId=([a-f0-9-]{36})";
+    var startLines = getLinesByRegex(logging, startGetDocumentsRegex);
+    var startRequestIdsExternalIds = new HashMap<String, String>();
+    startLines.forEach((line) -> startRequestIdsExternalIds.put(line.group(1), line.group(3)));
 
     // Logs marking end of a request (i.e. 'got documents'):
-    var gotDocumentsRegex = "DEBUG.*request=([a-f0-9-]{36}).*(got documents).*externalId=([a-f0-9-]{36})";
-    var gotLines = getLinesByRegex(logging, gotDocumentsRegex);
-    var gotIds = new HashMap<String, String>();
-    getLines.forEach((line) -> gotIds.put(line.group(1), line.group(3)));
+    var endGetDocumentsRegex = "DEBUG.*request=([a-f0-9-]{36}).*(got documents).*externalId=([a-f0-9-]{36})";
+    var endLines = getLinesByRegex(logging, endGetDocumentsRegex);
+    var endRequestIdsExternalIds = new HashMap<String, String>();
+    startLines.forEach((line) -> endRequestIdsExternalIds.put(line.group(1), line.group(3)));
 
     // Test start of request is logged:
-    assertThat(gotLines.size()).isEqualTo(requestsToPerform);
-    testExternalIds.forEach((testExternalId) -> assertThat(getIds).containsValue(testExternalId));
+    assertThat(endLines.size()).isEqualTo(requestsToPerform);
+    testExternalIds.forEach((testExternalId) -> assertThat(startRequestIdsExternalIds).containsValue(testExternalId));
 
     // Test end of request is logged:
-    assertThat(getLines.size()).isEqualTo(requestsToPerform);
-    testExternalIds.forEach((testExternalId) -> assertThat(gotIds).containsValue(testExternalId));
+    assertThat(startLines.size()).isEqualTo(requestsToPerform);
+    testExternalIds.forEach((testExternalId) -> assertThat(endRequestIdsExternalIds).containsValue(testExternalId));
 
     // Test request ID remains linked to external ID:
-    getIds.forEach((requestId, externalId) ->
-        assertThat(gotIds.get(requestId)).isEqualTo(externalId)
+    startRequestIdsExternalIds.forEach((requestId, externalId) ->
+        assertThat(endRequestIdsExternalIds.get(requestId)).isEqualTo(externalId)
     );
+
+    // Test each request gets and keeps its own ID:
+    assertThat(startRequestIdsExternalIds.keySet().size()).isEqualTo(requestsToPerform);
+    assertThat(endRequestIdsExternalIds.keySet().size()).isEqualTo(requestsToPerform);
+    assertThat(startRequestIdsExternalIds.keySet()).containsAll(endRequestIdsExternalIds.keySet());
   }
 
   private List<MatchResult> getLinesByRegex(String logging, String getDocumentsRegex) {

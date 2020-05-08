@@ -8,6 +8,11 @@ import java.time.format.DateTimeParseException;
 
 import static org.eclipse.jetty.util.StringUtil.isBlank;
 
+/**
+ * Convert Jersey datetime @QueryParams to LocalDateTime
+ *
+ * Datetime pattern is configured in config.yml
+ */
 public class LocalDateTimeParamConverter implements ParamConverter<LocalDateTime> {
 
   private DateTimeFormatter formatter;
