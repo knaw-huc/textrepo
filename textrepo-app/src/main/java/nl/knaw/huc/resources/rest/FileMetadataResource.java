@@ -32,7 +32,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 @Path("/rest/files/{fileId}/metadata")
 public class FileMetadataResource {
 
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private static final Logger log = LoggerFactory.getLogger(FileMetadataResource.class);
   private static final String POST_ERROR_MSG = "Not allowed to post metadata: use put instead";
 
   private final FileMetadataService fileMetadataService;
@@ -57,9 +57,9 @@ public class FileMetadataResource {
   public Response get(
       @PathParam("fileId") @NotNull @Valid UUID fileId
   ) {
-    logger.debug("get file metadata: fileId={}", fileId);
+    log.debug("get file metadata: fileId={}", fileId);
     var metadata = fileMetadataService.getMetadata(fileId);
-    logger.debug("got file metadata: {}", metadata);
+    log.debug("got file metadata: {}", metadata);
     return Response.ok(metadata).build();
   }
 
@@ -75,10 +75,10 @@ public class FileMetadataResource {
       @PathParam("key") @NotNull String key,
       @NotBlank String value
   ) {
-    logger.debug("update or create file metadata: fileId={}, key={}, value={}", fileId, key, value);
+    log.debug("update or create file metadata: fileId={}, key={}, value={}", fileId, key, value);
     var entry = new MetadataEntry(key, value);
     fileMetadataService.upsert(fileId, entry);
-    logger.debug("updated or created file metadata");
+    log.debug("updated or created file metadata");
     return Response.ok(new ResultFileMetadataEntry(fileId, entry)).build();
   }
 
@@ -93,9 +93,9 @@ public class FileMetadataResource {
       @PathParam("fileId") @NotNull @Valid UUID fileId,
       @PathParam("key") @NotBlank String key
   ) {
-    logger.debug("delete file metadata: fileId={}, key={}", fileId, key);
+    log.debug("delete file metadata: fileId={}, key={}", fileId, key);
     fileMetadataService.delete(fileId, key);
-    logger.debug("deleted file metadata");
+    log.debug("deleted file metadata");
     return Response.ok().build();
   }
 

@@ -13,7 +13,8 @@ import javax.ws.rs.core.Response;
 @Api(tags = {"task", "index"})
 @Path("task/index")
 public class IndexResource {
-  private static final Logger LOG = LoggerFactory.getLogger(IndexResource.class);
+
+  private static final Logger log = LoggerFactory.getLogger(IndexResource.class);
 
   private final TaskBuilderFactory factory;
 
@@ -27,27 +28,27 @@ public class IndexResource {
       @PathParam("externalId") String externalId,
       @PathParam("type") String type
   ) {
-    LOG.debug("index document: externalId={}; type={}", externalId, type);
+    log.debug("index document: externalId={}; type={}", externalId, type);
     final var task = factory
         .getDocumentIndexBuilder()
         .forExternalId(externalId)
         .withType(type)
         .build();
     task.run();
-    LOG.debug("indexed document");
+    log.debug("indexed document");
     return Response.accepted().build();
   }
 
   @POST
   @Path("/files/{type}")
   public Response indexAll(@PathParam("type") String type) {
-    LOG.debug("index all files of type: type={}", type);
+    log.debug("index all files of type: type={}", type);
     final var task = factory
         .getDocumentIndexBuilder()
         .withType(type)
         .build();
     task.run();
-    LOG.debug("indexed all files of type");
+    log.debug("indexed all files of type");
     return Response.accepted().build();
   }
 }

@@ -29,14 +29,15 @@ import static nl.knaw.huc.resources.ResourceUtils.readContents;
 @Api(tags = {"task", "import"})
 @Path("task/import")
 public class ImportResource {
-  private static final Logger LOG = LoggerFactory.getLogger(ImportResource.class);
+
+  private static final Logger log = LoggerFactory.getLogger(ImportResource.class);
   private final TaskBuilderFactory factory;
   private final int maxPayloadSize;
 
   public ImportResource(TaskBuilderFactory factory, int maxPayloadSize) {
     this.factory = factory;
     this.maxPayloadSize = maxPayloadSize;
-    LOG.debug("ImportFileResource configured with maxPayloadSize={}", maxPayloadSize);
+    log.debug("ImportFileResource configured with maxPayloadSize={}", maxPayloadSize);
   }
 
   @POST
@@ -52,7 +53,7 @@ public class ImportResource {
       @NotNull @FormDataParam("contents") InputStream uploadedInputStream,
       @NotNull @FormDataParam("contents") FormDataContentDisposition fileDetail
   ) {
-    LOG.debug(
+    log.debug(
         "import document contents for file with type: " +
         "externalId={}, " +
         "typeName={}, " +
@@ -69,7 +70,7 @@ public class ImportResource {
                                   .build();
 
     importTask.run();
-    LOG.debug("imported document contents for file with type");
+    log.debug("imported document contents for file with type");
     return Response.ok().build();
   }
 }

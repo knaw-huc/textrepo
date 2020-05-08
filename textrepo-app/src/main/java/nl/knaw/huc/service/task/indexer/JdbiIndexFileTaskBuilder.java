@@ -18,7 +18,7 @@ import java.util.function.Supplier;
 import static java.util.Objects.requireNonNull;
 
 public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
-  private static final Logger LOG = LoggerFactory.getLogger(JdbiIndexFileTaskBuilder.class);
+  private static final Logger log = LoggerFactory.getLogger(JdbiIndexFileTaskBuilder.class);
 
   private final Jdbi jdbi;
   private final Indexer indexer;
@@ -67,14 +67,14 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
         final var file = new FindDocumentFileByType(doc, typeName).executeIn(txn);
         final var contents = new GetLatestFileContents(file).executeIn(txn);
         final var indexResult = indexer.index(file, contents.asUtf8String());
-        indexResult.ifPresent(LOG::warn);
+        indexResult.ifPresent(log::warn);
         return indexResult.orElse("Ok");
       });
     }
   }
 
   private class JdbiIndexAllFilesTask implements Task<String> {
-    private final Logger logger = LoggerFactory.getLogger(JdbiIndexAllFilesTask.class);
+    private final Logger log = LoggerFactory.getLogger(JdbiIndexAllFilesTask.class);
 
     private final String typeName;
 
@@ -88,7 +88,7 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
     public String run() {
       indexFilesByType(resolveType());
       final var msg = String.format("Total files affected: %d", filesAffected);
-      logger.info(msg);
+      log.info(msg);
       return msg;
     }
 
@@ -109,11 +109,11 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
     }
 
     private void indexFile(TextrepoFile file) {
-      logger.debug("Indexing file: {}", file.getId());
+      log.debug("Indexing file: {}", file.getId());
       jdbi.useTransaction(txn -> {
         final var contents = new GetLatestFileContents(file).executeIn(txn);
         final var indexResult = indexer.index(file, contents.asUtf8String());
-        indexResult.ifPresent(LOG::warn);
+        indexResult.ifPresent(JdbiIndexFileTaskBuilder.log::warn);
         filesAffected++;
       });
     }

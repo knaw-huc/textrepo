@@ -73,7 +73,7 @@ public class DocumentsResourceTest {
     return new Paginator(config);
   }
 
-  private final static String dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS";
+  private static final String dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS";
 
   public static final ResourceExtension resource = ResourceExtension
       .builder()

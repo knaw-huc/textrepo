@@ -12,7 +12,6 @@ import nl.knaw.huc.service.DocumentFilesService;
 import nl.knaw.huc.service.Paginator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 
 import javax.validation.Valid;
 import javax.ws.rs.BeanParam;
@@ -30,7 +29,7 @@ import static nl.knaw.huc.service.Paginator.toResult;
 @Path("/rest/documents/{docId}/files")
 public class DocumentFilesResource {
 
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private static final Logger log = LoggerFactory.getLogger(DocumentFilesResource.class);
   private final DocumentFilesService documentFilesService;
   private Paginator paginator;
 
@@ -50,12 +49,12 @@ public class DocumentFilesResource {
       @PathParam("docId") @Valid UUID docId,
       @BeanParam FormPageParams pageParams
   ) {
-    logger.debug("get document files: docId={}; pageParams={}", docId, pageParams);
+    log.debug("get document files: docId={}; pageParams={}", docId, pageParams);
 
     final var page = documentFilesService.getFilesByDocumentId(docId, paginator.fromForm(pageParams));
     var result = toResult(page, (TextrepoFile file) -> new ResultTextrepoFile(docId, file));
 
-    logger.debug("got document files: {}", page);
+    log.debug("got document files: {}", page);
     return Response
         .ok(result)
         .build();

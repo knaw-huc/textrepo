@@ -31,7 +31,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 @Path("/rest/files")
 public class FilesResource {
 
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private static final Logger log = LoggerFactory.getLogger(FilesResource.class);
 
   private final FileService fileService;
 
@@ -47,9 +47,9 @@ public class FilesResource {
   public Response post(
       @Valid FormTextrepoFile form
   ) {
-    logger.debug("create file: form={}", form);
+    log.debug("create file: form={}", form);
     var file = fileService.insert(form.getDocId(), new TextrepoFile(null, form.getTypeId()));
-    logger.debug("created file: {}", file);
+    log.debug("created file: {}", file);
     return Response.ok(new ResultTextrepoFile(form.getDocId(), file)).build();
   }
 
@@ -62,10 +62,10 @@ public class FilesResource {
   public Response get(
       @PathParam("id") @NotNull @Valid UUID id
   ) {
-    logger.debug("get file: id={}", id);
+    log.debug("get file: id={}", id);
     var file = fileService.get(id);
     var docId = fileService.getDocumentId(file.getId());
-    logger.debug("got file: {}", file);
+    log.debug("got file: {}", file);
     return Response.ok(new ResultTextrepoFile(docId, file)).build();
   }
 
@@ -79,9 +79,9 @@ public class FilesResource {
       @PathParam("id") @Valid UUID id,
       @Valid FormTextrepoFile form
   ) {
-    logger.debug("Create or update file: id={}; form={}", id, form);
+    log.debug("Create or update file: id={}; form={}", id, form);
     var file = fileService.upsert(form.getDocId(), new TextrepoFile(id, form.getTypeId()));
-    logger.debug("Created or updated file: {}", file);
+    log.debug("Created or updated file: {}", file);
     return Response.ok(new ResultTextrepoFile(form.getDocId(), file)).build();
   }
 
@@ -92,9 +92,9 @@ public class FilesResource {
   public Response delete(
       @PathParam("id") @Valid UUID id
   ) {
-    logger.debug("delete file: id={}", id);
+    log.debug("delete file: id={}", id);
     fileService.delete(id);
-    logger.debug("deleted file");
+    log.debug("deleted file");
     return Response.ok().build();
   }
 

@@ -30,9 +30,9 @@ import static org.mockito.Mockito.when;
 public class ContentsResourceTest {
   private static final ContentsStorage FILE_STORAGE = mock(ContentsStorage.class);
 
-  private final static String sha224 = "55d4c44f5bc05762d8807f75f3f24b4095afa583ef70ac97eaf7afc6";
-  private final static String contents = "hello test";
-  private final static Contents TEXT_REPO_CONTENTS = new Contents(
+  private static final String sha224 = "55d4c44f5bc05762d8807f75f3f24b4095afa583ef70ac97eaf7afc6";
+  private static final String contents = "hello test";
+  private static final Contents TEXT_REPO_CONTENTS = new Contents(
       sha224,
       contents.getBytes()
   );

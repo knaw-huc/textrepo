@@ -9,7 +9,6 @@ import nl.knaw.huc.api.FormVersion;
 import nl.knaw.huc.api.ResultVersion;
 import nl.knaw.huc.exceptions.MethodNotAllowedException;
 import nl.knaw.huc.service.VersionService;
-import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +37,7 @@ import static nl.knaw.huc.resources.ResourceUtils.readContents;
 @Path("/rest/versions")
 public class VersionsResource {
 
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private static final Logger log = LoggerFactory.getLogger(VersionsResource.class);
   private static final String PUT_ERROR_MSG = "Not allowed to update a version: create a new version using POST";
 
   private final VersionService versionService;
@@ -59,10 +58,10 @@ public class VersionsResource {
       @FormDataParam("fileId") UUID fileId,
       @FormDataParam("contents") InputStream inputStream
   ) {
-    logger.debug("create version: fileId={}", fileId);
+    log.debug("create version: fileId={}", fileId);
     var contents = fromBytes(readContents(inputStream, maxPayloadSize));
     var version = versionService.createNewVersion(fileId, contents);
-    logger.debug("created version: {}", version);
+    log.debug("created version: {}", version);
     return Response.ok(new ResultVersion(version)).build();
   }
 
@@ -75,9 +74,9 @@ public class VersionsResource {
   public Response get(
       @PathParam("id") @NotNull @Valid UUID id
   ) {
-    logger.debug("get version: id={}", id);
+    log.debug("get version: id={}", id);
     var version = versionService.get(id);
-    logger.debug("got version: {}", version);
+    log.debug("got version: {}", version);
     return Response.ok(new ResultVersion(version)).build();
   }
 
@@ -101,9 +100,9 @@ public class VersionsResource {
   public Response delete(
       @PathParam("id") @Valid UUID id
   ) {
-    logger.debug("delete version: id={}", id);
+    log.debug("delete version: id={}", id);
     versionService.delete(id);
-    logger.debug("deleted version", id);
+    log.debug("deleted version", id);
     return Response.ok().build();
   }
 

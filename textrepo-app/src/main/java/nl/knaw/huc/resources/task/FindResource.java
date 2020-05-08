@@ -22,8 +22,9 @@ import static nl.knaw.huc.service.ContentsService.abbreviateMiddle;
 @Path("/task/latest")
 @Api(tags = {"task", "latest"})
 public class FindResource {
+
+  private static final Logger log = LoggerFactory.getLogger(FindResource.class);
   private final TaskBuilderFactory factory;
-  private static final Logger logger = LoggerFactory.getLogger(FindResource.class);
 
   public FindResource(TaskBuilderFactory factory) {
     this.factory = factory;
@@ -39,13 +40,13 @@ public class FindResource {
       @NotNull @QueryParam("externalId") String documentId,
       @NotNull @QueryParam("typeName") String typeName
   ) {
-    logger.debug("find latest version contents: documentId={}; typeName={}", documentId, typeName);
+    log.debug("find latest version contents: documentId={}; typeName={}", documentId, typeName);
     final var task = factory.getContentsFinderBuilder()
                             .forExternalId(documentId)
                             .withType(typeName)
                             .build();
     final var bytes = task.run().getContents();
-    logger.debug("find latest version contents: {}", abbreviateMiddle(bytes));
+    log.debug("find latest version contents: {}", abbreviateMiddle(bytes));
     return Response
         .ok(bytes, APPLICATION_OCTET_STREAM)
         .header("Content-Disposition", "attachment;")

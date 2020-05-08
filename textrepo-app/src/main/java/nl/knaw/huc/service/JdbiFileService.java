@@ -22,7 +22,7 @@ import static nl.knaw.huc.core.Contents.fromBytes;
 
 public class JdbiFileService implements FileService {
 
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private static final Logger log = LoggerFactory.getLogger(JdbiFileService.class);
 
   private final Jdbi jdbi;
   private final TypeService typeService;
@@ -47,7 +47,7 @@ public class JdbiFileService implements FileService {
       @Nonnull String type,
       @Nonnull String filename
   ) {
-    logger.trace("creating file of type: {}", type);
+    log.trace("creating file of type: {}", type);
     final var fileId = fileIdGenerator.get();
     final var typeId = typeService.getId(type);
     files().insert(fileId, typeId);

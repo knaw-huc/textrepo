@@ -33,7 +33,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 @Path("/rest/documents/{docId}/metadata")
 public class DocumentMetadataResource {
 
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private static final Logger log = LoggerFactory.getLogger(DocumentMetadataResource.class);
   private static final String POST_ERROR_MSG = "Not allowed to post metadata: use put instead";
 
   private final DocumentMetadataService documentMetadataService;
@@ -58,9 +58,9 @@ public class DocumentMetadataResource {
   public Map<String, String> get(
       @PathParam("docId") @NotNull @Valid UUID docId
   ) {
-    logger.debug("get document metadata: docId={}", docId);
+    log.debug("get document metadata: docId={}", docId);
     var metadata = documentMetadataService.getByDocId(docId);
-    logger.debug("got document metadata: {}", metadata);
+    log.debug("got document metadata: {}", metadata);
     return metadata;
   }
 
@@ -76,7 +76,7 @@ public class DocumentMetadataResource {
       @PathParam("key") @NotBlank String key,
       String value
   ) {
-    logger.debug("update metadata: docId={}, key={}, value={}", docId, key, value);
+    log.debug("update metadata: docId={}, key={}, value={}", docId, key, value);
     var entry = new MetadataEntry(key, value);
     documentMetadataService.upsert(docId, entry);
     return Response.ok(new ResultDocumentMetadataEntry(docId, entry)).build();
@@ -93,7 +93,7 @@ public class DocumentMetadataResource {
       @PathParam("docId") @NotNull @Valid UUID docId,
       @PathParam("key") @NotBlank String key
   ) {
-    logger.debug("delete metadata: docId={}, key={}", docId, key);
+    log.debug("delete metadata: docId={}, key={}", docId, key);
     documentMetadataService.delete(docId, key);
     return Response.ok().build();
   }

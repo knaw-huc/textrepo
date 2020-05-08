@@ -66,7 +66,7 @@ public class FileVersionsResourceTest {
   private static final VersionsDao VERSIONS_DAO = mock(VersionsDao.class);
 
   // with milliseconds:
-  private final static String dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS";
+  private static final String dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS";
 
   public static final ResourceExtension resource;
 

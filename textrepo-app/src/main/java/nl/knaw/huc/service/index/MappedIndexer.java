@@ -43,8 +43,8 @@ import static org.elasticsearch.common.xcontent.XContentType.JSON;
  */
 public class MappedIndexer implements Indexer {
 
+  private static final Logger log = LoggerFactory.getLogger(MappedIndexer.class);
   private final MappedIndexerConfiguration config;
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final Client requestClient = JerseyClientBuilder.newClient();
   private final TypeService typeService;
   private final TextRepoElasticClient client;
@@ -64,12 +64,12 @@ public class MappedIndexer implements Indexer {
   }
 
   private void createIndex(MappedIndexerConfiguration config) throws IndexerException {
-    logger.info("Creating es index [{}]", config.elasticsearch.index);
+    log.info("Creating es index [{}]", config.elasticsearch.index);
     var response = getMapping(config);
     var mappingResult = response.readEntity(String.class);
 
     if (response.getStatus() != 200) {
-      logger.error(
+      log.error(
           "Could not get mapping from [{}]: {} - {}",
           config.mapping, response.getStatus(), mappingResult
       );
@@ -85,9 +85,9 @@ public class MappedIndexer implements Indexer {
           .indices()
           .create(request, RequestOptions.DEFAULT);
     } catch (ElasticsearchStatusException ex) {
-      logger.info("Could not create index [{}], already exists", config.elasticsearch.index);
+      log.info("Could not create index [{}], already exists", config.elasticsearch.index);
     } catch (IOException ex) {
-      logger.error("Could not create index [{}]", config.elasticsearch.index, ex);
+      log.error("Could not create index [{}]", config.elasticsearch.index, ex);
     }
   }
 
@@ -173,12 +173,12 @@ public class MappedIndexer implements Indexer {
     var response = indexRequest(indexRequest);
     var status = response.status().getStatus();
     if (status == 201) {
-      logger.debug("Successfully added file [{}] to index [{}]", fileId, config.elasticsearch.index);
+      log.debug("Successfully added file [{}] to index [{}]", fileId, config.elasticsearch.index);
       return Optional.empty();
     } else {
       final var msg = format("Response of adding file %s to index %s was: %d - %s",
           fileId, config.elasticsearch.index, status, response.toString());
-      logger.error(msg);
+      log.error(msg);
       return Optional.of(msg);
     }
   }
@@ -193,7 +193,7 @@ public class MappedIndexer implements Indexer {
 
   private boolean mimetypeSupported(String mimetype) {
     if (!config.mimetypes.contains(mimetype)) {
-      logger.info("Not indexing in {} because {} is not in [{}]",
+      log.info("Not indexing in {} because {} is not in [{}]",
           config.elasticsearch.index, mimetype, join(", ", config.mimetypes)
       );
       return false;
@@ -205,7 +205,7 @@ public class MappedIndexer implements Indexer {
     if (response.getStatus() != 200) {
       final var msg = format("Could not get fields for %s, response was: %d - %s",
           config.elasticsearch.index, response.getStatus(), esFacets);
-      logger.error(msg);
+      log.error(msg);
       return Optional.of(msg);
     }
     return Optional.empty();

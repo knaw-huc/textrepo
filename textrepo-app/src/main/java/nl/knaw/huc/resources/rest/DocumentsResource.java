@@ -12,7 +12,6 @@ import nl.knaw.huc.service.DocumentService;
 import nl.knaw.huc.service.Paginator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 
 import javax.validation.Valid;
 import javax.ws.rs.BeanParam;
@@ -37,7 +36,7 @@ import static nl.knaw.huc.service.Paginator.toResult;
 @Path("/rest/documents")
 public class DocumentsResource {
 
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private static final Logger log = LoggerFactory.getLogger(DocumentsResource.class);
   private final DocumentService documentService;
   private Paginator paginator;
 
@@ -57,9 +56,9 @@ public class DocumentsResource {
   public Response post(
       @Valid FormDocument form
   ) {
-    logger.debug("create document: {}", form);
+    log.debug("create document: {}", form);
     var doc = documentService.create(new Document(null, form.getExternalId()));
-    logger.debug("created document: {}", doc);
+    log.debug("created document: {}", doc);
     return Response.ok(new ResultDocument(doc)).build();
   }
 
@@ -72,9 +71,9 @@ public class DocumentsResource {
       @QueryParam("createdAfter") LocalDateTime createdAfter,
       @BeanParam FormPageParams pageParams
   ) {
-    logger.debug("get documents: externalId={}; createdAfter={}; pageParams={}", externalId, createdAfter, pageParams);
+    log.debug("get documents: externalId={}; createdAfter={}; pageParams={}", externalId, createdAfter, pageParams);
     var docs = documentService.getAll(externalId, createdAfter, paginator.fromForm(pageParams));
-    logger.debug("got documents: {}", docs);
+    log.debug("got documents: {}", docs);
     return Response
         .ok(toResult(docs, ResultDocument::new))
         .build();
@@ -88,11 +87,11 @@ public class DocumentsResource {
   public Response get(
       @PathParam("id") @Valid UUID id
   ) {
-    logger.debug("get document: id={}", id);
+    log.debug("get document: id={}", id);
     final var doc = documentService
         .get(id)
         .orElseThrow(NotFoundException::new);
-    logger.debug("got document: {}", doc);
+    log.debug("got document: {}", doc);
     return Response
         .ok(new ResultDocument(doc))
         .build();
@@ -108,9 +107,9 @@ public class DocumentsResource {
       @PathParam("id") @Valid UUID id,
       @Valid FormDocument form
   ) {
-    logger.debug("update document: id={}; form={}", id, form);
+    log.debug("update document: id={}; form={}", id, form);
     var doc = documentService.update(new Document(id, form.getExternalId()));
-    logger.debug("updated document: {}", doc);
+    log.debug("updated document: {}", doc);
     return Response.ok(new ResultDocument(doc)).build();
   }
 
@@ -121,9 +120,9 @@ public class DocumentsResource {
   public Response delete(
       @PathParam("id") @Valid UUID id
   ) {
-    logger.debug("delete document: id={}", id);
+    log.debug("delete document: id={}", id);
     documentService.delete(id);
-    logger.debug("deleted document");
+    log.debug("deleted document");
     return Response.ok().build();
   }
 

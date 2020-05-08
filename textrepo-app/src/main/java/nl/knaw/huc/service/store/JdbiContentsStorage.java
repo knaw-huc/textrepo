@@ -10,7 +10,8 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 
 public class JdbiContentsStorage implements ContentsStorage {
-  private final Logger logger = LoggerFactory.getLogger(JdbiContentsStorage.class);
+
+  private static final Logger log = LoggerFactory.getLogger(JdbiContentsStorage.class);
 
   private final Jdbi jdbi;
 
@@ -23,7 +24,7 @@ public class JdbiContentsStorage implements ContentsStorage {
     try {
       contents().insert(contents);
     } catch (Exception e) {
-      logger.warn("Failed to insert contents: {}", e.getMessage());
+      log.warn("Failed to insert contents: {}", e.getMessage());
       throw new WebApplicationException(e);
     }
   }

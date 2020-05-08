@@ -24,7 +24,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
 @Path("/rest/contents")
 public class ContentsResource {
 
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private static final Logger log = LoggerFactory.getLogger(ContentsResource.class);
   private final ContentsService contentsService;
 
   public ContentsResource(ContentsService contentsService) {
@@ -40,16 +40,16 @@ public class ContentsResource {
   public Response get(
       @PathParam("sha") @NotBlank String sha
   ) {
-    logger.debug("get contents: sha={}", sha);
+    log.debug("get contents: sha={}", sha);
 
     if (sha.length() != 56) {
-      logger.warn("bad length in sha ({}): {}", sha.length(), sha);
+      log.warn("bad length in sha ({}): {}", sha.length(), sha);
       throw new BadRequestException("not a sha: " + sha);
     }
 
     final var contents = contentsService.getBySha(sha);
 
-    logger.debug("got contents: {}", contents);
+    log.debug("got contents: {}", contents);
 
     return Response
         .ok(contents.getContents(), APPLICATION_OCTET_STREAM)

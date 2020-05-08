@@ -30,7 +30,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
 @Path("/rest/versions/{versionId}/contents")
 public class VersionContentsResource {
 
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private static final Logger log = LoggerFactory.getLogger(VersionContentsResource.class);
   private static final String POST_ERROR_MSG = "Not allowed to post contents: post new version instead";
   private static final String PUT_ERROR_MSG = "Not allowed to put contents of version: post new version instead";
   private static final String DELETE_ERROR_MSG = "Not allowed to delete contents of version: delete version instead";
@@ -57,9 +57,9 @@ public class VersionContentsResource {
   public Response get(
       @PathParam("versionId") @NotNull @Valid UUID versionId
   ) {
-    logger.debug("get version contents: versionId={}", versionId);
+    log.debug("get version contents: versionId={}", versionId);
     var contents = contentsService.getByVersionId(versionId);
-    logger.debug("got version contents: {}", contents);
+    log.debug("got version contents: {}", contents);
     return Response
         .ok(contents.getContents(), APPLICATION_OCTET_STREAM)
         .header("Content-Disposition", "attachment;")

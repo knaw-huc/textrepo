@@ -28,11 +28,11 @@ import static nl.knaw.huc.service.PsqlExceptionService.violatesConstraint;
 
 public class JdbiVersionService implements VersionService {
 
+  private static final Logger log = LoggerFactory.getLogger(JdbiVersionService.class);
   private final Jdbi jdbi;
   private final ContentsService contentsService;
   private List<MappedIndexer> indexers;
   private Supplier<UUID> uuidGenerator;
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   public JdbiVersionService(
       Jdbi jdbi,
@@ -102,10 +102,10 @@ public class JdbiVersionService implements VersionService {
   private void tryDeletingContents(@Nonnull UUID id, String sha) {
     try {
       contents().delete(sha);
-      logger.info("Deleted contents of version {} by sha {}", id, sha);
+      log.info("Deleted contents of version {} by sha {}", id, sha);
     } catch (JdbiException ex) {
       if (violatesConstraint(ex, VERSIONS_CONTENTS_SHA)) {
-        logger.info("Not deleting contents of version {} because sha {} is still in use", id, sha);
+        log.info("Not deleting contents of version {} because sha {} is still in use", id, sha);
       } else {
         throw ex;
       }

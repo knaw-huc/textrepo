@@ -50,6 +50,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(DropwizardExtensionsSupport.class)
 public class LoggingTest {
 
+  private static final Logger log = LoggerFactory.getLogger(LoggingTest.class);
   private static File configFile = new File("src/test/resources/logging/config.yml");
   private static File logFile = new File("target/testlog.log");
   private static String endpoint = "http://localhost:8765/rest/documents";
@@ -59,7 +60,6 @@ public class LoggingTest {
 
   public static DropwizardAppExtension<TextRepositoryConfiguration> application;
 
-  private Logger logger = LoggerFactory.getLogger(this.getClass());
 
   /*
     To test logging: create test app with DocumentResource and custom config and file logger
@@ -121,7 +121,7 @@ public class LoggingTest {
     }
 
     while (testExternalIds.size() != requestsToPerform) {
-      logger.info("Wait for {} concurrent requests to finish", requestsToPerform);
+      log.info("Wait for {} concurrent requests to finish", requestsToPerform);
       MILLISECONDS.sleep(100);
     }
 

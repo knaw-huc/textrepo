@@ -17,7 +17,7 @@ import static org.elasticsearch.cluster.health.ClusterHealthStatus.YELLOW;
 
 public class ElasticsearchHealthCheck extends HealthCheck {
 
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private static final Logger logger = LoggerFactory.getLogger(ElasticsearchHealthCheck.class);
   private final String indexName;
   private final TextRepoElasticClient client;
 

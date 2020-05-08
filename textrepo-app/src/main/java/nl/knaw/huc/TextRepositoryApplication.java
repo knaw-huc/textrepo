@@ -65,11 +65,11 @@ import static java.util.stream.Collectors.toMap;
 
 public class TextRepositoryApplication extends Application<TextRepositoryConfiguration> {
 
-  private static final Logger logger = LoggerFactory.getLogger(TextRepositoryApplication.class);
+  private static final Logger log = LoggerFactory.getLogger(TextRepositoryApplication.class);
 
   public static void main(final String[] args) throws Exception {
     new TextRepositoryApplication().run(args);
-    logger.info("TextRepository app started");
+    log.info("TextRepository app started");
   }
 
   @Override
@@ -189,11 +189,11 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
 
     for (var customIndexerConfig : config.getCustomFacetIndexers()) {
       try {
-        logger.info("Creating indexer [{}]", customIndexerConfig.elasticsearch.index);
+        log.info("Creating indexer [{}]", customIndexerConfig.elasticsearch.index);
         var customFacetIndexer = new MappedIndexer(customIndexerConfig, typeService);
         customIndexers.add(customFacetIndexer);
       } catch (IndexerException ex) {
-        logger.error("Could not create indexer [{}]", customIndexerConfig.elasticsearch.index, ex);
+        log.error("Could not create indexer [{}]", customIndexerConfig.elasticsearch.index, ex);
       }
     }
     return customIndexers;

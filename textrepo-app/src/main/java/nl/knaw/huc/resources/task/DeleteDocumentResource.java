@@ -12,7 +12,8 @@ import javax.ws.rs.core.Response;
 
 @Path("/task/delete")
 public class DeleteDocumentResource {
-  private static final Logger LOG = LoggerFactory.getLogger(DeleteDocumentResource.class);
+
+  private static final Logger log = LoggerFactory.getLogger(DeleteDocumentResource.class);
 
   private final TaskBuilderFactory factory;
 
@@ -25,12 +26,12 @@ public class DeleteDocumentResource {
   public Response deleteDocument(
       @NotBlank @PathParam("externalId") String externalId
   ) {
-    LOG.debug("delete document: externalId={}", externalId);
+    log.debug("delete document: externalId={}", externalId);
 
     final var task = factory.getDocumentDeleteBuilder().forExternalId(externalId).build();
     final var doc = task.run();
 
-    LOG.debug("deleted document");
+    log.debug("deleted document");
     return Response.ok(doc).build();
   }
 }

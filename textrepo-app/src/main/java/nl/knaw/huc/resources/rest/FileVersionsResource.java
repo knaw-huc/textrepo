@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -22,19 +21,16 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.UUID;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static nl.knaw.huc.service.Paginator.toResult;
-import static org.eclipse.jetty.util.StringUtil.isBlank;
 
 @Api(tags = {"files", "versions"})
 @Path("/rest/files/{fileId}/versions")
 public class FileVersionsResource {
 
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private static final Logger log = LoggerFactory.getLogger(FileVersionsResource.class);
 
   private VersionService versionService;
   private Paginator paginator;
@@ -57,10 +53,10 @@ public class FileVersionsResource {
       @BeanParam FormPageParams pageParams,
       @QueryParam("createdAfter") LocalDateTime createdAfter
   ) {
-    logger.debug("get versions of file: fileId={}; pageParams={}; createdAfter={}", fileId, pageParams, createdAfter);
+    log.debug("get versions of file: fileId={}; pageParams={}; createdAfter={}", fileId, pageParams, createdAfter);
     var results = versionService
         .getAll(fileId, paginator.fromForm(pageParams), createdAfter);
-    logger.debug("got versions of file: {}", results);
+    log.debug("got versions of file: {}", results);
     return Response
         .ok()
         .entity(toResult(results, ResultVersion::new))
