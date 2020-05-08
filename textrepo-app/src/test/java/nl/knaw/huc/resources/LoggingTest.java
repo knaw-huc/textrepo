@@ -136,13 +136,13 @@ public class LoggingTest {
     );
 
     // Logs marking start of request (i.e. 'get documents'):
-    var startGetDocumentsRegex = "DEBUG.*request=([a-f0-9-]{36}).*(get documents).*externalId=([a-f0-9-]{36})";
+    var startGetDocumentsRegex = "DEBUG.*request=([a-f0-9-]{36}).*(Get documents).*externalId=([a-f0-9-]{36})";
     var startLines = getLinesByRegex(logging, startGetDocumentsRegex);
     var startRequestIdsExternalIds = new HashMap<String, String>();
     startLines.forEach((line) -> startRequestIdsExternalIds.put(line.group(1), line.group(3)));
 
     // Logs marking end of a request (i.e. 'got documents'):
-    var endGetDocumentsRegex = "DEBUG.*request=([a-f0-9-]{36}).*(got documents).*externalId=([a-f0-9-]{36})";
+    var endGetDocumentsRegex = "DEBUG.*request=([a-f0-9-]{36}).*(Got documents).*externalId=([a-f0-9-]{36})";
     var endLines = getLinesByRegex(logging, endGetDocumentsRegex);
     var endRequestIdsExternalIds = new HashMap<String, String>();
     startLines.forEach((line) -> endRequestIdsExternalIds.put(line.group(1), line.group(3)));
