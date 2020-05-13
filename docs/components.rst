@@ -7,7 +7,7 @@ Endpoints
 *********
 
 - |tr| `API <http://localhost:8080/textrepo/swagger>`_
-- |tr| `healtch checks <http://localhost:8081/healthcheck/>`_
+- |tr| `healtch checks <http://localhost:8081/healthcheck>`_
 - `Integration test results <https://demorepo.tt.di.huc.knaw.nl/concordion/nl/knaw/huc/textrepo/Textrepo.html>`_
 - `Elasticsearch indexes <http://localhost:8080/index/_aliases?pretty>`_
 - `Stub indexer <http://localhost:8080/custom-index/>`_
