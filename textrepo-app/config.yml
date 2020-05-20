@@ -1,69 +1,25 @@
 database:
-  driverClass: org.postgresql.Driver
-  user: textrepo
-  password: textrepo
-  url: jdbc:postgresql://postgres:5432/textrepo
+  driverClass: ${TR_DATABASE_DRIVER_CLASS}
+  user: ${TR_DATABASE_USER}
+  password: ${TR_DATABASE_PASSWORD}
+  url: ${TR_DATABASE_URL}
   properties:
-    charSet: UTF-8
-  maxWaitForConnection: 1s
-  validationQueryTimeout: 3s
-  minSize: 8
-  maxSize: 32
-  checkConnectionWhileIdle: false
-  evictionInterval: 10s
-  minIdleTime: 1 minute
-
+    charSet: ${TR_DATABASE_PROPERTIES_CHAR_SET}
+  maxWaitForConnection: ${TR_DATABASE_MAX_WAIT_FOR_CONNECTION}
+  validationQueryTimeout: ${TR_DATABASE_VALIDATION_QUERY_TIMEOUT}
+  minSize: ${TR_DATABASE_MIN_SIZE}
+  maxSize: ${TR_DATABASE_MAX_SIZE}
+  checkConnectionWhileIdle: ${TR_DATABASE_CHECK_CONNECTION_WHILE_IDLE}
+  evictionInterval: ${TR_DATABASE_EVICTION_INTERVAL}
 logging:
-  level: INFO
-  loggers:
-    nl.knaw.huc: DEBUG
-    # Hide warnings of Swagger trying to load classes through reflection:
-    org.reflections.Reflections: ERROR
-  appenders:
-    - type: console
-      # Log only first 8 chars of request uuid:
-      logFormat: "[%-5p] [%d{ISO8601,UTC}] [%.8X{request}] %logger{32}: %m%n%rEx"
-
-indexers:
-- mapping: https://demo.docere.diginfra.net/api/projects/gheys/mapping
-  fields:
-    url: https://demo.docere.diginfra.net/api/projects/docere/documents/x/fields
-    type: urlencoded
-  mimetypes:
-    - application/xml
-  elasticsearch:
-    index: docere
-    hosts:
-      - elasticsearch:9200
-- mapping: http://autocomplete-indexer:8080/autocomplete/mapping
-  fields:
-    url: http://autocomplete-indexer:8080/autocomplete/fields
-    type: multipart
-  mimetypes:
-    - application/xml
-    - text/plain
-  elasticsearch:
-    index: autocomplete
-    hosts:
-      - elasticsearch:9200
-- mapping: http://full-text-indexer:8080/full-text/mapping
-  fields:
-    url: http://full-text-indexer:8080/full-text/fields
-    type: multipart
-  mimetypes:
-    - application/xml
-    - text/plain
-  elasticsearch:
-    index: full-text
-    hosts:
-      - elasticsearch:9200
-
+  level: ${TR_LOGGING_LEVEL}
+  loggers: ${TR_LOGGING_LOGGERS}
+  appenders: ${TR_LOGGING_APPENDERS}
+indexers: ${TR_INDEXERS}
 swagger:
-  resourcePackage: nl.knaw.huc.resources
-  contextRoot: /textrepo
-
+  resourcePackage: ${TR_SWAGGER_RESOURCE_PACKAGE}
+  contextRoot: ${TR_SWAGGER_CONTEXT_ROOT}
 pagination:
-  defaultOffset: 0
-  defaultLimit: 10
-
-dateFormat: yyyy-MM-dd'T'HH:mm:ss
+  defaultOffset: ${TR_PAGINATION_DEFAULT_OFFSET}
+  defaultLimit: ${TR_PAGINATION_DEFAULT_LIMIT}
+dateFormat: ${TR_DATE_FORMAT}

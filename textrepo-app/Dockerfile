@@ -8,5 +8,6 @@ WORKDIR /textrepo-app
 COPY --from=builder /build/target/textrepo-1.0-SNAPSHOT.jar /textrepo-app/textrepo.jar
 COPY ./config.yml /textrepo-app/
 COPY ./scripts/wait-for-it.sh /utils/
+RUN apt-get update && apt-get install -y gettext-base
 
 CMD java -jar /textrepo-app/textrepo.jar server config.yml
