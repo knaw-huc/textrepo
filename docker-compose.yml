@@ -85,10 +85,10 @@ services:
     - 8081:8081
     networks:
     - textrepo_network
-    command: ["/utils/wait-for-it.sh", "autocomplete-indexer:8080",
+    command: ["./wait-for-it.sh", "autocomplete-indexer:8080",
               "--timeout=0",
               "--",
-              "/bin/bash", "-c", "envsubst < config.yml > config-subst.yml && java -jar /textrepo-app/textrepo.jar server config-subst.yml"
+              "./start.sh"
     ]
     environment:
       TR_DATABASE_DRIVER_CLASS: ${TR_DATABASE_DRIVER_CLASS}
