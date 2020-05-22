@@ -110,7 +110,7 @@ public class LoggingTest {
 
     // Requests:
     var testExternalIds = Collections.synchronizedCollection(new ArrayList<String>());
-    var requestsToPerform = 100;
+    var requestsToPerform = 10;
     assertThat(application.client().target(endpoint).request()).isNotNull();
     for (var i = 0; i < requestsToPerform; i++) {
       new Thread(() -> {
