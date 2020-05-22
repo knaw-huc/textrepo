@@ -20,11 +20,11 @@ services:
     container_name: tr_elasticsearch
     image: docker.elastic.co/elasticsearch/elasticsearch:7.6.0
     environment:
-    - node.name=es01
-    - cluster.initial_master_nodes=es01
-    - cluster.name=textrepo-cluster
-    - bootstrap.memory_lock=true
-    - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - node.name=${ES_NODE_NAME}
+      - cluster.initial_master_nodes=${ES_CLUSTER_INITIAL_MASTER_NODES}
+      - cluster.name=${ES_CLUSTER_NAME}
+      - bootstrap.memory_lock=${ES_BOOTSTRAP_MEMORY_LOCK}
+      - ES_JAVA_OPTS=${ES_JAVA_OPTS}
     restart: always
     ulimits:
       memlock:
@@ -132,9 +132,9 @@ services:
     volumes:
     - concordiondata:/concordion
     environment:
-      ES_HOST: elasticsearch:9200
-      APP_HOST: textrepo-app:8080
-      APP_HOST_ADMIN: textrepo-app:8081
+      ES_HOST: ${CONCORDION_ES_HOST}
+      APP_HOST: ${CONCORDION_APP_HOST}
+      APP_HOST_ADMIN: ${CONCORDION_APP_HOST_ADMIN}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
