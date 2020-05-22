@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
 set -x
-source docker-compose.env
-docker-compose up --build
+
+source ./scripts/set-env.sh
+
+docker-compose -f docker-compose-subst.yml up --build

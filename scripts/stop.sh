@@ -1,3 +1,6 @@
 #!/usr/bin/env bash
 set -x
-docker-compose down -v
+
+source ./scripts/set-env.sh
+
+docker-compose -f docker-compose-subst.yml down -v

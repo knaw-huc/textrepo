@@ -47,8 +47,10 @@ services:
     - textrepo-app
     volumes:
     - concordiondata:/concordion:ro
-    ports:
-    - 8080:8080
+    expose:
+    - ${NGINX_EXPOSE}
+    environment:
+      VIRTUAL_HOST: ${NGINX_VIRTUAL_HOST}
 
   autocomplete-indexer:
     container_name: tr_autocomplete
@@ -141,8 +143,8 @@ services:
       CUSTOM_INDEX: ${CUSTOM_INDEX}
       AUTOCOMPLETE_INDEX: ${AUTOCOMPLETE_INDEX}
 
-networks:
-  textrepo_network:
+# ${ NETWORKS } should be replaced with valid mapping before it passing to docker-compose:
+networks: ${NETWORKS}
 
 volumes:
   esdata:
