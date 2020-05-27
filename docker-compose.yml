@@ -143,8 +143,8 @@ services:
       CUSTOM_INDEX: ${CUSTOM_INDEX}
       AUTOCOMPLETE_INDEX: ${AUTOCOMPLETE_INDEX}
 
-# ${ NETWORKS } should be replaced with valid mapping before it passing to docker-compose:
-networks: ${NETWORKS}
+networks:
+  textrepo_network:
 
 volumes:
   esdata:
