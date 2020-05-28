@@ -47,10 +47,11 @@ services:
     - textrepo-app
     volumes:
     - concordiondata:/concordion:ro
-    expose:
-    - ${NGINX_EXPOSE}
+    ports:
+    - ${NGINX_EXPOSE}:${NGINX_EXPOSE}
     environment:
       VIRTUAL_HOST: ${NGINX_VIRTUAL_HOST}
+      NGINX_EXPOSE: ${NGINX_EXPOSE}
 
   autocomplete-indexer:
     container_name: tr_autocomplete
