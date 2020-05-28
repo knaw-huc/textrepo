@@ -5,18 +5,25 @@ import nl.knaw.huc.core.Page;
 import nl.knaw.huc.core.PageParams;
 import nl.knaw.huc.db.DocumentsDao;
 import org.jdbi.v3.core.Jdbi;
+import org.jdbi.v3.core.JdbiException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.BadRequestException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
 
 import static java.lang.String.format;
+import static nl.knaw.huc.service.PsqlExceptionService.Constraint.DOCUMENTS_EXTERNAL_ID_KEY;
+import static nl.knaw.huc.service.PsqlExceptionService.violatesConstraint;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class JdbiDocumentService implements DocumentService {
   private final Jdbi jdbi;
   private Supplier<UUID> uuidGenerator;
+  private static final Logger log = LoggerFactory.getLogger(JdbiDocumentService.class);
 
   public JdbiDocumentService(Jdbi jdbi, Supplier<UUID> uuidGenerator) {
     this.jdbi = jdbi;
@@ -31,7 +38,18 @@ public class JdbiDocumentService implements DocumentService {
   @Override
   public Document create(Document document) {
     document.setId(uuidGenerator.get());
-    return documents().insert(document);
+    try {
+      return documents().insert(document);
+    } catch (JdbiException ex) {
+      if (violatesConstraint(ex, DOCUMENTS_EXTERNAL_ID_KEY)) {
+        var msg = format("Document not created: external ID [%s] already exists", document.getExternalId());
+        log.warn(msg);
+        throw new BadRequestException(msg);
+      } else {
+        throw ex;
+      }
+    }
+
   }
 
   @Override

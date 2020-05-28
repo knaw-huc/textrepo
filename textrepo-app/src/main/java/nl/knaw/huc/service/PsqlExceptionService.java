@@ -7,7 +7,8 @@ public class PsqlExceptionService {
   public enum Constraint {
     // These constraints are named postgres constraints, from "postgres/initdb/02-init.sql"
     FILES_TYPE_ID("files_type_id_fkey"),
-    VERSIONS_CONTENTS_SHA("versions_contents_sha_fkey");
+    VERSIONS_CONTENTS_SHA("versions_contents_sha_fkey"),
+    DOCUMENTS_EXTERNAL_ID_KEY("documents_external_id_key");
 
     private final String name;
 
