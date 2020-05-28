@@ -77,6 +77,31 @@ public class TestRestDocuments extends AbstractConcordionTest {
     return result;
   }
 
+  public static class DuplicateExternalIdErrorResult {
+    public int status;
+    public String body;
+    public String msg;
+  }
+
+  public DuplicateExternalIdErrorResult tryDuplicate(Object endpoint, Object newEntity) {
+    final var response = client
+        .target(HOST + endpoint.toString())
+        .request()
+        .post(entity(newEntity.toString(), APPLICATION_JSON_TYPE));
+
+    var result = new DuplicateExternalIdErrorResult();
+    result.status = response.getStatus();
+    var body = response.readEntity(String.class);
+    result.body = asPrettyJson(body);
+    var expectedErrorMsg = "Document not created: external ID [updated-test-external-id] already exists";
+    result.msg = jsonPath.parse(body).read("$.message").equals(expectedErrorMsg)
+        ? "error message"
+        : "no error msg";
+    return result;
+  }
+
+
+
   public static class DeleteResult {
     public int status;
   }

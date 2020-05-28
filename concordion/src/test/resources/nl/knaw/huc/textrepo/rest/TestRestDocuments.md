@@ -55,6 +55,23 @@ Then:
 
 [ ](- "ext:embed=#updateResult.body")
 
+### External ID is unique
+When trying to create the following document with an existing external ID and a `POST` to [`/rest/documents`](- "#createEndpoint"):
+
+[```{
+  "externalId": "updated-test-external-id"
+}```](- "#duplicateEntity")
+
+[ ](- "#duplicateResult=tryDuplicate(#createEndpoint, #duplicateEntity)")
+
+Then:
+
+ - The response status should be: [400](- "?=#duplicateResult.status");
+ - The response should contain an [error message](- "?=#duplicateResult.msg");
+ - Full response:
+ 
+[ ](- "ext:embed=#duplicateResult.body")
+
 ### Delete document
 When deleting document [ ](- "c:echo=#createResult.id") with a `DELETE` to [`/rest/documents/{id}`](- "#deleteEndpoint"):
 
