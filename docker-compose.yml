@@ -48,10 +48,10 @@ services:
     volumes:
     - concordiondata:/concordion:ro
     ports:
-    - ${NGINX_EXPOSE}:${NGINX_EXPOSE}
+    - ${NGINX_LISTEN}:${NGINX_LISTEN}
     environment:
       VIRTUAL_HOST: ${NGINX_VIRTUAL_HOST}
-      NGINX_EXPOSE: ${NGINX_EXPOSE}
+      NGINX_LISTEN: ${NGINX_LISTEN}
 
   autocomplete-indexer:
     container_name: tr_autocomplete
