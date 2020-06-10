@@ -31,7 +31,7 @@ Similarly we could be interested in `lines` ``2..4`` at address::
 
  curl $prefix/documents/$id/text/lines?start=2&end=4
 
-The idea being that the ``text`` part in ``$prefix/documents/$id/text/chars?start=10&length=5`` signifies that we
+The idea being that the ``text`` part in ``$prefix/documents/$id/text/chars?start=10&length=6`` signifies that we
 are interested in interpreting the document from a ``txt`` perspective, looking at lines, words, characters, etc.
 (as opposed to, e.g., an XML / TEI context where we could be interested in getting the author from the metadata, ...)
 
