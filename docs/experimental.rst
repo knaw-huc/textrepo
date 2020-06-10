@@ -52,7 +52,7 @@ In ``$prefix/documents/$id/text/{chars,lines,words,...}`` we will call ``text`` 
 
 Sidestepping to current |tr| implementation, ``perspective`` could be a Resource class in the WebApp stack,
 translating the URI / addressing scheme. Then a separate `Perspective` class hierarchy is responsible for mapping
-various file formats to text (e.g., flatten an the tree and yield the characters for a generic XML file, do something
+various file formats to text (flatten the tree and yield the characters for a generic XML file, do something
 more intelligent for a TEI file, use "Rutger's" implementation for PageXML/hOCR, etc.). Then a `Selector` class
 hierarchy works in the ``txt`` domain and selects the requested fragment.
 
