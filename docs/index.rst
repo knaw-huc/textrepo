@@ -38,6 +38,7 @@ Documentation
     Basic usage <usage>
     Components <components>
     Search and index <indexing>
+    Experimental <experimental>
 
 Support
 -------
