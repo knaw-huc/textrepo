@@ -38,7 +38,7 @@ are interested in interpreting the document from a ``txt`` perspective, looking 
 Things get interesting once we challenge ourselves to the idea that we could be interested in
 viewing a document from this ``text`` perspective, irrespective of the actual format that was used to upload
 the document. So, even if a ``TEI`` (or ``PageXML``, ``hOCR``, ...) document is uploaded, we still want
-to address its `textual content` via ``/text/chars/...`` and we consider it to a |tr| responsibility to be
+to address its `textual content` via ``/text/chars/...`` and we consider it a |tr| responsibility to be
 able to (in this case) yield the requested `character range` (lines, words, ...) from the ``TEI`` document.
 
 Perspectives
