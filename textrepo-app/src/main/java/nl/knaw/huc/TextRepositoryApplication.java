@@ -11,6 +11,7 @@ import io.dropwizard.setup.Environment;
 import io.federecio.dropwizard.swagger.SwaggerBundle;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import nl.knaw.huc.exceptions.MethodNotAllowedExceptionMapper;
+import nl.knaw.huc.resources.task.GetResource;
 import nl.knaw.huc.service.datetime.LocalDateTimeParamConverterProvider;
 import nl.knaw.huc.service.datetime.LocalDateTimeSerializer;
 import nl.knaw.huc.resources.rest.ContentsResource;
@@ -134,7 +135,8 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
         new FilesResource(fileService),
         new DocumentFilesResource(documentFilesService, paginator),
         new VersionsResource(versionService, maxPayloadSize),
-        new VersionContentsResource(versionContentsService)
+        new VersionContentsResource(versionContentsService),
+        new GetResource(taskBuilderFactory)
     );
 
     environment.jersey().register(new MethodNotAllowedExceptionMapper());
