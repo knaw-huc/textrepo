@@ -6,6 +6,8 @@ set -e
 
 if [[ ! -d "./textrepo-app" ]] ; then echo "./textrepo-app not found, aborting."; exit; fi
 
+source docker-compose.env
+
 # create new jar
 (cd textrepo-app && mvn clean install)
 
