@@ -30,10 +30,15 @@ DOC_ID=$(curl "$HOST/documents" \
   -d '{"externalId": "example-external-id"}' | jq -r '.id')
 echo "Created document with id: $DOC_ID"
 
-curl "$HOST/documents" \
+SECOND_DOC_ID=$(curl "$HOST/documents" \
   -H 'content-type:application/json' \
-  -d '{"externalId": "other-example-external-id"}'
+  -d '{"externalId": "other-example-external-id"}' | jq -r '.id')
+echo "Created second document with id: $DOC_ID"
 
+# Add metadata to document:
+DOC_METADATA_KEY='test-key'
+curl -X PUT "$HOST/documents/$DOC_ID/metadata/$DOC_METADATA_KEY" -H 'Content-Type: application/json' -d 'test-value' > /dev/null
+echo "Created document metadata with key: $DOC_METADATA_KEY"
 
 # Add xml and text files to document with $DOC_ID:
 
