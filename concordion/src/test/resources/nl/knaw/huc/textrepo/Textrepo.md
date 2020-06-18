@@ -5,6 +5,8 @@
 
 ## Rest API
 
+A user of the Text Repository can retrieve, create, update and delete resources using a REST-full API:
+
  - [Document collection](rest/TestRestDocumentCollection.md "c:run")
  - [Documents](rest/TestRestDocuments.md "c:run")
  - [Document metadata](rest/TestRestDocumentMetadata.md "c:run")
@@ -16,3 +18,9 @@
  - [Versions](rest/TestRestVersions.md "c:run")
  - [Version contents](rest/TestRestVersionContents.md "c:run")
  - [Contents](rest/TestRestContents.md "c:run")
+
+# Task API
+
+The Text Repository offers `task`-endpoints to perform a single, complex task within a single request:
+
+ - [Get document metadata by external ID](task/TestGetDocumentMetadataByExternalId.md "c:run")
