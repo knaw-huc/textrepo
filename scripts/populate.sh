@@ -36,7 +36,7 @@ SECOND_DOC_ID=$(curl "$HOST/documents" \
 echo "Created second document with id: $DOC_ID"
 
 # Add metadata to document:
-DOC_METADATA_KEY='test-key'
+DOC_METADATA_KEY='test-doc-key'
 curl -X PUT \
   "$HOST/documents/$DOC_ID/metadata/$DOC_METADATA_KEY" \
   -H 'Content-Type: application/json' \
@@ -51,9 +51,9 @@ TEXT_FILE_ID=$(curl "$HOST/files" \
   -d "{\"docId\": \"$DOC_ID\", \"typeId\": \"$TEXT_TYPE_ID\"}" | jq -r '.id')
 echo "Created text file with id: $TEXT_FILE_ID"
 
-FILE_METADATA_KEY='test-key'
+FILE_METADATA_KEY='test-file-key'
 curl -X PUT \
-  "localhost:8080/textrepo/rest/files/$TEXT_FILE_ID/metadata/test-key" \
+  "localhost:8080/textrepo/rest/files/$TEXT_FILE_ID/metadata/$FILE_METADATA_KEY" \
   -d 'test-value' \
   -H 'Content-Type: application/json' \
   > /dev/null
