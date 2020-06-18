@@ -4,6 +4,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import nl.knaw.huc.resources.rest.DocumentMetadataResource;
+import nl.knaw.huc.resources.rest.DocumentsResource;
 import nl.knaw.huc.service.task.TaskBuilderFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +18,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.UriBuilder.fromResource;
 
 @Path("/task/get")
 @Api(tags = {"task", "get"})
@@ -31,7 +34,8 @@ public class GetResource {
   @GET
   @Path("{externalId}/document/metadata")
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Get metadata of document by external ID", response = byte[].class)
+  @ApiOperation(value = "Get metadata of document by external ID, " +
+      "with header links to original resource and parent resource", response = byte[].class)
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "OK"),
       @ApiResponse(code = 404, message = "Given document could not be found")})
@@ -44,12 +48,17 @@ public class GetResource {
         .forExternalId(externalId)
         .build();
 
-    final var metadata = task
+    final var docMeta = task
         .run();
 
+    var resourceLink = fromResource(DocumentMetadataResource.class).build(docMeta.getDocument().getId());
+    var parentResourceLink = fromResource(DocumentsResource.class).path("/{id}").build(docMeta.getDocument().getId());
+
     return Response
-        .ok(metadata, APPLICATION_JSON)
+        .ok(docMeta.getMetadata(), APPLICATION_JSON)
         .header("Content-Disposition", "attachment;")
+        .header("Link","<" + resourceLink + ">; rel=original")
+        .header("Link","<" + parentResourceLink + ">; rel=up")
         .build();
   }
 

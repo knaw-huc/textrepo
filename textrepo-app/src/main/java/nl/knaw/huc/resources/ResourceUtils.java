@@ -22,13 +22,6 @@ public class ResourceUtils {
     }
   }
 
-  public static <T> URI locationOf(UUID uuid, Class<T> resource) {
-    return UriBuilder
-        .fromResource(resource)
-        .path("{uuid}/latest")
-        .build(uuid);
-  }
-
   private static class InputStreamLimiter extends InputStream {
     private final InputStream delegate;
     private final int maxAllowedSize;

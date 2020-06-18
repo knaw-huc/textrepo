@@ -15,12 +15,18 @@ When retrieving the metadata of a document with a `GET` to [`/task/get/{external
 
  - where `{externalId}` is [ ](- "c:echo=#externalId"):
 
-[ ](- "#retrieveResult=retrieve(#getEndpoint, #externalId, #key)")
+[ ](- "#retrieveResult=retrieve(#getEndpoint, #docId, #externalId, #key)")
 
 Then:
 
  - The response status should be: [200](- "?=#retrieveResult.status");
  - Metadata key `testKey` should have value [`testValue`](- "?=#retrieveResult.value");
+ - Headers should contain link to [original resource](- "?=#retrieveResult.original");
+ - Headers should contain link to [parent resource](- "?=#retrieveResult.parent");
+ - Headers:
+
+[ ](- "ext:embed=#retrieveResult.headers")
+
  - Full response:
 
 [ ](- "ext:embed=#retrieveResult.body")

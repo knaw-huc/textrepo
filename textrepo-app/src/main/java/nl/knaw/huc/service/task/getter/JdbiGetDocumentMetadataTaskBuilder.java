@@ -1,11 +1,10 @@
 package nl.knaw.huc.service.task.getter;
 
+import nl.knaw.huc.core.DocumentMetadata;
 import nl.knaw.huc.service.task.FindDocumentByExternalId;
 import nl.knaw.huc.service.task.GetDocumentMetadata;
 import nl.knaw.huc.service.task.Task;
 import org.jdbi.v3.core.Jdbi;
-
-import java.util.Map;
 
 public class JdbiGetDocumentMetadataTaskBuilder implements GetDocumentMetadataTaskBuilder {
 
@@ -23,17 +22,21 @@ public class JdbiGetDocumentMetadataTaskBuilder implements GetDocumentMetadataTa
   }
 
   @Override
-  public Task<Map<String, String>> build() {
+  public Task<DocumentMetadata> build() {
     return new GetDocumentMetadataTask();
   }
 
-  private class GetDocumentMetadataTask implements Task<Map<String, String>> {
+  private class GetDocumentMetadataTask implements Task<DocumentMetadata> {
 
     @Override
-    public Map<String, String> run() {
+    public DocumentMetadata run() {
       return jdbi.inTransaction(transaction -> {
         final var doc = new FindDocumentByExternalId(externalId).executeIn(transaction);
-        return new GetDocumentMetadata(doc.getId()).executeIn(transaction);
+        var metadata = new GetDocumentMetadata(doc.getId()).executeIn(transaction);
+        var result = new DocumentMetadata();
+        result.setDocument(doc);
+        result.setMetadata(metadata);
+        return result;
       });
     }
   }
