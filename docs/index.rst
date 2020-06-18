@@ -37,6 +37,7 @@ Documentation
     Overview <overview>
     Basic usage <usage>
     Components <components>
+    Rest and Tasks API <tr-api>
     Search and index <indexing>
     Experimental <experimental>
 

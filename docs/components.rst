@@ -3,6 +3,8 @@
 Components
 ==========
 
+.. _endpoints:
+
 Endpoints
 *********
 
