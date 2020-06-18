@@ -55,7 +55,7 @@ public class TestGetDocumentMetadataByExternalId extends AbstractConcordionTest 
         .findFirst();
     if (original.isPresent()) {
       result.original = "original resource";
-      result.headers += addHeader(original.get().toString());
+      result.headers += asHeaderLink(original.get().toString());
     } else {
       result.original = "resource missing";
     }
@@ -66,7 +66,7 @@ public class TestGetDocumentMetadataByExternalId extends AbstractConcordionTest 
         .findFirst();
     if (parent.isPresent()) {
       result.parent = "parent resource";
-      result.headers += addHeader(parent.get().toString());
+      result.headers += asHeaderLink(parent.get().toString());
     } else {
       result.parent = "resource missing";
     }
@@ -76,7 +76,7 @@ public class TestGetDocumentMetadataByExternalId extends AbstractConcordionTest 
     return result;
   }
 
-  private String addHeader(String header) {
+  private String asHeaderLink(String header) {
     return StringEscapeUtils.escapeHtml4("Link: " + header + "\n");
   }
 }
