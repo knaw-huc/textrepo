@@ -6,7 +6,9 @@ import nl.knaw.huc.service.task.deleter.JdbiDeleteDocumentTaskBuilder;
 import nl.knaw.huc.service.task.finder.FindContentsTaskBuilder;
 import nl.knaw.huc.service.task.finder.JdbiFindContentsTaskBuilder;
 import nl.knaw.huc.service.task.getter.GetDocumentMetadataTaskBuilder;
+import nl.knaw.huc.service.task.getter.GetFileMetadataTaskBuilder;
 import nl.knaw.huc.service.task.getter.JdbiGetDocumentMetadataTaskBuilder;
+import nl.knaw.huc.service.task.getter.JdbiGetFileMetadataTaskBuilder;
 import nl.knaw.huc.service.task.importer.ImportFileTaskBuilder;
 import nl.knaw.huc.service.task.importer.JdbiImportFileTaskBuilder;
 import nl.knaw.huc.service.task.indexer.IndexFileTaskBuilder;
@@ -61,5 +63,10 @@ public class JdbiTaskFactory implements TaskBuilderFactory {
   @Override
   public GetDocumentMetadataTaskBuilder getDocumentMetadataGetter() {
     return new JdbiGetDocumentMetadataTaskBuilder(jdbi);
+  }
+
+  @Override
+  public GetFileMetadataTaskBuilder getFileMetadataGetter() {
+    return new JdbiGetFileMetadataTaskBuilder(jdbi);
   }
 }
