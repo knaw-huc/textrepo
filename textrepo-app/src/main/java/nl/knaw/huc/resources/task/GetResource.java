@@ -22,6 +22,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
+import java.util.Map;
+
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
 import static javax.ws.rs.core.UriBuilder.fromResource;
@@ -42,7 +44,7 @@ public class GetResource {
   @Path("/document/metadata")
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Get metadata of document by external ID, " +
-      "with header links to original and parent resource", response = byte[].class)
+      "with header links to original and parent resource", response = Map.class)
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "OK"),
       @ApiResponse(code = 404, message = "Given document could not be found")})
@@ -71,8 +73,8 @@ public class GetResource {
   @GET
   @Path("/file/metadata")
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Get metadata of file by external ID, " +
-      "with header links to original, parent and type resource", response = byte[].class)
+  @ApiOperation(value = "Get metadata of file by external ID and file type, " +
+      "with header links to original, parent and type resource", response = Map.class)
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "OK"),
       @ApiResponse(code = 404, message = "Given file could not be found")})
@@ -104,7 +106,8 @@ public class GetResource {
   @GET
   @Path("/file/contents")
   @Produces({APPLICATION_JSON, APPLICATION_OCTET_STREAM})
-  @ApiOperation(value = "Get contents of latest file version by external ID and file type", response = byte[].class)
+  @ApiOperation(value = "Get contents of latest file version by external ID and file type, " +
+      "with header links to version history, parent and type resource", response = Map.class)
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "OK"),
       @ApiResponse(code = 404, message = "Given type, document or supposed contents could not be found")})
