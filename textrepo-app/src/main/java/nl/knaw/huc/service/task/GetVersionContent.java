@@ -36,5 +36,4 @@ public class GetVersionContent implements InTransactionProvider<Contents> {
       return new NotFoundException(message);
     };
   }
-
 }

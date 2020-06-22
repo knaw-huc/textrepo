@@ -20,7 +20,7 @@ public class RestUtils {
   private static Client client = JerseyClientBuilder.newClient();
 
   /**
-   * @return document uuid
+   * @return String document uuid
    */
   public static String createDocument(String externalId) {
     final var response = client
@@ -41,6 +41,9 @@ public class RestUtils {
     return JsonPath.parse(body).read("$.id");
   }
 
+  /**
+   * @return String file id
+   */
   public static String createFile(String docId, int typeId) {
     final var response = client
         .target(HOST + "/rest/files/")
@@ -51,6 +54,9 @@ public class RestUtils {
     return JsonPath.parse(body).read("$.id");
   }
 
+  /**
+   * @return String file version id
+   */
   public static String createVersion(String fileId, String contents) {
     var multiPart = new FormDataMultiPart()
         .field("fileId", fileId)

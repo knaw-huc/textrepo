@@ -23,7 +23,7 @@ Then:
  - Metadata key `testKey` should have value [`testValue`](- "?=#retrieveResult.value");
  - Headers should contain link to [original resource](- "?=#retrieveResult.original");
  - Headers should contain link to [parent resource](- "?=#retrieveResult.parent");
- - Headers:
+ - Link headers:
 
 [ ](- "ext:embed=#retrieveResult.headers")
 

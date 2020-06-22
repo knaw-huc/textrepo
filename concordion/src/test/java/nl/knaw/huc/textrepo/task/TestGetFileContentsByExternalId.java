@@ -5,14 +5,11 @@ import nl.knaw.huc.textrepo.util.RestUtils;
 import org.apache.commons.text.StringEscapeUtils;
 
 import static java.util.Map.of;
-import static javax.ws.rs.client.Entity.entity;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
-import static nl.knaw.huc.textrepo.Config.HOST;
 import static nl.knaw.huc.textrepo.util.TestUtils.asCodeBlock;
 import static nl.knaw.huc.textrepo.util.TestUtils.asPrettyJson;
 import static nl.knaw.huc.textrepo.util.TestUtils.replaceInUrlAndQueryParams;
 
-public class TestGetFileMetadataByExternalId extends AbstractConcordionTest {
+public class TestGetFileContentsByExternalId extends AbstractConcordionTest {
 
   public String createDocument(String externalId) {
     return RestUtils.createDocument(externalId);
@@ -22,24 +19,21 @@ public class TestGetFileMetadataByExternalId extends AbstractConcordionTest {
     return RestUtils.createFile(docId, getTextTypeId());
   }
 
-  public void createMetadata(Object fileId, Object key, Object value) {
-    client
-        .target(HOST + "/rest/files/" + fileId + "/metadata/" + key)
-        .request()
-        .put(entity(value.toString(), APPLICATION_JSON_TYPE));
+  public String createVersion(String fileId, String contents) {
+    return RestUtils.createVersion(fileId, contents);
   }
 
   public static class RetrieveResult {
     public int status;
     public String value;
-    public String original;
+    public String versionHistory;
     public String parent;
     public String type;
     public String headers;
     public String body;
   }
 
-  public RetrieveResult retrieve(String endpoint, String externalId, String fileType, String key) {
+  public RetrieveResult retrieve(String endpoint, String externalId, String fileType) {
     final var response = client
         .target(replaceInUrlAndQueryParams(endpoint, of("{externalId}", externalId, "{name}", fileType)))
         .request()
@@ -47,25 +41,23 @@ public class TestGetFileMetadataByExternalId extends AbstractConcordionTest {
 
     var result = new RetrieveResult();
     result.status = response.getStatus();
-    var body = response.readEntity(String.class);
-    result.body = asPrettyJson(body);
-    var json = jsonPath.parse(body);
-    result.value = json.read("$." + key);
+    result.body = response.readEntity(String.class);
 
     result.headers = "";
     var links = response.getHeaders().get("Link");
-    links.forEach((l) -> result.headers += asHeaderLink(l.toString()));
+    links.forEach((l) -> {
+      System.out.println("link:" + l.toString());result.headers += asHeaderLink(l.toString());});
 
-    result.original = links
+    result.versionHistory = links
         .stream()
-        .filter(l -> l.toString().contains("/metadata"))
+        .filter(l -> l.toString().contains("/versions"))
         .findFirst()
-        .map(l -> "original resource")
+        .map(l -> "version history")
         .orElse("header link missing");
 
     result.parent = links
         .stream()
-        .filter((l) -> l.toString().contains("/files") && !l.toString().contains("/metadata"))
+        .filter((l) -> l.toString().contains("/files") && !l.toString().contains("/versions"))
         .findFirst()
         .map(l -> "parent resource")
         .orElse("header link missing");

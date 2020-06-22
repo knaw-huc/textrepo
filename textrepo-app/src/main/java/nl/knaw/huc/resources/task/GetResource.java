@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.resources.rest.DocumentMetadataResource;
 import nl.knaw.huc.resources.rest.DocumentsResource;
 import nl.knaw.huc.resources.rest.FileMetadataResource;
+import nl.knaw.huc.resources.rest.FileVersionsResource;
 import nl.knaw.huc.resources.rest.FilesResource;
 import nl.knaw.huc.resources.rest.TypesResource;
 import nl.knaw.huc.service.task.TaskBuilderFactory;
@@ -62,8 +63,8 @@ public class GetResource {
 
     return Response
         .ok(docMeta.getMetadata(), APPLICATION_JSON)
-        .header("Link","<" + resourceLink + ">; rel=original")
-        .header("Link","<" + parentResourceLink + ">; rel=up")
+        .header("Link", "<" + resourceLink + ">; rel=original")
+        .header("Link", "<" + parentResourceLink + ">; rel=up")
         .build();
   }
 
@@ -94,9 +95,9 @@ public class GetResource {
 
     return Response
         .ok(fileMetadata.getMetadata(), APPLICATION_JSON)
-        .header("Link","<" + resourceLink + ">; rel=original")
-        .header("Link","<" + parentResourceLink + ">; rel=up")
-        .header("Link","<" + typeResourceLink + ">; rel=type")
+        .header("Link", "<" + resourceLink + ">; rel=original")
+        .header("Link", "<" + parentResourceLink + ">; rel=up")
+        .header("Link", "<" + typeResourceLink + ">; rel=type")
         .build();
   }
 
@@ -112,16 +113,25 @@ public class GetResource {
       @NotNull @QueryParam("type") String typeName
   ) {
     log.debug("Get latest version contents: documentId={}; type={}", documentId, typeName);
-    final var task = factory.getContentsFinderBuilder()
-                            .forExternalId(documentId)
-                            .withType(typeName)
-                            .build();
-    final var bytes = task.run().getContents();
+    final var task = factory
+        .getContentsFinderBuilder()
+        .forExternalId(documentId)
+        .withType(typeName)
+        .build();
+    var taskResult = task.run();
+    final var bytes = taskResult.getContents();
 
     log.debug("Got latest version contents: {}", abbreviateMiddle(bytes));
 
+    var versionHistoryLink = fromResource(FileVersionsResource.class).build(taskResult.getFileId());
+    var parentResourceLink = fromResource(FilesResource.class).path("/{id}").build(taskResult.getFileId());
+    var typeResourceLink = fromResource(TypesResource.class).path("/{id}").build(taskResult.getTypeId());
+
     return Response
         .ok(bytes, APPLICATION_OCTET_STREAM)
+        .header("Link", "<" + versionHistoryLink + ">; rel=version-history")
+        .header("Link", "<" + parentResourceLink + ">; rel=up")
+        .header("Link", "<" + typeResourceLink + ">; rel=type")
         .header("Content-Disposition", "attachment;")
         .build();
   }

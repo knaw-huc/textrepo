@@ -1,6 +1,6 @@
 # Test `/task/get/{externalId}/file/metadata?type={name}`
 
-File metadata can be retrieved with the `get` task and an external ID.
+File metadata can be retrieved with the `get` task, an external ID and file type.
 
 To retrieve file metadata we first create: 
 
@@ -12,11 +12,11 @@ To retrieve file metadata we first create:
 [ ](- "#fileId=createFile(#docId)")
 [ ](- "createMetadata(#fileId, #key, #value)")
 
-### Retrieve document metadata
-When retrieving the metadata of a file with a `GET` to [`/task/get/{externalId}/file/metadata?type={typeName}`](- "#getEndpoint") 
+### Retrieve file metadata
+When retrieving the metadata of a file with a `GET` to [`/task/get/{externalId}/file/metadata?type={name}`](- "#getEndpoint") 
 
  - where `{externalId}` is [ ](- "c:echo=#externalId");
- - where `{typeName}` is [ ](- "c:echo=#fileType");
+ - where type `{name}` is [ ](- "c:echo=#fileType");
 
 [ ](- "#retrieveResult=retrieve(#getEndpoint, #externalId, #fileType, #key)")
 
@@ -27,7 +27,7 @@ Then:
  - Headers should contain link to [original resource](- "?=#retrieveResult.original");
  - Headers should contain link to [parent resource](- "?=#retrieveResult.parent");
  - Headers should contain link to [type resource](- "?=#retrieveResult.type");
- - Headers:
+ - Link headers:
 
 [ ](- "ext:embed=#retrieveResult.headers")
 

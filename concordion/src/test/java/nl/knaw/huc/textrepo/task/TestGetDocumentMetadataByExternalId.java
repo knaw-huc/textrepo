@@ -48,31 +48,24 @@ public class TestGetDocumentMetadataByExternalId extends AbstractConcordionTest 
 
     result.headers = "";
     var links = response.getHeaders().get("Link");
+    links.forEach((l) -> result.headers += asHeaderLink(l.toString()));
 
-    var original = links
+    result.original = links
         .stream()
         .filter(l -> l.toString().contains("/metadata"))
-        .findFirst();
-    if (original.isPresent()) {
-      result.original = "original resource";
-      result.headers += asHeaderLink(original.get().toString());
-    } else {
-      result.original = "resource missing";
-    }
+        .findFirst()
+        .map(l -> "original resource")
+        .orElse("header link missing");
 
-    var parent = links
+    result.parent = links
         .stream()
         .filter((l) -> !l.toString().contains("/metadata"))
-        .findFirst();
-    if (parent.isPresent()) {
-      result.parent = "parent resource";
-      result.headers += asHeaderLink(parent.get().toString());
-    } else {
-      result.parent = "resource missing";
-    }
+        .findFirst()
+        .map(l -> "parent resource")
+        .orElse("header link missing");
+
     result.headers = asCodeBlock(result.headers);
 
-    System.out.println(String.format("headers: [%s]", result.headers));
     return result;
   }
 
