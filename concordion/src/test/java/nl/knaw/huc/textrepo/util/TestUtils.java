@@ -166,7 +166,7 @@ public class TestUtils {
     return UriBuilder.fromPath(HOST + endpoint.toString()).build(params);
   }
 
-  public static URI createUrlQueryParams(Object endpoint, Map<String, String> params) {
+  public static URI replaceInUrlAndQueryParams(Object endpoint, Map<String, String> params) {
     var url = HOST + endpoint;
     for (var p : params.entrySet()) {
       url = url.replace(p.getKey(), p.getValue());

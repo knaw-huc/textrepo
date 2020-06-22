@@ -24,3 +24,4 @@ A user of the Text Repository can retrieve, create, update and delete resources 
 The Text Repository offers `task`-endpoints to perform a single, complex task within a single request:
 
  - [Get document metadata by external ID](task/TestGetDocumentMetadataByExternalId.md "c:run")
+ - [Get file metadata by external ID](task/TestGetFileMetadataByExternalId.md "c:run")

@@ -3,7 +3,7 @@
 A document contains files, no more than one file per type.
 
 [ ](- "#docId=createDocument()")
-[ ](- "#typeId=getTypeId()")
+[ ](- "#typeId=getTextTypeId()")
 [ ](- "#fooTypeId=getFooTypeId()")
 
 To add a file we create a document first: [ ](- "c:echo=#docId")

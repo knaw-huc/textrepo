@@ -91,7 +91,7 @@ public abstract class AbstractConcordionTest {
     }
   }
 
-  public int getTypeId() {
+  public int getTextTypeId() {
     return textTypeId;
   }
 

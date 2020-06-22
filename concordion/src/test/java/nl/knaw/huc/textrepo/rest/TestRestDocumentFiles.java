@@ -7,7 +7,7 @@ import nl.knaw.huc.textrepo.util.RestUtils;
 import static java.lang.String.format;
 import static java.util.Map.of;
 import static nl.knaw.huc.textrepo.util.TestUtils.asPrettyJson;
-import static nl.knaw.huc.textrepo.util.TestUtils.createUrlQueryParams;
+import static nl.knaw.huc.textrepo.util.TestUtils.replaceInUrlAndQueryParams;
 import static nl.knaw.huc.textrepo.util.TestUtils.replaceUrlParams;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
@@ -74,7 +74,7 @@ public class TestRestDocumentFiles extends AbstractConcordionTest {
   }
 
   public PaginateResult paginate(Object endpoint, String fileId, String offset, String limit, String textFileId) {
-    var url = createUrlQueryParams(endpoint, of(
+    var url = replaceInUrlAndQueryParams(endpoint, of(
         "{id}", fileId,
         "{offset}", offset,
         "{limit}", limit

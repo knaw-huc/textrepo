@@ -9,7 +9,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static nl.knaw.huc.textrepo.Config.HOST;
 import static nl.knaw.huc.textrepo.util.TestUtils.asPrettyJson;
 import static nl.knaw.huc.textrepo.util.TestUtils.replaceUrlParams;
-import static nl.knaw.huc.textrepo.util.TestUtils.createUrlQueryParams;
+import static nl.knaw.huc.textrepo.util.TestUtils.replaceInUrlAndQueryParams;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 public class TestRestFileVersions extends AbstractConcordionTest {
@@ -79,7 +79,7 @@ public class TestRestFileVersions extends AbstractConcordionTest {
   }
 
   public PaginateResult paginate(Object endpoint, String fileId, String offset, String limit, String newVersion) {
-    var url = createUrlQueryParams(endpoint, of(
+    var url = replaceInUrlAndQueryParams(endpoint, of(
         "{id}", fileId,
         "{offset}", offset,
         "{limit}", limit
@@ -110,7 +110,7 @@ public class TestRestFileVersions extends AbstractConcordionTest {
   }
 
   public CreatedAfterResult filterByCreatedAfter(String endpoint, String fileId, String date, String newVersion) {
-    var url = createUrlQueryParams(endpoint, of(
+    var url = replaceInUrlAndQueryParams(endpoint, of(
         "{id}", fileId,
         "{date}", date
     ));

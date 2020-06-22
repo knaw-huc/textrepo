@@ -3,7 +3,6 @@ package nl.knaw.huc.service.task.getter;
 import nl.knaw.huc.core.FileMetadata;
 import nl.knaw.huc.service.task.FindDocumentByExternalId;
 import nl.knaw.huc.service.task.FindFileByDocumentIdAndFileType;
-import nl.knaw.huc.service.task.GetDocumentMetadata;
 import nl.knaw.huc.service.task.GetFileMetadata;
 import nl.knaw.huc.service.task.Task;
 import org.jdbi.v3.core.Jdbi;

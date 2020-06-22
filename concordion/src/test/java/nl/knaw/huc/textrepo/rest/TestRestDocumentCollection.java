@@ -8,7 +8,7 @@ import static java.util.Map.of;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static nl.knaw.huc.textrepo.Config.HOST;
 import static nl.knaw.huc.textrepo.util.TestUtils.asPrettyJson;
-import static nl.knaw.huc.textrepo.util.TestUtils.createUrlQueryParams;
+import static nl.knaw.huc.textrepo.util.TestUtils.replaceInUrlAndQueryParams;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 public class TestRestDocumentCollection extends AbstractConcordionTest {
@@ -41,7 +41,7 @@ public class TestRestDocumentCollection extends AbstractConcordionTest {
   }
 
   public SearchResult search(Object endpoint, String externalId) {
-    var url = createUrlQueryParams(endpoint, of("{externalId}", externalId));
+    var url = replaceInUrlAndQueryParams(endpoint, of("{externalId}", externalId));
 
     final var response = client
         .target(url)
@@ -67,7 +67,7 @@ public class TestRestDocumentCollection extends AbstractConcordionTest {
   }
 
   public PaginateResult paginate(Object endpoint, String offset, String limit) {
-    var url = createUrlQueryParams(endpoint, of("{offset}", offset, "{limit}", limit));
+    var url = replaceInUrlAndQueryParams(endpoint, of("{offset}", offset, "{limit}", limit));
     final var response = client
         .target(url)
         .request()
@@ -93,7 +93,7 @@ public class TestRestDocumentCollection extends AbstractConcordionTest {
 
   public CreatedAfterResult filterByCreatedAfter(String endpoint, String date, String newDocument) {
     System.out.printf("endpoint + fileId + date: %s + %s", endpoint, date);
-    var url = createUrlQueryParams(endpoint, of(
+    var url = replaceInUrlAndQueryParams(endpoint, of(
         "{date}", date
     ));
 
