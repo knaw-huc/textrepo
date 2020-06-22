@@ -11,9 +11,6 @@ import io.dropwizard.setup.Environment;
 import io.federecio.dropwizard.swagger.SwaggerBundle;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import nl.knaw.huc.exceptions.MethodNotAllowedExceptionMapper;
-import nl.knaw.huc.resources.task.GetResource;
-import nl.knaw.huc.service.datetime.LocalDateTimeParamConverterProvider;
-import nl.knaw.huc.service.datetime.LocalDateTimeSerializer;
 import nl.knaw.huc.resources.rest.ContentsResource;
 import nl.knaw.huc.resources.rest.DocumentFilesResource;
 import nl.knaw.huc.resources.rest.DocumentMetadataResource;
@@ -25,7 +22,7 @@ import nl.knaw.huc.resources.rest.TypesResource;
 import nl.knaw.huc.resources.rest.VersionContentsResource;
 import nl.knaw.huc.resources.rest.VersionsResource;
 import nl.knaw.huc.resources.task.DeleteDocumentResource;
-import nl.knaw.huc.resources.task.FindResource;
+import nl.knaw.huc.resources.task.GetResource;
 import nl.knaw.huc.resources.task.ImportResource;
 import nl.knaw.huc.resources.task.IndexResource;
 import nl.knaw.huc.service.ContentsService;
@@ -37,14 +34,16 @@ import nl.knaw.huc.service.JdbiFileService;
 import nl.knaw.huc.service.JdbiTypeService;
 import nl.knaw.huc.service.JdbiVersionContentsService;
 import nl.knaw.huc.service.JdbiVersionService;
-import nl.knaw.huc.service.logging.LoggingApplicationEventListener;
 import nl.knaw.huc.service.Paginator;
 import nl.knaw.huc.service.TypeService;
+import nl.knaw.huc.service.datetime.LocalDateTimeParamConverterProvider;
+import nl.knaw.huc.service.datetime.LocalDateTimeSerializer;
 import nl.knaw.huc.service.health.ElasticsearchHealthCheck;
 import nl.knaw.huc.service.health.IndexerHealthCheck;
 import nl.knaw.huc.service.index.IndexerException;
 import nl.knaw.huc.service.index.MappedIndexer;
 import nl.knaw.huc.service.index.TextRepoElasticClient;
+import nl.knaw.huc.service.logging.LoggingApplicationEventListener;
 import nl.knaw.huc.service.store.JdbiContentsStorage;
 import nl.knaw.huc.service.task.JdbiTaskFactory;
 import org.jdbi.v3.core.Jdbi;
@@ -130,7 +129,6 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
         new DocumentMetadataResource(documentMetadataService),
         new ImportResource(taskBuilderFactory, maxPayloadSize),
         new IndexResource(taskBuilderFactory),
-        new FindResource(taskBuilderFactory),
         new DeleteDocumentResource(taskBuilderFactory),
         new FilesResource(fileService),
         new DocumentFilesResource(documentFilesService, paginator),

@@ -22,9 +22,11 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
 import static javax.ws.rs.core.UriBuilder.fromResource;
+import static nl.knaw.huc.service.ContentsService.abbreviateMiddle;
 
-@Path("/task/get")
+@Path("/task/get/{externalId}")
 @Api(tags = {"task", "get"})
 public class GetResource {
 
@@ -36,7 +38,7 @@ public class GetResource {
   }
 
   @GET
-  @Path("{externalId}/document/metadata")
+  @Path("/document/metadata")
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Get metadata of document by external ID, " +
       "with header links to original and parent resource", response = byte[].class)
@@ -66,7 +68,7 @@ public class GetResource {
   }
 
   @GET
-  @Path("{externalId}/file/metadata")
+  @Path("/file/metadata")
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Get metadata of file by external ID, " +
       "with header links to original, parent and type resource", response = byte[].class)
@@ -95,6 +97,32 @@ public class GetResource {
         .header("Link","<" + resourceLink + ">; rel=original")
         .header("Link","<" + parentResourceLink + ">; rel=up")
         .header("Link","<" + typeResourceLink + ">; rel=type")
+        .build();
+  }
+
+  @GET
+  @Path("/file/contents")
+  @Produces({APPLICATION_JSON, APPLICATION_OCTET_STREAM})
+  @ApiOperation(value = "Get contents of latest file version by external ID and file type", response = byte[].class)
+  @ApiResponses(value = {
+      @ApiResponse(code = 200, message = "OK"),
+      @ApiResponse(code = 404, message = "Given type, document or supposed contents could not be found")})
+  public Response getLatestFileVersionContent(
+      @NotNull @PathParam("externalId") String documentId,
+      @NotNull @QueryParam("type") String typeName
+  ) {
+    log.debug("Get latest version contents: documentId={}; type={}", documentId, typeName);
+    final var task = factory.getContentsFinderBuilder()
+                            .forExternalId(documentId)
+                            .withType(typeName)
+                            .build();
+    final var bytes = task.run().getContents();
+
+    log.debug("Got latest version contents: {}", abbreviateMiddle(bytes));
+
+    return Response
+        .ok(bytes, APPLICATION_OCTET_STREAM)
+        .header("Content-Disposition", "attachment;")
         .build();
   }
 
