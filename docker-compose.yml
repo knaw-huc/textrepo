@@ -52,6 +52,7 @@ services:
     environment:
       VIRTUAL_HOST: ${NGINX_VIRTUAL_HOST}
       NGINX_LISTEN: ${NGINX_LISTEN}
+      NGINX_LOCATION: ${NGINX_LOCATION}
 
   autocomplete-indexer:
     container_name: tr_autocomplete
