@@ -22,7 +22,7 @@ import nl.knaw.huc.resources.rest.TypesResource;
 import nl.knaw.huc.resources.rest.VersionContentsResource;
 import nl.knaw.huc.resources.rest.VersionsResource;
 import nl.knaw.huc.resources.task.DeleteDocumentResource;
-import nl.knaw.huc.resources.task.GetResource;
+import nl.knaw.huc.resources.task.FindResource;
 import nl.knaw.huc.resources.task.ImportResource;
 import nl.knaw.huc.resources.task.IndexResource;
 import nl.knaw.huc.service.ContentsService;
@@ -134,7 +134,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
         new DocumentFilesResource(documentFilesService, paginator),
         new VersionsResource(versionService, maxPayloadSize),
         new VersionContentsResource(versionContentsService),
-        new GetResource(taskBuilderFactory)
+        new FindResource(taskBuilderFactory)
     );
 
     environment.jersey().register(new MethodNotAllowedExceptionMapper());

@@ -4,27 +4,22 @@ import nl.knaw.huc.textrepo.AbstractConcordionTest;
 import nl.knaw.huc.textrepo.util.RestUtils;
 import org.apache.commons.text.StringEscapeUtils;
 
-import static java.util.Map.of;
 import static javax.ws.rs.client.Entity.entity;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
 import static nl.knaw.huc.textrepo.Config.HOST;
 import static nl.knaw.huc.textrepo.util.TestUtils.asCodeBlock;
 import static nl.knaw.huc.textrepo.util.TestUtils.asPrettyJson;
-import static nl.knaw.huc.textrepo.util.TestUtils.replaceInUrlAndQueryParams;
+import static nl.knaw.huc.textrepo.util.TestUtils.replaceUrlParams;
 
-public class TestGetFileMetadataByExternalId extends AbstractConcordionTest {
+public class TestFindDocumentMetadataByExternalId extends AbstractConcordionTest {
 
   public String createDocument(String externalId) {
     return RestUtils.createDocument(externalId);
   }
 
-  public String createFile(String docId) {
-    return RestUtils.createFile(docId, getTextTypeId());
-  }
-
-  public void createMetadata(Object fileId, Object key, Object value) {
+  public void createMetadata(Object docId, Object key, Object value) {
     client
-        .target(HOST + "/rest/files/" + fileId + "/metadata/" + key)
+        .target(HOST + "/rest/documents/" + docId + "/metadata/" + key)
         .request()
         .put(entity(value.toString(), APPLICATION_JSON_TYPE));
   }
@@ -34,14 +29,13 @@ public class TestGetFileMetadataByExternalId extends AbstractConcordionTest {
     public String value;
     public String original;
     public String parent;
-    public String type;
     public String headers;
     public String body;
   }
 
-  public RetrieveResult retrieve(String endpoint, String externalId, String fileType, String key) {
+  public RetrieveResult retrieve(Object endpoint, Object docId, Object externalId, Object key) {
     final var response = client
-        .target(replaceInUrlAndQueryParams(endpoint, of("{externalId}", externalId, "{name}", fileType)))
+        .target(replaceUrlParams(endpoint, externalId))
         .request()
         .get();
 
@@ -65,16 +59,9 @@ public class TestGetFileMetadataByExternalId extends AbstractConcordionTest {
 
     result.parent = links
         .stream()
-        .filter((l) -> l.toString().contains("/files") && !l.toString().contains("/metadata"))
+        .filter((l) -> !l.toString().contains("/metadata"))
         .findFirst()
         .map(l -> "parent resource")
-        .orElse("header link missing");
-
-    result.type = links
-        .stream()
-        .filter((l) -> l.toString().contains("/types/"))
-        .findFirst()
-        .map(l -> "type resource")
         .orElse("header link missing");
 
     result.headers = asCodeBlock(result.headers);

@@ -1,6 +1,6 @@
-# Test `/task/get/{externalId}/file/contents?type={name}`
+# Test `/task/find/{externalId}/file/contents?type={name}`
 
-The contents of the latest file version can be retrieved with the `get` task, an external ID and file type.
+The contents of the latest file version can be retrieved with the `find` task, an external ID and file type.
 
 To retrieve file metadata we first create: 
 
@@ -13,12 +13,12 @@ To retrieve file metadata we first create:
 [ ](- "createVersion(#fileId, #contents)")
 
 ### Retrieve file contents
-When retrieving the contents of a file with a `GET` to [`/task/get/{externalId}/file/contents?type={name}`](- "#getEndpoint") 
+When retrieving the contents of a file with a `GET` to [`/task/find/{externalId}/file/contents?type={name}`](- "#findEndpoint") 
 
  - where `{externalId}` is [ ](- "c:echo=#externalId");
  - where `{typeName}` is [ ](- "c:echo=#fileType");
 
-[ ](- "#retrieveResult=retrieve(#getEndpoint, #externalId, #fileType)")
+[ ](- "#retrieveResult=retrieve(#findEndpoint, #externalId, #fileType)")
 
 Then:
 

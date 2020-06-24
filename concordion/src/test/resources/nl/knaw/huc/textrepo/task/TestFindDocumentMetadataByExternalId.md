@@ -1,8 +1,8 @@
-# Test `/task/get/{externalId}/document/metadata`
+# Test `/task/find/{externalId}/document/metadata`
 
-Document metadata can be retrieved with the `get` task and an external ID.
+Document metadata can be retrieved with the `find` task and an external ID.
 
-To retrieve document metadata we first create: 
+To find document metadata we first create: 
 
   - a document with external ID: [`test-external-id`](- "#externalId");
   - and some metadata with key [`testKey`](- "#key") and value [`testValue`](- "#value").
@@ -11,11 +11,11 @@ To retrieve document metadata we first create:
 [ ](- "createMetadata(#docId, #key, #value)")
 
 ### Retrieve document metadata
-When retrieving the metadata of a document with a `GET` to [`/task/get/{externalId}/document/metadata`](- "#getEndpoint") 
+When retrieving the metadata of a document with a `GET` to [`/task/find/{externalId}/document/metadata`](- "#findEndpoint") 
 
  - where `{externalId}` is [ ](- "c:echo=#externalId"):
 
-[ ](- "#retrieveResult=retrieve(#getEndpoint, #docId, #externalId, #key)")
+[ ](- "#retrieveResult=retrieve(#findEndpoint, #docId, #externalId, #key)")
 
 Then:
 

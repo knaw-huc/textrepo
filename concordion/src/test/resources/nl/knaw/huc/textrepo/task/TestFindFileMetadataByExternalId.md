@@ -1,6 +1,6 @@
-# Test `/task/get/{externalId}/file/metadata?type={name}`
+# Test `/task/find/{externalId}/file/metadata?type={name}`
 
-File metadata can be retrieved with the `get` task, an external ID and file type.
+File metadata can be retrieved with the `find` task, an external ID and file type.
 
 To retrieve file metadata we first create: 
 
@@ -13,12 +13,12 @@ To retrieve file metadata we first create:
 [ ](- "createMetadata(#fileId, #key, #value)")
 
 ### Retrieve file metadata
-When retrieving the metadata of a file with a `GET` to [`/task/get/{externalId}/file/metadata?type={name}`](- "#getEndpoint") 
+When retrieving the metadata of a file with a `GET` to [`/task/find/{externalId}/file/metadata?type={name}`](- "#findEndpoint") 
 
  - where `{externalId}` is [ ](- "c:echo=#externalId");
  - where type `{name}` is [ ](- "c:echo=#fileType");
 
-[ ](- "#retrieveResult=retrieve(#getEndpoint, #externalId, #fileType, #key)")
+[ ](- "#retrieveResult=retrieve(#findEndpoint, #externalId, #fileType, #key)")
 
 Then:
 

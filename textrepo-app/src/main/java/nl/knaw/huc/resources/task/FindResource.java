@@ -29,21 +29,26 @@ import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
 import static javax.ws.rs.core.UriBuilder.fromResource;
 import static nl.knaw.huc.service.ContentsService.abbreviateMiddle;
 
-@Path("/task/get/{externalId}")
-@Api(tags = {"task", "get"})
-public class GetResource {
+/**
+ * The /find-task finds resources by external id and possible other parameters
+ *
+ * <p>Naming of task: stackoverflow.com/a/2141846
+ */
+@Path("/task/find/{externalId}")
+@Api(tags = {"task", "find"})
+public class FindResource {
 
-  private static final Logger log = LoggerFactory.getLogger(GetResource.class);
+  private static final Logger log = LoggerFactory.getLogger(FindResource.class);
   private final TaskBuilderFactory factory;
 
-  public GetResource(TaskBuilderFactory factory) {
+  public FindResource(TaskBuilderFactory factory) {
     this.factory = factory;
   }
 
   @GET
   @Path("/document/metadata")
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Get metadata of document by external ID, " +
+  @ApiOperation(value = "Find metadata of document by external ID, " +
       "with header links to original and parent resource", response = Map.class)
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "OK"),
@@ -73,7 +78,7 @@ public class GetResource {
   @GET
   @Path("/file/metadata")
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Get metadata of file by external ID and file type, " +
+  @ApiOperation(value = "Find metadata of file by external ID and file type, " +
       "with header links to original, parent and type resource", response = Map.class)
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "OK"),
@@ -106,7 +111,7 @@ public class GetResource {
   @GET
   @Path("/file/contents")
   @Produces({APPLICATION_JSON, APPLICATION_OCTET_STREAM})
-  @ApiOperation(value = "Get contents of latest file version by external ID and file type, " +
+  @ApiOperation(value = "Find contents of latest file version by external ID and file type, " +
       "with header links to version history, parent and type resource", response = Map.class)
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "OK"),

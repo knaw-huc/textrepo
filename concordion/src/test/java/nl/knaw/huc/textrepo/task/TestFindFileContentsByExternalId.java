@@ -9,7 +9,7 @@ import static nl.knaw.huc.textrepo.util.TestUtils.asCodeBlock;
 import static nl.knaw.huc.textrepo.util.TestUtils.asPrettyJson;
 import static nl.knaw.huc.textrepo.util.TestUtils.replaceInUrlAndQueryParams;
 
-public class TestGetFileContentsByExternalId extends AbstractConcordionTest {
+public class TestFindFileContentsByExternalId extends AbstractConcordionTest {
 
   public String createDocument(String externalId) {
     return RestUtils.createDocument(externalId);
