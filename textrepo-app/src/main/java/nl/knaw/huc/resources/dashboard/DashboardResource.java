@@ -24,7 +24,7 @@ public class DashboardResource {
   private static final Logger log = LoggerFactory.getLogger(DashboardResource.class);
   private final DocumentService documentService;
 
-  private DashboardResource(DocumentService documentService) {
+  public DashboardResource(DocumentService documentService) {
     this.documentService = documentService;
   }
 
