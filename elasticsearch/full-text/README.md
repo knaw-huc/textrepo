@@ -1,6 +1,6 @@
 # Full-text indexer
 
-Run: see `../README.md`
+Run: see `../../README.md`
 
 Get elasticsearch mapping:
 ```

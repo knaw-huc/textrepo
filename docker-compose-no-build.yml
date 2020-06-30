@@ -1,0 +1,149 @@
+version: '3'
+
+services:
+  postgres:
+    container_name: tr_postgres
+    image: knawhuc/textrepo-postgres:latest
+    networks:
+    - textrepo_network
+    ports:
+    - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_HOST: postgres.textrepo
+      POSTGRES_PORT: ${POSTGRES_PORT}
+
+  elasticsearch:
+    container_name: tr_elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.6.0
+    environment:
+      - node.name=${ES_NODE_NAME}
+      - cluster.initial_master_nodes=${ES_CLUSTER_INITIAL_MASTER_NODES}
+      - cluster.name=${ES_CLUSTER_NAME}
+      - bootstrap.memory_lock=${ES_BOOTSTRAP_MEMORY_LOCK}
+      - ES_JAVA_OPTS=${ES_JAVA_OPTS}
+    restart: always
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+    - esdata:/usr/share/elasticsearch/data
+    ports:
+    - 9200
+    networks:
+    - textrepo_network
+
+  nginx:
+    container_name: tr_nginx
+    image: knawhuc/textrepo-nginx:latest
+    networks:
+    - textrepo_network
+    depends_on:
+    - textrepo-app
+    volumes:
+    - concordiondata:/concordion:ro
+    ports:
+    - ${NGINX_LISTEN}:${NGINX_LISTEN}
+    environment:
+      VIRTUAL_HOST: ${NGINX_VIRTUAL_HOST}
+      NGINX_LISTEN: ${NGINX_LISTEN}
+      NGINX_LOCATION: ${NGINX_LOCATION}
+
+  autocomplete-indexer:
+    container_name: tr_autocomplete
+    image: knawhuc/textrepo-autocomplete-indexer:latest
+    ports:
+      - 8080
+    networks:
+      - textrepo_network
+    command: ["/utils/wait-for-it.sh", "elasticsearch:9200",
+              "--timeout=0",
+              "--",
+              "java", "-jar", "/indexer/autocomplete.jar", "server", "config.yml"]
+
+  full-text-indexer:
+    container_name: tr_full-text
+    image: knawhuc/textrepo-full-text-indexer:latest
+    ports:
+      - 8080
+    networks:
+      - textrepo_network
+    command: ["/utils/wait-for-it.sh", "elasticsearch:9200",
+              "--timeout=0",
+              "--",
+              "java", "-jar", "/indexer/full-text.jar", "server", "config.yml"]
+
+  textrepo-app:
+    container_name: tr_textrepo
+    image: knawhuc/textrepo-app:latest
+    ports:
+    - 8080
+    - 8081:8081
+    networks:
+    - textrepo_network
+    command: ["./wait-for-it.sh", "autocomplete-indexer:8080",
+              "--timeout=0",
+              "--",
+              "./start.sh"
+    ]
+    environment:
+      TR_DATABASE_DRIVER_CLASS: ${TR_DATABASE_DRIVER_CLASS}
+      TR_DATABASE_USER: ${TR_DATABASE_USER}
+      TR_DATABASE_PASSWORD: ${TR_DATABASE_PASSWORD}
+      TR_DATABASE_URL: ${TR_DATABASE_URL}
+      TR_DATABASE_PROPERTIES_CHAR_SET: ${TR_DATABASE_PROPERTIES_CHAR_SET}
+      TR_DATABASE_MAX_WAIT_FOR_CONNECTION: ${TR_DATABASE_MAX_WAIT_FOR_CONNECTION}
+      TR_DATABASE_VALIDATION_QUERY_TIMEOUT: ${TR_DATABASE_VALIDATION_QUERY_TIMEOUT}
+      TR_DATABASE_MIN_SIZE: ${TR_DATABASE_MIN_SIZE}
+      TR_DATABASE_MAX_SIZE: ${TR_DATABASE_MAX_SIZE}
+      TR_DATABASE_CHECK_CONNECTION_WHILE_IDLE: ${TR_DATABASE_CHECK_CONNECTION_WHILE_IDLE}
+      TR_DATABASE_EVICTION_INTERVAL: ${TR_DATABASE_EVICTION_INTERVAL}
+      TR_LOGGING_LEVEL: ${TR_LOGGING_LEVEL}
+      TR_LOGGING_LOGGERS: ${TR_LOGGING_LOGGERS}
+      TR_LOGGING_APPENDERS: ${TR_LOGGING_APPENDERS}
+      TR_INDEXERS: ${TR_INDEXERS}
+      TR_SWAGGER_RESOURCE_PACKAGE: ${TR_SWAGGER_RESOURCE_PACKAGE}
+      TR_SWAGGER_CONTEXT_ROOT: ${TR_SWAGGER_CONTEXT_ROOT}
+      TR_PAGINATION_DEFAULT_OFFSET: ${TR_PAGINATION_DEFAULT_OFFSET}
+      TR_PAGINATION_DEFAULT_LIMIT: ${TR_PAGINATION_DEFAULT_LIMIT}
+      TR_DATE_FORMAT: ${TR_DATE_FORMAT}
+
+  concordion:
+    container_name: tr_concordion
+    image: knawhuc/textrepo-concordion:latest
+    ports:
+    - 8080
+    networks:
+    - textrepo_network
+    command: [
+      "/utils/wait-for-it.sh", "textrepo-app:8080",
+      "--timeout=0",
+      "--",
+      # run tests and keep container up:
+      "/bin/bash", "-c", "mvn clean test ; tail -f /dev/null"
+    ]
+    volumes:
+    - concordiondata:/concordion
+    environment:
+      ES_HOST: ${CONCORDION_ES_HOST}
+      APP_HOST: ${CONCORDION_APP_HOST}
+      APP_HOST_ADMIN: ${CONCORDION_APP_HOST_ADMIN}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      FULL_TEXT_INDEX: ${FULL_TEXT_INDEX}
+      CUSTOM_INDEX: ${CUSTOM_INDEX}
+      AUTOCOMPLETE_INDEX: ${AUTOCOMPLETE_INDEX}
+
+networks:
+  textrepo_network:
+
+volumes:
+  esdata:
+    driver: local
+  concordiondata:
+    driver: local
