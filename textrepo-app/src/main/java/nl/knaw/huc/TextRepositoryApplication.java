@@ -11,6 +11,7 @@ import io.dropwizard.setup.Environment;
 import io.federecio.dropwizard.swagger.SwaggerBundle;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import nl.knaw.huc.exceptions.MethodNotAllowedExceptionMapper;
+import nl.knaw.huc.resources.dashboard.DashboardResource;
 import nl.knaw.huc.resources.rest.ContentsResource;
 import nl.knaw.huc.resources.rest.DocumentFilesResource;
 import nl.knaw.huc.resources.rest.DocumentMetadataResource;
@@ -134,7 +135,8 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
         new DocumentFilesResource(documentFilesService, paginator),
         new VersionsResource(versionService, maxPayloadSize),
         new VersionContentsResource(versionContentsService),
-        new FindResource(taskBuilderFactory)
+        new FindResource(taskBuilderFactory),
+        new DashboardResource(documentService)
     );
 
     environment.jersey().register(new MethodNotAllowedExceptionMapper());
