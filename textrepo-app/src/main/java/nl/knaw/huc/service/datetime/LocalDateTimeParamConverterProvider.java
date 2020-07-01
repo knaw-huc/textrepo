@@ -8,13 +8,14 @@ import java.time.LocalDateTime;
 
 public class LocalDateTimeParamConverterProvider implements ParamConverterProvider {
 
-  private String dateTimePattern;
+  private final String dateTimePattern;
 
   public LocalDateTimeParamConverterProvider(String dateTimePattern) {
     this.dateTimePattern = dateTimePattern;
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   public <T> ParamConverter<T> getConverter(Class<T> rawType, Type genericType, Annotation[] annotations) {
     if (rawType.equals(LocalDateTime.class)) {
       return (ParamConverter<T>) new LocalDateTimeParamConverter(dateTimePattern);
