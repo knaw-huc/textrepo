@@ -1,6 +1,6 @@
 package nl.knaw.huc.service.task;
 
-import nl.knaw.huc.core.TextrepoFile;
+import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.core.Version;
 import nl.knaw.huc.db.VersionsDao;
 import org.jdbi.v3.core.Handle;
@@ -15,9 +15,9 @@ import static java.util.Objects.requireNonNull;
 public class GetLatestFileVersion implements InTransactionProvider<Version> {
   private static final Logger log = LoggerFactory.getLogger(GetLatestFileVersion.class);
 
-  private final TextrepoFile file;
+  private final TextRepoFile file;
 
-  public GetLatestFileVersion(TextrepoFile file) {
+  public GetLatestFileVersion(TextRepoFile file) {
     this.file = requireNonNull(file);
   }
 
@@ -28,7 +28,7 @@ public class GetLatestFileVersion implements InTransactionProvider<Version> {
                       .orElseThrow(noLatestVersionFound(file));
   }
 
-  private Supplier<NotFoundException> noLatestVersionFound(TextrepoFile file) {
+  private Supplier<NotFoundException> noLatestVersionFound(TextRepoFile file) {
     return () -> {
       final var message = String.format("No latest version found for file: %s", file.getId());
       log.warn(message);

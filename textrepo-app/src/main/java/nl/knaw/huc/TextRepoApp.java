@@ -63,13 +63,13 @@ import java.util.function.Supplier;
 
 import static java.util.stream.Collectors.toMap;
 
-public class TextRepositoryApplication extends Application<TextRepositoryConfiguration> {
+public class TextRepoApp extends Application<TextRepoConfiguration> {
 
-  private static final Logger log = LoggerFactory.getLogger(TextRepositoryApplication.class);
+  private static final Logger log = LoggerFactory.getLogger(TextRepoApp.class);
 
   public static void main(final String[] args) throws Exception {
-    new TextRepositoryApplication().run(args);
-    log.info("TextRepository app started");
+    new TextRepoApp().run(args);
+    log.info("Text Repository Application started");
   }
 
   @Override
@@ -78,23 +78,23 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
   }
 
   @Override
-  public void initialize(@Nonnull final Bootstrap<TextRepositoryConfiguration> bootstrap) {
+  public void initialize(@Nonnull final Bootstrap<TextRepoConfiguration> bootstrap) {
     bootstrap.addBundle(new MultiPartBundle());
     bootstrap.addBundle(new JdbiExceptionsBundle());
     bootstrap.addBundle(getSwaggerBundle());
   }
 
-  private SwaggerBundle<TextRepositoryConfiguration> getSwaggerBundle() {
+  private SwaggerBundle<TextRepoConfiguration> getSwaggerBundle() {
     return new SwaggerBundle<>() {
       @Override
-      protected SwaggerBundleConfiguration getSwaggerBundleConfiguration(TextRepositoryConfiguration configuration) {
+      protected SwaggerBundleConfiguration getSwaggerBundleConfiguration(TextRepoConfiguration configuration) {
         return configuration.getSwaggerBundleConfiguration();
       }
     };
   }
 
   @Override
-  public void run(TextRepositoryConfiguration config, Environment environment) {
+  public void run(TextRepoConfiguration config, Environment environment) {
     final Supplier<UUID> uuidGenerator = UUID::randomUUID;
 
     final var maxPayloadSize = 10 * 1024 * 1024; // TODO: arbitrary, get from configuration and figure out sane default
@@ -150,7 +150,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     environment.jersey().register(new LoggingApplicationEventListener(uuidGenerator));
   }
 
-  private Map<String, HealthCheck> createElasticsearchHealthChecks(TextRepositoryConfiguration config) {
+  private Map<String, HealthCheck> createElasticsearchHealthChecks(TextRepoConfiguration config) {
     return config
         .getCustomFacetIndexers()
         .stream()
@@ -160,7 +160,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
         );
   }
 
-  private Map<String, HealthCheck> createIndexerHealthChecks(TextRepositoryConfiguration config) {
+  private Map<String, HealthCheck> createIndexerHealthChecks(TextRepoConfiguration config) {
     return config
         .getCustomFacetIndexers()
         .stream()
@@ -170,7 +170,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
         );
   }
 
-  private Jdbi createJdbi(TextRepositoryConfiguration config, Environment environment) {
+  private Jdbi createJdbi(TextRepoConfiguration config, Environment environment) {
     var factory = new JdbiFactory();
     var jdbi = factory.build(
         environment,
@@ -182,7 +182,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
   }
 
   private ArrayList<MappedIndexer> createElasticCustomFacetIndexers(
-      TextRepositoryConfiguration config,
+      TextRepoConfiguration config,
       TypeService typeService
   ) {
     var customIndexers = new ArrayList<MappedIndexer>();

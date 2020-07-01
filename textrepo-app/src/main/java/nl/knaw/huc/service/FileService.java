@@ -1,28 +1,28 @@
 package nl.knaw.huc.service;
 
 import nl.knaw.huc.core.Contents;
-import nl.knaw.huc.core.TextrepoFile;
+import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.core.Version;
 
 import javax.annotation.Nonnull;
 import java.util.UUID;
 
 public interface FileService {
-  TextrepoFile createFile(String type, String filename);
+  TextRepoFile createFile(String type, String filename);
 
-  Version createVersion(TextrepoFile file, byte[] contents);
+  Version createVersion(TextRepoFile file, byte[] contents);
 
-  Version addFile(Contents contents, TextrepoFile file);
+  Version addFile(Contents contents, TextRepoFile file);
 
   Version getLatestVersion(@Nonnull UUID fileId);
 
-  TextrepoFile insert(UUID docId, TextrepoFile textrepoFile);
+  TextRepoFile insert(UUID docId, TextRepoFile textRepoFile);
 
-  TextrepoFile get(UUID fileId);
+  TextRepoFile get(UUID fileId);
 
   UUID getDocumentId(UUID fileId);
 
-  TextrepoFile upsert(UUID docId, TextrepoFile textrepoFile);
+  TextRepoFile upsert(UUID docId, TextRepoFile textRepoFile);
 
   void delete(UUID fileId);
 }

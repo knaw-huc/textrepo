@@ -1,7 +1,7 @@
 package nl.knaw.huc.db;
 
 import nl.knaw.huc.core.PageParams;
-import nl.knaw.huc.core.TextrepoFile;
+import nl.knaw.huc.core.TextRepoFile;
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.customizer.BindBean;
@@ -18,8 +18,8 @@ public interface DocumentFilesDao {
 
   @SqlQuery("SELECT f.id, f.type_id FROM files f, documents_files df " +
       "WHERE df.document_id = :docId AND f.id = df.file_id AND f.type_id = :typeId")
-  @RegisterConstructorMapper(TextrepoFile.class)
-  Optional<TextrepoFile> findFile(@Bind("docId") UUID docId, @Bind("typeId") short typeId);
+  @RegisterConstructorMapper(TextRepoFile.class)
+  Optional<TextRepoFile> findFile(@Bind("docId") UUID docId, @Bind("typeId") short typeId);
 
   @SqlQuery("select distinct document_id from documents_files where file_id = :fileId")
   Optional<UUID> findDocumentId(@Bind("fileId") UUID fileId);
@@ -35,14 +35,14 @@ public interface DocumentFilesDao {
   @SqlQuery("select id, type_id " +
       "from documents_files as df left join files as f on f.id = df.file_id " +
       "where df.document_id = ?")
-  @RegisterConstructorMapper(TextrepoFile.class)
-  List<TextrepoFile> findFilesByDocumentId(UUID docId);
+  @RegisterConstructorMapper(TextRepoFile.class)
+  List<TextRepoFile> findFilesByDocumentId(UUID docId);
 
   @SqlQuery("select id, type_id " +
       "from documents_files as df left join files as f on f.id = df.file_id " +
       "where df.document_id = :docId limit :limit offset :offset")
-  @RegisterConstructorMapper(TextrepoFile.class)
-  List<TextrepoFile> findFilesByDocumentId(@Bind("docId") UUID docId, @BindBean PageParams pageParams);
+  @RegisterConstructorMapper(TextRepoFile.class)
+  List<TextRepoFile> findFilesByDocumentId(@Bind("docId") UUID docId, @BindBean PageParams pageParams);
 
   @SqlQuery("select count(*)" +
       "from documents_files as df left join files as f on f.id = df.file_id " +

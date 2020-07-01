@@ -5,9 +5,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import nl.knaw.huc.api.FormTextrepoFile;
-import nl.knaw.huc.api.ResultTextrepoFile;
-import nl.knaw.huc.core.TextrepoFile;
+import nl.knaw.huc.api.FormTextRepoFile;
+import nl.knaw.huc.api.ResultTextRepoFile;
+import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.service.FileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,14 +43,14 @@ public class FilesResource {
   @Consumes(APPLICATION_JSON)
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Create file")
-  @ApiResponses(value = {@ApiResponse(code = 200, response = ResultTextrepoFile.class, message = "OK")})
+  @ApiResponses(value = {@ApiResponse(code = 200, response = ResultTextRepoFile.class, message = "OK")})
   public Response post(
-      @Valid FormTextrepoFile form
+      @Valid FormTextRepoFile form
   ) {
     log.debug("Create file: form={}", form);
-    var file = fileService.insert(form.getDocId(), new TextrepoFile(null, form.getTypeId()));
+    var file = fileService.insert(form.getDocId(), new TextRepoFile(null, form.getTypeId()));
     log.debug("Created file: {}", file);
-    return Response.ok(new ResultTextrepoFile(form.getDocId(), file)).build();
+    return Response.ok(new ResultTextRepoFile(form.getDocId(), file)).build();
   }
 
   @GET
@@ -58,7 +58,7 @@ public class FilesResource {
   @Timed
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Retrieve file")
-  @ApiResponses(value = {@ApiResponse(code = 200, response = ResultTextrepoFile.class, message = "OK")})
+  @ApiResponses(value = {@ApiResponse(code = 200, response = ResultTextRepoFile.class, message = "OK")})
   public Response get(
       @PathParam("id") @NotNull @Valid UUID id
   ) {
@@ -66,7 +66,7 @@ public class FilesResource {
     var file = fileService.get(id);
     var docId = fileService.getDocumentId(file.getId());
     log.debug("Got file: {}", file);
-    return Response.ok(new ResultTextrepoFile(docId, file)).build();
+    return Response.ok(new ResultTextRepoFile(docId, file)).build();
   }
 
   @PUT
@@ -74,15 +74,15 @@ public class FilesResource {
   @Consumes(APPLICATION_JSON)
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Create or update file")
-  @ApiResponses(value = {@ApiResponse(code = 200, response = ResultTextrepoFile.class, message = "OK")})
+  @ApiResponses(value = {@ApiResponse(code = 200, response = ResultTextRepoFile.class, message = "OK")})
   public Response put(
       @PathParam("id") @Valid UUID id,
-      @Valid FormTextrepoFile form
+      @Valid FormTextRepoFile form
   ) {
     log.debug("Create or update file: id={}; form={}", id, form);
-    var file = fileService.upsert(form.getDocId(), new TextrepoFile(id, form.getTypeId()));
+    var file = fileService.upsert(form.getDocId(), new TextRepoFile(id, form.getTypeId()));
     log.debug("Created or updated file: {}", file);
-    return Response.ok(new ResultTextrepoFile(form.getDocId(), file)).build();
+    return Response.ok(new ResultTextRepoFile(form.getDocId(), file)).build();
   }
 
   @DELETE

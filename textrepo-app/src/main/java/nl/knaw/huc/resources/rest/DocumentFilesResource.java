@@ -6,8 +6,8 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.FormPageParams;
 import nl.knaw.huc.api.ResultDocument;
-import nl.knaw.huc.api.ResultTextrepoFile;
-import nl.knaw.huc.core.TextrepoFile;
+import nl.knaw.huc.api.ResultTextRepoFile;
+import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.service.DocumentFilesService;
 import nl.knaw.huc.service.Paginator;
 import org.slf4j.Logger;
@@ -52,7 +52,7 @@ public class DocumentFilesResource {
     log.debug("Get document files: docId={}; pageParams={}", docId, pageParams);
 
     final var page = documentFilesService.getFilesByDocumentId(docId, paginator.fromForm(pageParams));
-    var result = toResult(page, (TextrepoFile file) -> new ResultTextrepoFile(docId, file));
+    var result = toResult(page, (TextRepoFile file) -> new ResultTextRepoFile(docId, file));
 
     log.debug("Got document files: {}", page);
     return Response

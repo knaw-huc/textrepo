@@ -1,6 +1,6 @@
 package nl.knaw.huc.service.task;
 
-import nl.knaw.huc.core.TextrepoFile;
+import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.db.FilesDao;
 import org.jdbi.v3.core.Handle;
 import org.junit.jupiter.api.AfterEach;
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.when;
 public class FindFileTest {
   private static final FilesDao FILES_DAO = mock(FilesDao.class);
   private static final Handle TRANSACTION = mock(Handle.class);
-  private static final TextrepoFile TEST_FILE = new TextrepoFile(UUID.randomUUID(), (short) 42);
+  private static final TextRepoFile TEST_FILE = new TextRepoFile(UUID.randomUUID(), (short) 42);
 
   @BeforeEach
   public void setup() {
@@ -41,7 +41,7 @@ public class FindFileTest {
 
   @Test
   public void testFindFile_usesTransactionToAccessFilesDao() {
-    when(FILES_DAO.find(any())).thenReturn(Optional.of(mock(TextrepoFile.class)));
+    when(FILES_DAO.find(any())).thenReturn(Optional.of(mock(TextRepoFile.class)));
     new FindFile(TEST_FILE.getId()).executeIn(TRANSACTION);
     verify(TRANSACTION).attach(FilesDao.class);
   }

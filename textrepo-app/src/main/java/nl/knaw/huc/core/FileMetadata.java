@@ -3,14 +3,14 @@ package nl.knaw.huc.core;
 import java.util.Map;
 
 public class FileMetadata {
-  private TextrepoFile file;
+  private TextRepoFile file;
   private Map<String, String> metadata;
 
-  public TextrepoFile getFile() {
+  public TextRepoFile getFile() {
     return file;
   }
 
-  public void setFile(TextrepoFile file) {
+  public void setFile(TextRepoFile file) {
     this.file = file;
   }
 

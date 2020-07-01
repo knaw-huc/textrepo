@@ -1,6 +1,6 @@
 package nl.knaw.huc.service.index;
 
-import nl.knaw.huc.core.TextrepoFile;
+import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.service.TypeService;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.action.index.IndexRequest;
@@ -92,7 +92,7 @@ public class MappedIndexer implements Indexer {
   }
 
   @Override
-  public Optional<String> index(@Nonnull TextrepoFile file, @Nonnull String latestVersionContents) {
+  public Optional<String> index(@Nonnull TextRepoFile file, @Nonnull String latestVersionContents) {
     var mimetype = typeService.getType(file.getTypeId()).getMimetype();
     if (!mimetypeSupported(mimetype)) {
       return Optional.empty();

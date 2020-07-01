@@ -1,6 +1,6 @@
 package nl.knaw.huc.service.task.indexer;
 
-import nl.knaw.huc.core.TextrepoFile;
+import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.db.FilesDao;
 import nl.knaw.huc.db.TypesDao;
 import nl.knaw.huc.service.index.Indexer;
@@ -108,7 +108,7 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
       jdbi.onDemand(FilesDao.class).foreachByType(typeId, this::indexFile);
     }
 
-    private void indexFile(TextrepoFile file) {
+    private void indexFile(TextRepoFile file) {
       log.debug("Indexing file: {}", file.getId());
       jdbi.useTransaction(txn -> {
         final var contents = new GetLatestFileContents(file).executeIn(txn);

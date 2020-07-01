@@ -1,7 +1,7 @@
 package nl.knaw.huc.service.task;
 
 import nl.knaw.huc.core.Contents;
-import nl.knaw.huc.core.TextrepoFile;
+import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.core.Version;
 import nl.knaw.huc.db.ContentsDao;
 import nl.knaw.huc.db.VersionsDao;
@@ -17,14 +17,14 @@ import static java.util.Objects.requireNonNull;
 public class SetCurrentFileContents implements InTransactionProvider<Version> {
 
   private Supplier<UUID> versionIdGenerator;
-  private final TextrepoFile file;
+  private final TextRepoFile file;
   private final Contents contents;
 
   private Handle transaction;
 
   public SetCurrentFileContents(
       Supplier<UUID> versionIdGenerator,
-      TextrepoFile file,
+      TextRepoFile file,
       Contents contents
   ) {
     this.versionIdGenerator = requireNonNull(versionIdGenerator);
