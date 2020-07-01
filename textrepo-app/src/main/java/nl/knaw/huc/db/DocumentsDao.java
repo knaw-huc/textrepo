@@ -43,9 +43,6 @@ public interface DocumentsDao {
       @BindBean PageParams pageParams
   );
 
-  @SqlQuery("select count(*) from documents")
-  long count();
-
   @SqlQuery("select count(*) from documents " +
       "where (:externalId is null or external_id like :externalId) " +
       "and (:createdAfter\\:\\:timestamp is null or created_at >= :createdAfter\\:\\:timestamp)"

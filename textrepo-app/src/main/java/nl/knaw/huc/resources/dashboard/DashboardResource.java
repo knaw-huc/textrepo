@@ -6,7 +6,6 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.ResultDocument;
 import nl.knaw.huc.service.DashboardService;
-import nl.knaw.huc.service.DocumentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,11 +23,9 @@ public class DashboardResource {
 
   private static final Logger log = LoggerFactory.getLogger(DashboardResource.class);
   private final DashboardService dashboardService;
-  private final DocumentService documentService;
 
-  public DashboardResource(DashboardService dashboardService, DocumentService documentService) {
+  public DashboardResource(DashboardService dashboardService) {
     this.dashboardService = dashboardService;
-    this.documentService = documentService;
   }
 
   @GET
@@ -38,7 +35,7 @@ public class DashboardResource {
   public Map<String, String> getStats() {
     log.debug("Get dashboard statistics");
     final var stats = new HashMap<String, String>();
-    stats.put("documentCount", String.valueOf(documentService.count()));
+    stats.put("documentCount", String.valueOf(dashboardService.countDocuments()));
     stats.put("documentsWithoutFiles", String.valueOf(dashboardService.countDocumentsWithoutFiles()));
     stats.put("documentsWithoutMetadata", String.valueOf(dashboardService.countDocumentsWithoutMetadata()));
     return stats;

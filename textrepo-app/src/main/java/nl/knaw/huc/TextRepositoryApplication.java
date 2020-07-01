@@ -138,7 +138,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
         new VersionsResource(versionService, maxPayloadSize),
         new VersionContentsResource(versionContentsService),
         new FindResource(taskBuilderFactory),
-        new DashboardResource(dashboardService, documentService)
+        new DashboardResource(dashboardService)
     );
 
     environment.jersey().register(new MethodNotAllowedExceptionMapper());

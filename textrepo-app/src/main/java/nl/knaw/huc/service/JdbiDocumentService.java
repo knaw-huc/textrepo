@@ -62,11 +62,6 @@ public class JdbiDocumentService implements DocumentService {
     documents().delete(docId);
   }
 
-  @Override
-  public long count() {
-    return documents().count();
-  }
-
   /**
    * get all documents filtered by externalId
    */

@@ -17,7 +17,5 @@ public interface DocumentService {
 
   void delete(UUID docId);
 
-  long count();
-
   Page<Document> getAll(String externalId, LocalDateTime createdAfter, PageParams pageParams);
 }
