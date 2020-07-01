@@ -31,6 +31,11 @@ public class JdbiDashboardService implements DashboardService {
     return dashboard().countDocumentsWithoutMetadata();
   }
 
+  @Override
+  public long countOrphans() {
+    return dashboard().countOrphans();
+  }
+
   private DashboardDao dashboard() {
     return jdbi.onDemand(DashboardDao.class);
   }

@@ -6,4 +6,6 @@ public interface DashboardService {
   long countDocumentsWithoutFiles();
 
   long countDocumentsWithoutMetadata();
+
+  long countOrphans();
 }

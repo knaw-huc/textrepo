@@ -15,6 +15,7 @@ import javax.ws.rs.Produces;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.lang.String.valueOf;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 @Api(tags = {"dashboard"})
@@ -35,9 +36,10 @@ public class DashboardResource {
   public Map<String, String> getStats() {
     log.debug("Get dashboard statistics");
     final var stats = new HashMap<String, String>();
-    stats.put("documentCount", String.valueOf(dashboardService.countDocuments()));
-    stats.put("documentsWithoutFiles", String.valueOf(dashboardService.countDocumentsWithoutFiles()));
-    stats.put("documentsWithoutMetadata", String.valueOf(dashboardService.countDocumentsWithoutMetadata()));
+    stats.put("documentCount", valueOf(dashboardService.countDocuments()));
+    stats.put("documentsWithoutFiles", valueOf(dashboardService.countDocumentsWithoutFiles()));
+    stats.put("documentsWithoutMetadata", valueOf(dashboardService.countDocumentsWithoutMetadata()));
+    stats.put("orphans", valueOf(dashboardService.countOrphans()));
     return stats;
   }
 }
