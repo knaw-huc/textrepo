@@ -33,6 +33,7 @@ public class DashboardResource {
   @ApiOperation(value = "Get dashboard statistics")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultDocument.class, message = "OK")})
   public Map<String, String> getStats() {
+    log.debug("Get dashboard statistics");
     final var stats = new HashMap<String, String>();
     stats.put("documentCount", String.valueOf(documentService.count()));
     return stats;
