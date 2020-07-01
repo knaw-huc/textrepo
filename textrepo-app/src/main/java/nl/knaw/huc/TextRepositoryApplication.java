@@ -27,6 +27,7 @@ import nl.knaw.huc.resources.task.FindResource;
 import nl.knaw.huc.resources.task.ImportResource;
 import nl.knaw.huc.resources.task.IndexResource;
 import nl.knaw.huc.service.ContentsService;
+import nl.knaw.huc.service.JdbiDashboardService;
 import nl.knaw.huc.service.JdbiDocumentFilesService;
 import nl.knaw.huc.service.JdbiDocumentMetadataService;
 import nl.knaw.huc.service.JdbiDocumentService;
@@ -120,6 +121,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
     var documentService = new JdbiDocumentService(jdbi, uuidGenerator);
     var documentMetadataService = new JdbiDocumentMetadataService(jdbi);
     var paginator = new Paginator(config.getPagination());
+    var dashboardService = new JdbiDashboardService(jdbi);
 
     var resources = Arrays.asList(
         new ContentsResource(contentsService),
@@ -136,7 +138,7 @@ public class TextRepositoryApplication extends Application<TextRepositoryConfigu
         new VersionsResource(versionService, maxPayloadSize),
         new VersionContentsResource(versionContentsService),
         new FindResource(taskBuilderFactory),
-        new DashboardResource(documentService)
+        new DashboardResource(dashboardService, documentService)
     );
 
     environment.jersey().register(new MethodNotAllowedExceptionMapper());

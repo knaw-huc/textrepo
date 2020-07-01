@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.ResultDocument;
+import nl.knaw.huc.service.DashboardService;
 import nl.knaw.huc.service.DocumentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,9 +23,11 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 public class DashboardResource {
 
   private static final Logger log = LoggerFactory.getLogger(DashboardResource.class);
+  private final DashboardService dashboardService;
   private final DocumentService documentService;
 
-  public DashboardResource(DocumentService documentService) {
+  public DashboardResource(DashboardService dashboardService, DocumentService documentService) {
+    this.dashboardService = dashboardService;
     this.documentService = documentService;
   }
 
@@ -36,6 +39,8 @@ public class DashboardResource {
     log.debug("Get dashboard statistics");
     final var stats = new HashMap<String, String>();
     stats.put("documentCount", String.valueOf(documentService.count()));
+    stats.put("documentsWithoutFiles", String.valueOf(dashboardService.countDocumentsWithoutFiles()));
+    stats.put("documentsWithoutMetadata", String.valueOf(dashboardService.countDocumentsWithoutMetadata()));
     return stats;
   }
 }
