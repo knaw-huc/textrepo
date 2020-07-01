@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 public class LocalDateTimeParamConverterProvider implements ParamConverterProvider {
 
-  private String dateTimePattern;
+  private final String dateTimePattern;
 
   public LocalDateTimeParamConverterProvider(String dateTimePattern) {
     this.dateTimePattern = dateTimePattern;

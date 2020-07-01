@@ -32,8 +32,8 @@ public class FileVersionsResource {
 
   private static final Logger log = LoggerFactory.getLogger(FileVersionsResource.class);
 
-  private VersionService versionService;
-  private Paginator paginator;
+  private final VersionService versionService;
+  private final Paginator paginator;
 
   public FileVersionsResource(
       VersionService versionService,
