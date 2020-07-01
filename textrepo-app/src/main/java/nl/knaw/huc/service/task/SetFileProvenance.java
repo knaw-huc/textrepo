@@ -1,17 +1,17 @@
 package nl.knaw.huc.service.task;
 
 import nl.knaw.huc.api.MetadataEntry;
-import nl.knaw.huc.core.TextrepoFile;
+import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.db.FileMetadataDao;
 import org.jdbi.v3.core.Handle;
 
 import static java.util.Objects.requireNonNull;
 
 public class SetFileProvenance implements InTransactionProvider<MetadataEntry> {
-  private final TextrepoFile file;
+  private final TextRepoFile file;
   private final String filename;
 
-  public SetFileProvenance(TextrepoFile file, String filename) {
+  public SetFileProvenance(TextRepoFile file, String filename) {
     this.file = requireNonNull(file);
     this.filename = requireNonNull(filename);
   }

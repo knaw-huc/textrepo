@@ -1,6 +1,6 @@
 package nl.knaw.huc.service.task;
 
-import nl.knaw.huc.core.TextrepoFile;
+import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.db.DocumentFilesDao;
 import nl.knaw.huc.db.TypesDao;
 import org.jdbi.v3.core.Handle;
@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
-public class FindFileByDocumentIdAndFileType implements InTransactionProvider<TextrepoFile> {
+public class FindFileByDocumentIdAndFileType implements InTransactionProvider<TextRepoFile> {
   private final UUID docId;
   private final String typeName;
   private Handle transaction;
@@ -23,7 +23,7 @@ public class FindFileByDocumentIdAndFileType implements InTransactionProvider<Te
   }
 
   @Override
-  public TextrepoFile executeIn(Handle transaction) {
+  public TextRepoFile executeIn(Handle transaction) {
     this.transaction = requireNonNull(transaction);
     var type = types().find(this.typeName).orElseThrow(illegalType(this.typeName));
     return documentFiles().findFile(docId, type).orElseThrow(this::noFileForDocAndType);

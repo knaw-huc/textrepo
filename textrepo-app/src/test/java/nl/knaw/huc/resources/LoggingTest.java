@@ -9,7 +9,7 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
-import nl.knaw.huc.TextRepositoryConfiguration;
+import nl.knaw.huc.TextRepoConfiguration;
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.core.Page;
 import nl.knaw.huc.core.PageParams;
@@ -58,7 +58,7 @@ public class LoggingTest {
   private static DocumentService documentService = mock(DocumentService.class);
   private static Paginator paginator = mock(Paginator.class);
 
-  public static DropwizardAppExtension<TextRepositoryConfiguration> application;
+  public static DropwizardAppExtension<TextRepoConfiguration> application;
 
 
   /*
@@ -67,14 +67,14 @@ public class LoggingTest {
   static {
     try {
       var factory = new YamlConfigurationFactory<>(
-          TextRepositoryConfiguration.class,
+          TextRepoConfiguration.class,
           Validators.newValidator(),
           Jackson.newObjectMapper(),
           "dw"
       );
 
-      var textRepositoryConfiguration = factory.build(configFile);
-      application = new DropwizardAppExtension<>(TestApp.class, textRepositoryConfiguration);
+      var textRepoConfiguration = factory.build(configFile);
+      application = new DropwizardAppExtension<>(TestApp.class, textRepoConfiguration);
 
     } catch (IOException | ConfigurationException ex) {
       throw new RuntimeException("Could not init test app", ex);
@@ -181,14 +181,14 @@ public class LoggingTest {
   }
 
 
-  public static class TestApp extends Application<TextRepositoryConfiguration> {
+  public static class TestApp extends Application<TextRepoConfiguration> {
 
     @Override
-    public void initialize(Bootstrap<TextRepositoryConfiguration> bootstrap) {
+    public void initialize(Bootstrap<TextRepoConfiguration> bootstrap) {
     }
 
     @Override
-    public void run(TextRepositoryConfiguration config, Environment environment) {
+    public void run(TextRepoConfiguration config, Environment environment) {
       environment.jersey().register(new LocalDateTimeParamConverterProvider(config.getDateFormat()));
       environment.jersey().register(new DocumentsResource(documentService, paginator));
       environment.jersey().register(new LoggingApplicationEventListener(UUID::randomUUID));

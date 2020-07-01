@@ -2,4 +2,4 @@
 set -x
 
 source docker-compose.env
-docker-compose up --build
+docker-compose -f docker-compose-dev.yml up --build

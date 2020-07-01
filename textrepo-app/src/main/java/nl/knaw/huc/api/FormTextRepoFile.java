@@ -7,7 +7,7 @@ import com.google.common.base.MoreObjects;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
-public class FormTextrepoFile {
+public class FormTextRepoFile {
 
   @NotNull(message = "is mandatory")
   private UUID docId;
@@ -16,7 +16,7 @@ public class FormTextrepoFile {
   private final short typeId;
 
   @JsonCreator
-  public FormTextrepoFile(
+  public FormTextRepoFile(
       @JsonProperty("docId") UUID docId,
       @JsonProperty("typeId") short typeId
   ) {

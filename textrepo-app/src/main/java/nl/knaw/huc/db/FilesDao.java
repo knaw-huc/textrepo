@@ -1,6 +1,6 @@
 package nl.knaw.huc.db;
 
-import nl.knaw.huc.core.TextrepoFile;
+import nl.knaw.huc.core.TextRepoFile;
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.customizer.BindBean;
@@ -16,16 +16,16 @@ public interface FilesDao {
   void insert(@Bind("fileId") UUID fileId, @Bind("typeId") short typeId);
 
   @SqlQuery("select id, type_id from files where id = ?")
-  @RegisterConstructorMapper(value = TextrepoFile.class)
-  Optional<TextrepoFile> find(UUID id);
+  @RegisterConstructorMapper(value = TextRepoFile.class)
+  Optional<TextRepoFile> find(UUID id);
 
   @SqlQuery("select id, type_id from files where type_id = :typeId")
-  @RegisterConstructorMapper(value = TextrepoFile.class)
-  void foreachByType(@Bind("typeId") short typeId, Consumer<TextrepoFile> consumer);
+  @RegisterConstructorMapper(value = TextRepoFile.class)
+  void foreachByType(@Bind("typeId") short typeId, Consumer<TextRepoFile> consumer);
 
   @SqlUpdate("insert into files (id, type_id) values (:id, :typeId) " +
       "on conflict (id) do update set type_id = excluded.type_id")
-  void upsert(@BindBean TextrepoFile file);
+  void upsert(@BindBean TextRepoFile file);
 
   @SqlUpdate("delete from files where id = ?")
   void delete(UUID fileId);

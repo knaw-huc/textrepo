@@ -24,7 +24,7 @@ Prerequisites: docker-compose.
 To install the |tr| locally, run in a new directory: ::
 
     $ git clone https://github.com/knaw-huc/textrepo .
-    $ docker-compose up --build
+    $ docker-compose up
 
 
 `Read more <usage.html>`_

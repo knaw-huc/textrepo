@@ -1,13 +1,13 @@
 package nl.knaw.huc.service.index;
 
-import nl.knaw.huc.core.TextrepoFile;
+import nl.knaw.huc.core.TextRepoFile;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
 
 public interface Indexer {
   Optional<String> index(
-      @Nonnull TextrepoFile file,
+      @Nonnull TextRepoFile file,
       @Nonnull String latestVersionContents
   );
 }

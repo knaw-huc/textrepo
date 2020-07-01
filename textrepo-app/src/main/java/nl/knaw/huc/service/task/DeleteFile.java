@@ -1,6 +1,6 @@
 package nl.knaw.huc.service.task;
 
-import nl.knaw.huc.core.TextrepoFile;
+import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.db.FilesDao;
 import nl.knaw.huc.db.VersionsDao;
 import org.jdbi.v3.core.Handle;
@@ -11,9 +11,9 @@ public class DeleteFile implements InTransactionRunner {
 
   private static final Logger log = LoggerFactory.getLogger(DeleteFile.class);
 
-  private final TextrepoFile file;
+  private final TextRepoFile file;
 
-  public DeleteFile(TextrepoFile file) {
+  public DeleteFile(TextRepoFile file) {
     this.file = file;
   }
 

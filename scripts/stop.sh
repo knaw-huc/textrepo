@@ -2,4 +2,4 @@
 set -x
 
 source docker-compose.env
-docker-compose down -v
+docker-compose -f docker-compose-dev.yml down -v

@@ -5,13 +5,13 @@ import com.google.common.base.MoreObjects;
 import java.beans.ConstructorProperties;
 import java.util.UUID;
 
-public class TextrepoFile {
+public class TextRepoFile {
 
   private UUID id;
   private Short typeId;
 
   @ConstructorProperties({"id", "type_id"})
-  public TextrepoFile(UUID id, Short typeId) {
+  public TextRepoFile(UUID id, Short typeId) {
     this.id = id;
     this.typeId = typeId;
   }

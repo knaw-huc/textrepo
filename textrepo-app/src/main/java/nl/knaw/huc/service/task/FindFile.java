@@ -1,6 +1,6 @@
 package nl.knaw.huc.service.task;
 
-import nl.knaw.huc.core.TextrepoFile;
+import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.db.FilesDao;
 import org.jdbi.v3.core.Handle;
 
@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
-public class FindFile implements InTransactionProvider<TextrepoFile> {
+public class FindFile implements InTransactionProvider<TextRepoFile> {
   private final UUID fileId;
 
   public FindFile(UUID fileId) {
@@ -18,7 +18,7 @@ public class FindFile implements InTransactionProvider<TextrepoFile> {
   }
 
   @Override
-  public TextrepoFile executeIn(Handle transaction) {
+  public TextRepoFile executeIn(Handle transaction) {
     return transaction.attach(FilesDao.class).find(fileId).orElseThrow(fileNotFound());
   }
 

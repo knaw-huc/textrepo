@@ -2,4 +2,4 @@
 set -x
 
 source docker-compose.env
-docker-compose -f docker-compose-no-build.yml up --no-build
+docker-compose -f docker-compose.yml up --no-build

@@ -1,6 +1,6 @@
 package nl.knaw.huc.service.task;
 
-import nl.knaw.huc.core.TextrepoFile;
+import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.core.Version;
 import nl.knaw.huc.db.VersionsDao;
 import org.jdbi.v3.core.Handle;
@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 public class GetLatestFileVersionTest {
   private static final VersionsDao VERSIONS_DAO = mock(VersionsDao.class);
   private static final Handle TRANSACTION = mock(Handle.class);
-  private static final TextrepoFile TEST_FILE = new TextrepoFile(randomUUID(), (short) 42);
+  private static final TextRepoFile TEST_FILE = new TextRepoFile(randomUUID(), (short) 42);
   private static final String TEST_SHA = "blablasha";
   private static final Version TEST_VERSION = new Version(randomUUID(), TEST_FILE.getId(), TEST_SHA, now());
 

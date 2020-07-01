@@ -1,6 +1,6 @@
 package nl.knaw.huc.resources;
 
-import nl.knaw.huc.core.TextrepoFile;
+import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.core.Type;
 import nl.knaw.huc.service.TypeService;
 import nl.knaw.huc.service.index.MappedIndexerConfiguration;
@@ -96,7 +96,7 @@ public class MappedIndexerTest {
     mockMappingResponse();
     mockCreatingIndexResponse(config);
     var indexer = new MappedIndexer(config, typeServiceMock);
-    var file = new TextrepoFile(UUID.randomUUID(), (short) 43);
+    var file = new TextRepoFile(UUID.randomUUID(), (short) 43);
     var postDoc2FieldsRequest = request()
         .withMethod("POST")
         .withPath(mockFieldsEndpoint)
@@ -130,7 +130,7 @@ public class MappedIndexerTest {
         .withHeader("Content-Type", expectedContentTypeHeader);
     mockDoc2FieldsResponse(postDocToFieldsRequest);
 
-    indexer.index(new TextrepoFile(fileId, (short) 43), getResourceAsString("fields/file.xml"));
+    indexer.index(new TextRepoFile(fileId, (short) 43), getResourceAsString("fields/file.xml"));
 
     mockServer.verify(postDocToFieldsRequest, once());
   }

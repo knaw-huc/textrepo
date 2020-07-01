@@ -1,17 +1,17 @@
 package nl.knaw.huc.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import nl.knaw.huc.core.TextrepoFile;
+import nl.knaw.huc.core.TextRepoFile;
 
 import java.util.UUID;
 
-public class ResultTextrepoFile {
+public class ResultTextRepoFile {
 
   private UUID id;
   private final UUID docId;
   private final short typeId;
 
-  public ResultTextrepoFile(UUID docId, TextrepoFile file) {
+  public ResultTextRepoFile(UUID docId, TextRepoFile file) {
     this.id = file.getId();
     this.docId = docId;
     this.typeId = file.getTypeId();
