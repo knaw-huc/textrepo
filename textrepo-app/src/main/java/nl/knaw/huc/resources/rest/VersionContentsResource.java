@@ -35,7 +35,7 @@ public class VersionContentsResource {
   private static final String PUT_ERROR_MSG = "Not allowed to put contents of version: post new version instead";
   private static final String DELETE_ERROR_MSG = "Not allowed to delete contents of version: delete version instead";
 
-  private final VersionContentsService contentsService;
+  private VersionContentsService contentsService;
 
   public VersionContentsResource(VersionContentsService contentsService) {
     this.contentsService = contentsService;

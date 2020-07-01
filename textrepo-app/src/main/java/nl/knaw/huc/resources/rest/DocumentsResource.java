@@ -38,7 +38,7 @@ public class DocumentsResource {
 
   private static final Logger log = LoggerFactory.getLogger(DocumentsResource.class);
   private final DocumentService documentService;
-  private final Paginator paginator;
+  private Paginator paginator;
 
   public DocumentsResource(
       DocumentService documentService,
