@@ -30,7 +30,7 @@ public class DashboardResource {
 
   @GET
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Retrieve document files")
+  @ApiOperation(value = "Get dashboard statistics")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultDocument.class, message = "OK")})
   public Map<String, String> getStats() {
     final var stats = new HashMap<String, String>();
