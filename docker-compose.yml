@@ -4,7 +4,6 @@ services:
   postgres:
     container_name: tr_postgres
     image: knawhuc/textrepo-postgres:latest
-    build: ./postgres
     networks:
     - textrepo_network
     ports:
@@ -40,7 +39,6 @@ services:
   nginx:
     container_name: tr_nginx
     image: knawhuc/textrepo-nginx:latest
-    build: ./nginx
     networks:
     - textrepo_network
     depends_on:
@@ -57,7 +55,6 @@ services:
   autocomplete-indexer:
     container_name: tr_autocomplete
     image: knawhuc/textrepo-autocomplete-indexer:latest
-    build: ./elasticsearch/autocomplete
     ports:
       - 8080
     networks:
@@ -70,7 +67,6 @@ services:
   full-text-indexer:
     container_name: tr_full-text
     image: knawhuc/textrepo-full-text-indexer:latest
-    build: ./elasticsearch/full-text
     ports:
       - 8080
     networks:
@@ -83,7 +79,6 @@ services:
   textrepo-app:
     container_name: tr_textrepo
     image: knawhuc/textrepo-app:latest
-    build: ./textrepo-app
     ports:
     - 8080
     - 8081:8081
@@ -119,7 +114,6 @@ services:
   concordion:
     container_name: tr_concordion
     image: knawhuc/textrepo-concordion:latest
-    build: ./concordion
     ports:
     - 8080
     networks:

@@ -6,7 +6,7 @@ Basic Usage
 Run locally
 -----------
 
-|tr| can be started using `docker-compose up --build`. However, in order to prevent any unexpected behaviour due to
+|tr| can be started using `docker-compose up`. However, in order to prevent any unexpected behaviour due to
 misconfigured ports, volumes, etc, the `./scripts` directory also contains some example scripts.
 
 To start and stop the |tr|: ::

@@ -20,4 +20,4 @@ docker commit tr_textrepo knawhuc/textrepo-app:latest
 
 # restart container with new image
 docker-compose stop textrepo-app
-docker-compose up -d --no-deps textrepo-app
+docker-compose -f docker-compose-dev.yml up -d --no-deps textrepo-app
