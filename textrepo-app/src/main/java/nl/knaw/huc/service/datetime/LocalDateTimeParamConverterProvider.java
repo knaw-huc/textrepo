@@ -15,6 +15,7 @@ public class LocalDateTimeParamConverterProvider implements ParamConverterProvid
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   public <T> ParamConverter<T> getConverter(Class<T> rawType, Type genericType, Annotation[] annotations) {
     if (rawType.equals(LocalDateTime.class)) {
       return (ParamConverter<T>) new LocalDateTimeParamConverter(dateTimePattern);
