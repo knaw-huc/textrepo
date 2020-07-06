@@ -20,8 +20,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Link;
 import javax.ws.rs.core.Response;
-
+import javax.ws.rs.core.UriBuilder;
 import java.util.Map;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -38,7 +39,20 @@ import static nl.knaw.huc.service.ContentsService.abbreviateMiddle;
 @Api(tags = {"task", "find"})
 public class FindResource {
 
+  public static final String REL_ORIGINAL = "original";
+  public static final String REL_TYPE = Link.TYPE;
+  public static final String REL_UP = "up";
+  public static final String REL_VERSION_HISTORY = "version-history";
+
+  private static final UriBuilder DOCUMENTS = fromResource(DocumentsResource.class).path("/{id}");
+  private static final UriBuilder DOCUMENT_METADATA = fromResource(DocumentMetadataResource.class);
+  private static final UriBuilder FILES = fromResource(FilesResource.class).path("/{id}");
+  private static final UriBuilder FILE_METADATA = fromResource(FileMetadataResource.class);
+  private static final UriBuilder FILE_VERSIONS = fromResource(FileVersionsResource.class);
+  private static final UriBuilder TYPES = fromResource(TypesResource.class).path("/{id}");
+
   private static final Logger log = LoggerFactory.getLogger(FindResource.class);
+
   private final TaskBuilderFactory factory;
 
   public FindResource(TaskBuilderFactory factory) {
@@ -62,16 +76,13 @@ public class FindResource {
         .forExternalId(externalId)
         .build();
 
-    final var docMeta = task
-        .run();
-
-    var resourceLink = fromResource(DocumentMetadataResource.class).build(docMeta.getDocument().getId());
-    var parentResourceLink = fromResource(DocumentsResource.class).path("/{id}").build(docMeta.getDocument().getId());
+    final var result = task.run();
+    final var docId = result.getDocument().getId();
 
     return Response
-        .ok(docMeta.getMetadata(), APPLICATION_JSON)
-        .header("Link", "<" + resourceLink + ">; rel=original")
-        .header("Link", "<" + parentResourceLink + ">; rel=up")
+        .ok(result.getMetadata(), APPLICATION_JSON)
+        .link(DOCUMENT_METADATA.build(docId), REL_ORIGINAL)
+        .link(DOCUMENTS.build(docId), REL_UP)
         .build();
   }
 
@@ -94,17 +105,16 @@ public class FindResource {
         .forType(typeName)
         .build();
 
-    final var fileMetadata = task.run();
-
-    var resourceLink = fromResource(FileMetadataResource.class).build(fileMetadata.getFile().getId());
-    var parentResourceLink = fromResource(FilesResource.class).path("/{id}").build(fileMetadata.getFile().getId());
-    var typeResourceLink = fromResource(TypesResource.class).path("/{id}").build(fileMetadata.getFile().getTypeId());
+    final var result = task.run();
+    final var file = result.getFile();
+    final var fileId = file.getId();
+    final var typeId = file.getTypeId();
 
     return Response
-        .ok(fileMetadata.getMetadata(), APPLICATION_JSON)
-        .header("Link", "<" + resourceLink + ">; rel=original")
-        .header("Link", "<" + parentResourceLink + ">; rel=up")
-        .header("Link", "<" + typeResourceLink + ">; rel=type")
+        .ok(result.getMetadata(), APPLICATION_JSON)
+        .link(FILE_METADATA.build(fileId), REL_ORIGINAL)
+        .link(FILES.build(fileId), REL_UP)
+        .link(TYPES.build(typeId), REL_TYPE)
         .build();
   }
 
@@ -126,20 +136,19 @@ public class FindResource {
         .forExternalId(documentId)
         .withType(typeName)
         .build();
-    var taskResult = task.run();
-    final var bytes = taskResult.getContents();
 
+    final var result = task.run();
+    final var bytes = result.getContents();
     log.debug("Got latest version contents: {}", abbreviateMiddle(bytes));
-
-    var versionHistoryLink = fromResource(FileVersionsResource.class).build(taskResult.getFileId());
-    var parentResourceLink = fromResource(FilesResource.class).path("/{id}").build(taskResult.getFileId());
-    var typeResourceLink = fromResource(TypesResource.class).path("/{id}").build(taskResult.getTypeId());
+   
+    final var fileId = result.getFileId();
+    final var typeId = result.getTypeId();
 
     return Response
         .ok(bytes, APPLICATION_OCTET_STREAM)
-        .header("Link", "<" + versionHistoryLink + ">; rel=version-history")
-        .header("Link", "<" + parentResourceLink + ">; rel=up")
-        .header("Link", "<" + typeResourceLink + ">; rel=type")
+        .link(FILE_VERSIONS.build(fileId), REL_VERSION_HISTORY)
+        .link(FILES.build(fileId), REL_UP)
+        .link(TYPES.build(typeId), REL_TYPE)
         .header("Content-Disposition", "attachment;")
         .build();
   }
