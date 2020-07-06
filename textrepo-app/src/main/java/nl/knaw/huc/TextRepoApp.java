@@ -138,7 +138,7 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
         new VersionsResource(versionService, maxPayloadSize),
         new VersionContentsResource(versionContentsService),
         new FindResource(taskBuilderFactory),
-        new DashboardResource(dashboardService)
+        new DashboardResource(dashboardService, paginator)
     );
 
     environment.jersey().register(new MethodNotAllowedExceptionMapper());

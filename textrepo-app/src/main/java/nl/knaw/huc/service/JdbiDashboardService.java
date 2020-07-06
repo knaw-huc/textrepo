@@ -1,5 +1,8 @@
 package nl.knaw.huc.service;
 
+import nl.knaw.huc.core.Document;
+import nl.knaw.huc.core.Page;
+import nl.knaw.huc.core.PageParams;
 import nl.knaw.huc.db.DashboardDao;
 import org.jdbi.v3.core.Jdbi;
 import org.slf4j.Logger;
@@ -14,26 +17,31 @@ public class JdbiDashboardService implements DashboardService {
   }
 
   @Override
-  public long countDocuments() {
+  public int countDocuments() {
     log.info("countDocuments");
     return dashboard().countDocuments();
   }
 
   @Override
-  public long countDocumentsWithoutFiles() {
+  public int countDocumentsWithoutFiles() {
     log.trace("countDocumentsWithoutFiles");
     return dashboard().countDocumentsWithoutFiles();
   }
 
   @Override
-  public long countDocumentsWithoutMetadata() {
+  public int countDocumentsWithoutMetadata() {
     log.debug("countDocumentsWithoutMetadata");
     return dashboard().countDocumentsWithoutMetadata();
   }
 
   @Override
-  public long countOrphans() {
+  public int countOrphans() {
     return dashboard().countOrphans();
+  }
+
+  @Override
+  public Page<Document> findOrphans(PageParams pageParams) {
+    return new Page<>(dashboard().findOrphans(pageParams), countOrphans(), pageParams);
   }
 
   private DashboardDao dashboard() {

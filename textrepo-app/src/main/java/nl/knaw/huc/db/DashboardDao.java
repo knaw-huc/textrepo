@@ -1,21 +1,35 @@
 package nl.knaw.huc.db;
 
+import nl.knaw.huc.core.Document;
+import nl.knaw.huc.core.PageParams;
+import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
+import org.jdbi.v3.sqlobject.customizer.BindBean;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
+
+import java.util.List;
 
 public interface DashboardDao {
   @SqlQuery("select count(*) from documents")
-  long countDocuments();
+  int countDocuments();
 
   @SqlQuery("select count(*) from documents d where " +
       "not exists (select from documents_files df where df.document_id = d.id)")
-  long countDocumentsWithoutFiles();
+  int countDocumentsWithoutFiles();
 
   @SqlQuery("select count(*) from documents d where " +
       "not exists (select from documents_metadata dm where dm.document_id = d.id)")
-  long countDocumentsWithoutMetadata();
+  int countDocumentsWithoutMetadata();
 
   @SqlQuery("select count(*) from documents d where " +
       "not exists (select from documents_files fm where fm.document_id = d.id)" +
       "and not exists (select from documents_metadata dm where dm.document_id = d.id) ")
-  long countOrphans();
+  int countOrphans();
+
+  @SqlQuery("select d.id, d.external_id, d.created_at from documents d where " +
+      "not exists (select from documents_files fm where fm.document_id = d.id)" +
+      "and not exists (select from documents_metadata dm where dm.document_id = d.id) " +
+      "order by d.external_id " +
+      "limit :limit offset :offset")
+  @RegisterConstructorMapper(value = Document.class)
+  List<Document> findOrphans(@BindBean PageParams pageParams);
 }

@@ -1,11 +1,17 @@
 package nl.knaw.huc.service;
 
+import nl.knaw.huc.core.Document;
+import nl.knaw.huc.core.Page;
+import nl.knaw.huc.core.PageParams;
+
 public interface DashboardService {
-  long countDocuments();
+  int countDocuments();
 
-  long countDocumentsWithoutFiles();
+  int countDocumentsWithoutFiles();
 
-  long countDocumentsWithoutMetadata();
+  int countDocumentsWithoutMetadata();
 
-  long countOrphans();
+  int countOrphans();
+
+  Page<Document> findOrphans(PageParams pageParams);
 }
