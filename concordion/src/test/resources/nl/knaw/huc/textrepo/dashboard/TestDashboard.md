@@ -18,14 +18,18 @@ We first create the following documents:
 [ ](- "#doc3Id=createDocument(#doc3)")
 [ ](- "createMetadata(#doc3Id, #doc3Key, #doc3Value)")
 
-## Check document counts
+## Check document status
 When checking the dashboard using a `GET` to [`/dashboard`](- "#endpoint")
 
 [ ](- "#result=retrieve(#endpoint)")
 
 Then:
 
-  - The response status should be [200](- "?=#result.status")
+  - The response status should be [200](- "?=#result.status");
+  - There should be [3](- "?=#result.documentCount") documents;
+  - There should be [2](- "?=#result.withoutFiles") documents without files;
+  - There should be [2](- "?=#result.withoutMetadata") documents without metadata;
+  - There should be [1](- "?=#result.orphans") *orphan*: a document with no file and no metadata; 
 
   - Full response:
 

@@ -27,6 +27,10 @@ public class TestDashboard extends AbstractConcordionTest {
   public static class DashboardResult {
     public int status;
     public String body;
+    public String documentCount;
+    public String withoutFiles;
+    public String withoutMetadata;
+    public String orphans;
   }
 
   public DashboardResult retrieve(String endpoint) {
@@ -37,8 +41,16 @@ public class TestDashboard extends AbstractConcordionTest {
 
     final var result = new DashboardResult();
     result.status = response.getStatus();
+
     var body = response.readEntity(String.class);
     result.body = asPrettyJson(body);
+
+    var json = jsonPath.parse(body);
+    result.documentCount = json.read("$.documentCount");
+    result.withoutFiles = json.read("$.documentsWithoutFiles");
+    result.withoutMetadata = json.read("$.documentsWithoutMetadata");
+    result.orphans = json.read("$.orphans");
+
     return result;
   }
 }
