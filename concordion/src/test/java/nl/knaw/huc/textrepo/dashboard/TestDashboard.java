@@ -1,5 +1,6 @@
 package nl.knaw.huc.textrepo.dashboard;
 
+import com.jayway.jsonpath.DocumentContext;
 import nl.knaw.huc.textrepo.AbstractConcordionTest;
 import nl.knaw.huc.textrepo.util.RestUtils;
 
@@ -25,7 +26,7 @@ public class TestDashboard extends AbstractConcordionTest {
   }
 
   public static class DashboardResult {
-    public int status;
+    public String status;
     public String body;
     public String documentCount;
     public String withoutFiles;
@@ -40,17 +41,54 @@ public class TestDashboard extends AbstractConcordionTest {
         .get();
 
     final var result = new DashboardResult();
-    result.status = response.getStatus();
+    result.status = readableStatus(response);
 
     var body = response.readEntity(String.class);
     result.body = asPrettyJson(body);
 
     var json = jsonPath.parse(body);
-    result.documentCount = json.read("$.documentCount");
-    result.withoutFiles = json.read("$.documentsWithoutFiles");
-    result.withoutMetadata = json.read("$.documentsWithoutMetadata");
-    result.orphans = json.read("$.orphans");
+    result.documentCount = json.read("$.documentCount") + " documents";
+    result.withoutFiles = json.read("$.documentsWithoutFiles") + " documents without files";
+    result.withoutMetadata = json.read("$.documentsWithoutMetadata") + " documents without metadata";
+    result.orphans = json.read("$.orphans") + " orphan";
 
     return result;
   }
+
+  public static class OrphansResult {
+    public String status;
+    public String body;
+    public String itemCount;
+    public String orphanExternalId;
+    public String isPaginated;
+  }
+
+  public OrphansResult retrieveOrphans(String endpoint) {
+    final var response = client
+        .target(HOST + endpoint)
+        .request()
+        .get();
+
+    final var result = new OrphansResult();
+    result.status = readableStatus(response);
+
+    var body = response.readEntity(String.class);
+    result.body = asPrettyJson(body);
+
+    var json = jsonPath.parse(body);
+    int itemCount = json.read("$.total");
+    result.itemCount = String.format("%d item%s", itemCount, itemCount == 1 ? "" : "s");
+    result.orphanExternalId = "externalId: " + json.read("$.items[0].externalId");
+    result.isPaginated = isPaginated(json) ? "is properly paginated" : "lacks proper pagination";
+    return result;
+  }
+
+  private boolean isPaginated(DocumentContext json) {
+    return json.read("$.items") != null
+        && json.read("$.total") != null
+        && json.read("$.params") != null
+        && json.read("$.params.limit") != null
+        && json.read("$.params.offset") != null;
+  }
+
 }

@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.Client;
+import javax.ws.rs.core.Response;
 import java.sql.SQLException;
 
 import static com.jayway.jsonpath.Option.DEFAULT_PATH_LEAF_TO_NULL;
@@ -87,6 +88,10 @@ public abstract class AbstractConcordionTest {
     } catch (SQLException ex) {
       throw new RuntimeException("Could not truncate tables", ex);
     }
+  }
+
+  protected static String readableStatus(Response response) {
+    return String.format("%d %s", response.getStatus(), response.getStatusInfo());
   }
 
   public int getTextTypeId() {
