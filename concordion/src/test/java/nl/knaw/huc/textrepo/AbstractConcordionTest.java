@@ -21,16 +21,14 @@ import java.sql.SQLException;
 import static com.jayway.jsonpath.Option.DEFAULT_PATH_LEAF_TO_NULL;
 import static com.jayway.jsonpath.Option.SUPPRESS_EXCEPTIONS;
 import static java.sql.DriverManager.getConnection;
-import static nl.knaw.huc.textrepo.Config.TEXT_MIMETYPE;
-import static nl.knaw.huc.textrepo.Config.TEXT_TYPE;
 import static nl.knaw.huc.textrepo.Config.FOO_MIMETYPE;
 import static nl.knaw.huc.textrepo.Config.FOO_TYPE;
-import static nl.knaw.huc.textrepo.Config.HTTP_APP_HOST;
-import static nl.knaw.huc.textrepo.Config.HTTP_ES_HOST;
 import static nl.knaw.huc.textrepo.Config.POSTGRES_DB;
 import static nl.knaw.huc.textrepo.Config.POSTGRES_HOST;
 import static nl.knaw.huc.textrepo.Config.POSTGRES_PASSWORD;
 import static nl.knaw.huc.textrepo.Config.POSTGRES_USER;
+import static nl.knaw.huc.textrepo.Config.TEXT_MIMETYPE;
+import static nl.knaw.huc.textrepo.Config.TEXT_TYPE;
 import static nl.knaw.huc.textrepo.util.IndexUtils.emptyIndices;
 import static nl.knaw.huc.textrepo.util.RestUtils.createType;
 
