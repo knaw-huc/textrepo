@@ -47,8 +47,8 @@ Then:
 
  - The response status should be [200 OK](- "?=#result.status");
  - The result [is properly paginated](- "?=#result.isPaginated") using `items`, `total`, `limit`, and `offset`;
+ - The `items` array contains exactly the *orphan* document with [externalId: \["doc1"\]](- "?=#result.orphanExternalId");
  - There should be [1 item](- "?=#result.itemCount") in total;
- - The `items` array includes the *orphan* document with [externalId: doc1](- "?=#result.orphanExternalId");
 
  - Full response:
 

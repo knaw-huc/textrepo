@@ -78,7 +78,7 @@ public class TestDashboard extends AbstractConcordionTest {
     var json = jsonPath.parse(body);
     int itemCount = json.read("$.total");
     result.itemCount = String.format("%d item%s", itemCount, itemCount == 1 ? "" : "s");
-    result.orphanExternalId = "externalId: " + json.read("$.items[0].externalId");
+    result.orphanExternalId = "externalId: " + json.read("$.items[*].externalId");
     result.isPaginated = isPaginated(json) ? "is properly paginated" : "lacks proper pagination";
     return result;
   }
