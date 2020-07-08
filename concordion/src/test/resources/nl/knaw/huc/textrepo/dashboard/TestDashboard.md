@@ -9,6 +9,8 @@ We first create the following documents:
   [`text`](- "#doc2Type")
   - external ID [`doc3`](- "#doc3") without files, but with metadata
   key [`doc3Key`](- "#doc3Key") and value [`doc3Value`](- "#doc3Value")
+  - external ID [`doc4`](- "#doc4") with both a file of type [`text`](- "#doc4Type")
+  and metadata with key [`doc4Key`](- "#doc4Key") and value [`doc4Value`](- "#doc4Value")
   
 [ ](- "#doc1Id=createDocument(#doc1)")
 
@@ -18,6 +20,10 @@ We first create the following documents:
 [ ](- "#doc3Id=createDocument(#doc3)")
 [ ](- "createMetadata(#doc3Id, #doc3Key, #doc3Value)")
 
+[ ](- "#doc4Id=createDocument(#doc4)")
+[ ](- "#file4Id=createFile(#doc4Id)")
+[ ](- "createMetadata(#doc4Id, #doc4Key, #doc4Value)")
+
 ## Check document status
 When checking the dashboard using a `GET` to [`/dashboard`](- "#endpoint")
 
@@ -26,7 +32,7 @@ When checking the dashboard using a `GET` to [`/dashboard`](- "#endpoint")
 Then:
 
   - The response status should be [200 OK](- "?=#result.status");
-  - There should be [3 documents](- "?=#result.documentCount") (`doc1`, `doc2`, `doc3`);
+  - There should be [4 documents](- "?=#result.documentCount") (`doc1`, `doc2`, `doc3`, `doc4`);
   - There should be [2 documents without files](- "?=#result.withoutFiles") (`doc1`, `doc3`);
   - There should be [2 documents without metadata](- "?=#result.withoutMetadata") (`doc1`, `doc2`);
   - There should be [1 orphan](- "?=#result.orphans"): a document with no file and no metadata (`doc1`); 
