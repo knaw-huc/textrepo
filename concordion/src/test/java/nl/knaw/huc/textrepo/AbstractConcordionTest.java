@@ -65,7 +65,7 @@ public abstract class AbstractConcordionTest {
 
   @AfterSpecification
   public void cleanUp() {
-    emptyTextrepoDatabase();
+    emptyTextRepoDatabase();
     emptyIndices();
   }
 
@@ -74,7 +74,7 @@ public abstract class AbstractConcordionTest {
     fooTypeId = createType(FOO_TYPE, FOO_MIMETYPE);
   }
 
-  private void emptyTextrepoDatabase() {
+  private void emptyTextRepoDatabase() {
     logger.info("truncate tables owned by [{}]", POSTGRES_USER);
 
     var host = POSTGRES_HOST;
