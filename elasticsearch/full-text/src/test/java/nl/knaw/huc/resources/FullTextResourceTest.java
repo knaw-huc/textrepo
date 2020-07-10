@@ -38,7 +38,7 @@ public class FullTextResourceTest {
   private Client client;
 
   @Test
-  public void testMapping_returnsMapping() throws IOException {
+  public void testMapping_returnsMapping() {
     var response = client
         .target(getTestUrl("/mapping"))
         .request().get();
@@ -50,7 +50,7 @@ public class FullTextResourceTest {
   }
 
   @Test
-  public void testFields_returnsCompletionSuggesterInput_whenTxt() throws IOException {
+  public void testFields_returnsFullText_whenTxt() throws IOException {
     var fileContents = getResourceAsBytes("file.txt");
     var response = postTestContents(fileContents, "text/plain");
     var fields = response.readEntity(String.class);
@@ -65,6 +65,29 @@ public class FullTextResourceTest {
     assertThat(response.getStatus()).isEqualTo(422);
     var fields = response.readEntity(String.class);
     assertThat(fields).contains("Unexpected mimetype: got [application/pdf] but should be one of [");
+  }
+
+  @Test
+  public void testFields_returnsFullText_whenXml() throws IOException {
+    var fileContents = getResourceAsBytes("file.xml");
+    var response = postTestContents(fileContents, "application/xml");
+    var fields = response.readEntity(String.class);
+    assertThat(response.getStatus()).isEqualTo(200);
+    assertThat(JsonPath.parse(fields).read("$.contents", String.class)).isEqualToIgnoringWhitespace("mijzelf hoofd knie en tenen");
+  }
+
+  @Test
+  public void testFields_returnsFullText_whenOdt() throws IOException {
+    var fileContents = getResourceAsBytes("file.odt");
+    var response = postTestContents(fileContents, "application/vnd.oasis.opendocument.text");
+    var fields = response.readEntity(String.class);
+    assertThat(response.getStatus()).isEqualTo(200);
+    assertThat(JsonPath.parse(fields).read("$.contents", String.class)).isEqualTo("Hoofd, " +
+        "schouders, knie en teen, knie en teen\n" +
+        "Hoofd, schouders, knie en teen, knie en teen\n" +
+        "Hoofd, schouders, knie en teen, knie en teen\n" +
+        "Oren, ogen, puntje van je neus\n" +
+        "Hoofd, schouders, knie en teen, knie en teen\n");
   }
 
   private Response postTestContents(byte[] bytes, String mimetype) {

@@ -1,10 +1,10 @@
 package nl.knaw.huc.api;
 
-public class Properties {
+public class Fields {
 
   public String contents;
 
-  public Properties(String contents) {
+  public Fields(String contents) {
     this.contents = contents;
   }
 

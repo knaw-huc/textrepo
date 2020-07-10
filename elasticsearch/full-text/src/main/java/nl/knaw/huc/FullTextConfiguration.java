@@ -13,10 +13,6 @@ public class FullTextConfiguration extends Configuration {
   @NotNull
   private String mappingFile;
 
-  @Valid
-  @NotNull
-  private List<String> supportedMimetypes;
-
   @JsonProperty("mappingFile")
   public String getMappingFile() {
     return mappingFile;
@@ -25,15 +21,5 @@ public class FullTextConfiguration extends Configuration {
   @JsonProperty("mappingFile")
   public void setMappingFile(String mappingFile) {
     this.mappingFile = mappingFile;
-  }
-
-  @JsonProperty("supportedMimetypes")
-  public List<String> getSupportedMimetypes() {
-    return supportedMimetypes;
-  }
-
-  @JsonProperty("supportedMimetypes")
-  public void setSupportedMimetypes(List<String> supportedMimetypes) {
-    this.supportedMimetypes = supportedMimetypes;
   }
 }

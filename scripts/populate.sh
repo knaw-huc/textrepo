@@ -4,10 +4,12 @@ set -e
 HOST=localhost:8080/textrepo/rest
 OLD_CONTENT=./scripts/example.old.txt
 NEW_CONTENT=./scripts/example.new.txt
+XML_CONTENT=./scripts/example.xml
 
 # Check example files exist:
 if [[ ! -f $OLD_CONTENT ]] ; then echo "File '$OLD_CONTENT' not found, aborting."; exit; fi
 if [[ ! -f $NEW_CONTENT ]] ; then echo "File '$NEW_CONTENT' not found, aborting."; exit; fi
+if [[ ! -f $XML_CONTENT ]] ; then echo "File '$XML_CONTENT' not found, aborting."; exit; fi
 
 
 # Create text and xml file types:
@@ -79,3 +81,9 @@ NEW_VERSION_ID=$(curl "$HOST/versions" \
   -F "contents=@$NEW_CONTENT" | jq -r '.id')
 echo "Created new version with id: $NEW_VERSION_ID"
 
+# Add one xml file:
+
+XML_VERSION_ID=$(curl "$HOST/versions" \
+  -F "fileId=$XML_FILE_ID" \
+  -F "contents=@$XML_CONTENT" | jq -r '.id')
+echo "Created xml version with id: $XML_VERSION_ID"

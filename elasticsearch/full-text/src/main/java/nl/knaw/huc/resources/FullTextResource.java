@@ -1,6 +1,7 @@
 package nl.knaw.huc.resources;
 
 import com.codahale.metrics.annotation.Timed;
+import nl.knaw.huc.core.SupportedType;
 import nl.knaw.huc.service.FieldsService;
 import nl.knaw.huc.service.MappingService;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
@@ -59,7 +60,7 @@ public class FullTextResource {
     var mimetype = body.getMediaType().toString();
     var fields = fieldsService.createFields(
         inputStream,
-        mimetype
+        SupportedType.fromString(mimetype)
     );
 
     return Response
