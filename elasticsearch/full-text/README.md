@@ -2,6 +2,11 @@
 
 Run: see `../../README.md`
 
+Get supported mimetypes:
+```
+curl '<host>/full-text/types'
+```
+
 Get elasticsearch mapping:
 ```
 curl '<host>/full-text/mapping'

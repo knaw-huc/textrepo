@@ -90,6 +90,18 @@ public class FullTextResourceTest {
         "Hoofd, schouders, knie en teen, knie en teen\n");
   }
 
+  @Test
+  public void testTypes_returnsArrayOfTypes() throws IOException {
+    var response = client
+        .target(getTestUrl("/types"))
+        .request()
+        .get();
+    var fields = response.readEntity(String.class);
+    assertThat(response.getStatus()).isEqualTo(200);
+    assertThat(JsonPath.parse(fields).read("$.[0]", String.class)).isEqualTo("application/xml");
+    assertThat(JsonPath.parse(fields).read("$.length()", Integer.class)).isEqualTo(3);
+  }
+
   private Response postTestContents(byte[] bytes, String mimetype) {
     var contentDisposition = FormDataContentDisposition
         .name("file")
