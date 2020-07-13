@@ -9,8 +9,6 @@ import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AbstractParser;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
-import org.apache.tika.parser.odf.OpenDocumentParser;
-import org.apache.tika.parser.xml.XMLParser;
 import org.apache.tika.sax.BodyContentHandler;
 import org.xml.sax.SAXException;
 
@@ -27,8 +25,6 @@ import static org.apache.commons.io.IOUtils.copy;
 public class FieldsService {
 
   private FullTextConfiguration config;
-  private XMLParser xmlParser = new XMLParser();
-  private OpenDocumentParser odtParser = new OpenDocumentParser();
   private AutoDetectParser autoDetectParser = new AutoDetectParser();
 
   public FieldsService(FullTextConfiguration config) {
