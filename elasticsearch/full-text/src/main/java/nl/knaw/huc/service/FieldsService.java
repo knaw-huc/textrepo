@@ -7,7 +7,9 @@ import org.apache.commons.io.IOUtils;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AbstractParser;
+import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
+import org.apache.tika.parser.microsoft.OfficeParser;
 import org.apache.tika.parser.odf.OpenDocumentParser;
 import org.apache.tika.parser.xml.XMLParser;
 import org.apache.tika.sax.BodyContentHandler;
@@ -19,10 +21,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static com.google.common.collect.ImmutableList.of;
 import static java.lang.String.format;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.stream.Collectors.joining;
 import static org.apache.commons.io.IOUtils.copy;
 
 public class FieldsService {
@@ -30,6 +30,7 @@ public class FieldsService {
   private FullTextConfiguration config;
   private XMLParser xmlParser = new XMLParser();
   private OpenDocumentParser odtParser = new OpenDocumentParser();
+  private AutoDetectParser autoDetectParser = new AutoDetectParser();
 
   public FieldsService(FullTextConfiguration config) {
     this.config = config;
@@ -44,8 +45,10 @@ public class FieldsService {
         return fromTxt(inputStream);
       case XML:
         return fromXml(inputStream);
-      case ODT :
+      case ODT:
         return fromOdt(inputStream);
+      case DOCX:
+        return fromDocx(inputStream);
       default:
         throw new IllegalStateException(format("Could not create fields for type [%s]", mimetype));
     }
@@ -61,12 +64,16 @@ public class FieldsService {
     return new Fields(text);
   }
 
+  private Fields fromXml(InputStream inputStream) {
+    return createFieldsFromInputStream(inputStream, xmlParser);
+  }
+
   private Fields fromOdt(InputStream inputStream) {
     return createFieldsFromInputStream(inputStream, odtParser);
   }
 
-  private Fields fromXml(InputStream inputStream) {
-    return createFieldsFromInputStream(inputStream, xmlParser);
+  private Fields fromDocx(InputStream inputStream) {
+    return createFieldsFromInputStream(inputStream, autoDetectParser);
   }
 
   private Fields createFieldsFromInputStream(InputStream inputStream, AbstractParser parser) {

@@ -10,7 +10,8 @@ public enum SupportedType {
 
   XML("application/xml"),
   TXT("text/plain"),
-  ODT("application/vnd.oasis.opendocument.text");
+  ODT("application/vnd.oasis.opendocument.text"),
+  DOCX("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
 
   private String mimetype;
 

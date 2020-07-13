@@ -38,6 +38,18 @@ public class FullTextResourceTest {
   private Client client;
 
   @Test
+  public void testTypes_returnsArrayOfTypes() throws IOException {
+    var response = client
+        .target(getTestUrl("/types"))
+        .request()
+        .get();
+    var fields = response.readEntity(String.class);
+    assertThat(response.getStatus()).isEqualTo(200);
+    assertThat(JsonPath.parse(fields).read("$.[0]", String.class)).isEqualTo("application/xml");
+    assertThat(JsonPath.parse(fields).read("$.length()", Integer.class)).isEqualTo(4);
+  }
+
+  @Test
   public void testMapping_returnsMapping() {
     var response = client
         .target(getTestUrl("/mapping"))
@@ -91,15 +103,19 @@ public class FullTextResourceTest {
   }
 
   @Test
-  public void testTypes_returnsArrayOfTypes() throws IOException {
-    var response = client
-        .target(getTestUrl("/types"))
-        .request()
-        .get();
+  public void testFields_returnsFullText_whenDocx() throws IOException {
+    var fileContents = getResourceAsBytes("file.docx");
+    var response = postTestContents(fileContents, "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
     var fields = response.readEntity(String.class);
     assertThat(response.getStatus()).isEqualTo(200);
-    assertThat(JsonPath.parse(fields).read("$.[0]", String.class)).isEqualTo("application/xml");
-    assertThat(JsonPath.parse(fields).read("$.length()", Integer.class)).isEqualTo(3);
+    assertThat(JsonPath.parse(fields).read("$.contents", String.class)).isEqualTo("Een beetje gek dat bestaat niet\n" +
+        "Gaan we gek doen?\n" +
+        "Het voelt alsof we gek gaan doen\n" +
+        "Een beetje gek, niet als toen\n" +
+        "Gaan we gek doen?\n" +
+        "Het voelt alsof we gek gaan doen\n" +
+        "Of wel een beetje, een beetje gek als toen\n" +
+        "Een beetje gek dat bestaat niet, het is helemaal of niks\n");
   }
 
   private Response postTestContents(byte[] bytes, String mimetype) {
