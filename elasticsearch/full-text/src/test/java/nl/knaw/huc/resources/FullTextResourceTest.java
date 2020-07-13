@@ -38,7 +38,7 @@ public class FullTextResourceTest {
   private Client client;
 
   @Test
-  public void testTypes_returnsArrayOfTypes() throws IOException {
+  public void testTypes_returnsArrayOfTypes() {
     var response = client
         .target(getTestUrl("/types"))
         .request()

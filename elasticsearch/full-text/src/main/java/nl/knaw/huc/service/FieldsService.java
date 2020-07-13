@@ -9,7 +9,6 @@ import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AbstractParser;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
-import org.apache.tika.parser.microsoft.OfficeParser;
 import org.apache.tika.parser.odf.OpenDocumentParser;
 import org.apache.tika.parser.xml.XMLParser;
 import org.apache.tika.sax.BodyContentHandler;
@@ -44,11 +43,9 @@ public class FieldsService {
       case TXT:
         return fromTxt(inputStream);
       case XML:
-        return fromXml(inputStream);
       case ODT:
-        return fromOdt(inputStream);
       case DOCX:
-        return fromDocx(inputStream);
+        return parseWithTika(inputStream, autoDetectParser);
       default:
         throw new IllegalStateException(format("Could not create fields for type [%s]", mimetype));
     }
@@ -64,19 +61,7 @@ public class FieldsService {
     return new Fields(text);
   }
 
-  private Fields fromXml(InputStream inputStream) {
-    return createFieldsFromInputStream(inputStream, xmlParser);
-  }
-
-  private Fields fromOdt(InputStream inputStream) {
-    return createFieldsFromInputStream(inputStream, odtParser);
-  }
-
-  private Fields fromDocx(InputStream inputStream) {
-    return createFieldsFromInputStream(inputStream, autoDetectParser);
-  }
-
-  private Fields createFieldsFromInputStream(InputStream inputStream, AbstractParser parser) {
+  private Fields parseWithTika(InputStream inputStream, AbstractParser parser) {
     var bytes = getBytes(inputStream);
     var metadata = new Metadata();
     var parseContext = new ParseContext();
