@@ -6,6 +6,6 @@ import org.junit.runner.RunWith;
 
 @FullOGNL
 @RunWith(ConcordionRunner.class)
-public class TextrepoTest {
+public class TextRepoTest {
   // concordion needs this *Test.java-class to render the breadcrumb index page.
 }

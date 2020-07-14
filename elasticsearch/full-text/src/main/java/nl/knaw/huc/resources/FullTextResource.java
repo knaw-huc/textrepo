@@ -1,6 +1,7 @@
 package nl.knaw.huc.resources;
 
 import com.codahale.metrics.annotation.Timed;
+import nl.knaw.huc.core.SupportedType;
 import nl.knaw.huc.service.FieldsService;
 import nl.knaw.huc.service.MappingService;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
@@ -14,7 +15,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
 
@@ -30,6 +37,20 @@ public class FullTextResource {
   ) {
     this.fieldsService = fieldsService;
     this.mappingService = mappingService;
+  }
+
+  @GET
+  @Path("/types")
+  @Timed
+  @Produces(APPLICATION_JSON)
+  public Response types() {
+    var mimetypes = stream(SupportedType.values())
+        .map(SupportedType::getMimetype)
+        .collect(toList());
+    return Response
+        .status(200)
+        .entity(mimetypes)
+        .build();
   }
 
   @GET
@@ -59,7 +80,7 @@ public class FullTextResource {
     var mimetype = body.getMediaType().toString();
     var fields = fieldsService.createFields(
         inputStream,
-        mimetype
+        SupportedType.fromString(mimetype)
     );
 
     return Response

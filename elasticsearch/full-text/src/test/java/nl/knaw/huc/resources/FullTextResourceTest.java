@@ -38,7 +38,19 @@ public class FullTextResourceTest {
   private Client client;
 
   @Test
-  public void testMapping_returnsMapping() throws IOException {
+  public void testTypes_returnsArrayOfTypes() {
+    var response = client
+        .target(getTestUrl("/types"))
+        .request()
+        .get();
+    var fields = response.readEntity(String.class);
+    assertThat(response.getStatus()).isEqualTo(200);
+    assertThat(JsonPath.parse(fields).read("$.[0]", String.class)).isEqualTo("application/xml");
+    assertThat(JsonPath.parse(fields).read("$.length()", Integer.class)).isEqualTo(4);
+  }
+
+  @Test
+  public void testMapping_returnsMapping() {
     var response = client
         .target(getTestUrl("/mapping"))
         .request().get();
@@ -50,7 +62,7 @@ public class FullTextResourceTest {
   }
 
   @Test
-  public void testFields_returnsCompletionSuggesterInput_whenTxt() throws IOException {
+  public void testFields_returnsFullText_whenTxt() throws IOException {
     var fileContents = getResourceAsBytes("file.txt");
     var response = postTestContents(fileContents, "text/plain");
     var fields = response.readEntity(String.class);
@@ -65,6 +77,45 @@ public class FullTextResourceTest {
     assertThat(response.getStatus()).isEqualTo(422);
     var fields = response.readEntity(String.class);
     assertThat(fields).contains("Unexpected mimetype: got [application/pdf] but should be one of [");
+  }
+
+  @Test
+  public void testFields_returnsFullText_whenXml() throws IOException {
+    var fileContents = getResourceAsBytes("file.xml");
+    var response = postTestContents(fileContents, "application/xml");
+    var fields = response.readEntity(String.class);
+    assertThat(response.getStatus()).isEqualTo(200);
+    assertThat(JsonPath.parse(fields).read("$.contents", String.class)).isEqualToIgnoringWhitespace("mijzelf hoofd knie en tenen");
+  }
+
+  @Test
+  public void testFields_returnsFullText_whenOdt() throws IOException {
+    var fileContents = getResourceAsBytes("file.odt");
+    var response = postTestContents(fileContents, "application/vnd.oasis.opendocument.text");
+    var fields = response.readEntity(String.class);
+    assertThat(response.getStatus()).isEqualTo(200);
+    assertThat(JsonPath.parse(fields).read("$.contents", String.class)).isEqualTo("Hoofd, " +
+        "schouders, knie en teen, knie en teen\n" +
+        "Hoofd, schouders, knie en teen, knie en teen\n" +
+        "Hoofd, schouders, knie en teen, knie en teen\n" +
+        "Oren, ogen, puntje van je neus\n" +
+        "Hoofd, schouders, knie en teen, knie en teen\n");
+  }
+
+  @Test
+  public void testFields_returnsFullText_whenDocx() throws IOException {
+    var fileContents = getResourceAsBytes("file.docx");
+    var response = postTestContents(fileContents, "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+    var fields = response.readEntity(String.class);
+    assertThat(response.getStatus()).isEqualTo(200);
+    assertThat(JsonPath.parse(fields).read("$.contents", String.class)).isEqualTo("Een beetje gek dat bestaat niet\n" +
+        "Gaan we gek doen?\n" +
+        "Het voelt alsof we gek gaan doen\n" +
+        "Een beetje gek, niet als toen\n" +
+        "Gaan we gek doen?\n" +
+        "Het voelt alsof we gek gaan doen\n" +
+        "Of wel een beetje, een beetje gek als toen\n" +
+        "Een beetje gek dat bestaat niet, het is helemaal of niks\n");
   }
 
   private Response postTestContents(byte[] bytes, String mimetype) {
