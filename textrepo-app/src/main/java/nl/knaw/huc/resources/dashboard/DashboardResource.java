@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import nl.knaw.huc.api.DocumentCounts;
 import nl.knaw.huc.api.FormPageParams;
 import nl.knaw.huc.api.ResultDocument;
 import nl.knaw.huc.api.ResultPage;
@@ -48,6 +49,14 @@ public class DashboardResource {
     stats.put("documentsWithoutMetadata", valueOf(dashboardService.countDocumentsWithoutMetadata()));
     stats.put("orphans", valueOf(dashboardService.countOrphans()));
     return stats;
+  }
+
+  @GET
+  @Produces(APPLICATION_JSON)
+  @Path("v2")
+  public DocumentCounts getDocumentCounts() {
+    log.debug("Get document counts");
+    return dashboardService.getDocumentCounts();
   }
 
   @GET
