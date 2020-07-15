@@ -24,7 +24,7 @@ We first create the following documents:
 [ ](- "#file4Id=createFile(#doc4Id)")
 [ ](- "createMetadata(#doc4Id, #doc4Key, #doc4Value)")
 
-## Check document status
+## Check document count overview
 When checking the dashboard using a `GET` to [`/dashboard`](- "#endpoint")
 
 [ ](- "#result=retrieve(#endpoint)")
@@ -33,9 +33,10 @@ Then:
 
   - The response status should be [200 OK](- "?=#result.status");
   - There should be [4 documents](- "?=#result.documentCount") (`doc1`, `doc2`, `doc3`, `doc4`);
-  - There should be [2 documents without files](- "?=#result.withoutFiles") (`doc1`, `doc3`);
-  - There should be [2 documents without metadata](- "?=#result.withoutMetadata") (`doc1`, `doc2`);
-  - There should be [1 orphan](- "?=#result.orphans"): a document with no file and no metadata (`doc1`); 
+  - There should be [2 documents with a file](- "?=#result.hasFile") (`doc1`, `doc3`);
+  - There should be [2 documents with metadata](- "?=#result.hasMetadata") (`doc1`, `doc2`);
+  - There should be [1 document with both a file and metadata](- "?=#result.hasBoth") (`doc4`)
+  - There should be [1 document without any files or metadata](- "?=#result.hasNone"): ("orphan") (`doc1`); 
 
   - Full response:
 

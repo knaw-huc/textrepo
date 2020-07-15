@@ -17,10 +17,7 @@ import javax.ws.rs.BeanParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import java.util.HashMap;
-import java.util.Map;
 
-import static java.lang.String.valueOf;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static nl.knaw.huc.service.Paginator.toResult;
 
@@ -39,26 +36,11 @@ public class DashboardResource {
 
   @GET
   @Produces(APPLICATION_JSON)
-  @ApiOperation("Get dashboard statistics")
-  @ApiResponses(value = {@ApiResponse(code = 200, response = ResultDocument.class, message = "OK")})
-  public Map<String, String> getStats() {
-    log.debug("Get dashboard statistics");
-    final var stats = new HashMap<String, String>();
-    stats.put("documentCount", valueOf(dashboardService.countDocuments()));
-    stats.put("documentsWithoutFiles", valueOf(dashboardService.countDocumentsWithoutFiles()));
-    stats.put("documentsWithoutMetadata", valueOf(dashboardService.countDocumentsWithoutMetadata()));
-    stats.put("orphans", valueOf(dashboardService.countOrphans()));
-    return stats;
-  }
-
-  @GET
-  @Produces(APPLICATION_JSON)
-  @Path("v2")
-  public ResultDocumentsOverview getDocumentsOverview() {
+  @ApiOperation("Get document count overview")
+  @ApiResponses(value = {@ApiResponse(code = 200, response = ResultDocumentsOverview.class, message = "OK")})
+  public ResultDocumentsOverview getStats() {
     log.debug("Get documents overview");
-    final var documentsOverview = dashboardService.getDocumentsOverview();
-    log.debug("Got overview from db: {}", documentsOverview);
-    return new ResultDocumentsOverview(documentsOverview);
+    return new ResultDocumentsOverview(dashboardService.getDocumentsOverview());
   }
 
   @GET

@@ -6,12 +6,6 @@ import nl.knaw.huc.core.Page;
 import nl.knaw.huc.core.PageParams;
 
 public interface DashboardService {
-  int countDocuments();
-
-  int countDocumentsWithoutFiles();
-
-  int countDocumentsWithoutMetadata();
-
   int countOrphans();
 
   DocumentsOverview getDocumentsOverview();

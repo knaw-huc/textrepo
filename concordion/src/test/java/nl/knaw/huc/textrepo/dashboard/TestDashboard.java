@@ -29,9 +29,10 @@ public class TestDashboard extends AbstractConcordionTest {
     public String status;
     public String body;
     public String documentCount;
-    public String withoutFiles;
-    public String withoutMetadata;
-    public String orphans;
+    public String hasFile;
+    public String hasMetadata;
+    public String hasBoth;
+    public String hasNone;
   }
 
   public DashboardResult retrieve(String endpoint) {
@@ -48,9 +49,10 @@ public class TestDashboard extends AbstractConcordionTest {
 
     var json = jsonPath.parse(body);
     result.documentCount = json.read("$.documentCount") + " documents";
-    result.withoutFiles = json.read("$.documentsWithoutFiles") + " documents without files";
-    result.withoutMetadata = json.read("$.documentsWithoutMetadata") + " documents without metadata";
-    result.orphans = json.read("$.orphans") + " orphan";
+    result.hasFile = json.read("$.hasFile") + " documents with a file";
+    result.hasMetadata = json.read("$.hasMetadata") + " documents with metadata";
+    result.hasBoth = json.read("$.hasBoth") + " document with both a file and metadata";
+    result.hasNone = json.read("$.hasNone") + " document without any files or metadata";
 
     return result;
   }
@@ -86,9 +88,9 @@ public class TestDashboard extends AbstractConcordionTest {
   private boolean isPaginated(DocumentContext json) {
     return json.read("$.items") != null
         && json.read("$.total") != null
-        && json.read("$.params") != null
-        && json.read("$.params.limit") != null
-        && json.read("$.params.offset") != null;
+        && json.read("$.page") != null
+        && json.read("$.page.limit") != null
+        && json.read("$.page.offset") != null;
   }
 
 }

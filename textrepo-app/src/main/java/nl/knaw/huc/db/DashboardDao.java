@@ -10,17 +10,6 @@ import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import java.util.List;
 
 public interface DashboardDao {
-  @SqlQuery("select count(*) from documents")
-  int countDocuments();
-
-  @SqlQuery("select count(*) from documents d where " +
-      "not exists (select from documents_files df where df.document_id = d.id)")
-  int countDocumentsWithoutFiles();
-
-  @SqlQuery("select count(*) from documents d where " +
-      "not exists (select from documents_metadata dm where dm.document_id = d.id)")
-  int countDocumentsWithoutMetadata();
-
   @SqlQuery("select count(*) from documents d where " +
       "not exists (select from documents_files fm where fm.document_id = d.id) " +
       "and not exists (select from documents_metadata dm where dm.document_id = d.id) ")
