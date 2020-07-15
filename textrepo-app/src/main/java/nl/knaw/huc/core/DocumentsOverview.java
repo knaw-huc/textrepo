@@ -1,6 +1,6 @@
-package nl.knaw.huc.api;
+package nl.knaw.huc.core;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.MoreObjects;
 
 import java.beans.ConstructorProperties;
 
@@ -22,23 +22,35 @@ public class DocumentCounts {
     this.hasBoth = hasBoth;
   }
 
-  @JsonProperty
   public long getDocumentCount() {
     return documentCount;
   }
 
-  @JsonProperty
   public long getHasFile() {
     return hasFile;
   }
 
-  @JsonProperty
   public long getHasMetadata() {
     return hasMetadata;
   }
 
-  @JsonProperty
   public long getHasBoth() {
     return hasBoth;
+  }
+
+  public long getOrphans() {
+    return documentCount - hasFile - hasMetadata + hasBoth;
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects
+        .toStringHelper(this)
+        .add("documentCount", documentCount)
+        .add("hasFile", hasFile)
+        .add("hasMetadata", hasMetadata)
+        .add("hasBoth", hasBoth)
+        .add("orphans", getOrphans())
+        .toString();
   }
 }
