@@ -4,7 +4,7 @@ import com.google.common.base.MoreObjects;
 
 import java.beans.ConstructorProperties;
 
-public class DocumentCounts {
+public class DocumentsOverview {
 
   private final long documentCount;
 
@@ -14,12 +14,15 @@ public class DocumentCounts {
 
   private final long hasBoth;
 
+  private final long hasNone;
+
   @ConstructorProperties({"document_count", "has_file", "has_metadata", "has_both"})
-  public DocumentCounts(long documentCount, long hasFile, long hasMetadata, long hasBoth) {
+  public DocumentsOverview(long documentCount, long hasFile, long hasMetadata, long hasBoth) {
     this.documentCount = documentCount;
     this.hasFile = hasFile;
     this.hasMetadata = hasMetadata;
     this.hasBoth = hasBoth;
+    this.hasNone = documentCount - hasFile - hasMetadata + hasBoth;
   }
 
   public long getDocumentCount() {
@@ -38,8 +41,8 @@ public class DocumentCounts {
     return hasBoth;
   }
 
-  public long getOrphans() {
-    return documentCount - hasFile - hasMetadata + hasBoth;
+  public long getHasNone() {
+    return hasNone;
   }
 
   @Override
@@ -50,7 +53,7 @@ public class DocumentCounts {
         .add("hasFile", hasFile)
         .add("hasMetadata", hasMetadata)
         .add("hasBoth", hasBoth)
-        .add("orphans", getOrphans())
+        .add("hasNone", hasNone)
         .toString();
   }
 }

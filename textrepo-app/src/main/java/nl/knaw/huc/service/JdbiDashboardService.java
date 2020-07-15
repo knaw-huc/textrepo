@@ -1,7 +1,7 @@
 package nl.knaw.huc.service;
 
-import nl.knaw.huc.api.DocumentCounts;
 import nl.knaw.huc.core.Document;
+import nl.knaw.huc.core.DocumentsOverview;
 import nl.knaw.huc.core.Page;
 import nl.knaw.huc.core.PageParams;
 import nl.knaw.huc.db.DashboardDao;
@@ -41,8 +41,8 @@ public class JdbiDashboardService implements DashboardService {
   }
 
   @Override
-  public DocumentCounts getDocumentCounts() {
-    return dashboard().getDocumentCounts();
+  public DocumentsOverview getDocumentsOverview() {
+    return dashboard().getDocumentsOverview();
   }
 
   @Override

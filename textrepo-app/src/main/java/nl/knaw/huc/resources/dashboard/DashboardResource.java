@@ -4,9 +4,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import nl.knaw.huc.api.DocumentCounts;
 import nl.knaw.huc.api.FormPageParams;
 import nl.knaw.huc.api.ResultDocument;
+import nl.knaw.huc.api.ResultDocumentsOverview;
 import nl.knaw.huc.api.ResultPage;
 import nl.knaw.huc.service.DashboardService;
 import nl.knaw.huc.service.Paginator;
@@ -54,9 +54,11 @@ public class DashboardResource {
   @GET
   @Produces(APPLICATION_JSON)
   @Path("v2")
-  public DocumentCounts getDocumentCounts() {
-    log.debug("Get document counts");
-    return dashboardService.getDocumentCounts();
+  public ResultDocumentsOverview getDocumentsOverview() {
+    log.debug("Get documents overview");
+    final var documentsOverview = dashboardService.getDocumentsOverview();
+    log.debug("Got overview from db: {}", documentsOverview);
+    return new ResultDocumentsOverview(documentsOverview);
   }
 
   @GET

@@ -3,7 +3,7 @@ package nl.knaw.huc.api;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import nl.knaw.huc.core.DocumentsOverview;
 
-public class ResultDocumentCounts {
+public class ResultDocumentsOverview {
   private final long documentCount;
 
   private final long hasFile;
@@ -12,14 +12,14 @@ public class ResultDocumentCounts {
 
   private final long hasBoth;
 
-  private final long orphans;
+  private final long hasNone;
 
-  public ResultDocumentCounts(DocumentsOverview counts) {
-    this.documentCount = counts.getDocumentCount();
-    this.hasFile = counts.getHasFile();
-    this.hasMetadata = counts.getHasMetadata();
-    this.hasBoth = counts.getHasBoth();
-    this.orphans = counts.getOrphans();
+  public ResultDocumentsOverview(DocumentsOverview overview) {
+    this.documentCount = overview.getDocumentCount();
+    this.hasFile = overview.getHasFile();
+    this.hasMetadata = overview.getHasMetadata();
+    this.hasBoth = overview.getHasBoth();
+    this.hasNone = overview.getHasNone();
   }
 
   @JsonProperty
@@ -43,7 +43,7 @@ public class ResultDocumentCounts {
   }
 
   @JsonProperty
-  public long getOrphans() {
-    return orphans;
+  public long getHasNone() {
+    return hasNone;
   }
 }
