@@ -29,5 +29,5 @@ public class ResultType {
   public String getMimetype() {
     return mimetype;
   }
-
 }
+
