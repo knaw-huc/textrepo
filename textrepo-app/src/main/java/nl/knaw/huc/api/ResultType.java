@@ -5,7 +5,7 @@ import nl.knaw.huc.core.Type;
 
 public class ResultType {
 
-  private short id;
+  private final short id;
   private final String name;
   private final String mimetype;
 
@@ -29,5 +29,5 @@ public class ResultType {
   public String getMimetype() {
     return mimetype;
   }
-
 }
+
