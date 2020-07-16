@@ -76,6 +76,21 @@ services:
               "--",
               "java", "-jar", "/indexer/full-text.jar", "server", "config.yml"]
 
+  spacy-ner-indexer:
+    container_name: tr_spacy-ner
+    image: knawhuc/textrepo-spacy-ner-indexer:${TR_VERSION}
+    ports:
+      - 8080
+    networks:
+      - textrepo_network
+    command: ["/utils/wait-for-it.sh", "elasticsearch:9200",
+              "--timeout=0",
+              "--",
+              "python", "/tagger/py/main.py"
+    ]
+    volumes:
+      - ./elasticsearch/spacy-ner/model:/tagger/model
+
   textrepo-app:
     container_name: tr_textrepo
     image: knawhuc/textrepo-app:${TR_VERSION}
