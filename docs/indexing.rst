@@ -38,6 +38,14 @@ When a file version is added, the |tr| adds or updates all appropriate indexed d
 - Yes? `POST` the contents of new version to `fields`-endpoint. `Content-Type` header contains mimetype of file.
 - Response of `fields`-endpoint is used by |tr| to create a new or update the corresponding index document
 
+Fields type
+----------
+
+Fields can be of type 'multipart' or 'urlencoded':
+- When using _multipart_, files will be send to the fields endpoint using `Content-Type: multipart/form-data` with a body part named `file` which contains the file contents and its `content-type`.
+- When using _urlencoded_, files will be send to the fields endpoint with a `content-type` header and a body contained the file contents.
+
+
 Configuration
 -------------
 Custom indexers can be configured in the `config.yml` of |tr| under `indexers`.
