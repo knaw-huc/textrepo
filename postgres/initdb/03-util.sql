@@ -11,20 +11,3 @@ BEGIN
   END LOOP;
 END;
 $$ LANGUAGE plpgsql;
-
-
-
--- overview of which documents have files and / or metadata
-CREATE OR REPLACE FUNCTION get_documents_overview(
-  OUT document_count bigint, OUT has_file bigint,
-  OUT has_metadata bigint, OUT has_both bigint) AS $$
-    SELECT
-        (SELECT COUNT(*) FROM documents d),
-        (SELECT COUNT(*) FROM documents d, documents_files df
-	    WHERE df.document_id = d.id),
-        (SELECT COUNT(*) FROM documents d, documents_metadata dm
-	    WHERE dm.document_id = d.id),
-        (SELECT COUNT(*)
-	    FROM documents d, documents_files df, documents_metadata dm
-            WHERE df.document_id = d.id AND dm.document_id = d.id);
-$$ LANGUAGE SQL;
