@@ -38,12 +38,15 @@ When a file version is added, the |tr| adds or updates all appropriate indexed d
 - Yes? `POST` the contents of new version to `fields`-endpoint. `Content-Type` header contains mimetype of file.
 - Response of `fields`-endpoint is used by |tr| to create a new or update the corresponding index document
 
-Fields type
-----------
+Fields endpoint
+-----------
 
-Fields can be of type 'multipart' or 'urlencoded':
-- When using _multipart_, files will be send to the fields endpoint using `Content-Type: multipart/form-data` with a body part named `file` which contains the file contents and its `content-type`.
-- When using _urlencoded_, files will be send to the fields endpoint with a `content-type` header and a body contained the file contents.
+The fields-endpoint of an indexer converts a file into a elasticsearch document. The |tr| can call this endpoint in two ways: this can be configured with `indexers[].fields.type`.
+
+A fields `type` can configured as 'multipart' or 'original':
+
+- When using *multipart*, files will be send to the fields endpoint using `Content-Type: multipart/form-data` with a body part named `file` which contains the file contents and and a `Content-Type` header with the file mimetype.
+- When using *original*, files will be send to the fields endpoint with a `Content-Type` header and a body contained the file contents.
 
 
 Configuration
@@ -55,7 +58,7 @@ One empty index example: ::
   - mapping:    # string, url of GET mapping endpoint
     fields:
       url:      # string, url of POST fields endpoint
-      type:     # string, 'multipart' or 'urlencoded'
+      type:     # string, 'multipart' or 'original'
     mimetypes:
       -         # list of strings, supported mimetypes
     elasticsearch:

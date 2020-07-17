@@ -23,6 +23,8 @@ import java.util.UUID;
 
 import static java.lang.String.format;
 import static nl.knaw.huc.resources.TestUtils.getResourceAsString;
+import static nl.knaw.huc.service.index.FieldsType.MULTIPART;
+import static nl.knaw.huc.service.index.FieldsType.ORIGINAL;
 import static org.assertj.core.util.Lists.newArrayList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -72,7 +74,7 @@ public class MappedIndexerTest {
 
   @Test
   public void testInstantiationElasticCustomFacetIndexer_requestsMapping() throws IOException, IndexerException {
-    var config = createCustomFacetIndexerConfiguration("urlencoded", testType.getMimetype());
+    var config = createCustomFacetIndexerConfiguration(ORIGINAL.getName(), testType.getMimetype());
     var getMappingRequest = request()
         .withMethod("GET")
         .withPath(mockMappingEndpoint);
@@ -92,7 +94,7 @@ public class MappedIndexerTest {
 
   @Test
   public void testIndexFile_requestsFields() throws IOException, IndexerException {
-    var config = createCustomFacetIndexerConfiguration("urlencoded", testType.getMimetype());
+    var config = createCustomFacetIndexerConfiguration(ORIGINAL.getName(), testType.getMimetype());
     mockMappingResponse();
     mockCreatingIndexResponse(config);
     var indexer = new MappedIndexer(config, typeServiceMock);
@@ -118,7 +120,7 @@ public class MappedIndexerTest {
   public void testInstantiatingElasticCustomFacetIndexer_requestsFieldUsingMultipart_whenTypeIsMultipart()
       throws IOException, IndexerException {
     var expectedContentTypeHeader = "multipart/form-data;boundary=.*";
-    var config = createCustomFacetIndexerConfiguration("multipart", testType.getMimetype());
+    var config = createCustomFacetIndexerConfiguration(MULTIPART.getName(), testType.getMimetype());
     var fileId = UUID.randomUUID();
     mockPuttingFileResponse(config, fileId);
     mockCreatingIndexResponse(config);

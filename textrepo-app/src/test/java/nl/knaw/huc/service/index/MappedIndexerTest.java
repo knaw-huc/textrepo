@@ -15,6 +15,8 @@ import org.mockserver.integration.ClientAndServer;
 import java.util.UUID;
 
 import static java.util.Arrays.asList;
+import static nl.knaw.huc.service.index.FieldsType.MULTIPART;
+import static nl.knaw.huc.service.index.FieldsType.ORIGINAL;
 import static org.mockito.ArgumentMatchers.anyShort;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -45,8 +47,8 @@ public class MappedIndexerTest {
   }
 
   @Test
-  public void index_usesUrlEncode_whenFieldsTypeIsUrlencoded() throws IndexerException {
-    var fieldsType = "urlencoded";
+  public void index_usesOriginal_whenFieldsTypeIsOriginal() throws IndexerException {
+    var fieldsType = ORIGINAL.getName();
     var config = createConfig(fieldsType);
     var testId = UUID.randomUUID();
     var testFile = new TextRepoFile(testId, (short) 1);
@@ -67,7 +69,7 @@ public class MappedIndexerTest {
 
   @Test
   public void index_usesMultipartFormData_whenFieldsTypeIsMultipart() throws IndexerException {
-    var fieldsType = "multipart";
+    var fieldsType = MULTIPART.getName();
     var config = createConfig(fieldsType);
     var testId = UUID.randomUUID();
     var testFile = new TextRepoFile(testId, (short) 1);
@@ -121,7 +123,7 @@ public class MappedIndexerTest {
     config.elasticsearch.index = "test-index-name";
     config.mapping = host + "/mapping";
     config.fields = new FieldsConfiguration();
-    config.fields.type = fieldsType;
+    config.fields.type = FieldsType.fromString(fieldsType);
     config.fields.url = host + "/fields";
     config.mimetypes = asList("text/plain");
     return config;
