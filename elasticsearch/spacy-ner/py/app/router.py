@@ -6,7 +6,10 @@ from . import tagger
 
 app = flask.Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
+app.url_map.strict_slashes = False
+
 ROOT = '/spacy-ner'
+
 
 @app.route(ROOT, methods=['GET'])
 def home():
