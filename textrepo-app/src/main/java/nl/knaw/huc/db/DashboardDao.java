@@ -14,30 +14,26 @@ import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import java.beans.ConstructorProperties;
 import java.util.List;
 
+@UseClasspathSqlLocator
 public interface DashboardDao {
   @SqlQuery
-  @UseClasspathSqlLocator
   @RegisterConstructorMapper(DocumentsOverview.class)
   DocumentsOverview getDocumentsOverview();
 
   @SqlQuery
-  @UseClasspathSqlLocator
   int countOrphans();
 
   @SqlQuery
-  @UseClasspathSqlLocator
   @RegisterConstructorMapper(Document.class)
   List<Document> findOrphans(@BindBean PageParams pageParams);
 
-  @SqlQuery
-  @UseClasspathSqlLocator
+  @SqlQuery("documentCountsByMetadataKey")
   @RegisterConstructorMapper(KeyCount.class)
-  List<KeyCount> documentCountsByMetadataKey();
+  List<KeyCount> countDocumentsByMetadataKey();
 
-  @SqlQuery
-  @UseClasspathSqlLocator
+  @SqlQuery("documentCountsByMetadataValue")
   @RegisterConstructorMapper(ValueCount.class)
-  List<ValueCount> documentCountsByMetadataValue(@Bind("key") String key);
+  List<ValueCount> countDocumentsByMetadataValue(@Bind("key") String key);
 
   class KeyCount {
     private final String key;

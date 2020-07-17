@@ -17,7 +17,7 @@ public interface DashboardService {
 
   Page<Document> findOrphans(PageParams pageParams);
 
-  List<KeyCount> documentCountsByMetadataKey();
+  List<KeyCount> countDocumentsByMetadataKey();
 
-  List<ValueCount> documentCountsByMetadataValue(String key);
+  List<ValueCount> countDocumentsByMetadataValue(String key);
 }

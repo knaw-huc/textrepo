@@ -62,9 +62,9 @@ public class DashboardResource {
   @GET
   @Path("metadata")
   @Produces(APPLICATION_JSON)
-  public List<KeyCount> documentCountsByMetadataKey() {
-    log.debug("Get document breakdown by metadata key");
-    final var keyCounts = dashboardService.documentCountsByMetadataKey();
+  public List<KeyCount> countDocumentsByMetadataKey() {
+    log.debug("Count documents by metadata key");
+    final var keyCounts = dashboardService.countDocumentsByMetadataKey();
     log.debug("Got keyCounts: {}", keyCounts);
     return keyCounts;
   }
@@ -72,9 +72,9 @@ public class DashboardResource {
   @GET
   @Path("metadata/{key}")
   @Produces(APPLICATION_JSON)
-  public List<ValueCount> documentCountsByMetadataValue(@PathParam("key") String key) {
-    log.debug("documentCountsByMetadataValue, key={}", key);
-    final var valueCounts = dashboardService.documentCountsByMetadataValue(key);
+  public List<ValueCount> countDocumentsByMetadataValue(@PathParam("key") String key) {
+    log.debug("Count documents by metadata value for key=[{}]", key);
+    final var valueCounts = dashboardService.countDocumentsByMetadataValue(key);
     log.debug("Got valueCounts: {}", valueCounts);
     return valueCounts;
   }
