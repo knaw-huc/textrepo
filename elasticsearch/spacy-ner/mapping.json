@@ -1,0 +1,38 @@
+{
+  "mappings": {
+    "properties": {
+      "contents": {
+        "type": "text"
+      },
+      "entity": {
+        "type": "nested",
+        "properties": {
+          "end": {
+            "type": "long"
+          },
+          "label": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 10
+              }
+            }
+          },
+          "start": {
+            "type": "long"
+          },
+          "text": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

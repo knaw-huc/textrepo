@@ -28,6 +28,7 @@ import java.util.UUID;
 import static java.lang.String.format;
 import static java.lang.String.join;
 import static javax.ws.rs.client.Entity.entity;
+import static nl.knaw.huc.service.index.FieldsType.MULTIPART;
 import static org.elasticsearch.common.xcontent.XContentType.JSON;
 
 /**
@@ -38,7 +39,10 @@ import static org.elasticsearch.common.xcontent.XContentType.JSON;
  * - sends index-request with es-doc to its index
  * MappedFileIndexer depends on a REST-service with the following two endpoints:
  * - GET `mapping`
- * - POST `fields` (using urlencoded or multipart)
+ * - POST `fields`. Files can be posted in two ways:
+ * - `original`: POST request with a body containing the file and a Content-Type header containing the file mimetype
+ * - `multipart`: POST request with a multipart Content-Type header and a multipart body with one body part containing
+ * a Content-Type header with the file mimetype and a
  * MappedFileIndexer is configured in config.yml
  */
 public class MappedIndexer implements Indexer {
@@ -58,7 +62,7 @@ public class MappedIndexer implements Indexer {
     this.client = new TextRepoElasticClient(config.elasticsearch);
 
     createIndex(config);
-    if (config.fields.type.equals("multipart")) {
+    if (MULTIPART.equals(config.fields.type)) {
       requestClient.register(MultiPartFeature.class);
     }
   }
@@ -124,10 +128,10 @@ public class MappedIndexer implements Indexer {
 
   private Response getFields(@Nonnull String latestVersionContents, String mimetype) {
     switch (config.fields.type) {
-      case "urlencoded":
-        return getFieldsUrlencoded(latestVersionContents, mimetype);
-      case "multipart":
-        return getFieldsMultiparted(latestVersionContents, mimetype);
+      case ORIGINAL:
+        return getFieldsOriginal(latestVersionContents, mimetype);
+      case MULTIPART:
+        return getFieldsMultipart(latestVersionContents, mimetype);
       default:
         throw new IllegalStateException(format(
             "Fields type [%s] of [%s] does not exist",
@@ -137,18 +141,18 @@ public class MappedIndexer implements Indexer {
     }
   }
 
-  private Response getFieldsUrlencoded(@Nonnull String latestVersionContents, String mimetype) {
+  private Response getFieldsOriginal(@Nonnull String latestVersionContents, String mimetype) {
     return requestClient
         .target(config.fields.url)
         .request()
         .post(entity(latestVersionContents, mimetype));
   }
 
-  private Response getFieldsMultiparted(@Nonnull String latestVersionContents, String mimetype) {
-    return postMultiparted(latestVersionContents.getBytes(), mimetype);
+  private Response getFieldsMultipart(@Nonnull String latestVersionContents, String mimetype) {
+    return postMultipart(latestVersionContents.getBytes(), mimetype);
   }
 
-  private Response postMultiparted(byte[] bytes, String mimetype) {
+  private Response postMultipart(byte[] bytes, String mimetype) {
     var contentDisposition = FormDataContentDisposition
         .name("file")
         .size(bytes.length)

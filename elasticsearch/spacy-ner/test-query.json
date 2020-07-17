@@ -1,0 +1,18 @@
+{
+  "query": {
+    "nested": {
+      "path": "entity",
+      "query": {
+        "bool": {
+          "must": [
+            {
+              "match": {
+                "entity.text": "Cust van Vlaenderen"
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}
