@@ -9,6 +9,7 @@ import nl.knaw.huc.api.ResultDocument;
 import nl.knaw.huc.api.ResultDocumentsOverview;
 import nl.knaw.huc.api.ResultPage;
 import nl.knaw.huc.db.DashboardDao.KeyCount;
+import nl.knaw.huc.db.DashboardDao.ValueCount;
 import nl.knaw.huc.service.DashboardService;
 import nl.knaw.huc.service.Paginator;
 import org.slf4j.Logger;
@@ -17,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import java.util.List;
 
@@ -63,7 +65,17 @@ public class DashboardResource {
   public List<KeyCount> documentCountsByMetadataKey() {
     log.debug("Get document breakdown by metadata key");
     final var keyCounts = dashboardService.documentCountsByMetadataKey();
-    log.debug("Got keycounts: {}", keyCounts);
+    log.debug("Got keyCounts: {}", keyCounts);
     return keyCounts;
+  }
+
+  @GET
+  @Path("metadata/{key}")
+  @Produces(APPLICATION_JSON)
+  public List<ValueCount> documentCountsByMetadataValue(@PathParam("key") String key) {
+    log.debug("documentCountsByMetadataValue, key={}", key);
+    final var valueCounts = dashboardService.documentCountsByMetadataValue(key);
+    log.debug("Got valueCounts: {}", valueCounts);
+    return valueCounts;
   }
 }

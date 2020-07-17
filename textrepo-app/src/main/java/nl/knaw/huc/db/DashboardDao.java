@@ -6,6 +6,7 @@ import nl.knaw.huc.core.Document;
 import nl.knaw.huc.core.DocumentsOverview;
 import nl.knaw.huc.core.PageParams;
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
+import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.customizer.BindBean;
 import org.jdbi.v3.sqlobject.locator.UseClasspathSqlLocator;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
@@ -33,6 +34,11 @@ public interface DashboardDao {
   @RegisterConstructorMapper(KeyCount.class)
   List<KeyCount> documentCountsByMetadataKey();
 
+  @SqlQuery
+  @UseClasspathSqlLocator
+  @RegisterConstructorMapper(ValueCount.class)
+  List<ValueCount> documentCountsByMetadataValue(@Bind("key") String key);
+
   class KeyCount {
     private final String key;
 
@@ -59,6 +65,37 @@ public interface DashboardDao {
       return MoreObjects
           .toStringHelper(this)
           .add("key", key)
+          .add("count", count)
+          .toString();
+    }
+  }
+
+  class ValueCount {
+    private final String value;
+
+    private final int count;
+
+    @ConstructorProperties({"value", "count"})
+    public ValueCount(String value, int count) {
+      this.value = value;
+      this.count = count;
+    }
+
+    @JsonProperty
+    public String getValue() {
+      return value;
+    }
+
+    @JsonProperty
+    public int getCount() {
+      return count;
+    }
+
+    @Override
+    public String toString() {
+      return MoreObjects
+          .toStringHelper(this)
+          .add("value", value)
           .add("count", count)
           .toString();
     }

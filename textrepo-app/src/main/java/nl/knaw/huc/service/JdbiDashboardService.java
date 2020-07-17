@@ -40,6 +40,11 @@ public class JdbiDashboardService implements DashboardService {
     return dashboard().documentCountsByMetadataKey();
   }
 
+  @Override
+  public List<DashboardDao.ValueCount> documentCountsByMetadataValue(String key) {
+    return dashboard().documentCountsByMetadataValue(key);
+  }
+
   private DashboardDao dashboard() {
     return jdbi.onDemand(DashboardDao.class);
   }
