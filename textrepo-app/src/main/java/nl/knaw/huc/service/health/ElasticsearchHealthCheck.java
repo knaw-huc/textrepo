@@ -4,8 +4,6 @@ import com.codahale.metrics.health.HealthCheck;
 import nl.knaw.huc.service.index.TextRepoElasticClient;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -17,7 +15,6 @@ import static org.elasticsearch.cluster.health.ClusterHealthStatus.YELLOW;
 
 public class ElasticsearchHealthCheck extends HealthCheck {
 
-  private static final Logger logger = LoggerFactory.getLogger(ElasticsearchHealthCheck.class);
   private final String indexName;
   private final TextRepoElasticClient client;
 

@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class IndexUtils {
 
   private final static Client client = JerseyClientBuilder.newClient();
-  private static final Logger logger = LoggerFactory.getLogger(IndexUtils.class);
+  private static final Logger log = LoggerFactory.getLogger(IndexUtils.class);
 
   public static void emptyIndices() {
     INDICES.forEach(IndexUtils::emptyIndex);
@@ -38,11 +38,11 @@ public class IndexUtils {
         .get();
 
     if (indexExists.getStatus() == 404) {
-      logger.info("Not clearing index [{}] because it does not exist", index);
+      log.info("Not clearing index [{}] because it does not exist", index);
       return;
     }
 
-    logger.info("Clearing index [{}]", index);
+    log.info("Clearing index [{}]", index);
 
     refreshIndex(client, index);
     var delete = client

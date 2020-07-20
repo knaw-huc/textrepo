@@ -31,7 +31,7 @@ import static nl.knaw.huc.textrepo.Config.TEXT_TYPE;
 
 public class TestUtils {
 
-  static final Logger logger = LoggerFactory.getLogger(TestUtils.class);
+  static final Logger log = LoggerFactory.getLogger(TestUtils.class);
   static final ObjectMapper mapper = new ObjectMapper();
   private static Client client = JerseyClientBuilder.newClient();
 
@@ -73,7 +73,7 @@ public class TestUtils {
   public static Response postFileWithFilename(
       Client client, URL filesEndpoint, String filename, byte[] content
   ) {
-    logger.info("Posting file [{}] to [{}]", filename, filesEndpoint);
+    log.info("Posting file [{}] to [{}]", filename, filesEndpoint);
     var contentDisposition = FormDataContentDisposition
         .name("contents")
         .fileName(filename)
