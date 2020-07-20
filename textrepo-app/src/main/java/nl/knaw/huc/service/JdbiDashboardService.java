@@ -7,13 +7,11 @@ import nl.knaw.huc.core.PageParams;
 import nl.knaw.huc.db.DashboardDao;
 import nl.knaw.huc.db.DashboardDao.KeyCount;
 import org.jdbi.v3.core.Jdbi;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public class JdbiDashboardService implements DashboardService {
-  private static final Logger log = LoggerFactory.getLogger(JdbiDashboardService.class);
+
   private final Jdbi jdbi;
 
   public JdbiDashboardService(Jdbi jdbi) {

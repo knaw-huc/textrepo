@@ -7,12 +7,9 @@ import nl.knaw.huc.core.Version;
 
 import javax.annotation.Nonnull;
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.UUID;
 
 public interface VersionService {
-
-  Optional<Version> findLatestVersion(@Nonnull UUID fileId);
 
   Version createNewVersion(
       @Nonnull UUID fileId,
