@@ -16,16 +16,6 @@ public class Page<T> {
     this.params = params;
   }
 
-  @Override
-  public String toString() {
-    return MoreObjects
-        .toStringHelper(this)
-        .add("items", items)
-        .add("total", total)
-        .add("params", params)
-        .toString();
-  }
-
   public List<T> getItems() {
     return items;
   }
@@ -36,5 +26,15 @@ public class Page<T> {
 
   public PageParams getParams() {
     return params;
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects
+        .toStringHelper(this)
+        .add("items", items)
+        .add("total", total)
+        .add("params", params)
+        .toString();
   }
 }

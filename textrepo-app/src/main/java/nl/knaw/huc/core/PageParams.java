@@ -14,15 +14,6 @@ public class PageParams implements Paginated {
   }
 
   @Override
-  public String toString() {
-    return MoreObjects
-        .toStringHelper(this)
-        .add("limit", limit)
-        .add("offset", offset)
-        .toString();
-  }
-
-  @Override
   public Integer getLimit() {
     return limit;
   }
@@ -30,5 +21,14 @@ public class PageParams implements Paginated {
   @Override
   public Integer getOffset() {
     return offset;
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects
+        .toStringHelper(this)
+        .add("limit", limit)
+        .add("offset", offset)
+        .toString();
   }
 }
