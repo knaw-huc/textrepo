@@ -8,9 +8,10 @@ import nl.knaw.huc.service.task.Task;
 import org.jdbi.v3.core.Jdbi;
 
 public class JdbiGetFileMetadataTaskBuilder implements GetFileMetadataTaskBuilder {
+  private final Jdbi jdbi;
+ 
   private String externalId;
   private String typeName;
-  private Jdbi jdbi;
 
   public JdbiGetFileMetadataTaskBuilder(Jdbi jdbi) {
     this.jdbi = jdbi;
