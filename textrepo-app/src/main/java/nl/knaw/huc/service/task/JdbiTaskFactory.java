@@ -35,6 +35,7 @@ public class JdbiTaskFactory implements TaskBuilderFactory {
     return this;
   }
 
+  // TODO: never used??? https://jira.socialhistoryservices.org/browse/TT-589
   public JdbiTaskFactory withFileIndexer(Indexer indexer) {
     this.indexer = requireNonNull(indexer);
     return this;
