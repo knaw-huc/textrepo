@@ -1,8 +1,8 @@
 package nl.knaw.huc.api;
 
 public class ResultException {
-  private int code;
-  private String message;
+  private final int code;
+  private final String message;
 
   public ResultException(int code, String message) {
     this.code = code;

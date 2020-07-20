@@ -5,9 +5,8 @@ import nl.knaw.huc.core.Paginated;
 
 public class ResultPageParams implements Paginated {
 
-  private Integer limit;
-
-  private Integer offset;
+  private final Integer limit;
+  private final Integer offset;
 
   public ResultPageParams(Integer limit, Integer offset) {
     this.limit = limit;

@@ -7,9 +7,9 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class ResultDocument {
-  private UUID id;
-  private String externalId;
-  private LocalDateTime createdAt;
+  private final UUID id;
+  private final String externalId;
+  private final LocalDateTime createdAt;
 
   public ResultDocument(Document document) {
     this.id = document.getId();

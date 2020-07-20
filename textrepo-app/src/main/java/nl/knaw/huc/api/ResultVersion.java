@@ -9,9 +9,9 @@ import java.util.UUID;
 public class ResultVersion {
 
   private final UUID id;
-  private UUID fileId;
-  private LocalDateTime createdAt;
-  private String contentsSha;
+  private final UUID fileId;
+  private final LocalDateTime createdAt;
+  private final String contentsSha;
 
   public ResultVersion(Version version) {
     this.id = version.getId();
