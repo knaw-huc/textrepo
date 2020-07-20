@@ -4,9 +4,9 @@ import com.google.common.base.MoreObjects;
 
 public class PageParams implements Paginated {
 
-  private int limit;
+  private final int limit;
 
-  private int offset;
+  private final int offset;
 
   public PageParams(int limit, int offset) {
     this.limit = limit;

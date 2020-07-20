@@ -6,9 +6,9 @@ import java.util.List;
 
 public class Page<T> {
 
-  private List<T> items;
-  private int total;
-  private PageParams params;
+  private final List<T> items;
+  private final int total;
+  private final PageParams params;
 
   public Page(List<T> items, int total, PageParams params) {
     this.items = items;
