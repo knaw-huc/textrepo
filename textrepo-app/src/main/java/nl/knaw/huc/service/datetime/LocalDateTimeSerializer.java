@@ -18,7 +18,7 @@ import static java.time.format.DateTimeFormatter.ofPattern;
  */
 public class LocalDateTimeSerializer extends JsonSerializer<LocalDateTime> {
 
-  private String dateFormat;
+  private final String dateFormat;
 
   public LocalDateTimeSerializer(String dateFormat) {
     this.dateFormat = dateFormat;

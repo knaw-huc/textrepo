@@ -12,7 +12,7 @@ import java.util.function.Supplier;
  */
 public class LoggingRequestEventListener implements RequestEventListener {
 
-  private Supplier<UUID> uuidGenerator;
+  private final Supplier<UUID> uuidGenerator;
 
   public LoggingRequestEventListener(Supplier<UUID> uuidGenerator) {
     this.uuidGenerator = uuidGenerator;
