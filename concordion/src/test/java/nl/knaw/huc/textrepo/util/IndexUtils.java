@@ -10,15 +10,12 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
 
 import static java.lang.String.format;
-import static java.util.Arrays.asList;
 import static javax.ws.rs.client.Entity.entity;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
 import static nl.knaw.huc.textrepo.Config.HTTP_ES_HOST;
 import static nl.knaw.huc.textrepo.Config.INDICES;
-import static nl.knaw.huc.textrepo.util.TestUtils.getByUrl;
 import static nl.knaw.huc.textrepo.util.TestUtils.sleepMs;
 import static org.assertj.core.api.Assertions.assertThat;
 
