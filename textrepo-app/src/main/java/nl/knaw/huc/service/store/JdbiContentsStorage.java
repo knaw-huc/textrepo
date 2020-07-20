@@ -6,6 +6,7 @@ import org.jdbi.v3.core.Jdbi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 
@@ -20,7 +21,7 @@ public class JdbiContentsStorage implements ContentsStorage {
   }
 
   @Override
-  public void storeContents(Contents contents) {
+  public void storeContents(@Nonnull Contents contents) {
     try {
       contents().insert(contents);
     } catch (Exception e) {
@@ -30,7 +31,7 @@ public class JdbiContentsStorage implements ContentsStorage {
   }
 
   @Override
-  public Contents get(String sha) {
+  public Contents get(@Nonnull String sha) {
     return contents()
         .findBySha224(sha)
         .orElseThrow(() -> new NotFoundException("Contents not found"));
