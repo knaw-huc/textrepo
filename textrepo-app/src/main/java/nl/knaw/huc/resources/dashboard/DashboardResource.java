@@ -8,6 +8,8 @@ import nl.knaw.huc.api.FormPageParams;
 import nl.knaw.huc.api.ResultDocument;
 import nl.knaw.huc.api.ResultDocumentsOverview;
 import nl.knaw.huc.api.ResultPage;
+import nl.knaw.huc.db.DashboardDao.KeyCount;
+import nl.knaw.huc.db.DashboardDao.ValueCount;
 import nl.knaw.huc.service.DashboardService;
 import nl.knaw.huc.service.Paginator;
 import org.slf4j.Logger;
@@ -16,7 +18,9 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import java.util.List;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static nl.knaw.huc.service.Paginator.toResult;
@@ -47,12 +51,31 @@ public class DashboardResource {
   @Path("/orphans")
   @Produces(APPLICATION_JSON)
   @ApiOperation("Find orphans: documents with neither metadata nor any associated files")
-  // @ApiResponses(value = {@ApiResponse(code = 200, response = ResultDocument.class, message = "OK")})
+  @ApiResponses(value = {@ApiResponse(code = 200, response = ResultDocument.class, message = "OK")})
   public ResultPage<ResultDocument> findOrphans(@BeanParam FormPageParams pageParams) {
     log.debug("Find orphans");
     var orphans = dashboardService.findOrphans(paginator.fromForm(pageParams));
     log.debug("Got orphans: {}", orphans);
-    // return Response.ok(orphans).build();
     return toResult(orphans, ResultDocument::new);
+  }
+
+  @GET
+  @Path("metadata")
+  @Produces(APPLICATION_JSON)
+  public List<KeyCount> countDocumentsByMetadataKey() {
+    log.debug("Count documents by metadata key");
+    final var keyCounts = dashboardService.countDocumentsByMetadataKey();
+    log.debug("Got keyCounts: {}", keyCounts);
+    return keyCounts;
+  }
+
+  @GET
+  @Path("metadata/{key}")
+  @Produces(APPLICATION_JSON)
+  public List<ValueCount> countDocumentsByMetadataValue(@PathParam("key") String key) {
+    log.debug("Count documents by metadata value for key=[{}]", key);
+    final var valueCounts = dashboardService.countDocumentsByMetadataValue(key);
+    log.debug("Got valueCounts: {}", valueCounts);
+    return valueCounts;
   }
 }
