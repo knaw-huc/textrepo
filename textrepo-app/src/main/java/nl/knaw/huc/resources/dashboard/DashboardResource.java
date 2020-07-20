@@ -9,7 +9,7 @@ import nl.knaw.huc.api.ResultDocument;
 import nl.knaw.huc.api.ResultDocumentsOverview;
 import nl.knaw.huc.api.ResultPage;
 import nl.knaw.huc.db.DashboardDao.KeyCount;
-import nl.knaw.huc.db.DashboardDao.ValueCount;
+import nl.knaw.huc.resources.rest.MetadataResource;
 import nl.knaw.huc.service.DashboardService;
 import nl.knaw.huc.service.Paginator;
 import org.slf4j.Logger;
@@ -20,9 +20,12 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 import java.util.List;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.UriBuilder.fromResource;
 import static nl.knaw.huc.service.Paginator.toResult;
 
 @Api(tags = {"dashboard"})
@@ -30,6 +33,12 @@ import static nl.knaw.huc.service.Paginator.toResult;
 public class DashboardResource {
 
   private static final Logger log = LoggerFactory.getLogger(DashboardResource.class);
+
+  private static final UriBuilder DOCUMENT_METADATA =
+      fromResource(MetadataResource.class)
+          .path("{key}")
+          .path("documents");
+
   private final DashboardService dashboardService;
   private final Paginator paginator;
 
@@ -72,10 +81,13 @@ public class DashboardResource {
   @GET
   @Path("metadata/{key}")
   @Produces(APPLICATION_JSON)
-  public List<ValueCount> countDocumentsByMetadataValue(@PathParam("key") String key) {
+  public Response countDocumentsByMetadataValue(@PathParam("key") String key) {
     log.debug("Count documents by metadata value for key=[{}]", key);
     final var valueCounts = dashboardService.countDocumentsByMetadataValue(key);
     log.debug("Got valueCounts: {}", valueCounts);
-    return valueCounts;
+    return Response
+        .ok(valueCounts)
+        .link(DOCUMENT_METADATA.build(key), "collection")
+        .build();
   }
 }

@@ -19,6 +19,7 @@ import nl.knaw.huc.resources.rest.DocumentsResource;
 import nl.knaw.huc.resources.rest.FileMetadataResource;
 import nl.knaw.huc.resources.rest.FileVersionsResource;
 import nl.knaw.huc.resources.rest.FilesResource;
+import nl.knaw.huc.resources.rest.MetadataResource;
 import nl.knaw.huc.resources.rest.TypesResource;
 import nl.knaw.huc.resources.rest.VersionContentsResource;
 import nl.knaw.huc.resources.rest.VersionsResource;
@@ -138,7 +139,8 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
         new VersionsResource(versionService, maxPayloadSize),
         new VersionContentsResource(versionContentsService),
         new FindResource(taskBuilderFactory),
-        new DashboardResource(dashboardService, paginator)
+        new DashboardResource(dashboardService, paginator),
+        new MetadataResource(documentMetadataService)
     );
 
     environment.jersey().register(new MethodNotAllowedExceptionMapper());

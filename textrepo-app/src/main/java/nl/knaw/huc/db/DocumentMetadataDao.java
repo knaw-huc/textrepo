@@ -8,6 +8,7 @@ import org.jdbi.v3.sqlobject.customizer.BindBean;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -26,4 +27,7 @@ public interface DocumentMetadataDao {
 
   @SqlUpdate("delete from documents_metadata where document_id = :id and key = :key")
   void delete(@Bind("id") UUID docId, @Bind("key") String key);
+
+  @SqlQuery("select document_id from documents_metadata where key = :key")
+  List<UUID> findByMetadataKey(@Bind("key") String key);
 }
