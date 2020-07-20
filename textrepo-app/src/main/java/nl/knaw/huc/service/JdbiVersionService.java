@@ -18,7 +18,6 @@ import javax.annotation.Nonnull;
 import javax.ws.rs.NotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -45,11 +44,6 @@ public class JdbiVersionService implements VersionService {
     this.contentsService = contentsService;
     this.indexers = indexers;
     this.uuidGenerator = uuidGenerator;
-  }
-
-  @Override
-  public Optional<Version> findLatestVersion(@Nonnull UUID fileId) {
-    return versions().findLatestByFileId(fileId);
   }
 
   @Override
