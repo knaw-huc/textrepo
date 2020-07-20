@@ -6,8 +6,8 @@ Basic Usage
 Run locally
 -----------
 
-|tr| can be started using `docker-compose up`. However, in order to prevent any unexpected behaviour due to
-misconfigured ports, volumes, etc, the `./scripts` directory also contains some example scripts.
+|tr| can be started using ``docker-compose up``. However, in order to prevent any unexpected behaviour due to
+misconfigured ports, volumes, etc, the ``./scripts`` directory also contains some example scripts.
 
 To start and stop the |tr|: ::
 
@@ -16,14 +16,14 @@ To start and stop the |tr|: ::
 
 Note: These scripts are quite rigorous and all data will be lost when restarting, so *use for development purposes only*.
 
-When you do not want to rebuild docker images, use: `docker-compose up`.
+When you do not want to rebuild docker images, use: ``docker-compose up``.
 
 Explore locally
 ---------------
 After running the docker-compose setup, you can:
 
 - Find basic use cases in the integration test `results <http://localhost:8080/concordion/nl/knaw/huc/textrepo/Textrepo.html>`_
-- Add some test data: `./scripts/populate.sh`
+- Add some test data: ``./scripts/populate.sh``
 - Explore REST-API of |tr| using `swaggger <http://localhost:8080/textrepo/swagger>`_
 - Search in `full-text <http://localhost:8080/index/full-text>`_ and `autocomplete <http://localhost:8080/index/autocomplete>`_ indexes
 
