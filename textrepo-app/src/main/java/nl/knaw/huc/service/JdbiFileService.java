@@ -1,14 +1,11 @@
 package nl.knaw.huc.service;
 
-import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.core.Version;
 import nl.knaw.huc.db.DocumentFilesDao;
 import nl.knaw.huc.db.FilesDao;
 import org.jdbi.v3.core.Jdbi;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.ws.rs.BadRequestException;
@@ -17,57 +14,24 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 import static java.lang.String.format;
-import static java.time.LocalDateTime.now;
-import static nl.knaw.huc.core.Contents.fromBytes;
 
 public class JdbiFileService implements FileService {
 
-  private static final Logger log = LoggerFactory.getLogger(JdbiFileService.class);
-
   private final Jdbi jdbi;
-  private final TypeService typeService;
   private final VersionService versionService;
   private final Supplier<UUID> fileIdGenerator;
 
-  private FileMetadataService fileMetadataService;
-
   public JdbiFileService(
       Jdbi jdbi,
-      TypeService typeService,
       VersionService versionService,
-      FileMetadataService fileMetadataService, Supplier<UUID> fileIdGenerator) {
+      Supplier<UUID> fileIdGenerator) {
     this.jdbi = jdbi;
-    this.typeService = typeService;
     this.versionService = versionService;
     this.fileIdGenerator = fileIdGenerator;
-    this.fileMetadataService = fileMetadataService;
-  }
-
-  public TextRepoFile createFile(
-      @Nonnull String type,
-      @Nonnull String filename
-  ) {
-    log.trace("Creating file of type: {}", type);
-    final var fileId = fileIdGenerator.get();
-    final var typeId = typeService.getId(type);
-    files().insert(fileId, typeId);
-    fileMetadataService.insert(fileId, new MetadataEntry("filename", filename));
-    return new TextRepoFile(fileId, typeId);
-  }
-
-  public Version createVersion(TextRepoFile file, byte[] bytes) {
-    final var contents = fromBytes(bytes);
-    return addFile(contents, file);
   }
 
   public Version addFile(@Nonnull Contents contents, TextRepoFile file) {
     return versionService.createNewVersion(file.getId(), contents);
-  }
-
-  public Version getLatestVersion(@Nonnull UUID fileId) {
-    return versionService
-        .findLatestVersion(fileId)
-        .orElseThrow(() -> new NotFoundException(format("No such file: %s", fileId)));
   }
 
   @Override

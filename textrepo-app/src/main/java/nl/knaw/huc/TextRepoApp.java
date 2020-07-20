@@ -117,7 +117,7 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
         .withIdGenerator(uuidGenerator);
     var versionService = new JdbiVersionService(jdbi, contentsService, indexers, uuidGenerator);
     var versionContentsService = new JdbiVersionContentsService(jdbi);
-    var fileService = new JdbiFileService(jdbi, typeService, versionService, metadataService, uuidGenerator);
+    var fileService = new JdbiFileService(jdbi, versionService, uuidGenerator);
     var documentFilesService = new JdbiDocumentFilesService(jdbi);
     var documentService = new JdbiDocumentService(jdbi, uuidGenerator);
     var documentMetadataService = new JdbiDocumentMetadataService(jdbi);
