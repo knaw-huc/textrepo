@@ -5,7 +5,6 @@ import com.jayway.jsonpath.JsonPath;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.testing.junit5.ResourceExtension;
-import nl.knaw.huc.service.datetime.LocalDateTimeParamConverterProvider;
 import nl.knaw.huc.PaginationConfiguration;
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.core.Page;
@@ -14,6 +13,7 @@ import nl.knaw.huc.exceptions.MethodNotAllowedExceptionMapper;
 import nl.knaw.huc.service.DocumentService;
 import nl.knaw.huc.service.FileService;
 import nl.knaw.huc.service.Paginator;
+import nl.knaw.huc.service.datetime.LocalDateTimeParamConverterProvider;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.jdbi.v3.core.Jdbi;
 import org.junit.jupiter.api.AfterEach;
@@ -33,7 +33,6 @@ import java.util.UUID;
 import static java.time.LocalDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
@@ -142,6 +141,7 @@ public class DocumentsResourceTest {
     assertThat(body.read("$.total", Integer.class)).isEqualTo(total);
 
   }
+
   @Test
   public void getDocuments_createsAndReturnsPage_filtersByCreationDate() {
     var now = now();
