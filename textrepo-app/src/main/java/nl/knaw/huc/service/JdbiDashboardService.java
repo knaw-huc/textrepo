@@ -5,10 +5,9 @@ import nl.knaw.huc.core.DocumentsOverview;
 import nl.knaw.huc.core.Page;
 import nl.knaw.huc.core.PageParams;
 import nl.knaw.huc.db.DashboardDao;
-import nl.knaw.huc.db.DashboardDao.KeyCount;
 import org.jdbi.v3.core.Jdbi;
 
-import java.util.List;
+import java.util.Map;
 
 public class JdbiDashboardService implements DashboardService {
 
@@ -34,12 +33,12 @@ public class JdbiDashboardService implements DashboardService {
   }
 
   @Override
-  public List<KeyCount> countDocumentsByMetadataKey() {
+  public Map<String, Integer> countDocumentsByMetadataKey() {
     return dashboard().countDocumentsByMetadataKey();
   }
 
   @Override
-  public List<DashboardDao.ValueCount> countDocumentsByMetadataValue(String key) {
+  public Map<String, Integer> countDocumentsByMetadataValue(String key) {
     return dashboard().countDocumentsByMetadataValue(key);
   }
 
