@@ -132,7 +132,7 @@ class DashboardResourceTest {
   }
 
   @Test
-  public void countDocumentsByMetadataKey_ReturnsProperKeyCount() {
+  public void countDocumentsByMetadataKey_ReturnsProperCounts() {
     final Map.Entry<String, Integer> entryA = Map.entry("a", 3);
     final Map.Entry<String, Integer> entryB = Map.entry("b", 14);
     final Map.Entry<String, Integer> entryC = Map.entry("<no metadata>", 1693);
@@ -159,7 +159,7 @@ class DashboardResourceTest {
   }
 
   @Test
-  public void countDocumentsByMetadataValue_ReturnsProperKeyCount() {
+  public void countDocumentsByMetadataValue_ReturnsProperCounts() {
     final var testKey = "testKey";
     final Map.Entry<String, Integer> entryA = Map.entry("a", 3);
     final Map.Entry<String, Integer> entryB = Map.entry("b", 14);
