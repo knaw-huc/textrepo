@@ -19,6 +19,7 @@ import nl.knaw.huc.resources.rest.DocumentsResource;
 import nl.knaw.huc.resources.rest.FileMetadataResource;
 import nl.knaw.huc.resources.rest.FileVersionsResource;
 import nl.knaw.huc.resources.rest.FilesResource;
+import nl.knaw.huc.resources.rest.MetadataResource;
 import nl.knaw.huc.resources.rest.TypesResource;
 import nl.knaw.huc.resources.rest.VersionContentsResource;
 import nl.knaw.huc.resources.rest.VersionsResource;
@@ -116,7 +117,7 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
         .withIdGenerator(uuidGenerator);
     var versionService = new JdbiVersionService(jdbi, contentsService, indexers, uuidGenerator);
     var versionContentsService = new JdbiVersionContentsService(jdbi);
-    var fileService = new JdbiFileService(jdbi, typeService, versionService, metadataService, uuidGenerator);
+    var fileService = new JdbiFileService(jdbi, versionService, uuidGenerator);
     var documentFilesService = new JdbiDocumentFilesService(jdbi);
     var documentService = new JdbiDocumentService(jdbi, uuidGenerator);
     var documentMetadataService = new JdbiDocumentMetadataService(jdbi);
@@ -138,7 +139,8 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
         new VersionsResource(versionService, maxPayloadSize),
         new VersionContentsResource(versionContentsService),
         new FindResource(taskBuilderFactory),
-        new DashboardResource(dashboardService, paginator)
+        new DashboardResource(dashboardService, paginator),
+        new MetadataResource(documentMetadataService)
     );
 
     environment.jersey().register(new MethodNotAllowedExceptionMapper());

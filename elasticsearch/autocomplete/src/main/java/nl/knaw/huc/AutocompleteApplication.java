@@ -14,11 +14,11 @@ import org.slf4j.LoggerFactory;
 
 public class AutocompleteApplication extends Application<AutocompleteConfiguration> {
 
-  private static final Logger logger = LoggerFactory.getLogger(AutocompleteApplication.class);
+  private static final Logger log = LoggerFactory.getLogger(AutocompleteApplication.class);
 
   public static void main(final String[] args) throws Exception {
     new AutocompleteApplication().run(args);
-    logger.info("Autocomplete app started");
+    log.info("Autocomplete app started");
   }
 
   @Override

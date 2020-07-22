@@ -15,8 +15,8 @@ import static org.eclipse.jetty.util.StringUtil.isBlank;
  */
 public class LocalDateTimeParamConverter implements ParamConverter<LocalDateTime> {
 
-  private DateTimeFormatter formatter;
-  private String pattern;
+  private final DateTimeFormatter formatter;
+  private final String pattern;
 
   public LocalDateTimeParamConverter(String pattern) {
     this.formatter = DateTimeFormatter.ofPattern(pattern);

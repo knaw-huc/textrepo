@@ -11,7 +11,7 @@ import static java.lang.String.format;
 
 public class JdbiVersionContentsService implements VersionContentsService {
 
-  private Jdbi jdbi;
+  private final Jdbi jdbi;
 
   public JdbiVersionContentsService(Jdbi jdbi) {
     this.jdbi = jdbi;

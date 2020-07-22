@@ -39,7 +39,7 @@ import static nl.knaw.huc.textrepo.util.RestUtils.createType;
 @ConcordionOptions(declareNamespaces = {"ext", "urn:concordion-extensions:2010"})
 public abstract class AbstractConcordionTest {
 
-  final Logger logger = LoggerFactory.getLogger(this.getClass());
+  final Logger log = LoggerFactory.getLogger(this.getClass());
   protected final static Client client = JerseyClientBuilder.newClient();
   protected static int textTypeId;
   protected static int fooTypeId;
@@ -75,7 +75,7 @@ public abstract class AbstractConcordionTest {
   }
 
   private void emptyTextRepoDatabase() {
-    logger.info("truncate tables owned by [{}]", POSTGRES_USER);
+    log.info("truncate tables owned by [{}]", POSTGRES_USER);
 
     var host = POSTGRES_HOST;
     var db = POSTGRES_DB;

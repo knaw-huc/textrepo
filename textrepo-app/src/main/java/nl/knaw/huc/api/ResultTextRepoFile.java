@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public class ResultTextRepoFile {
 
-  private UUID id;
+  private final UUID id;
   private final UUID docId;
   private final short typeId;
 

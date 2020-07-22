@@ -26,6 +26,7 @@ public class TextRepoElasticClient {
     var colon = addr.lastIndexOf(':');
     if (colon >= 0) {
       var after = addr.substring(colon + 1);
+      // TODO: see https://jira.socialhistoryservices.org/browse/TT-588
       if (!after.matches("[0-9:]+\\]")) {
         try {
           port = Integer.parseInt(after);

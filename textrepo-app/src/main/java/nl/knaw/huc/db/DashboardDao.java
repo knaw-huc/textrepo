@@ -1,17 +1,17 @@
 package nl.knaw.huc.db;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.MoreObjects;
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.core.DocumentsOverview;
 import nl.knaw.huc.core.PageParams;
+import org.jdbi.v3.sqlobject.config.KeyColumn;
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
+import org.jdbi.v3.sqlobject.config.ValueColumn;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.customizer.BindBean;
 import org.jdbi.v3.sqlobject.locator.UseClasspathSqlLocator;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 
-import java.beans.ConstructorProperties;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 @UseClasspathSqlLocator
@@ -27,73 +27,14 @@ public interface DashboardDao {
   @RegisterConstructorMapper(Document.class)
   List<Document> findOrphans(@BindBean PageParams pageParams);
 
-  @SqlQuery("documentCountsByMetadataKey")
-  @RegisterConstructorMapper(KeyCount.class)
-  List<KeyCount> countDocumentsByMetadataKey();
+  @SqlQuery("documentCountsByMetadataKey") // use LinkedHashMap to preserve SQL order
+  @KeyColumn("key")
+  @ValueColumn("count")
+  LinkedHashMap<String, Integer> countDocumentsByMetadataKey();
 
-  @SqlQuery("documentCountsByMetadataValue")
-  @RegisterConstructorMapper(ValueCount.class)
-  List<ValueCount> countDocumentsByMetadataValue(@Bind("key") String key);
+  @SqlQuery("documentCountsByMetadataValue") // use LinkedHashMap to preserve SQL order
+  @KeyColumn("value")
+  @ValueColumn("count")
+  LinkedHashMap<String, Integer> countDocumentsByMetadataValue(@Bind("key") String key);
 
-  class KeyCount {
-    private final String key;
-
-    private final int count;
-
-    @ConstructorProperties({"key", "count"})
-    public KeyCount(String key, int count) {
-      this.key = key;
-      this.count = count;
-    }
-
-    @JsonProperty
-    public String getKey() {
-      return key;
-    }
-
-    @JsonProperty
-    public int getCount() {
-      return count;
-    }
-
-    @Override
-    public String toString() {
-      return MoreObjects
-          .toStringHelper(this)
-          .add("key", key)
-          .add("count", count)
-          .toString();
-    }
-  }
-
-  class ValueCount {
-    private final String value;
-
-    private final int count;
-
-    @ConstructorProperties({"value", "count"})
-    public ValueCount(String value, int count) {
-      this.value = value;
-      this.count = count;
-    }
-
-    @JsonProperty
-    public String getValue() {
-      return value;
-    }
-
-    @JsonProperty
-    public int getCount() {
-      return count;
-    }
-
-    @Override
-    public String toString() {
-      return MoreObjects
-          .toStringHelper(this)
-          .add("value", value)
-          .add("count", count)
-          .toString();
-    }
-  }
 }

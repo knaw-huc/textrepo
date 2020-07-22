@@ -97,7 +97,7 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
       return jdbi.inTransaction(transaction -> {
         final Document doc = documentFinder.executeIn(transaction);
         final var file = new HaveFileForDocumentByType(fileIdGenerator, doc, typeName).executeIn(transaction);
-        final var entry = new SetFileProvenance(file, filename).executeIn(transaction);
+        new SetFileProvenance(file, filename).executeIn(transaction);
         return new SetCurrentFileContents(versionIdGenerator, file, contents).executeIn(transaction);
       });
     }

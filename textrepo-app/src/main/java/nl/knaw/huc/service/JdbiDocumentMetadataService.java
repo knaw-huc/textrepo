@@ -4,6 +4,7 @@ import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.db.DocumentMetadataDao;
 import org.jdbi.v3.core.Jdbi;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -32,6 +33,11 @@ public class JdbiDocumentMetadataService implements DocumentMetadataService {
   @Override
   public void delete(UUID docId, String key) {
     metadata().delete(docId, key);
+  }
+
+  @Override
+  public List<UUID> findByMetadataKey(String key) {
+    return metadata().findByMetadataKey(key);
   }
 
   private DocumentMetadataDao metadata() {

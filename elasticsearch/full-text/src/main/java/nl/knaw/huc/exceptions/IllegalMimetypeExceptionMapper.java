@@ -8,11 +8,11 @@ import javax.ws.rs.ext.ExceptionMapper;
 
 public class IllegalMimetypeExceptionMapper implements ExceptionMapper<IllegalMimetypeException> {
 
-  private static final Logger logger = LoggerFactory.getLogger(IllegalMimetypeExceptionMapper.class);
+  private static final Logger log = LoggerFactory.getLogger(IllegalMimetypeExceptionMapper.class);
 
   @Override
   public Response toResponse(IllegalMimetypeException exception) {
-    logger.error(exception.getMessage());
+    log.error(exception.getMessage());
     return Response
         .status(422)
         .entity(exception.getMessage())

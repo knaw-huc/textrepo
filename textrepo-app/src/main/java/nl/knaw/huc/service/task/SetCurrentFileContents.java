@@ -16,7 +16,8 @@ import static java.util.Objects.requireNonNull;
 
 public class SetCurrentFileContents implements InTransactionProvider<Version> {
 
-  private Supplier<UUID> versionIdGenerator;
+  private final Supplier<UUID> versionIdGenerator;
+  
   private final TextRepoFile file;
   private final Contents contents;
 

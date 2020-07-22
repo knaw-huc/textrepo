@@ -18,7 +18,6 @@ import javax.annotation.Nonnull;
 import javax.ws.rs.NotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -29,10 +28,11 @@ import static nl.knaw.huc.service.PsqlExceptionService.violatesConstraint;
 public class JdbiVersionService implements VersionService {
 
   private static final Logger log = LoggerFactory.getLogger(JdbiVersionService.class);
+
   private final Jdbi jdbi;
   private final ContentsService contentsService;
-  private List<MappedIndexer> indexers;
-  private Supplier<UUID> uuidGenerator;
+  private final List<MappedIndexer> indexers;
+  private final Supplier<UUID> uuidGenerator;
 
   public JdbiVersionService(
       Jdbi jdbi,
@@ -44,11 +44,6 @@ public class JdbiVersionService implements VersionService {
     this.contentsService = contentsService;
     this.indexers = indexers;
     this.uuidGenerator = uuidGenerator;
-  }
-
-  @Override
-  public Optional<Version> findLatestVersion(@Nonnull UUID fileId) {
-    return versions().findLatestByFileId(fileId);
   }
 
   @Override

@@ -3,11 +3,8 @@ package nl.knaw.huc.resources;
 import nl.knaw.huc.exceptions.PayloadTooLargeException;
 
 import javax.ws.rs.BadRequestException;
-import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.util.UUID;
 
 public class ResourceUtils {
   public static byte[] readContents(InputStream uploadedInputStream, int maxFileSize) {

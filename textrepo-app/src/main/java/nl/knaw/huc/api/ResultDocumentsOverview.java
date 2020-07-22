@@ -5,13 +5,9 @@ import nl.knaw.huc.core.DocumentsOverview;
 
 public class ResultDocumentsOverview {
   private final long documentCount;
-
   private final long hasFile;
-
   private final long hasMetadata;
-
   private final long hasBoth;
-
   private final long hasNone;
 
   public ResultDocumentsOverview(DocumentsOverview overview) {

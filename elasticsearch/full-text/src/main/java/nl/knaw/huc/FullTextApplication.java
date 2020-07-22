@@ -14,11 +14,11 @@ import org.slf4j.LoggerFactory;
 
 public class FullTextApplication extends Application<FullTextConfiguration> {
 
-  private static final Logger logger = LoggerFactory.getLogger(FullTextApplication.class);
+  private static final Logger log = LoggerFactory.getLogger(FullTextApplication.class);
 
   public static void main(final String[] args) throws Exception {
     new FullTextApplication().run(args);
-    logger.info("Full-text app started");
+    log.info("Full-text app started");
   }
 
   @Override

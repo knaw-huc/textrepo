@@ -5,15 +5,12 @@ import nl.knaw.huc.core.DocumentsOverview;
 import nl.knaw.huc.core.Page;
 import nl.knaw.huc.core.PageParams;
 import nl.knaw.huc.db.DashboardDao;
-import nl.knaw.huc.db.DashboardDao.KeyCount;
 import org.jdbi.v3.core.Jdbi;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.List;
+import java.util.Map;
 
 public class JdbiDashboardService implements DashboardService {
-  private static final Logger log = LoggerFactory.getLogger(JdbiDashboardService.class);
+
   private final Jdbi jdbi;
 
   public JdbiDashboardService(Jdbi jdbi) {
@@ -36,12 +33,12 @@ public class JdbiDashboardService implements DashboardService {
   }
 
   @Override
-  public List<KeyCount> countDocumentsByMetadataKey() {
+  public Map<String, Integer> countDocumentsByMetadataKey() {
     return dashboard().countDocumentsByMetadataKey();
   }
 
   @Override
-  public List<DashboardDao.ValueCount> countDocumentsByMetadataValue(String key) {
+  public Map<String, Integer> countDocumentsByMetadataValue(String key) {
     return dashboard().countDocumentsByMetadataValue(key);
   }
 

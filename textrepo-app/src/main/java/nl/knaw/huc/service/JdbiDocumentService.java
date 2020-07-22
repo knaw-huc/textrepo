@@ -21,9 +21,10 @@ import static nl.knaw.huc.service.PsqlExceptionService.violatesConstraint;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class JdbiDocumentService implements DocumentService {
-  private final Jdbi jdbi;
-  private Supplier<UUID> uuidGenerator;
   private static final Logger log = LoggerFactory.getLogger(JdbiDocumentService.class);
+  
+  private final Jdbi jdbi;
+  private final Supplier<UUID> uuidGenerator;
 
   public JdbiDocumentService(Jdbi jdbi, Supplier<UUID> uuidGenerator) {
     this.jdbi = jdbi;

@@ -4,17 +4,10 @@ import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.core.Version;
 
-import javax.annotation.Nonnull;
 import java.util.UUID;
 
 public interface FileService {
-  TextRepoFile createFile(String type, String filename);
-
-  Version createVersion(TextRepoFile file, byte[] contents);
-
   Version addFile(Contents contents, TextRepoFile file);
-
-  Version getLatestVersion(@Nonnull UUID fileId);
 
   TextRepoFile insert(UUID docId, TextRepoFile textRepoFile);
 

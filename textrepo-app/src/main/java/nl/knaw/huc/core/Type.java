@@ -1,6 +1,5 @@
 package nl.knaw.huc.core;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 
 import java.beans.ConstructorProperties;

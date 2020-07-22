@@ -4,22 +4,13 @@ import com.google.common.base.MoreObjects;
 
 public class PageParams implements Paginated {
 
-  private int limit;
+  private final int limit;
 
-  private int offset;
+  private final int offset;
 
   public PageParams(int limit, int offset) {
     this.limit = limit;
     this.offset = offset;
-  }
-
-  @Override
-  public String toString() {
-    return MoreObjects
-        .toStringHelper(this)
-        .add("limit", limit)
-        .add("offset", offset)
-        .toString();
   }
 
   @Override
@@ -30,5 +21,14 @@ public class PageParams implements Paginated {
   @Override
   public Integer getOffset() {
     return offset;
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects
+        .toStringHelper(this)
+        .add("limit", limit)
+        .add("offset", offset)
+        .toString();
   }
 }

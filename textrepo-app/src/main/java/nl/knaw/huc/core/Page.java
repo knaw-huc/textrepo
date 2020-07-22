@@ -6,24 +6,14 @@ import java.util.List;
 
 public class Page<T> {
 
-  private List<T> items;
-  private int total;
-  private PageParams params;
+  private final List<T> items;
+  private final int total;
+  private final PageParams params;
 
   public Page(List<T> items, int total, PageParams params) {
     this.items = items;
     this.total = total;
     this.params = params;
-  }
-
-  @Override
-  public String toString() {
-    return MoreObjects
-        .toStringHelper(this)
-        .add("items", items)
-        .add("total", total)
-        .add("params", params)
-        .toString();
   }
 
   public List<T> getItems() {
@@ -36,5 +26,15 @@ public class Page<T> {
 
   public PageParams getParams() {
     return params;
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects
+        .toStringHelper(this)
+        .add("items", items)
+        .add("total", total)
+        .add("params", params)
+        .toString();
   }
 }
