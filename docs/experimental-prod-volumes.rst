@@ -26,6 +26,9 @@ Testing production setup
   # check added documents exist:
   curl localhost:8080/textrepo/rest/documents
 
+  # we might want to backup our data first?
+  # see: https://docs.docker.com/storage/volumes/#backup-restore-or-migrate-data-volumes
+
   # stop production setup:
   ./scripts/stop-docker-compose-prod.sh
 
