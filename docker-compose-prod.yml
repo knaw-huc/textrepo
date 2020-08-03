@@ -1,16 +1,13 @@
 version: '3'
-# docker-compose file for development purposes
-# -> contains build location
 
 services:
   postgres:
     container_name: tr_postgres
     image: knawhuc/textrepo-postgres:${TR_VERSION}
-    build: ./postgres
     networks:
-    - textrepo_network
+      - textrepo_network
     ports:
-    - 5432:5432
+      - 5432:5432
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
@@ -19,7 +16,7 @@ services:
       POSTGRES_PORT: ${POSTGRES_PORT}
       PGDATA: /var/lib/textrepo/data
     volumes:
-      - postgresdata:/var/lib/textrepo/data
+      - postgresdata-prod:/var/lib/textrepo/data
 
   elasticsearch:
     container_name: tr_elasticsearch
@@ -36,24 +33,23 @@ services:
         soft: -1
         hard: -1
     volumes:
-    - esdata:/usr/share/elasticsearch/data
+      - esdata-prod:/usr/share/elasticsearch/data
     ports:
-    - 9200
+      - 9200
     networks:
-    - textrepo_network
+      - textrepo_network
 
   nginx:
     container_name: tr_nginx
     image: knawhuc/textrepo-nginx:${TR_VERSION}
-    build: ./nginx
     networks:
-    - textrepo_network
+      - textrepo_network
     depends_on:
-    - textrepo-app
+      - textrepo-app
     volumes:
-    - concordiondata:/concordion:ro
+      - concordiondata:/concordion:ro
     ports:
-    - ${NGINX_LISTEN}:${NGINX_LISTEN}
+      - ${NGINX_LISTEN}:${NGINX_LISTEN}
     environment:
       VIRTUAL_HOST: ${NGINX_VIRTUAL_HOST}
       NGINX_LISTEN: ${NGINX_LISTEN}
@@ -62,7 +58,6 @@ services:
   autocomplete-indexer:
     container_name: tr_autocomplete
     image: knawhuc/textrepo-autocomplete-indexer:${TR_VERSION}
-    build: ./elasticsearch/autocomplete
     ports:
       - 8080
     networks:
@@ -75,7 +70,6 @@ services:
   full-text-indexer:
     container_name: tr_full-text
     image: knawhuc/textrepo-full-text-indexer:${TR_VERSION}
-    build: ./elasticsearch/full-text
     ports:
       - 8080
     networks:
@@ -88,12 +82,11 @@ services:
   textrepo-app:
     container_name: tr_textrepo
     image: knawhuc/textrepo-app:${TR_VERSION}
-    build: ./textrepo-app
     ports:
-    - 8080
-    - 8081:8081
+      - 8080
+      - 8081:8081
     networks:
-    - textrepo_network
+      - textrepo_network
     command: ["./wait-for-it.sh", "autocomplete-indexer:8080",
               "--timeout=0",
               "--",
@@ -121,42 +114,14 @@ services:
       TR_PAGINATION_DEFAULT_LIMIT: ${TR_PAGINATION_DEFAULT_LIMIT}
       TR_DATE_FORMAT: ${TR_DATE_FORMAT}
 
-  concordion:
-    container_name: tr_concordion
-    image: knawhuc/textrepo-concordion:${TR_VERSION}
-    build: ./concordion
-    ports:
-    - 8080
-    networks:
-    - textrepo_network
-    command: [
-      "/utils/wait-for-it.sh", "textrepo-app:8080",
-      "--timeout=0",
-      "--",
-      # run tests and keep container up:
-      "/bin/bash", "-c", "mvn clean test ; tail -f /dev/null"
-    ]
-    volumes:
-    - concordiondata:/concordion
-    environment:
-      ES_HOST: ${CONCORDION_ES_HOST}
-      APP_HOST: ${CONCORDION_APP_HOST}
-      APP_HOST_ADMIN: ${CONCORDION_APP_HOST_ADMIN}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_HOST: ${POSTGRES_HOST}
-      FULL_TEXT_INDEX: ${FULL_TEXT_INDEX}
-      CUSTOM_INDEX: ${CUSTOM_INDEX}
-      AUTOCOMPLETE_INDEX: ${AUTOCOMPLETE_INDEX}
-
 networks:
   textrepo_network:
 
 volumes:
-  esdata:
+  esdata-prod:
     driver: local
+  postgresdata-prod:
+    driver: local
+  # display test results from non-production volume:
   concordiondata:
-    driver: local
-  postgresdata:
     driver: local

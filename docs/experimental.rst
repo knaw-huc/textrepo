@@ -57,3 +57,4 @@ more intelligent for a TEI file, use "Rutger's" implementation for PageXML/hOCR,
 hierarchy works in the ``txt`` domain and selects the requested fragment.
 
 **TODO**: diagrams :-)
+
