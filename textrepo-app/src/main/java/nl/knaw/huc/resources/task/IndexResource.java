@@ -47,8 +47,8 @@ public class IndexResource {
         .getDocumentIndexBuilder()
         .withType(type)
         .build();
-    task.run();
-    log.debug("Indexed all files of type");
-    return Response.accepted().build();
+    var result = task.run();
+    log.debug(result);
+    return Response.ok().build();
   }
 }

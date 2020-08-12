@@ -13,6 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.NotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
@@ -21,14 +23,14 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
   private static final Logger log = LoggerFactory.getLogger(JdbiIndexFileTaskBuilder.class);
 
   private final Jdbi jdbi;
-  private final Indexer indexer;
+  private final List<Indexer> indexers;
 
   private String externalId;
   private String typeName;
 
-  public JdbiIndexFileTaskBuilder(Jdbi jdbi, Indexer indexer) {
+  public JdbiIndexFileTaskBuilder(Jdbi jdbi, List<Indexer> indexers) {
     this.jdbi = requireNonNull(jdbi);
-    this.indexer = requireNonNull(indexer);
+    this.indexers = requireNonNull(indexers);
   }
 
   @Override
@@ -66,9 +68,13 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
         final var doc = new FindDocumentByExternalId(externalId).executeIn(txn);
         final var file = new FindDocumentFileByType(doc, typeName).executeIn(txn);
         final var contents = new GetLatestFileContents(file).executeIn(txn);
-        final var indexResult = indexer.index(file, contents.asUtf8String());
-        indexResult.ifPresent(log::warn);
-        return indexResult.orElse("Ok");
+        final var results = new ArrayList<String>();
+        indexers.forEach((indexer) -> {
+          var result = indexer.getClass().getName() + " - " + indexer.index(file, contents.asUtf8String()).orElse("Ok");
+          results.add(result);
+          log.info(result);
+        });
+        return results.toString();
       });
     }
   }
@@ -112,8 +118,11 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
       log.debug("Indexing file: {}", file.getId());
       jdbi.useTransaction(txn -> {
         final var contents = new GetLatestFileContents(file).executeIn(txn);
-        final var indexResult = indexer.index(file, contents.asUtf8String());
-        indexResult.ifPresent(JdbiIndexFileTaskBuilder.log::warn);
+
+        indexers.forEach((indexer) -> {
+          var result = indexer.index(file, contents.asUtf8String());
+          result.ifPresent((str) -> log.warn(indexer.getClass().getName() + " - " + str));
+        });
         filesAffected++;
       });
     }

@@ -41,7 +41,7 @@ public class TypesResource {
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Create type")
   public Response post(
-      @NotNull @Valid FormType form
+      @Valid @NotNull FormType form
   ) {
     var type = new Type(form.getName(), form.getMimetype());
     log.debug("Create type: type={}", type);

@@ -43,6 +43,7 @@ import nl.knaw.huc.service.datetime.LocalDateTimeParamConverterProvider;
 import nl.knaw.huc.service.datetime.LocalDateTimeSerializer;
 import nl.knaw.huc.service.health.ElasticsearchHealthCheck;
 import nl.knaw.huc.service.health.IndexerHealthCheck;
+import nl.knaw.huc.service.index.Indexer;
 import nl.knaw.huc.service.index.IndexerException;
 import nl.knaw.huc.service.index.MappedIndexer;
 import nl.knaw.huc.service.index.TextRepoElasticClient;
@@ -60,6 +61,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -113,7 +115,7 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
     healthChecks.putAll(createElasticsearchHealthChecks(config));
     healthChecks.putAll(createIndexerHealthChecks(config));
 
-    var taskBuilderFactory = new JdbiTaskFactory(jdbi)
+    var taskBuilderFactory = new JdbiTaskFactory(jdbi, indexers)
         .withIdGenerator(uuidGenerator);
     var versionService = new JdbiVersionService(jdbi, contentsService, indexers, uuidGenerator);
     var versionContentsService = new JdbiVersionContentsService(jdbi);
@@ -187,11 +189,11 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
     return jdbi;
   }
 
-  private ArrayList<MappedIndexer> createElasticCustomFacetIndexers(
+  private List<Indexer> createElasticCustomFacetIndexers(
       TextRepoConfiguration config,
       TypeService typeService
   ) {
-    var customIndexers = new ArrayList<MappedIndexer>();
+    var customIndexers = new ArrayList<Indexer>();
 
     for (var customIndexerConfig : config.getCustomFacetIndexers()) {
       try {

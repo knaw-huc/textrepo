@@ -15,6 +15,7 @@ import nl.knaw.huc.service.task.indexer.IndexFileTaskBuilder;
 import nl.knaw.huc.service.task.indexer.JdbiIndexFileTaskBuilder;
 import org.jdbi.v3.core.Jdbi;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -22,22 +23,16 @@ import static java.util.Objects.requireNonNull;
 
 public class JdbiTaskFactory implements TaskBuilderFactory {
   private final Jdbi jdbi;
-
   private Supplier<UUID> idGenerator;
-  private Indexer indexer;
+  private List<Indexer> indexers;
 
-  public JdbiTaskFactory(Jdbi jdbi) {
+  public JdbiTaskFactory(Jdbi jdbi, List<Indexer> indexers) {
     this.jdbi = requireNonNull(jdbi);
+    this.indexers = requireNonNull(indexers);
   }
 
   public JdbiTaskFactory withIdGenerator(Supplier<UUID> idGenerator) {
     this.idGenerator = requireNonNull(idGenerator);
-    return this;
-  }
-
-  // TODO: never used??? https://jira.socialhistoryservices.org/browse/TT-589
-  public JdbiTaskFactory withFileIndexer(Indexer indexer) {
-    this.indexer = requireNonNull(indexer);
     return this;
   }
 
@@ -48,7 +43,7 @@ public class JdbiTaskFactory implements TaskBuilderFactory {
 
   @Override
   public IndexFileTaskBuilder getDocumentIndexBuilder() {
-    return new JdbiIndexFileTaskBuilder(jdbi, indexer);
+    return new JdbiIndexFileTaskBuilder(jdbi, indexers);
   }
 
   @Override

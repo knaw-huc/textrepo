@@ -44,7 +44,8 @@ public class ImportResource {
   @Path("documents/{externalId}/{typeName}")
   @Consumes(MULTIPART_FORM_DATA)
   @Produces(APPLICATION_JSON)
-  @ApiOperation("Import file as the current version for {typeName} of document referenced by {externalId}")
+  @ApiOperation("Import file as the current version for {typeName} of document referenced by {externalId} " +
+      "without indexing")
   @ApiResponses(value = {@ApiResponse(code = 201, message = "CREATED")})
   public Response importDocumentContentsForFileWithType(
       @NotBlank @PathParam("externalId") String externalId,
