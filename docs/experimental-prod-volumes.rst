@@ -27,7 +27,15 @@ Testing production setup
   curl localhost:8080/textrepo/rest/documents
 
   # we might want to backup our data first?
-  # see: https://docs.docker.com/storage/volumes/#backup-restore-or-migrate-data-volumes
+  ./scripts/backup-prod.sh
+
+  # disaster strikes!
+  docker rm -f tr_elasticsearch
+  PREFIX=$(basename $(pwd)) # default is parent dir
+  docker volume rm ${PREFIX}_esdata
+
+  # restore:
+  ./scripts/restore-prod.sh
 
   # stop production setup:
   ./scripts/stop-docker-compose-prod.sh
