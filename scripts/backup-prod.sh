@@ -13,8 +13,10 @@ backup_volume() {
 
   if [[ ! -d $backup_dir ]] ; then echo "backup dir [$backup_dir] not found, aborting."; exit; fi
 
-  # source: blog.ssdnodes.com/blog/docker-backup-volumes/
+  # stop containers using volume:
   docker stop $container
+
+  # create tar in backup directory:
   docker run --rm --volumes-from $container -v $backup_dir:/backup alpine /bin/sh -c "cd $container_dir && tar cvf /backup/esdata-volume.tar ."
 }
 
