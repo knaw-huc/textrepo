@@ -17,40 +17,42 @@ Testing production setup
 
 .. code-block:: bash
 
+  cd ./examples/production
+
   # start production:
-  ./scripts/start-docker-compose-prod.sh
+  ./start-prod.sh
 
   # add some docs, files and versions:
-  ./scripts/populate.sh
+  (cd ../../ && ./scripts/populate.sh)
 
   # check added documents exist:
   curl localhost:8080/textrepo/rest/documents
 
   # we might want to backup our data volumes first?
-  ./scripts/backup-prod.sh
+  ./backup-prod.sh
 
   # disaster strikes!
   docker rm -f tr_elasticsearch
   PREFIX=$(basename $(pwd)) # default is parent dir
-  docker volume rm ${PREFIX}_esdata
+  docker volume rm ${PREFIX}_esdata-prod
 
   # restore volumes:
-  ./scripts/restore-prod.sh
+  ./restore-prod.sh
 
   # stop production setup:
-  ./scripts/stop-docker-compose-prod.sh
+  ./stop-prod.sh
 
   # run integration tests with different volumes:
-  ./scripts/start-docker-compose.sh
+  ./start-integration.sh
 
-  # check that no documents exist (because ./scripts/populate.sh was not run):
+  # check that no documents exist (because populate.sh was not run):
   curl localhost:8080/textrepo/rest/documents
 
-  # stop integration test setup:
-  ./scripts/stop-docker-compose.sh
+  # when tests have run, stop integration test setup:
+  ./stop-integration.sh
 
   # start production again...
-  ./scripts/start-docker-compose-prod.sh
+  ./start-prod.sh
 
   # check that documents created by ./scripts/populate.sh still exist:
   curl localhost:8080/textrepo/rest/documents
@@ -60,9 +62,8 @@ Testing production setup
 
   # when rerunning this test, make sure everything is really really gone:
   source docker-compose.env
-  docker-compose -f docker-compose.yml down -v
-  docker-compose -f docker-compose-dev.yml down -v
   docker-compose -f docker-compose-prod.yml down -v
+  docker-compose -f docker-compose-integration.yml down -v
   docker rm tr_postgres
   docker rmi knawhuc/textrepo-postgres:latest
   docker rmi postgres:11-alpine
