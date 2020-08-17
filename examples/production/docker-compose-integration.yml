@@ -5,9 +5,9 @@ services:
     container_name: tr_postgres
     image: knawhuc/textrepo-postgres:${TR_VERSION}
     networks:
-      - textrepo_network
+    - textrepo_network
     ports:
-      - 5432:5432
+    - 5432:5432
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
@@ -16,7 +16,7 @@ services:
       POSTGRES_PORT: ${POSTGRES_PORT}
       PGDATA: /var/lib/textrepo/data
     volumes:
-      - postgresdata-prod:/var/lib/textrepo/data
+      - postgresdata:/var/lib/textrepo/data
 
   elasticsearch:
     container_name: tr_elasticsearch
@@ -33,23 +33,23 @@ services:
         soft: -1
         hard: -1
     volumes:
-      - esdata-prod:/usr/share/elasticsearch/data
+    - esdata:/usr/share/elasticsearch/data
     ports:
-      - 9200
+    - 9200
     networks:
-      - textrepo_network
+    - textrepo_network
 
   nginx:
     container_name: tr_nginx
     image: knawhuc/textrepo-nginx:${TR_VERSION}
     networks:
-      - textrepo_network
+    - textrepo_network
     depends_on:
-      - textrepo-app
+    - textrepo-app
     volumes:
-      - concordiondata:/concordion:ro
+    - concordiondata:/concordion:ro
     ports:
-      - ${NGINX_LISTEN}:${NGINX_LISTEN}
+    - ${NGINX_LISTEN}:${NGINX_LISTEN}
     environment:
       VIRTUAL_HOST: ${NGINX_VIRTUAL_HOST}
       NGINX_LISTEN: ${NGINX_LISTEN}
@@ -83,10 +83,10 @@ services:
     container_name: tr_textrepo
     image: knawhuc/textrepo-app:${TR_VERSION}
     ports:
-      - 8080
-      - 8081:8081
+    - 8080
+    - 8081:8081
     networks:
-      - textrepo_network
+    - textrepo_network
     command: ["./wait-for-it.sh", "autocomplete-indexer:8080",
               "--timeout=0",
               "--",
@@ -114,14 +114,41 @@ services:
       TR_PAGINATION_DEFAULT_LIMIT: ${TR_PAGINATION_DEFAULT_LIMIT}
       TR_DATE_FORMAT: ${TR_DATE_FORMAT}
 
+  concordion:
+    container_name: tr_concordion
+    image: knawhuc/textrepo-concordion:${TR_VERSION}
+    ports:
+    - 8080
+    networks:
+    - textrepo_network
+    command: [
+      "/utils/wait-for-it.sh", "textrepo-app:8080",
+      "--timeout=0",
+      "--",
+      # run tests and keep container up:
+      "/bin/bash", "-c", "mvn clean test ; tail -f /dev/null"
+    ]
+    volumes:
+    - concordiondata:/concordion
+    environment:
+      ES_HOST: ${CONCORDION_ES_HOST}
+      APP_HOST: ${CONCORDION_APP_HOST}
+      APP_HOST_ADMIN: ${CONCORDION_APP_HOST_ADMIN}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      FULL_TEXT_INDEX: ${FULL_TEXT_INDEX}
+      CUSTOM_INDEX: ${CUSTOM_INDEX}
+      AUTOCOMPLETE_INDEX: ${AUTOCOMPLETE_INDEX}
+
 networks:
   textrepo_network:
 
 volumes:
-  esdata-prod:
+  esdata:
     driver: local
-  postgresdata-prod:
-    driver: local
-  # display test results from non-production volume:
   concordiondata:
+    driver: local
+  postgresdata:
     driver: local
