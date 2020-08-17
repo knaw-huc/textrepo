@@ -39,6 +39,7 @@ Documentation
     Components <components>
     Rest and Tasks API <tr-api>
     Indexing <indexing>
+    Dashboard <dashboard>
     Experimental <experimental>
 
 Support
