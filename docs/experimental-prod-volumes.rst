@@ -26,7 +26,7 @@ Testing production setup
   # check added documents exist:
   curl localhost:8080/textrepo/rest/documents
 
-  # we might want to backup our data first?
+  # we might want to backup our data volumes first?
   ./scripts/backup-prod.sh
 
   # disaster strikes!
@@ -34,7 +34,7 @@ Testing production setup
   PREFIX=$(basename $(pwd)) # default is parent dir
   docker volume rm ${PREFIX}_esdata
 
-  # restore:
+  # restore volumes:
   ./scripts/restore-prod.sh
 
   # stop production setup:
