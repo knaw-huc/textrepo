@@ -54,6 +54,7 @@ services:
       VIRTUAL_HOST: ${NGINX_VIRTUAL_HOST}
       NGINX_LISTEN: ${NGINX_LISTEN}
       NGINX_LOCATION: ${NGINX_LOCATION}
+      NGINX_ROOT_REDIRECT: ${NGINX_ROOT_REDIRECT}
 
   autocomplete-indexer:
     container_name: tr_autocomplete
