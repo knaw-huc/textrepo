@@ -1,33 +1,36 @@
 #!/usr/bin/env bash
 set -e
-set -x
 
 restore_volume() {
-  local prefix=${1}
-  local volume=${2}
-  local backup_dir=${3}
-  local backup_archive=${4}
-  local container_dir=${5}
 
-  if [[ ! -f "$backup_dir/$backup_archive" ]] ; then echo "backup [$backup_dir/$backup_archive] not found, aborting."; exit; fi
+  # prefix of volume (=parent dir):
+  local prefix=${1}
+
+  # name of volume:
+  local volume=${2}
+
+  # location of archive on host machine:
+  local backup_dir=${3}
+
+  # filename of archive:
+  local archive_name=${4}
+
+  # must not run:
+  local container=${5}
+
+  if [[ ! -f "$backup_dir/$archive_name" ]] ; then echo "backup [$backup_dir/$archive_name] not found, aborting."; exit; fi
+  if [[ "$(docker ps -q -f name=$container)" ]] ; then echo "$container is running, aborting."; exit; fi
 
   # create named but still empty volume:
   docker volume create $volume
 
-  # create dummy alpine container with volume and extract archive in it:
-  docker run --rm -v $volume:/recover -v $backup_dir:/backup alpine /bin/sh -c "cd /recover && tar xvf /backup/$backup_archive"
+  # create dummy alpine container with volume, and unpack archive in it:
+  docker run --rm -v $volume:/recover -v $backup_dir:/backup alpine /bin/sh -c "cd /recover && tar xvf /backup/$archive_name"
 }
 
 PREFIX=$(basename $(pwd))
-
-VOLUME=${PREFIX}_esdata-prod
-BACKUP_DIR=~/workspace/test/backup
-BACKUP_ARCHIVE=esdata-prod-volume.tar
-CONTAINER_DIR=/usr/share/elasticsearch/data
-restore_volume $PREFIX $VOLUME $BACKUP_DIR $BACKUP_ARCHIVE $CONTAINER_DIR $CONTAINER
-
 VOLUME=${PREFIX}_postgresdata-prod
-BACKUP_DIR=~/workspace/test/backup
-BACKUP_ARCHIVE=postgresdata-prod-volume.tar
-CONTAINER_DIR=/var/lib/textrepo/data
-restore_volume $PREFIX $VOLUME $BACKUP_DIR $BACKUP_ARCHIVE $CONTAINER_DIR $CONTAINER
+BACKUP_DIR=~/backup
+ARCHIVE_NAME=postgresdata-prod-volume.tar
+CONTAINER=tr_postgres
+restore_volume $PREFIX $VOLUME $BACKUP_DIR $ARCHIVE_NAME $CONTAINER
