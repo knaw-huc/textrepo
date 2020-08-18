@@ -69,6 +69,8 @@ public class DashboardResource {
 
   @GET
   @Path("metadata")
+  @ApiOperation("Get document count breakdown by metadata key (yields Map: key -> count)")
+  @ApiResponses(@ApiResponse(code = 200, message = "OK. Body contains Map: String key -> int count"))
   @Produces(APPLICATION_JSON)
   public Map<String, Integer> countDocumentsByMetadataKey() {
     log.debug("Count documents by metadata key");
@@ -79,6 +81,10 @@ public class DashboardResource {
 
   @GET
   @Path("metadata/{key}")
+  @ApiOperation("Get document count breakdown by metadata value for given metadata key")
+  @ApiResponses(@ApiResponse(
+      code = 200,
+      message = "OK. Body contains Map: String value -> int count. Link rel='collection' to relevant documents"))
   @Produces(APPLICATION_JSON)
   public Response countDocumentsByMetadataValue(@PathParam("key") String key) {
     log.debug("Count documents by metadata value for key=[{}]", key);
