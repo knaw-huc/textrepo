@@ -17,6 +17,7 @@ logging:
   appenders: ${TR_LOGGING_APPENDERS}
 indexers: ${TR_INDEXERS}
 swagger:
+  schemes: ${TR_SWAGGER_SCHEMES}
   resourcePackage: ${TR_SWAGGER_RESOURCE_PACKAGE}
   contextRoot: ${TR_SWAGGER_CONTEXT_ROOT}
 pagination:
