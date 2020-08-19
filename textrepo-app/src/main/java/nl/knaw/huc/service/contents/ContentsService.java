@@ -6,7 +6,6 @@ import nl.knaw.huc.service.store.ContentsStorage;
 import javax.annotation.Nonnull;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Arrays.copyOfRange;
 
 public class ContentsService {
   private final ContentsStorage contentsStorage;
@@ -39,8 +38,8 @@ public class ContentsService {
       return new String(contents);
     }
 
-    var start = new String(copyOfRange(contents, 0, lengthStartEnd), UTF_8);
-    var end = new String(copyOfRange(contents, contents.length - lengthStartEnd, contents.length), UTF_8);
+    var start = new String(contents, 0, lengthStartEnd, UTF_8);
+    var end = new String(contents, contents.length - lengthStartEnd, lengthStartEnd, UTF_8);
     return start + replacement + end;
   }
 
