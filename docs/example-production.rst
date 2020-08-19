@@ -32,9 +32,7 @@ Testing production setup
   ./backup-prod.sh
 
   # disaster strikes!
-  docker rm -f tr_elasticsearch
-  PREFIX=$(basename $(pwd)) # default is parent dir
-  docker volume rm ${PREFIX}_esdata-prod
+  docker-compose -f docker-compose-prod.yml down -v
 
   # restore volumes:
   ./restore-prod.sh
@@ -56,6 +54,7 @@ Testing production setup
 
   # check that documents created by ./scripts/populate.sh still exist:
   curl localhost:8080/textrepo/rest/documents
+  curl localhost:8080/index/full-text/_search
 
   # check concordion results from integration setup are available through nginx:
   open http://localhost:8080/concordion/nl/knaw/huc/textrepo/TextRepo.html
