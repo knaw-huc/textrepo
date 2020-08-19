@@ -1,6 +1,6 @@
 .. |tr| replace:: Text Repository
 
-Production Volumes
+Production Setup
 ==================
 
 To keep production data safe, create a production docker-compose file which:
@@ -10,7 +10,7 @@ To keep production data safe, create a production docker-compose file which:
 
 ES data is already stored in a seperate volume, postgres data must be moved to its own volume in this branch, called ``postgresdata`` and ``prostgresdata-prod``.
 
-See: ``docker-compose-prod.yml``.
+See: ``./example/production/``.
 
 Testing production setup
 ------------------------
@@ -59,12 +59,4 @@ Testing production setup
 
   # check concordion results from integration setup are available through nginx:
   open http://localhost:8080/concordion/nl/knaw/huc/textrepo/TextRepo.html
-
-  # when rerunning this test, make sure everything is really really gone:
-  source docker-compose.env
-  docker-compose -f docker-compose-prod.yml down -v
-  docker-compose -f docker-compose-integration.yml down -v
-  docker rm tr_postgres
-  docker rmi knawhuc/textrepo-postgres:latest
-  docker rmi postgres:11-alpine
 
