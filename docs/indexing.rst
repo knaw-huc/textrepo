@@ -7,7 +7,7 @@ The |tr| creates and updates ElasticSearch (ES) indexes as defined in ``docker-c
 
 Elasticsearch documents are automatically created and updated when new file versions are added to the |TR|.
 
-More on searching in ES `here <https://www.elastic.co/guide/en/elastic-stack/current/index.html>`_.
+More on: `searching in ES <https://www.elastic.co/guide/en/elastic-stack/current/index.html>`_.
 
 Indexer
 -------
@@ -18,7 +18,7 @@ An 'indexer' is a service with two endpoints:
 - ``GET mapping`` returns json mapping used by the |tr| to create an ES index.
 - ``POST fields`` endpoint converts the contents of new file version into a json document that matches the json mapping
 
-More on ES mappings `here <https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html>`_.
+More on: `ES mappings <https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html>`_.
 
 Indexing workflow
 -----------------
