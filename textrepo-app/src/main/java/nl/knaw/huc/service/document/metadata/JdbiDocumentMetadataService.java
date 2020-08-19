@@ -1,4 +1,4 @@
-package nl.knaw.huc.service;
+package nl.knaw.huc.service.document.metadata;
 
 import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.db.DocumentMetadataDao;

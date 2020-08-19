@@ -8,8 +8,8 @@ import nl.knaw.huc.api.FormPageParams;
 import nl.knaw.huc.api.ResultDocument;
 import nl.knaw.huc.api.ResultTextRepoFile;
 import nl.knaw.huc.core.TextRepoFile;
-import nl.knaw.huc.service.DocumentFilesService;
 import nl.knaw.huc.helpers.Paginator;
+import nl.knaw.huc.service.document.files.DocumentFilesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

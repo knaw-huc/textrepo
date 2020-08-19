@@ -15,7 +15,7 @@ import nl.knaw.huc.core.Page;
 import nl.knaw.huc.core.PageParams;
 import nl.knaw.huc.helpers.Paginator;
 import nl.knaw.huc.resources.rest.DocumentsResource;
-import nl.knaw.huc.service.DocumentService;
+import nl.knaw.huc.service.document.DocumentService;
 import nl.knaw.huc.service.datetime.LocalDateTimeParamConverterProvider;
 import nl.knaw.huc.service.logging.LoggingApplicationEventListener;
 import org.apache.commons.io.FileUtils;

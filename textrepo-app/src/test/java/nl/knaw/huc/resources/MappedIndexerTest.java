@@ -2,7 +2,7 @@ package nl.knaw.huc.resources;
 
 import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.core.Type;
-import nl.knaw.huc.service.TypeService;
+import nl.knaw.huc.service.type.TypeService;
 import nl.knaw.huc.service.index.MappedIndexerConfiguration;
 import nl.knaw.huc.service.index.IndexerException;
 import nl.knaw.huc.service.index.MappedIndexer;

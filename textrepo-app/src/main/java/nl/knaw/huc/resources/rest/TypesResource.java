@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import nl.knaw.huc.api.FormType;
 import nl.knaw.huc.api.ResultType;
 import nl.knaw.huc.core.Type;
-import nl.knaw.huc.service.TypeService;
+import nl.knaw.huc.service.type.TypeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,4 +1,4 @@
-package nl.knaw.huc.service;
+package nl.knaw.huc.service.file;
 
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.core.TextRepoFile;

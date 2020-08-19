@@ -8,9 +8,9 @@ import nl.knaw.huc.api.FormPageParams;
 import nl.knaw.huc.api.ResultDocument;
 import nl.knaw.huc.api.ResultDocumentsOverview;
 import nl.knaw.huc.api.ResultPage;
-import nl.knaw.huc.resources.rest.MetadataResource;
-import nl.knaw.huc.service.DashboardService;
 import nl.knaw.huc.helpers.Paginator;
+import nl.knaw.huc.resources.rest.MetadataResource;
+import nl.knaw.huc.service.dashboard.DashboardService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,4 +1,4 @@
-package nl.knaw.huc.service;
+package nl.knaw.huc.service.version;
 
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.core.Page;
@@ -8,6 +8,7 @@ import nl.knaw.huc.core.Version;
 import nl.knaw.huc.db.ContentsDao;
 import nl.knaw.huc.db.FilesDao;
 import nl.knaw.huc.db.VersionsDao;
+import nl.knaw.huc.service.contents.ContentsService;
 import nl.knaw.huc.service.index.Indexer;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.JdbiException;

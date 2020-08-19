@@ -10,7 +10,7 @@ import nl.knaw.huc.core.DocumentsOverview;
 import nl.knaw.huc.core.Page;
 import nl.knaw.huc.core.PageParams;
 import nl.knaw.huc.helpers.Paginator;
-import nl.knaw.huc.service.DashboardService;
+import nl.knaw.huc.service.dashboard.DashboardService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

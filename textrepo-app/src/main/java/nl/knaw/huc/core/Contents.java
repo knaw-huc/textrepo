@@ -8,7 +8,7 @@ import javax.annotation.Nonnull;
 import java.beans.ConstructorProperties;
 import java.nio.charset.StandardCharsets;
 
-import static nl.knaw.huc.service.ContentsService.abbreviateMiddle;
+import static nl.knaw.huc.service.contents.ContentsService.abbreviateMiddle;
 
 /**
  * Contents of a file, identified by its sha224-hash

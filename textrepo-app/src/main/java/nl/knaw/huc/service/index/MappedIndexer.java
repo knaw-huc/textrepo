@@ -1,7 +1,7 @@
 package nl.knaw.huc.service.index;
 
 import nl.knaw.huc.core.TextRepoFile;
-import nl.knaw.huc.service.TypeService;
+import nl.knaw.huc.service.type.TypeService;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;

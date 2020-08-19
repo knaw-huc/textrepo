@@ -2,7 +2,7 @@ package nl.knaw.huc.resources.rest;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import nl.knaw.huc.service.DocumentMetadataService;
+import nl.knaw.huc.service.document.metadata.DocumentMetadataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -3,7 +3,7 @@ package nl.knaw.huc.service.index;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.core.Type;
-import nl.knaw.huc.service.TypeService;
+import nl.knaw.huc.service.type.TypeService;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;

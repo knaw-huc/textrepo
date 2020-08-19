@@ -1,11 +1,12 @@
 package nl.knaw.huc.service;
 
 import nl.knaw.huc.core.Contents;
+import nl.knaw.huc.service.contents.ContentsService;
 import nl.knaw.huc.service.store.ContentsStorage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-import static nl.knaw.huc.service.ContentsService.abbreviateMiddle;
+import static nl.knaw.huc.service.contents.ContentsService.abbreviateMiddle;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;

@@ -9,7 +9,7 @@ import nl.knaw.huc.api.FormPageParams;
 import nl.knaw.huc.api.ResultDocument;
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.helpers.Paginator;
-import nl.knaw.huc.service.DocumentService;
+import nl.knaw.huc.service.document.DocumentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
