@@ -145,7 +145,7 @@ public class FileVersionsResourceTest {
   }
 
   @Test
-  public void testGetVersions_returnsMessageAboutDateFormat_whenWrongDateFormat() throws InterruptedException {
+  public void testGetVersions_returnsMessageAboutDateFormat_whenWrongDateFormat() {
     var noSAndMs = "yyyy-MM-dd'T'HH:mm";
     var betweenVersions = new SimpleDateFormat(noSAndMs).format(new Date());
     var response = resource
