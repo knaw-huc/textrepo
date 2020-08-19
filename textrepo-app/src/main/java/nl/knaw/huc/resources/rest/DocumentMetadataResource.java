@@ -8,7 +8,7 @@ import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.api.ResultDocumentMetadataEntry;
 import nl.knaw.huc.exceptions.MethodNotAllowedException;
-import nl.knaw.huc.service.DocumentMetadataService;
+import nl.knaw.huc.service.document.metadata.DocumentMetadataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

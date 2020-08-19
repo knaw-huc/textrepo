@@ -3,16 +3,16 @@ package nl.knaw.huc.resources.rest;
 import com.jayway.jsonpath.JsonPath;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.testing.junit5.ResourceExtension;
-import nl.knaw.huc.service.datetime.LocalDateTimeParamConverterProvider;
 import nl.knaw.huc.PaginationConfiguration;
 import nl.knaw.huc.core.PageParams;
 import nl.knaw.huc.core.Version;
 import nl.knaw.huc.db.VersionsDao;
-import nl.knaw.huc.service.ContentsService;
-import nl.knaw.huc.service.JdbiVersionService;
-import nl.knaw.huc.service.Paginator;
-import nl.knaw.huc.service.VersionService;
+import nl.knaw.huc.helpers.Paginator;
+import nl.knaw.huc.service.contents.ContentsService;
+import nl.knaw.huc.service.datetime.LocalDateTimeParamConverterProvider;
 import nl.knaw.huc.service.index.MappedIndexer;
+import nl.knaw.huc.service.version.JdbiVersionService;
+import nl.knaw.huc.service.version.VersionService;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.jdbi.v3.core.Jdbi;
 import org.junit.jupiter.api.AfterEach;
@@ -145,7 +145,7 @@ public class FileVersionsResourceTest {
   }
 
   @Test
-  public void testGetVersions_returnsMessageAboutDateFormat_whenWrongDateFormat() throws InterruptedException {
+  public void testGetVersions_returnsMessageAboutDateFormat_whenWrongDateFormat() {
     var noSAndMs = "yyyy-MM-dd'T'HH:mm";
     var betweenVersions = new SimpleDateFormat(noSAndMs).format(new Date());
     var response = resource

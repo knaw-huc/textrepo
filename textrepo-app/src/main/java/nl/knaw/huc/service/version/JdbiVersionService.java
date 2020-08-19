@@ -1,4 +1,4 @@
-package nl.knaw.huc.service;
+package nl.knaw.huc.service.version;
 
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.core.Page;
@@ -8,8 +8,8 @@ import nl.knaw.huc.core.Version;
 import nl.knaw.huc.db.ContentsDao;
 import nl.knaw.huc.db.FilesDao;
 import nl.knaw.huc.db.VersionsDao;
+import nl.knaw.huc.service.contents.ContentsService;
 import nl.knaw.huc.service.index.Indexer;
-import nl.knaw.huc.service.index.MappedIndexer;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.JdbiException;
 import org.slf4j.Logger;
@@ -23,8 +23,8 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 import static java.lang.String.format;
-import static nl.knaw.huc.service.PsqlExceptionService.Constraint.VERSIONS_CONTENTS_SHA;
-import static nl.knaw.huc.service.PsqlExceptionService.violatesConstraint;
+import static nl.knaw.huc.helpers.PsqlExceptionHelper.Constraint.VERSIONS_CONTENTS_SHA;
+import static nl.knaw.huc.helpers.PsqlExceptionHelper.violatesConstraint;
 
 public class JdbiVersionService implements VersionService {
 

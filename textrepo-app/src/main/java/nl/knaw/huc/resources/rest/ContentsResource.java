@@ -5,7 +5,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import nl.knaw.huc.service.ContentsService;
+import nl.knaw.huc.service.contents.ContentsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

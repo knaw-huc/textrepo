@@ -28,7 +28,7 @@ import java.util.Map;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
 import static javax.ws.rs.core.UriBuilder.fromResource;
-import static nl.knaw.huc.service.ContentsService.abbreviateMiddle;
+import static nl.knaw.huc.service.contents.ContentsService.abbreviateMiddle;
 
 /**
  * The /find-task finds resources by external id and possible other parameters
@@ -140,7 +140,7 @@ public class FindResource {
     final var result = task.run();
     final var bytes = result.getContents();
     log.debug("Got latest version contents: {}", abbreviateMiddle(bytes));
-   
+
     final var fileId = result.getFileId();
     final var typeId = result.getTypeId();
 

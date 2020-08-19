@@ -1,4 +1,4 @@
-package nl.knaw.huc.service;
+package nl.knaw.huc.service.type;
 
 import nl.knaw.huc.core.Type;
 

@@ -7,8 +7,8 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.FormPageParams;
 import nl.knaw.huc.api.ResultVersion;
-import nl.knaw.huc.service.Paginator;
-import nl.knaw.huc.service.VersionService;
+import nl.knaw.huc.helpers.Paginator;
+import nl.knaw.huc.service.version.VersionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static nl.knaw.huc.service.Paginator.toResult;
+import static nl.knaw.huc.helpers.Paginator.toResult;
 
 @Api(tags = {"files", "versions"})
 @Path("/rest/files/{fileId}/versions")

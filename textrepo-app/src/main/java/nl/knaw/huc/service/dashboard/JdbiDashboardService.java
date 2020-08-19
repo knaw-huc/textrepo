@@ -1,4 +1,4 @@
-package nl.knaw.huc.service;
+package nl.knaw.huc.service.dashboard;
 
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.core.DocumentsOverview;

@@ -1,4 +1,4 @@
-package nl.knaw.huc.service;
+package nl.knaw.huc.service.type;
 
 import nl.knaw.huc.core.Type;
 import nl.knaw.huc.db.TypesDao;
@@ -15,8 +15,8 @@ import java.util.List;
 
 import static java.lang.String.format;
 import static javax.ws.rs.core.Response.Status.CONFLICT;
-import static nl.knaw.huc.service.PsqlExceptionService.Constraint.FILES_TYPE_ID;
-import static nl.knaw.huc.service.PsqlExceptionService.violatesConstraint;
+import static nl.knaw.huc.helpers.PsqlExceptionHelper.Constraint.FILES_TYPE_ID;
+import static nl.knaw.huc.helpers.PsqlExceptionHelper.violatesConstraint;
 
 public class JdbiTypeService implements TypeService {
   private static final Logger log = LoggerFactory.getLogger(JdbiTypeService.class);

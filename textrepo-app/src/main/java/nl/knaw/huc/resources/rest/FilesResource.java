@@ -8,7 +8,7 @@ import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.FormTextRepoFile;
 import nl.knaw.huc.api.ResultTextRepoFile;
 import nl.knaw.huc.core.TextRepoFile;
-import nl.knaw.huc.service.FileService;
+import nl.knaw.huc.service.file.FileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

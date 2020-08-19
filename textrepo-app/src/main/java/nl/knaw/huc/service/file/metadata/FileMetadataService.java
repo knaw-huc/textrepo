@@ -1,4 +1,4 @@
-package nl.knaw.huc.service;
+package nl.knaw.huc.service.file.metadata;
 
 import nl.knaw.huc.api.MetadataEntry;
 

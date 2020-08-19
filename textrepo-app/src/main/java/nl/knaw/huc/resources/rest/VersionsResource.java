@@ -8,7 +8,7 @@ import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.FormVersion;
 import nl.knaw.huc.api.ResultVersion;
 import nl.knaw.huc.exceptions.MethodNotAllowedException;
-import nl.knaw.huc.service.VersionService;
+import nl.knaw.huc.service.version.VersionService;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

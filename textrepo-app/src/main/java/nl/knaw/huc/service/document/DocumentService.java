@@ -1,4 +1,4 @@
-package nl.knaw.huc.service;
+package nl.knaw.huc.service.document;
 
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.core.Page;
