@@ -35,7 +35,7 @@ public class ContentsService {
     var lengthStartEnd = 48;
 
     if (contents.length <= 2 * lengthStartEnd + replacement.length()) {
-      return new String(contents);
+      return new String(contents, UTF_8);
     }
 
     var start = new String(contents, 0, lengthStartEnd, UTF_8);
