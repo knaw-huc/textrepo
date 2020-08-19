@@ -10,7 +10,7 @@ import nl.knaw.huc.api.ResultDocumentsOverview;
 import nl.knaw.huc.api.ResultPage;
 import nl.knaw.huc.resources.rest.MetadataResource;
 import nl.knaw.huc.service.DashboardService;
-import nl.knaw.huc.service.Paginator;
+import nl.knaw.huc.helpers.Paginator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +25,7 @@ import java.util.Map;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.UriBuilder.fromResource;
-import static nl.knaw.huc.service.Paginator.toResult;
+import static nl.knaw.huc.helpers.Paginator.toResult;
 
 @Api(tags = {"dashboard"})
 @Path("/dashboard")

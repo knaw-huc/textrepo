@@ -1,8 +1,8 @@
-package nl.knaw.huc.service;
+package nl.knaw.huc.helpers;
 
 import org.postgresql.util.PSQLException;
 
-public class PsqlExceptionService {
+public class PsqlExceptionHelper {
 
   public enum Constraint {
     // These constraints are named postgres constraints, from "postgres/initdb/02-init.sql"

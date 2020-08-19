@@ -9,7 +9,7 @@ import nl.knaw.huc.api.ResultDocument;
 import nl.knaw.huc.api.ResultTextRepoFile;
 import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.service.DocumentFilesService;
-import nl.knaw.huc.service.Paginator;
+import nl.knaw.huc.helpers.Paginator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +23,7 @@ import javax.ws.rs.core.Response;
 import java.util.UUID;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static nl.knaw.huc.service.Paginator.toResult;
+import static nl.knaw.huc.helpers.Paginator.toResult;
 
 @Api(tags = {"documents"})
 @Path("/rest/documents/{docId}/files")

@@ -6,8 +6,8 @@ import org.jdbi.v3.core.JdbiException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static nl.knaw.huc.service.PsqlExceptionService.Constraint.VERSIONS_CONTENTS_SHA;
-import static nl.knaw.huc.service.PsqlExceptionService.violatesConstraint;
+import static nl.knaw.huc.helpers.PsqlExceptionHelper.Constraint.VERSIONS_CONTENTS_SHA;
+import static nl.knaw.huc.helpers.PsqlExceptionHelper.violatesConstraint;
 
 public class DeleteContents implements InTransactionRunner {
 

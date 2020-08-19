@@ -13,9 +13,9 @@ import nl.knaw.huc.TextRepoConfiguration;
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.core.Page;
 import nl.knaw.huc.core.PageParams;
+import nl.knaw.huc.helpers.Paginator;
 import nl.knaw.huc.resources.rest.DocumentsResource;
 import nl.knaw.huc.service.DocumentService;
-import nl.knaw.huc.service.Paginator;
 import nl.knaw.huc.service.datetime.LocalDateTimeParamConverterProvider;
 import nl.knaw.huc.service.logging.LoggingApplicationEventListener;
 import org.apache.commons.io.FileUtils;
@@ -51,12 +51,12 @@ import static org.mockito.Mockito.when;
 public class LoggingTest {
 
   private static final Logger log = LoggerFactory.getLogger(LoggingTest.class);
-  private static File configFile = new File("src/test/resources/logging/config.yml");
-  private static File logFile = new File("target/testlog.log");
-  private static String endpoint = "http://localhost:8765/rest/documents";
+  private static final File configFile = new File("src/test/resources/logging/config.yml");
+  private static final File logFile = new File("target/testlog.log");
+  private static final String endpoint = "http://localhost:8765/rest/documents";
 
-  private static DocumentService documentService = mock(DocumentService.class);
-  private static Paginator paginator = mock(Paginator.class);
+  private static final DocumentService documentService = mock(DocumentService.class);
+  private static final Paginator paginator = mock(Paginator.class);
 
   public static DropwizardAppExtension<TextRepoConfiguration> application;
 

@@ -12,7 +12,7 @@ import nl.knaw.huc.core.PageParams;
 import nl.knaw.huc.exceptions.MethodNotAllowedExceptionMapper;
 import nl.knaw.huc.service.DocumentService;
 import nl.knaw.huc.service.FileService;
-import nl.knaw.huc.service.Paginator;
+import nl.knaw.huc.helpers.Paginator;
 import nl.knaw.huc.service.datetime.LocalDateTimeParamConverterProvider;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.jdbi.v3.core.Jdbi;

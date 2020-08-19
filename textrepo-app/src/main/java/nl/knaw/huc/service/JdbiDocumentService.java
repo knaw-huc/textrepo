@@ -16,13 +16,13 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 import static java.lang.String.format;
-import static nl.knaw.huc.service.PsqlExceptionService.Constraint.DOCUMENTS_EXTERNAL_ID_KEY;
-import static nl.knaw.huc.service.PsqlExceptionService.violatesConstraint;
+import static nl.knaw.huc.helpers.PsqlExceptionHelper.Constraint.DOCUMENTS_EXTERNAL_ID_KEY;
+import static nl.knaw.huc.helpers.PsqlExceptionHelper.violatesConstraint;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class JdbiDocumentService implements DocumentService {
   private static final Logger log = LoggerFactory.getLogger(JdbiDocumentService.class);
-  
+
   private final Jdbi jdbi;
   private final Supplier<UUID> uuidGenerator;
 
