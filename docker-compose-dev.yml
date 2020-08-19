@@ -37,7 +37,8 @@ services:
         soft: -1
         hard: -1
     volumes:
-    - esdata:/snapshot-repo
+    - esdata:/usr/share/elasticsearch/data
+    - essnapshotdata:/snapshot-repo
     ports:
     - 9200
     networks:
@@ -158,6 +159,8 @@ networks:
 
 volumes:
   esdata:
+    driver: local
+  essnapshotdata:
     driver: local
   concordiondata:
     driver: local

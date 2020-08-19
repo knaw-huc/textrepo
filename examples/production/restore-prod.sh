@@ -45,7 +45,7 @@ restore_volume $PREFIX $VOLUME $BACKUP_DIR $ARCHIVE_NAME $CONTAINER
 CONTAINER_DIR=/snapshot-repo
 PREFIX=$(basename $(pwd))
 BACKUP_DIR=~/backup
-VOLUME=${PREFIX}_esdata-prod
+VOLUME=${PREFIX}_essnapshotdata-prod
 ARCHIVE_NAME=esdata-prod-volume.tar
 CONTAINER=tr_elasticsearch
 

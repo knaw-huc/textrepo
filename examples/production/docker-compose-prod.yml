@@ -34,7 +34,8 @@ services:
         soft: -1
         hard: -1
     volumes:
-      - esdata-prod:/snapshot-repo
+      - esdata-prod:/usr/share/elasticsearch/data
+      - essnapshotdata-prod:/snapshot-repo
     ports:
       - 9200
     networks:
@@ -122,8 +123,9 @@ networks:
 volumes:
   esdata-prod:
     driver: local
-  postgresdata-prod:
+  essnapshotdata-prod:
     driver: local
-  # display test results from non-production volume:
   concordiondata:
+    driver: local
+  postgresdata-prod:
     driver: local
