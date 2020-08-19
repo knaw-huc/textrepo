@@ -28,3 +28,6 @@ CONTAINER_DIR=/var/lib/textrepo/data
 ARCHIVE_NAME=postgresdata-prod-volume.tar
 CONTAINER=tr_postgres
 backup_volume $BACKUP_DIR $CONTAINER_DIR $ARCHIVE_NAME $CONTAINER
+
+ES_URL=localhost:8080/index
+curl -XPUT $ES_URL/_snapshot/backup -d "@es-snapshot-request.json" -H 'content-type:application/json'
