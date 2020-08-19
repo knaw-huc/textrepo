@@ -40,8 +40,9 @@ Documentation
     Rest and Tasks API <tr-api>
     Indexing <indexing>
     Dashboard <dashboard>
-    Experimental <experimental>
-    Experimental production volumes <experimental-prod-volumes>
+    Production Setup <example-production>
+    Backup Elasticsearch <example-backup-es>
+    Content Coordinate System [Experimental] <experimental>
 
 Support
 -------
