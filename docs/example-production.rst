@@ -47,16 +47,16 @@ Example of backing up and restoring production data:
   ls ~/backup/
 
   # disaster strikes!
+  source docker-compose.env
   docker-compose -f docker-compose-prod.yml down -v
 
-  # nothing!
+  # nothing left!
   ./start-prod.sh && ./log.sh prod
   curl localhost:8080/textrepo/rest/documents
   curl localhost:8080/index/full-text/_search
 
   # restore volumes:
-  source docker-compose.env
-  docker-compose -f docker-compose-prod.yml down
+  docker-compose -f docker-compose-prod.yml down -v
   ./restore-prod.sh
 
   # check docs have bee restored:
