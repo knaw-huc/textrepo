@@ -1,19 +1,28 @@
 .. |tr| replace:: Text Repository
 
-Production Setup
-==================
+Production Setup Example
+========================
 
 To keep production data safe, create a production docker-compose file which:
 
 - does not run the concordion tests
 - saves database and index data into its own 'production'-volumes
 
-ES data is already stored in a seperate volume, postgres data must be moved to its own volume in this branch, called ``postgresdata`` and ``prostgresdata-prod``.
 
 See: ``./example/production/``.
 
+Backing up data
+---------------
+
+Postgres is backed up by archiving its data directory.
+
+Elasticsearch is a bit more complicated: We cannot simply copy the data from es data dirs, because it could result in corrupt indices and missing data.
+Instead we'll be using the 'snapshot' api  of ES to create and restore backups.
+
 Testing production setup
 ------------------------
+
+See also: `backing up elasticsearch, an example <example-backup-es.html>`_.
 
 .. code-block:: bash
 
@@ -58,4 +67,3 @@ Testing production setup
 
   # check concordion results from integration setup are available through nginx:
   open http://localhost:8080/concordion/nl/knaw/huc/textrepo/TextRepo.html
-
