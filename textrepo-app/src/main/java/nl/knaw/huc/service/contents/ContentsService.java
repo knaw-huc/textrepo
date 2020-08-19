@@ -28,6 +28,8 @@ public class ContentsService {
    *
    * <p>Like org.apache.commons.lang3.StringUtils.StringUtils.abbreviateMiddle
    * but then without having to convert byte[] to String
+   * <p>
+   * TODO: properly handle multi-byte UTF sequences (TT-606).
    */
   public static String abbreviateMiddle(@Nonnull byte[] contents) {
     var replacement = "[..]";
