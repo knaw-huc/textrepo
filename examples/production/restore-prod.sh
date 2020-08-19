@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -e
+set -x
 
 restore_volume() {
 
@@ -28,9 +29,45 @@ restore_volume() {
   docker run --rm -v $volume:/recover -v $backup_dir:/backup alpine /bin/sh -c "cd /recover && tar xvf /backup/$archive_name"
 }
 
+
+# Restoring postgres:
+
 PREFIX=$(basename $(pwd))
-VOLUME=${PREFIX}_postgresdata-prod
 BACKUP_DIR=~/backup
+VOLUME=${PREFIX}_postgresdata-prod
 ARCHIVE_NAME=postgresdata-prod-volume.tar
 CONTAINER=tr_postgres
 restore_volume $PREFIX $VOLUME $BACKUP_DIR $ARCHIVE_NAME $CONTAINER
+
+
+# Restoring elasticsearch:
+
+CONTAINER_DIR=/snapshot-repo
+PREFIX=$(basename $(pwd))
+BACKUP_DIR=~/backup
+VOLUME=${PREFIX}_esdata-prod
+ARCHIVE_NAME=esdata-prod-volume.tar
+CONTAINER=tr_elasticsearch
+
+restore_volume $PREFIX $VOLUME $BACKUP_DIR $ARCHIVE_NAME $CONTAINER
+
+# start only es:
+docker-compose -f docker-compose-prod.yml up -d elasticsearch
+
+read -p "Press enter when elasticsearch has started (check with: ./log.sh prod)"
+
+ES_URL=$(docker port $CONTAINER 9200)
+
+# restore snapshot repository:
+curl -XPUT $ES_URL/_snapshot/backup \
+  -d "{\"type\":\"fs\",\"settings\":{\"location\":\"$CONTAINER_DIR\"}}" \
+  -H 'content-type:application/json'
+
+# restore snapshot:
+curl -XPOST "$ES_URL/_snapshot/backup/snapshot_1/_restore" \
+  -H 'content-type:application/json' \
+  -d '{}'
+
+# stop elasticsearch with restored backup/snapshot_1:
+docker-compose -f docker-compose-prod.yml stop elasticsearch
+

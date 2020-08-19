@@ -30,14 +30,14 @@ services:
       - cluster.name=${ES_CLUSTER_NAME}
       - bootstrap.memory_lock=${ES_BOOTSTRAP_MEMORY_LOCK}
       - ES_JAVA_OPTS=${ES_JAVA_OPTS}
-      - path.repo=/backup
+      - path.repo=/snapshot-repo
     restart: always
     ulimits:
       memlock:
         soft: -1
         hard: -1
     volumes:
-    - esdata:/backup
+    - esdata:/snapshot-repo
     ports:
     - 9200
     networks:
