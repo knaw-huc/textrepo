@@ -18,8 +18,6 @@ We can backup Postgres by archiving its data directory.
 
 Elasticsearch is a bit more complicated: we cannot simply copy the data from its data dir. It would result in corrupt indices and missing data. Instead we will be using the 'snapshot' api  of ES to create and restore backups.
 
-See: ``./backup-prod.sh`` and ``./restore-prod.sh`` in ``./examples/production/``.
-
 See also: `backing up elasticsearch, an example <example-backup-es.html>`_.
 
 Example of backing up and restoring production data:
@@ -60,17 +58,17 @@ Example of backing up and restoring production data:
   docker-compose -f docker-compose-prod.yml down -v
   ./restore-prod.sh
 
-  # check docs have bee restored:
+  # check docs have been restored:
   ./start-prod.sh && ./log.sh prod
   curl localhost:8080/textrepo/rest/documents
   curl localhost:8080/index/full-text/_search
+
+See: ``./backup-prod.sh`` and ``./restore-prod.sh`` in ``./examples/production/``.
 
 Running Integration Tests
 -------------------------
 
 In production we want to show the integration test results from the concordiondata volume, but we do not want concordion to wipe out our production data while running its tests. This can be achieved by creating separate postgres and elasticsearch volumes for the production and integration environment. However, we only have one concordion data volume, in order to share the concordion test results of the integration setup with the production setup.
-
-See: ``docker-compose-integration.yml`` and ``docker-compose-prod.yml`` in ``./examples/production/``.
 
 Example of running integration tests on production server (i.e. after upgrading) without interfering with production data:
 
@@ -101,3 +99,5 @@ Example of running integration tests on production server (i.e. after upgrading)
 
   # check concordion results from integration setup are available through nginx:
   open http://localhost:8080
+
+See: ``docker-compose-integration.yml`` and ``docker-compose-prod.yml`` in ``./examples/production/``.
