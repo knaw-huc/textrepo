@@ -14,10 +14,11 @@ See: ``./example/production/``.
 Backing Up Data
 ---------------
 
-Postgres is backed up by archiving its data directory.
+We can backup Postgres by archiving its data directory.
 
-Elasticsearch is a bit more complicated: We cannot simply copy the data from es data dirs, because it could result in corrupt indices and missing data.
-Instead we'll be using the 'snapshot' api  of ES to create and restore backups.
+Elasticsearch is a bit more complicated: we cannot simply copy the data from its data dir. It would result in corrupt indices and missing data. Instead we will be using the 'snapshot' api  of ES to create and restore backups.
+
+See: ``./backup-prod.sh`` and ``./restore-prod.sh`` in ``./examples/production/``.
 
 See also: `backing up elasticsearch, an example <example-backup-es.html>`_.
 
@@ -67,7 +68,9 @@ Example of backing up and restoring production data:
 Running Integration Tests
 -------------------------
 
-In production we want to show the integration test results from the concordiondata volume, but we want to prevent concordion to wipe/change our production data during the tests. This can be achieved by defining separate volumes for postgres and elasticsearch environments (prod vs integration), but using the same concordion volume.
+In production we want to show the integration test results from the concordiondata volume, but we do not want concordion to wipe out our production data while running its tests. This can be achieved by creating separate postgres and elasticsearch volumes for the production and integration environment. However, we only have one concordion data volume, in order to share the concordion test results of the integration setup with the production setup.
+
+See: ``docker-compose-integration.yml`` and ``docker-compose-prod.yml`` in ``./examples/production/``.
 
 Example of running integration tests on production server (i.e. after upgrading) without interfering with production data:
 
