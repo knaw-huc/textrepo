@@ -24,7 +24,7 @@ import static java.util.Objects.requireNonNull;
 public class JdbiTaskFactory implements TaskBuilderFactory {
   private final Jdbi jdbi;
   private Supplier<UUID> idGenerator;
-  private List<Indexer> indexers;
+  private final List<Indexer> indexers;
 
   public JdbiTaskFactory(Jdbi jdbi, List<Indexer> indexers) {
     this.jdbi = requireNonNull(jdbi);
@@ -64,5 +64,10 @@ public class JdbiTaskFactory implements TaskBuilderFactory {
   @Override
   public GetFileMetadataTaskBuilder getFileMetadataGetter() {
     return new JdbiGetFileMetadataTaskBuilder(jdbi);
+  }
+
+  @Override
+  public RegisterIdentifiersTaskBuilder getRegisterIdentifiersBuilder() {
+    return new JdbiRegisterIdentifiersTaskBuilder(jdbi, idGenerator);
   }
 }

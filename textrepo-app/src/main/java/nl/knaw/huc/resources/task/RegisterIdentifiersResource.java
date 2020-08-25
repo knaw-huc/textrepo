@@ -1,21 +1,25 @@
 package nl.knaw.huc.resources.task;
 
 import io.swagger.annotations.Api;
+import nl.knaw.huc.core.Document;
 import nl.knaw.huc.service.task.TaskBuilderFactory;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.Produces;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.List;
 
-@Api(tags = {"task", "registerIdentifiers"})
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+
+@Api(tags = {"task", "register"})
 @Path("task/register")
+@Produces(APPLICATION_JSON)
 public class RegisterIdentifiersResource {
   private static final Logger log = LoggerFactory.getLogger(RegisterIdentifiersResource.class);
 
@@ -28,30 +32,26 @@ public class RegisterIdentifiersResource {
   @POST
   // This works for, e.g., "curl <host> --data-binary @file"
   // not that "curl -d" eats up whitespace and newlines
-  public Response postIdentifiers(InputStream content) {
-    registerIdentifiers(new InputStreamReader(content));
-    return Response.ok().build();
+  public List<Document> postIdentifiers(InputStream content) {
+    return registerIdentifiers(content);
   }
 
   @PUT
   // This works for, e.g., "curl <host> -T file" (aka "curl --upload")
-  public Response putIdentifiers(InputStream content) {
-    registerIdentifiers(new InputStreamReader(content));
-    return Response.ok().build();
+  public List<Document> putIdentifiers(InputStream content) {
+    return registerIdentifiers(content);
   }
 
-  private void registerIdentifiers(InputStreamReader inputStreamReader) {
-    new BufferedReader(inputStreamReader)
-        .lines()
-        .limit(25)
-        .forEach(this::registerId);
-  }
+  private List<Document> registerIdentifiers(InputStream inputStream) {
+    final var externalIds = new BufferedReader(new InputStreamReader(inputStream)).lines();
 
-  private void registerId(String id) {
-    if (id.length() > 100) {
-      log.warn("skipping long id: [{}]", StringUtils.abbreviateMiddle(id, "...", 100));
-      return;
-    }
-    log.info("registering id: [{}]", id);
+    final var registerIdentifiersTask = factory
+        .getRegisterIdentifiersBuilder()
+        .forExternalIdentifiers(externalIds)
+        .build();
+
+    final var docs = registerIdentifiersTask.run();
+    log.debug("Registered {} identifiers", docs.size());
+    return docs;
   }
 }

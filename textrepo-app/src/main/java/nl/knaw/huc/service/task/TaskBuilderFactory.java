@@ -19,4 +19,6 @@ public interface TaskBuilderFactory {
   GetDocumentMetadataTaskBuilder getDocumentMetadataGetter();
 
   GetFileMetadataTaskBuilder getFileMetadataGetter();
+
+  RegisterIdentifiersTaskBuilder getRegisterIdentifiersBuilder();
 }
