@@ -19,5 +19,5 @@ docker cp ./textrepo-app/config.yml tr_textrepo:/textrepo-app/config.yml
 docker commit tr_textrepo knawhuc/textrepo-app:latest
 
 # restart container with new image
-docker-compose stop textrepo-app
+docker-compose -f docker-compose-dev.yml stop textrepo-app
 docker-compose -f docker-compose-dev.yml up -d --no-deps textrepo-app
