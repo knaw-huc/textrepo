@@ -28,6 +28,7 @@ import nl.knaw.huc.resources.task.DeleteDocumentResource;
 import nl.knaw.huc.resources.task.FindResource;
 import nl.knaw.huc.resources.task.ImportResource;
 import nl.knaw.huc.resources.task.IndexResource;
+import nl.knaw.huc.resources.task.RegisterIdentifiersResource;
 import nl.knaw.huc.service.contents.ContentsService;
 import nl.knaw.huc.service.dashboard.JdbiDashboardService;
 import nl.knaw.huc.service.datetime.LocalDateTimeParamConverterProvider;
@@ -142,7 +143,8 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
         new VersionContentsResource(versionContentsService),
         new FindResource(taskBuilderFactory),
         new DashboardResource(dashboardService, paginator),
-        new MetadataResource(documentMetadataService)
+        new MetadataResource(documentMetadataService),
+        new RegisterIdentifiersResource(taskBuilderFactory)
     );
 
     environment.jersey().register(new MethodNotAllowedExceptionMapper());
