@@ -58,6 +58,16 @@ public interface DocumentsDao {
   @RegisterConstructorMapper(value = Document.class)
   Document upsert(@BindBean Document document);
 
+  // trying to get this behaviour: if already registered, ignore, return existing entry in db
+  // "returning *" does not return anything if "on conflict do nothing is used" hence rewrite external_id
+  // hic sunt draconis in case of concurrency as per
+  // https://stackoverflow.com/questions/34708509/how-to-use-returning-with-on-conflict-in-postgresql
+  @SqlQuery("insert into documents (id, external_id) values (:id, :externalId) " +
+      "on conflict (external_id) do update set external_id = excluded.external_id " +
+      "returning *")
+  @RegisterConstructorMapper(value = Document.class)
+  Document register(@BindBean Document document);
+
   @SqlUpdate("delete from documents where id = ?")
   void delete(UUID id);
 }

@@ -22,6 +22,6 @@ public class RegisterIdentifier implements InTransactionProvider<Document> {
   public Document executeIn(Handle transaction) {
     return transaction
         .attach(DocumentsDao.class)
-        .upsert(new Document(idGenerator.get(), externalId));
+        .register(new Document(idGenerator.get(), externalId));
   }
 }
