@@ -31,7 +31,7 @@ public class RegisterIdentifiersResource {
 
   @POST
   // This works for, e.g., "curl <host> --data-binary @file"
-  // not that "curl -d" eats up whitespace and newlines
+  // note that "curl -d" eats up whitespace and newlines
   public List<Document> postIdentifiers(InputStream content) {
     return registerIdentifiers(content);
   }
