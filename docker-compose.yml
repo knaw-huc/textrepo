@@ -35,7 +35,7 @@ services:
         hard: -1
     volumes:
     - esdata:/usr/share/elasticsearch/data
-    - essnapshotdata-prod:/snapshot-repo
+    - essnapshotdata:/snapshot-repo
     ports:
     - 9200
     networks:
