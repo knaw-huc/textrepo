@@ -26,6 +26,40 @@ backup_volume() {
   docker run --rm --volumes-from $container -v $backup_dir:/backup alpine /bin/sh -c "cd $container_dir && tar czvf /backup/$archive_name ."
 }
 
+create_es_snapshot() {
+
+  # location of mounted volume in container:
+  local container_dir=${1}
+
+  # must not run:
+  local container=${2}
+
+  # container as named in docker-compose:
+  local service=${3}
+
+  if [[ "$(docker ps -q -f name=$container)" ]] ; then echo "$container is running, aborting."; exit; fi
+
+  # start es container:
+  docker-compose -f docker-compose-prod.yml up -d $service
+  read -p "Press enter when elasticsearch has started (check with: ./log.sh prod)"
+
+  local es_url=$(docker port $container 9200)
+
+  # empty repository directory:
+  docker exec -ti $container rm -rf $container_dir/*
+  docker exec -ti $container ls -al $container_dir
+
+  # create snapshot repository:
+  curl -XPUT $es_url/_snapshot/backup \
+    -d "{\"type\":\"fs\",\"settings\":{\"location\":\"$container_dir\"}}" \
+    -H 'content-type:application/json'
+
+  # create snapshot:
+  curl -XPUT "$es_url/_snapshot/backup/snapshot_1?wait_for_completion=true"
+
+  # stop elasticsearch with new snapshot:
+  docker-compose -f docker-compose-prod.yml stop $service
+}
 
 # Backing up postgres:
 
@@ -42,28 +76,8 @@ BACKUP_DIR=~/backup
 CONTAINER_DIR=/snapshot-repo
 ARCHIVE_NAME=esdata-prod-volume.tar
 CONTAINER=tr_elasticsearch
+SERVICE=elasticsearch
 
-# start es container:
-docker-compose -f docker-compose-prod.yml up -d elasticsearch
-read -p "Press enter when elasticsearch has started (check with: ./log.sh prod)"
-
-ES_URL=$(docker port $CONTAINER 9200)
-
-# empty repository directory:
-docker exec -ti tr_elasticsearch rm -rf $CONTAINER_DIR/*
-docker exec -ti tr_elasticsearch ls -al $CONTAINER_DIR
-
-# create snapshot repository:
-curl -XPUT $ES_URL/_snapshot/backup \
-  -d "{\"type\":\"fs\",\"settings\":{\"location\":\"$CONTAINER_DIR\"}}" \
-  -H 'content-type:application/json'
-
-# create snapshot:
-curl -XPUT "$ES_URL/_snapshot/backup/snapshot_1?wait_for_completion=true" | jq
-
-# stop elasticsearch with new snapshot:
-docker-compose -f docker-compose-prod.yml stop elasticsearch
-
-# create archive of snapshot:
+create_es_snapshot $CONTAINER_DIR $CONTAINER $SERVICE
 backup_volume $BACKUP_DIR $CONTAINER_DIR $ARCHIVE_NAME $CONTAINER
 
