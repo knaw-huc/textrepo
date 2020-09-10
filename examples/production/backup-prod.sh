@@ -47,6 +47,8 @@ create_es_snapshot() {
   local es_url=$(docker port $container 9200)
 
   # empty repository directory:
+  curl -XDELETE $es_url/_snapshot/backup/snapshot_1
+  curl -XDELETE $es_url/_snapshot/backup
   docker exec -ti $container rm -rf $container_dir/*
   docker exec -ti $container ls -al $container_dir
 
