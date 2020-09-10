@@ -24,6 +24,7 @@ backup_volume() {
 
   # create archive in backup directory:
   docker run --rm --volumes-from $container -v $backup_dir:/backup alpine /bin/sh -c "cd $container_dir && tar czvf /backup/$archive_name ."
+  ls -alh $backup_dir
 }
 
 create_es_snapshot() {
@@ -41,7 +42,7 @@ create_es_snapshot() {
 
   # start es container:
   docker-compose -f docker-compose-prod.yml up -d $service
-  read -p "Press enter when elasticsearch has started (check with: ./log.sh prod)"
+  read -p "Press enter when elasticsearch status is GREEN or YELLOW"
 
   local es_url=$(docker port $container 9200)
 

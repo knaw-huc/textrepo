@@ -43,7 +43,7 @@ restore_es_snapshot() {
   # start only es:
   docker-compose -f docker-compose-prod.yml up -d $service
 
-  read -p "Press enter when elasticsearch has started (check with: ./log.sh prod)"
+  read -p "Press enter when elasticsearch has started (check with: docker logs $container -f)"
 
   local es_url=$(docker port $container 9200)
 
@@ -53,7 +53,7 @@ restore_es_snapshot() {
     -H 'content-type:application/json'
 
   # restore snapshot:
-  curl -XPOST "$es_url/_snapshot/backup/snapshot_1/_restore" \
+  curl -XPOST "$es_url/_snapshot/backup/snapshot_1/_restore?wait_for_completion=true" \
     -H 'content-type:application/json' \
     -d '{}'
 
