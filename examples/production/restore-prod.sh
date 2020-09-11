@@ -2,6 +2,8 @@
 set -e
 set -x
 
+source docker-compose.env
+
 restore_volume() {
 
   # name of volume:
