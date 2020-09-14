@@ -42,7 +42,7 @@ public class JdbiTaskFactory implements TaskBuilderFactory {
   }
 
   @Override
-  public IndexFileTaskBuilder getDocumentIndexBuilder() {
+  public IndexFileTaskBuilder getIndexBuilder() {
     return new JdbiIndexFileTaskBuilder(jdbi, indexers);
   }
 

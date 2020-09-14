@@ -19,6 +19,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static javax.ws.rs.client.Entity.entity;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
+import static nl.knaw.huc.textrepo.Config.AUTOCOMPLETE_INDEX;
 import static nl.knaw.huc.textrepo.Config.FULL_TEXT_INDEX;
 import static nl.knaw.huc.textrepo.Config.HOST;
 import static nl.knaw.huc.textrepo.util.IndexUtils.indexToUrl;
@@ -26,7 +27,7 @@ import static nl.knaw.huc.textrepo.util.TestUtils.asCodeBlock;
 import static nl.knaw.huc.textrepo.util.TestUtils.asPrettyJson;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 
-public class TestIndexFilesByType extends AbstractConcordionTest {
+public class TestIndexFilesByIndexName extends AbstractConcordionTest {
 
   private static final Logger log = LoggerFactory.getLogger(IndexUtils.class);
 
@@ -98,9 +99,9 @@ public class TestIndexFilesByType extends AbstractConcordionTest {
     public String body;
   }
 
-  public IndexResult indexFilesBy(String indexEndpoint, String type) {
+  public IndexResult indexFilesBy(String indexEndpoint, String indexName) {
     var response = client
-        .target(HOST + indexEndpoint.replace("{type}", type))
+        .target(HOST + indexEndpoint.replace("{name}", indexName))
         .request()
         .post(entity("", APPLICATION_JSON));
 
@@ -119,8 +120,23 @@ public class TestIndexFilesByType extends AbstractConcordionTest {
     public String body;
   }
 
-  public SearchResult searchFullText() throws InterruptedException {
+  public SearchResult searchAutocompleteIndex() throws InterruptedException {
     SECONDS.sleep(2);
+    var indexUrl = indexToUrl(AUTOCOMPLETE_INDEX);
+    var searchIndexUrl = indexUrl + "/_search";
+    var response = client.target(searchIndexUrl).request().get();
+    var result = new SearchResult();
+    result.status = response.getStatus();
+    var body = response.readEntity(String.class);
+    result.body = asPrettyJson(body);
+    result.count = jsonPath.parse(body).read("$.hits.total.value", Integer.class);
+    var contents = jsonPath.parse(body).read("$.hits.hits[*]._source.suggest[0].input", String[].class);
+    Arrays.sort(contents);
+    result.contents = String.join(", ", contents);
+    return result;
+  }
+
+  public SearchResult searchFullTextIndex() {
     var indexUrl = indexToUrl(FULL_TEXT_INDEX);
     var searchIndexUrl = indexUrl + "/_search";
     var response = client.target(searchIndexUrl).request().get();
@@ -129,9 +145,6 @@ public class TestIndexFilesByType extends AbstractConcordionTest {
     var body = response.readEntity(String.class);
     result.body = asPrettyJson(body);
     result.count = jsonPath.parse(body).read("$.hits.total.value", Integer.class);
-    var contents = jsonPath.parse(body).read("$.hits.hits[*]._source.contents", String[].class);
-    Arrays.sort(contents);
-    result.contents = String.join(", ", contents);
     return result;
   }
 }

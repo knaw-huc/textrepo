@@ -1,5 +1,6 @@
 package nl.knaw.huc.service.task;
 
+import com.fasterxml.jackson.databind.PropertyMetadata;
 import nl.knaw.huc.service.task.deleter.DeleteDocumentTaskBuilder;
 import nl.knaw.huc.service.task.finder.FindContentsTaskBuilder;
 import nl.knaw.huc.service.task.getter.GetDocumentMetadataTaskBuilder;
@@ -10,7 +11,7 @@ import nl.knaw.huc.service.task.indexer.IndexFileTaskBuilder;
 public interface TaskBuilderFactory {
   ImportFileTaskBuilder getDocumentImportBuilder();
 
-  IndexFileTaskBuilder getDocumentIndexBuilder();
+  IndexFileTaskBuilder getIndexBuilder();
 
   FindContentsTaskBuilder getContentsFinderBuilder();
 
@@ -21,4 +22,5 @@ public interface TaskBuilderFactory {
   GetFileMetadataTaskBuilder getFileMetadataGetter();
 
   RegisterIdentifiersTaskBuilder getRegisterIdentifiersBuilder();
+
 }

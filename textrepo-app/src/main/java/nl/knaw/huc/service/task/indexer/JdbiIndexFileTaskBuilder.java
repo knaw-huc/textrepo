@@ -15,8 +15,10 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.NotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 
+import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
 public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
@@ -27,6 +29,7 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
 
   private String externalId;
   private String typeName;
+  private String indexName;
 
   public JdbiIndexFileTaskBuilder(Jdbi jdbi, List<Indexer> indexers) {
     this.jdbi = requireNonNull(jdbi);
@@ -40,6 +43,12 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
   }
 
   @Override
+  public IndexFileTaskBuilder forIndex(String name) {
+    this.indexName = name;
+    return this;
+  }
+
+  @Override
   public IndexFileTaskBuilder withType(String typeName) {
     this.typeName = requireNonNull(typeName);
     return this;
@@ -47,12 +56,18 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
 
   @Override
   public Task<String> build() {
+    if (indexName != null) {
+      return new JdbiIndexAllFilesByIndexTask(indexName);
+    }
     if (externalId == null) {
       return new JdbiIndexAllFilesTask(typeName);
     }
     return new JdbiIndexFileTask(externalId, typeName);
   }
 
+  /**
+   * Index files by externalId and file type name
+   */
   private class JdbiIndexFileTask implements Task<String> {
     private final String externalId;
     private final String typeName;
@@ -79,6 +94,9 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
     }
   }
 
+  /**
+   * Index files by file type name
+   */
   private class JdbiIndexAllFilesTask implements Task<String> {
     private final Logger log = LoggerFactory.getLogger(JdbiIndexAllFilesTask.class);
 
@@ -93,7 +111,7 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
     @Override
     public String run() {
       indexFilesByType(resolveType());
-      final var msg = String.format("Total files affected: %d", filesAffected);
+      final var msg = format("Total files affected: %d", filesAffected);
       log.info(msg);
       return msg;
     }
@@ -107,7 +125,7 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
     }
 
     private Supplier<NotFoundException> noSuchType(String typeName) {
-      return () -> new NotFoundException(String.format("No such type: %s", typeName));
+      return () -> new NotFoundException(format("No such type: %s", typeName));
     }
 
     private void indexFilesByType(Short typeId) {
@@ -123,6 +141,64 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
           var result = indexer.index(file, contents.asUtf8String());
           result.ifPresent((str) -> log.warn(indexer.getClass().getName() + " - " + str));
         });
+        filesAffected++;
+      });
+    }
+  }
+
+  /**
+   * Index files by indexer name
+   */
+  public class JdbiIndexAllFilesByIndexTask implements Task<String> {
+    private final Logger log = LoggerFactory.getLogger(JdbiIndexAllFilesTask.class);
+
+    private final Indexer indexer;
+
+    private int filesAffected = 0;
+
+    private JdbiIndexAllFilesByIndexTask(String indexName) {
+      this.indexer = indexers
+          .stream()
+          .filter(i -> i.getConfig().name.equals(indexName))
+          .findFirst()
+          .orElseThrow(noSuchIndexer(indexName));
+    }
+
+    @Override
+    public String run() {
+      indexer.getConfig().mimetypes
+          .forEach(m -> {
+            var type = types()
+                .findByMimetype(m);
+            type.ifPresentOrElse(
+                this::indexFilesByType,
+                () -> log.warn("No such mimetype: {}", m)
+            );
+          });
+
+      final var msg = format("Total files affected: %d", filesAffected);
+      log.info(msg);
+      return msg;
+    }
+
+    private TypesDao types() {
+      return jdbi.onDemand(TypesDao.class);
+    }
+
+    private Supplier<NotFoundException> noSuchIndexer(String name) {
+      return () -> new NotFoundException(format("No such indexer: %s", name));
+    }
+
+    private void indexFilesByType(Short typeId) {
+      jdbi.onDemand(FilesDao.class).foreachByType(typeId, this::indexFile);
+    }
+
+    private void indexFile(TextRepoFile file) {
+      log.debug("Indexing file: {}", file.getId());
+      jdbi.useTransaction(txn -> {
+        final var contents = new GetLatestFileContents(file).executeIn(txn);
+        var result = indexer.index(file, contents.asUtf8String());
+        result.ifPresent((str) -> log.warn(indexer.getClass().getName() + " - " + str));
         filesAffected++;
       });
     }

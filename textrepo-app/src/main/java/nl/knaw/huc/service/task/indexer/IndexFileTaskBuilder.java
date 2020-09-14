@@ -8,4 +8,6 @@ public interface IndexFileTaskBuilder {
   IndexFileTaskBuilder withType(String type);
 
   Task<String> build();
+
+  IndexFileTaskBuilder forIndex(String name);
 }

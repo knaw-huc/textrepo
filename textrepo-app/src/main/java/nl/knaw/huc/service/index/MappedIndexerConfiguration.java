@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-public class MappedIndexerConfiguration {
+public class MappedIndexerConfiguration extends IndexerConfiguration {
 
   /**
    * GET Endpoint to request es index mapping that is used to create custom index
@@ -17,12 +17,6 @@ public class MappedIndexerConfiguration {
    */
   @JsonProperty
   public FieldsConfiguration fields;
-
-  /**
-   * List of mimetypes that should be indexed
-   */
-  @JsonProperty
-  public List<String> mimetypes;
 
   /**
    * Location of elasticsearch nodes

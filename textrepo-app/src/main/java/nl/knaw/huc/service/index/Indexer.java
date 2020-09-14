@@ -10,4 +10,7 @@ public interface Indexer {
       @Nonnull TextRepoFile file,
       @Nonnull String latestVersionContents
   );
+
+  IndexerConfiguration getConfig();
+
 }
