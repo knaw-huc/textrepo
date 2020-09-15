@@ -77,7 +77,7 @@ create table files_metadata (
 
 -- Large file support via postgres 'large objects' table
 create table large_objects (
-  id int not null,
+  id serial not null,
   lob oid,
   primary key (id)
 );
