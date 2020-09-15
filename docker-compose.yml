@@ -85,11 +85,13 @@ services:
   textrepo-app:
     container_name: tr_textrepo
     image: knawhuc/textrepo-app:${TR_VERSION}
+    depends_on:
+      - postgres
     ports:
-    - 8080
-    - 8081:8081
+      - 8080
+      - 8081:8081
     networks:
-    - textrepo_network
+      - textrepo_network
     command: ["./wait-for-it.sh", "autocomplete-indexer:8080",
               "--timeout=0",
               "--",
