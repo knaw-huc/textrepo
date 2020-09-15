@@ -1,6 +1,7 @@
 package nl.knaw.huc.resources.task;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import nl.knaw.huc.service.task.TaskBuilderFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,13 +25,14 @@ public class IndexResource {
 
   @POST
   @Path("/document/{externalId}/{type}")
+  @ApiOperation("Index file of document by externalId and file type")
   public Response indexDocument(
       @PathParam("externalId") String externalId,
       @PathParam("type") String type
   ) {
     log.debug("Index document: externalId={}; type={}", externalId, type);
     final var task = factory
-        .getDocumentIndexBuilder()
+        .getIndexBuilder()
         .forExternalId(externalId)
         .withType(type)
         .build();
@@ -41,14 +43,30 @@ public class IndexResource {
 
   @POST
   @Path("/files/{type}")
+  @ApiOperation("Index all files by type")
   public Response indexAll(@PathParam("type") String type) {
     log.debug("Index all files of type: type={}", type);
     final var task = factory
-        .getDocumentIndexBuilder()
+        .getIndexBuilder()
         .withType(type)
         .build();
     var result = task.run();
     log.debug(result);
     return Response.ok().build();
   }
+
+  @POST
+  @Path("/{name}")
+  @ApiOperation("Index all files of a single index")
+  public Response indexSingleIndex(@PathParam("name") String name) {
+    log.debug("Index all files of index: index={}", name);
+    final var task = factory
+        .getIndexBuilder()
+        .forIndex(name)
+        .build();
+    task.run();
+    log.debug("Indexed all files of index");
+    return Response.ok().build();
+  }
+
 }

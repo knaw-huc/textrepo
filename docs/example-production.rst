@@ -101,3 +101,14 @@ Example of running integration tests on production server (i.e. after upgrading)
   open http://localhost:8080
 
 See: ``docker-compose-integration.yml`` and ``docker-compose-prod.yml`` in ``./examples/production/``.
+
+When rerunning an example, make sure all previous data is gone:
+
+.. code-block:: bash
+
+  cd ./examples/production
+
+  source docker-compose.env
+  docker-compose -f docker-compose-prod.yml down -v
+  docker-compose -f docker-compose-integration.yml down -v
+

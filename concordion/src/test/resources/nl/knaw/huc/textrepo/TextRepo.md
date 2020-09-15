@@ -27,6 +27,7 @@ The Text Repository offers `task`-endpoints to perform a single, complex task wi
  - [Get file metadata by external ID and file type](task/TestFindFileMetadataByExternalId.md "c:run")
  - [Get latest file contents by external ID and file type](task/TestFindFileContentsByExternalId.md "c:run")
  - [Index files by type](task/TestIndexFilesByType.md "c:run")
+ - [Index files by index name](task/TestIndexFilesByIndexName.md "c:run")
  
 # Dashboard
 

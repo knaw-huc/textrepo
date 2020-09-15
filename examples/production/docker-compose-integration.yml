@@ -90,9 +90,8 @@ services:
     - 8081:8081
     networks:
     - textrepo_network
-    command: ["./wait-for-it.sh", "autocomplete-indexer:8080",
-              "--timeout=0",
-              "--",
+    command: ["./wait-for-it.sh", "autocomplete-indexer:8080", "--timeout=0", "--",
+              "./wait-for-it.sh", "postgres:${POSTGRES_PORT}", "--timeout=0", "--",
               "./start.sh"
     ]
     environment:

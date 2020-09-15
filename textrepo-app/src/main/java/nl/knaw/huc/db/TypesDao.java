@@ -20,6 +20,9 @@ public interface TypesDao {
   @SqlQuery("select id from types where name = ?")
   Optional<Short> find(String name);
 
+  @SqlQuery("select id from types where mimetype = ?")
+  Optional<Short> findByMimetype(String mimetype);
+
   @SqlQuery("select id, name, mimetype from types where id = ?")
   @RegisterConstructorMapper(value = Type.class)
   Optional<Type> get(Short id);

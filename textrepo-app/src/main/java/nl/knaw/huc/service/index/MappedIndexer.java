@@ -113,6 +113,11 @@ public class MappedIndexer implements Indexer {
     return sendRequest(file.getId(), esFacets);
   }
 
+  @Override
+  public IndexerConfiguration getConfig() {
+    return this.config;
+  }
+
   private Response getMapping(MappedIndexerConfiguration config) throws IndexerException {
     Response response;
     try {

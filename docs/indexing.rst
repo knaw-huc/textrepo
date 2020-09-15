@@ -53,14 +53,15 @@ Indexer configuration
 Indexers and their ES indexes can be configured with ``$TR_INDEXERS`` in  ``docker-compose.env``. An (empty) indexer configuration consists of the following elements: ::
 
   indexers:
-  - mapping:    # string, url of GET mapping endpoint
+  - name:       # string, name of indexer
+    mapping:    # string, url of GET mapping endpoint
     fields:
       url:      # string, url of POST fields endpoint
       type:     # string, 'multipart' or 'original'
     mimetypes:
       -         # list of strings, supported mimetypes
     elasticsearch:
-      index:    # string, name
+      index:    # string, name of index
       hosts:
         -       # list of strings, host urls
 
