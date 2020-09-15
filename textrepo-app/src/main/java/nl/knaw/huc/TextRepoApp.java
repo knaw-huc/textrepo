@@ -103,7 +103,7 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
   public void run(TextRepoConfiguration config, Environment environment) {
     final Supplier<UUID> uuidGenerator = UUID::randomUUID;
 
-    final var maxPayloadSize = 10 * 1024 * 1024; // TODO: arbitrary, get from configuration and figure out sane default
+    final var maxPayloadSize = 100 * 1024 * 1024; // TODO: arbitrary, get from configuration and figure out sane default
 
     var jdbi = createJdbi(config, environment);
     var contentsStoreService = new JdbiContentsStorage(jdbi);
