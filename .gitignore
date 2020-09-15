@@ -5,5 +5,4 @@ target/
 dependency-reduced-pom.xml
 **/__pycache__
 *.swp
-dashboard.yml
 **/spacy-ner/model
