@@ -23,7 +23,7 @@ Development setup
 When you want to start developing or debugging, you can use the 'dev' setup, as found in ``examples/development``.
 When starting, the dev builds all |tr| images from scratch.
 When stopping, all containers, volumes and network are removed.
-The dev setup contains its own ``readme.md``.
+The dev setup contains its own ``README.md``.
 
 Explore locally
 ---------------
