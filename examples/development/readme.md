@@ -3,4 +3,4 @@
 To use development setup:
 - Move files to root.
 - Run `./start.sh` to build images and start containers
-- Run `./stop.sh` to remove containers, volumes and networks (using `down -v`) 
+- Run `./stop.sh` to remove all containers, volumes, data and networks (using `down -v`) 
