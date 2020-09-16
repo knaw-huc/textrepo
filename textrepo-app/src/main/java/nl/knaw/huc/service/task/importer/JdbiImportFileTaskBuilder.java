@@ -11,6 +11,8 @@ import nl.knaw.huc.service.task.InTransactionProvider;
 import nl.knaw.huc.service.task.SetCurrentFileContents;
 import nl.knaw.huc.service.task.SetFileProvenance;
 import nl.knaw.huc.service.task.Task;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.jdbi.v3.core.Jdbi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +21,7 @@ import javax.ws.rs.BadRequestException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
+import java.security.MessageDigest;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -112,6 +115,9 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
 
     @Override
     public Version run() {
+      MessageDigest digest = DigestUtils.getDigest(MessageDigestAlgorithms.SHA_224);
+      // TODO: digest chunks as we read, decompress if GZIPed, to compute hash of the (uncompressed) input.
+
       return jdbi.inTransaction(th -> {
         var lob = th.attach(LargeObjectsDao.class);
         var cis = new CountingInputStream(inputStream);
