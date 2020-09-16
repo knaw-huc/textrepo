@@ -21,13 +21,13 @@ Installation
 
 Prerequisites: docker-compose.
 
-To install the |tr| locally, run in a new directory: ::
+To run the |tr| locally, run in a new directory: ::
 
-    $ git clone https://github.com/knaw-huc/textrepo .
-    $ docker-compose up
+    git clone https://github.com/knaw-huc/textrepo .
+    cd examples/production
+    ./start-prod.sh
 
-
-`Read more <usage.html>`_
+Read more on `basic usage <usage.html>`_
 
 Documentation
 -------------
@@ -35,7 +35,7 @@ Documentation
     :maxdepth: 2
 
     Overview <overview>
-    Basic usage <usage>
+    Basic Usage <usage>
     Components <components>
     Rest and Tasks API <tr-api>
     Indexing <indexing>

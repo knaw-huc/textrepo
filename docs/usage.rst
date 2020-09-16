@@ -6,17 +6,24 @@ Basic Usage
 Run locally
 -----------
 
-|tr| can be started using ``docker-compose up``. However, in order to prevent any unexpected behaviour due to
-misconfigured ports, volumes, etc, the ``./scripts`` directory also contains some example scripts.
+Production setup
+****************
 
-To start and stop the |tr|: ::
+The easiest way would be to start the |tr| in 'prod' setup, as found in ``examples/development``.
+Run: ::
 
-  ./scripts/start.sh
-  ./scripts/stop.sh
+  cd examples/production
+  ./run-prod.sh
 
-Note: These scripts are quite rigorous and all data will be lost when restarting, so *use for development purposes only*.
+The production setup does not build images but downloads the images from docker hub.
 
-When you do not want to rebuild docker images, use: ``docker-compose up``.
+Development setup
+*****************
+
+When you want to start developing or debugging, you can use the 'dev' setup, as found in ``examples/development``.
+When starting, the dev builds all |tr| images from scratch.
+When stopping, all containers, volumes and network are removed.
+The dev setup contains its own ``readme.md``.
 
 Explore locally
 ---------------
