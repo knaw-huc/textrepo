@@ -24,7 +24,6 @@ import java.io.InputStream;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
-import static nl.knaw.huc.resources.ResourceUtils.readContents;
 
 @Api(tags = {"task", "import"})
 @Path("task/import")
@@ -56,9 +55,9 @@ public class ImportResource {
   ) {
     log.debug(
         "Import document contents for file with type: " +
-        "externalId={}, " +
-        "typeName={}, " +
-        "allowNewDocument={}",
+            "externalId={}, " +
+            "typeName={}, " +
+            "allowNewDocument={}",
         externalId, typeName, allowNewDocument
     );
 
@@ -67,7 +66,8 @@ public class ImportResource {
                                   .forExternalId(externalId)
                                   .withTypeName(typeName)
                                   .forFilename(fileDetail.getFileName())
-                                  .withContents(readContents(uploadedInputStream, maxPayloadSize))
+                                  .withInputStream(uploadedInputStream)
+                                  // .withContents(readContents(uploadedInputStream, maxPayloadSize))
                                   .build();
 
     importTask.run();
