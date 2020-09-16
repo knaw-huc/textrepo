@@ -1,5 +1,6 @@
 package nl.knaw.huc.service.task.importer;
 
+import com.google.common.io.CountingInputStream;
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.core.Version;
 import nl.knaw.huc.db.LargeObjectsDao;
@@ -14,12 +15,16 @@ import org.jdbi.v3.core.Jdbi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.BadRequestException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.PushbackInputStream;
 import java.util.UUID;
 import java.util.function.Supplier;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Objects.requireNonNull;
+import static java.util.zip.GZIPInputStream.GZIP_MAGIC;
 import static nl.knaw.huc.core.Contents.fromBytes;
 
 public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
@@ -109,8 +114,25 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
     public Version run() {
       return jdbi.inTransaction(th -> {
         var lob = th.attach(LargeObjectsDao.class);
-        var id = lob.insert(inputStream);
-        log.debug("Inserted {} into large_objects", id);
+        var cis = new CountingInputStream(inputStream);
+        var pbis = new PushbackInputStream(cis, 2);
+        var gzipCompressed = false;
+        try {
+          byte[] magic = new byte[2];
+          int nread = pbis.read(magic);
+          if (nread > 0) {
+            pbis.unread(magic, 0, nread);
+            if (magic[0] == (byte) GZIP_MAGIC && magic[1] == (byte) (GZIP_MAGIC >> 8)) {
+              log.debug("GZIP'ed INPUT DETECTED");
+              gzipCompressed = true;
+            }
+          }
+        } catch (IOException e) {
+          throw new BadRequestException("Could not read input stream of posted file", e);
+        }
+
+        var id = lob.insert(pbis);
+        log.debug("Inserted {} into large_objects, gzip={}, size={}", id, gzipCompressed, cis.getCount());
         final Document doc = documentFinder.executeIn(th);
         final var file = new HaveFileForDocumentByType(fileIdGenerator, doc, typeName).executeIn(th);
         new SetFileProvenance(file, filename).executeIn(th);
@@ -119,4 +141,5 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
       });
     }
   }
+
 }
