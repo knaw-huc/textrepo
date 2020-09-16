@@ -5,9 +5,8 @@
       "query": {
         "bool": {
           "must": [
-            {"match": {"entity.text": "Admiraliteyt"}},
-            {"match": {"entity.text": "Maze"}},
-            {"match": {"entity.label": "LOC"}}
+            {"match": {"entity.text": "Gent"}},
+            {"match": {"entity.label": "PER"}}
           ]
         }
       }
