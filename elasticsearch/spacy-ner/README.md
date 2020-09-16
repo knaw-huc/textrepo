@@ -27,7 +27,8 @@ Text repository indexer that recognizes named entities using spacy, flask and do
 
 - Add to `TR_INDEXERS` in `./docker-compose.env`:
 ```
-- mapping: http://spacy-ner-indexer:8080/spacy-ner/mapping
+- name: spacy-ner
+  mapping: http://spacy-ner-indexer:8080/spacy-ner/mapping
   fields:
     url: http://spacy-ner-indexer:8080/spacy-ner/fields
     type: multipart
