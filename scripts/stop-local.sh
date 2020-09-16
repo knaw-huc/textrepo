@@ -16,4 +16,4 @@ docker-compose -f docker-compose-local.yml exec -u postgres postgres pg_ctl stop
 # then it will end here (thinking there was an error), leaving the rest of the stack running.
 
 # Finally bring the rest of the stack down
-docker-compose -f docker-compose-local.yml down -v
+docker-compose -f docker-compose-local.yml down
