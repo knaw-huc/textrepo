@@ -34,7 +34,7 @@ public class ContentsResource {
   @GET
   @Path("/{sha}")
   @Timed
-  @Produces({APPLICATION_JSON, APPLICATION_OCTET_STREAM})
+  @Produces({APPLICATION_OCTET_STREAM, APPLICATION_JSON})
   @ApiOperation(value = "Retrieve contents")
   @ApiResponses(value = {@ApiResponse(code = 200, response = byte[].class, message = "OK")})
   public Response get(
