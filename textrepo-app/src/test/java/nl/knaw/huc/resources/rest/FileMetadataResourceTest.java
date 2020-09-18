@@ -82,7 +82,7 @@ public class FileMetadataResourceTest {
         .client()
         .target("/rest/files/" + fileId.toString() + "/metadata/" + metadataEntry.getKey())
         .request()
-        .put(Entity.json(metadataEntry.getValue()));
+        .put(Entity.text(metadataEntry.getValue()));
 
   }
 
