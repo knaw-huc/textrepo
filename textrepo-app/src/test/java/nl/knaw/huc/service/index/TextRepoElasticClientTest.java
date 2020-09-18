@@ -20,14 +20,12 @@ public class TextRepoElasticClientTest {
       "https://www.example.com:9200,https://www.example.com:9200",
       "2001:0db8:85a3:0000:0000:8a2e:0370:7334:9200,http://2001:0db8:85a3:0000:0000:8a2e:0370:7334:9200",
   })
-  public void newClient_shouldParseAddressesCorrectly(String in, String out) {
+  public void newClient_shouldParseAddressesCorrectly(String in, String expected) {
     var config = new ElasticsearchConfiguration();
-    config = new ElasticsearchConfiguration();
     config.hosts = List.of(in);
-    config.index = "test-index-name";
-    var toTest = new TextRepoElasticClient(config);
-    var host = toTest.getClient().getLowLevelClient().getNodes().get(0).getHost().toString();
-    assertThat(host).isEqualTo(out);
+    var client = new TextRepoElasticClient(config);
+    var toTest = client.getClient().getLowLevelClient().getNodes().get(0).getHost().toString();
+    assertThat(toTest).isEqualTo(expected);
   }
 
 }
