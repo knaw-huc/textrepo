@@ -24,10 +24,10 @@ import java.io.PushbackInputStream;
 import java.security.MessageDigest;
 import java.util.UUID;
 import java.util.function.Supplier;
+import java.util.zip.GZIPInputStream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Objects.requireNonNull;
-import static java.util.zip.GZIPInputStream.GZIP_MAGIC;
 import static nl.knaw.huc.core.Contents.fromBytes;
 
 public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
@@ -121,24 +121,11 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
       return jdbi.inTransaction(th -> {
         var lob = th.attach(LargeObjectsDao.class);
         var cis = new CountingInputStream(inputStream);
-        var pbis = new PushbackInputStream(cis, 2);
-        var gzipCompressed = false;
-        try {
-          byte[] magic = new byte[2];
-          int nread = pbis.read(magic);
-          if (nread > 0) {
-            pbis.unread(magic, 0, nread);
-            if (magic[0] == (byte) GZIP_MAGIC && magic[1] == (byte) (GZIP_MAGIC >> 8)) {
-              log.debug("GZIP'ed INPUT DETECTED");
-              gzipCompressed = true;
-            }
-          }
-        } catch (IOException e) {
-          throw new BadRequestException("Could not read input stream of posted file", e);
-        }
+        var is = new GzipDetectingInputStream(cis);
+        var id = lob.insert(is);
+        log.debug("Inserted {} into large_objects, gzip={}, size={}",
+            id, is.isGzipCompressed(), cis.getCount());
 
-        var id = lob.insert(pbis);
-        log.debug("Inserted {} into large_objects, gzip={}, size={}", id, gzipCompressed, cis.getCount());
         final Document doc = documentFinder.executeIn(th);
         final var file = new HaveFileForDocumentByType(fileIdGenerator, doc, typeName).executeIn(th);
         new SetFileProvenance(file, filename).executeIn(th);
@@ -146,6 +133,31 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
         return new SetCurrentFileContents(versionIdGenerator, file, contents).executeIn(th);
       });
     }
-  }
 
+    class GzipDetectingInputStream extends PushbackInputStream {
+      private static final byte GZIP_MAGIC_0 = (byte) GZIPInputStream.GZIP_MAGIC;
+      private static final byte GZIP_MAGIC_1 = (byte) (GZIPInputStream.GZIP_MAGIC >> 8);
+
+      private boolean isGzipCompressed = false;
+
+      protected GzipDetectingInputStream(InputStream in) {
+        super(in, 2);
+
+        try {
+          byte[] magic = new byte[2];
+          int nread = read(magic);
+          if (nread > 0) {
+            unread(magic, 0, nread);
+            isGzipCompressed = (magic[0] == GZIP_MAGIC_0 && magic[1] == GZIP_MAGIC_1);
+          }
+        } catch (IOException e) {
+          throw new BadRequestException("Could not read input stream of posted file", e);
+        }
+      }
+
+      public boolean isGzipCompressed() {
+        return isGzipCompressed;
+      }
+    }
+  }
 }
