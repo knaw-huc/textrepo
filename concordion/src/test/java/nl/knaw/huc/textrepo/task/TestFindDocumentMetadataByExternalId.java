@@ -6,6 +6,7 @@ import org.apache.commons.text.StringEscapeUtils;
 
 import static javax.ws.rs.client.Entity.entity;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
+import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
 import static nl.knaw.huc.textrepo.Config.HOST;
 import static nl.knaw.huc.textrepo.util.TestUtils.asCodeBlock;
 import static nl.knaw.huc.textrepo.util.TestUtils.asPrettyJson;
@@ -21,7 +22,7 @@ public class TestFindDocumentMetadataByExternalId extends AbstractConcordionTest
     client
         .target(HOST + "/rest/documents/" + docId + "/metadata/" + key)
         .request()
-        .put(entity(value.toString(), APPLICATION_JSON_TYPE));
+        .put(entity(value.toString(), TEXT_PLAIN));
   }
 
   public static class RetrieveResult {

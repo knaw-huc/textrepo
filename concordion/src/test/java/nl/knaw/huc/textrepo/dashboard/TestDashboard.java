@@ -22,7 +22,7 @@ public class TestDashboard extends AbstractConcordionTest {
   public void createMetadata(String docId, Object key, Object value) {
     client.target(HOST + "/rest/documents/" + docId + "/metadata/" + key)
           .request()
-          .put(entity(value.toString(), MediaType.APPLICATION_JSON_TYPE));
+          .put(entity(value.toString(), MediaType.TEXT_PLAIN));
   }
 
   public static class DashboardResult {
