@@ -21,9 +21,10 @@ Development setup
 *****************
 
 When you want to start developing or debugging, you can use the 'dev' setup, as found in ``examples/development``.
-When starting, the dev builds all |tr| images from scratch.
+When starting, docker-compose will build all |tr| images from scratch.
 When stopping, all containers, volumes and network are removed.
-The dev setup contains its own ``README.md``.
+
+See ``examples/development/README.md`` for installation details.
 
 Explore locally
 ---------------
