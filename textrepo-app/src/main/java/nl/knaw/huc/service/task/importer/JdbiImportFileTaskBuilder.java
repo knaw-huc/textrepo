@@ -17,14 +17,17 @@ import org.jdbi.v3.core.Jdbi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import javax.ws.rs.BadRequestException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PushbackInputStream;
 import java.security.MessageDigest;
 import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Objects.requireNonNull;
@@ -120,11 +123,18 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
 
       return jdbi.inTransaction(th -> {
         var lob = th.attach(LargeObjectsDao.class);
-        var cis = new CountingInputStream(inputStream);
-        var is = new GzipDetectingInputStream(cis);
-        var id = lob.insert(is);
-        log.debug("Inserted {} into large_objects, gzip={}, size={}",
-            id, is.isGzipCompressed(), cis.getCount());
+        var incomingCountingStream = new CountingInputStream(inputStream);
+        var gzis = new GzipDetectingInputStream(incomingCountingStream);
+        log.debug("gzip: {}", gzis.isGzipCompressed());
+        var uncompressedCountingStream = new CountingInputStream(decompressIfNeeded(gzis));
+        var compressedCountingStream = new CountingInputStream(compressInput(uncompressedCountingStream));
+        var id = lob.insert(compressedCountingStream);
+        log.debug("Data streamed to db: id={}, sizes: incoming={}, uncompressed={}, compressed={}",
+            id,
+            incomingCountingStream.getCount(),
+            uncompressedCountingStream.getCount(),
+            compressedCountingStream.getCount()
+        );
 
         final Document doc = documentFinder.executeIn(th);
         final var file = new HaveFileForDocumentByType(fileIdGenerator, doc, typeName).executeIn(th);
@@ -132,6 +142,25 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
         final var contents = fromBytes("lorem ipsum".getBytes(UTF_8));//fromBytes(inputStream.readAllBytes());
         return new SetCurrentFileContents(versionIdGenerator, file, contents).executeIn(th);
       });
+    }
+
+    private InputStream compressInput(InputStream uncompressed) {
+      try {
+        return new GzipCompressingInputStream(uncompressed);
+      } catch (IOException e) {
+        throw new BadRequestException("Unable to compress input", e);
+      }
+    }
+
+    private InputStream decompressIfNeeded(GzipDetectingInputStream is) {
+      if (is.isGzipCompressed()) {
+        try {
+          return new GZIPInputStream(is);
+        } catch (IOException e) {
+          throw new BadRequestException(e);
+        }
+      }
+      return is;
     }
 
     class GzipDetectingInputStream extends PushbackInputStream {
@@ -157,6 +186,92 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
 
       public boolean isGzipCompressed() {
         return isGzipCompressed;
+      }
+    }
+
+    public class GzipCompressingInputStream extends InputStream {
+      private final InputStream in;
+      private final GZIPOutputStream gz;
+
+      private byte[] buf = new byte[8192];
+      private final byte[] readBuf = new byte[8192];
+      private int read = 0;
+      private int write = 0;
+
+      public GzipCompressingInputStream(InputStream in) throws IOException {
+        this.in = in;
+        // grow the array if we don't have enough space to fulfill the incoming data
+        final OutputStream delegate = new OutputStream() {
+
+          private void growBufferIfNeeded(int len) {
+            if ((write + len) >= buf.length) {
+              // grow the array if we don't have enough space to fulfill the incoming data
+              byte[] newbuf = new byte[(buf.length + len) * 2];
+              System.arraycopy(buf, 0, newbuf, 0, buf.length);
+              buf = newbuf;
+            }
+          }
+
+          @Override
+          public void write(@Nonnull byte[] data, int off, int len) {
+            growBufferIfNeeded(len);
+            System.arraycopy(data, off, buf, write, len);
+            write += len;
+          }
+
+          @Override
+          public void write(int data) {
+            growBufferIfNeeded(1);
+            buf[write++] = (byte) data;
+          }
+        };
+        this.gz = new GZIPOutputStream(delegate);
+      }
+
+      @Override
+      public int read(@Nonnull byte[] data, int off, int len) throws IOException {
+        compressStream();
+        int numBytes = Math.min(len, write - read);
+        if (numBytes > 0) {
+          System.arraycopy(buf, read, data, off, numBytes);
+          read += numBytes;
+        } else if (len > 0) {
+          // if bytes were requested, but we have none, then we're at the end of the stream
+          return -1;
+        }
+        return numBytes;
+      }
+
+      @Override
+      public int read() throws IOException {
+        compressStream();
+        if (write == 0) {
+          // write should not be 0 if we were able to get data from compress stream, must mean we're at the end
+          return -1;
+        } else {
+          // reading a single byte
+          return buf[read++] & 0xFF;
+        }
+      }
+
+      private void compressStream() throws IOException {
+        // if the reader has caught up with the writer, then zero the positions out
+        if (read == write) {
+          read = 0;
+          write = 0;
+        }
+
+        while (write == 0) {
+          // feed the gzip stream data until it spits out a block
+          int val = in.read(readBuf);
+          if (val == -1) {
+            // nothing left to do, we've hit the end of the stream. finalize and break out
+            gz.close();
+            break;
+          } else if (val > 0) {
+            gz.write(readBuf, 0, val);
+          }
+        }
       }
     }
   }
