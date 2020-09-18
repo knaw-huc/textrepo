@@ -13,7 +13,7 @@ public class TextRepoElasticClientTest {
 
   @ParameterizedTest
   @CsvSource({
-      "localhost,http://localhost:9200",
+      "localhost,http://localhost",
       "localhost:9200,http://localhost:9200",
       "example:8080,http://example:8080",
       "0.0.0.0:8080,http://0.0.0.0:8080",
