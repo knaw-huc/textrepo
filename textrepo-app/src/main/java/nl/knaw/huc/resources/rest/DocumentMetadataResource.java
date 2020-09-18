@@ -67,7 +67,6 @@ public class DocumentMetadataResource {
   @PUT
   @Path("/{key}")
   @Timed
-  @Consumes(APPLICATION_JSON)
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Create or update document metadata entry")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
