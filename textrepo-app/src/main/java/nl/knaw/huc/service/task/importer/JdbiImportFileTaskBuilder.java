@@ -11,6 +11,7 @@ import nl.knaw.huc.service.task.InTransactionProvider;
 import nl.knaw.huc.service.task.SetCurrentFileContents;
 import nl.knaw.huc.service.task.SetFileProvenance;
 import nl.knaw.huc.service.task.Task;
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.jdbi.v3.core.Jdbi;
@@ -19,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.ws.rs.BadRequestException;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -32,6 +34,7 @@ import java.util.zip.GZIPOutputStream;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Objects.requireNonNull;
 import static nl.knaw.huc.core.Contents.fromBytes;
+import static org.apache.commons.codec.digest.MessageDigestAlgorithms.SHA_224;
 
 public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
   private static final Logger log = LoggerFactory.getLogger(JdbiImportFileTaskBuilder.class);
@@ -161,6 +164,57 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
         }
       }
       return is;
+    }
+
+    class DigestComputingInputStream extends FilterInputStream {
+      private final MessageDigest digest = DigestUtils.getDigest(SHA_224);
+
+      protected DigestComputingInputStream(InputStream in) {
+        super(in);
+      }
+
+      @Override
+      public int read() {
+        try {
+          final int nread = super.read();
+          if (nread > 0) {
+            digest.update((byte) nread);
+          }
+          return nread;
+        } catch (IOException e) {
+          throw new BadRequestException("Could not compute digest of posted file (1)", e);
+        }
+      }
+
+      @Override
+      public int read(@Nonnull byte[] data) throws IOException {
+        try {
+          final var nread = super.read(data);
+          if (nread > 0) {
+            digest.update(data, 0, nread);
+          }
+          return nread;
+        } catch (IOException e) {
+          throw new BadRequestException("Could not compute digest of posted file (2)", e);
+        }
+      }
+
+      @Override
+      public int read(@Nonnull byte[] data, int off, int len) {
+        try {
+          final var nread = super.read(data, off, len);
+          if (nread > 0) {
+            digest.update(data, off, nread);
+          }
+          return nread;
+        } catch (IOException e) {
+          throw new BadRequestException("Could not compute digest of posted file (3)", e);
+        }
+      }
+
+      public String digestAsHex() {
+        return Hex.encodeHexString(digest.digest());
+      }
     }
 
     class GzipDetectingInputStream extends PushbackInputStream {
