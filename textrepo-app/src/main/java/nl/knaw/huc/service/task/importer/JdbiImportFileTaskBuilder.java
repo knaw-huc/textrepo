@@ -122,7 +122,7 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
       // decompress if necessary, compute digest on (decompressed) content, then compress for storage
       final var originalContentStream = decompressIfNeeded(inputStream);
       final var digestComputingStream = new DigestComputingInputStream(originalContentStream);
-      final var compressedInputStream = compressInput(digestComputingStream);
+      final var compressedInputStream = compress(digestComputingStream);
 
       // hog memory to get all the (compressed) input bytes into 'contents'
       final var bytes = readAllBytes(compressedInputStream);
@@ -147,7 +147,7 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
       }
     }
 
-    private InputStream compressInput(InputStream uncompressed) {
+    private InputStream compress(InputStream uncompressed) {
       try {
         return new GzipCompressingInputStream(uncompressed);
       } catch (IOException e) {
