@@ -1,9 +1,9 @@
 package nl.knaw.huc.service.task.importer;
 
 import com.google.common.io.CountingInputStream;
+import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.core.Version;
-import nl.knaw.huc.db.LargeObjectsDao;
 import nl.knaw.huc.service.task.FindDocumentByExternalId;
 import nl.knaw.huc.service.task.HaveDocumentByExternalId;
 import nl.knaw.huc.service.task.HaveFileForDocumentByType;
@@ -13,7 +13,6 @@ import nl.knaw.huc.service.task.SetFileProvenance;
 import nl.knaw.huc.service.task.Task;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.jdbi.v3.core.Jdbi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,9 +30,7 @@ import java.util.function.Supplier;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Objects.requireNonNull;
-import static nl.knaw.huc.core.Contents.fromBytes;
 import static org.apache.commons.codec.digest.MessageDigestAlgorithms.SHA_224;
 
 public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
@@ -121,19 +118,21 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
 
     @Override
     public Version run() {
-      MessageDigest digest = DigestUtils.getDigest(MessageDigestAlgorithms.SHA_224);
-      // TODO: digest chunks as we read, decompress if GZIPed, to compute hash of the (uncompressed) input.
-
       return jdbi.inTransaction(th -> {
-        var lob = th.attach(LargeObjectsDao.class);
         var incomingCountingStream = new CountingInputStream(inputStream);
         var gzis = new GzipDetectingInputStream(incomingCountingStream);
         log.debug("gzip: {}", gzis.isGzipCompressed());
-        var uncompressedCountingStream = new CountingInputStream(decompressIfNeeded(gzis));
+        var realContent = decompressIfNeeded(gzis);
+        var digestComputingStream = new DigestComputingInputStream(realContent, SHA_224);
+        var uncompressedCountingStream = new CountingInputStream(digestComputingStream);
         var compressedCountingStream = new CountingInputStream(compressInput(uncompressedCountingStream));
-        var id = lob.insert(compressedCountingStream);
-        log.debug("Data streamed to db: id={}, sizes: incoming={}, uncompressed={}, compressed={}",
-            id,
+        final var bytes = readAllBytes(compressedCountingStream);
+        final var sha224 = digestComputingStream.digestAsHex();
+        final var contents = new Contents(sha224, bytes);
+        log.debug(
+            "Contents prepared: length={}; sha224={}, sizes: incoming={}, uncompressed={}, compressed={}",
+            bytes.length,
+            sha224,
             incomingCountingStream.getCount(),
             uncompressedCountingStream.getCount(),
             compressedCountingStream.getCount()
@@ -142,9 +141,16 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
         final Document doc = documentFinder.executeIn(th);
         final var file = new HaveFileForDocumentByType(fileIdGenerator, doc, typeName).executeIn(th);
         new SetFileProvenance(file, filename).executeIn(th);
-        final var contents = fromBytes("lorem ipsum".getBytes(UTF_8));//fromBytes(inputStream.readAllBytes());
         return new SetCurrentFileContents(versionIdGenerator, file, contents).executeIn(th);
       });
+    }
+
+    private byte[] readAllBytes(InputStream inputStream) {
+      try {
+        return inputStream.readAllBytes();
+      } catch (IOException e) {
+        throw new BadRequestException("Could not read all bytes of posted file", e);
+      }
     }
 
     private InputStream compressInput(InputStream uncompressed) {
@@ -167,10 +173,15 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
     }
 
     class DigestComputingInputStream extends FilterInputStream {
-      private final MessageDigest digest = DigestUtils.getDigest(SHA_224);
+      private final MessageDigest digest;
 
       protected DigestComputingInputStream(InputStream in) {
+        this(in, SHA_224);
+      }
+
+      protected DigestComputingInputStream(InputStream in, String algorithm) {
         super(in);
+        this.digest = DigestUtils.getDigest(algorithm);
       }
 
       @Override
@@ -187,7 +198,7 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
       }
 
       @Override
-      public int read(@Nonnull byte[] data) throws IOException {
+      public int read(@Nonnull byte[] data) {
         try {
           final var nread = super.read(data);
           if (nread > 0) {
