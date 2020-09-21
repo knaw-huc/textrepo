@@ -157,7 +157,7 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
         try {
           return new GZIPInputStream(is);
         } catch (IOException e) {
-          throw new BadRequestException(e);
+          throw new BadRequestException("Unable to decompress gzip compressed input", e);
         }
       }
       return is;
