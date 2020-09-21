@@ -117,16 +117,22 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
 
     @Override
     public Version run() {
-      return jdbi.inTransaction(th -> {
-        var originalContent = decompressIfNeeded(inputStream);
-        var digestComputingStream = new DigestComputingInputStream(originalContent, SHA_224);
-        var compressedInputStream = compressInput(digestComputingStream);
-        final var bytes = readAllBytes(compressedInputStream);
-        final var sha224 = digestComputingStream.digestAsHex();
-        final var contents = new Contents(sha224, bytes);
-        log.debug("Contents prepared: length={}; sha224={}", bytes.length, sha224);
+      // To keep transaction time to a minimum, construct new Content object first, outside transaction
 
-        final Document doc = documentFinder.executeIn(th);
+      // decompress if necessary, compute digest on (decompressed) content, then compress for storage
+      final var originalContentStream = decompressIfNeeded(inputStream);
+      final var digestComputingStream = new DigestComputingInputStream(originalContentStream);
+      final var compressedInputStream = compressInput(digestComputingStream);
+
+      // hog memory to get all the (compressed) input bytes into 'contents'
+      final var bytes = readAllBytes(compressedInputStream);
+      final var sha224 = digestComputingStream.digestAsHex();
+      final var contents = new Contents(sha224, bytes);
+      log.debug("Contents prepared: size={}, sha224={}", bytes.length, sha224);
+
+      // Now that 'contents' is ready, enter transaction to update Document file's version and contents
+      return jdbi.inTransaction(th -> {
+        final var doc = documentFinder.executeIn(th);
         final var file = new HaveFileForDocumentByType(fileIdGenerator, doc, typeName).executeIn(th);
         new SetFileProvenance(file, filename).executeIn(th);
         return new SetCurrentFileContents(versionIdGenerator, file, contents).executeIn(th);
