@@ -21,7 +21,7 @@ Features
 
 .. figure:: textrepo-overview.png
 
-   Schematic overview of the |TR|: **a)** search in corpus; **b)** manage versions and metadata of corpus; **c)** download versions and metadata of corpus; **d+e)** add custom indexes that are kept in sync with corpus; **f+g)** store all file types, versions and metadata in a postgres database.
+   Schematic overview of the |TR|: **a)** search in corpus; **b+c)** manage file types, versions and metadata of corpus; **d+e)** build custom indexes that are automatically kept in sync with corpus; **f+g)** store all data in a unified database model.
 
 
 Installation
