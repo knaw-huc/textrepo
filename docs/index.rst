@@ -3,18 +3,26 @@
 |tr|
 ===============
 
-|tr| offers an API to store, index and retrieve texts, including their versions, formats and metadata.
+|tr| offers an API to store, version and index the texts and metadata of a corpus.
 
 Features
 --------
 
-- Store texts in a uniform domain model
+- Store texts of a corpus in a uniform `domain model <domain-model.html>`_:
    - Keep track of file versions
    - Link all file types to the same source document
    - Store metadata about documents and files
 - Use Rest API to create, read, update and delete your texts
 - Search files using stock and custom `elasticsearch <https://www.elastic.co/elasticsearch/>`_ indexes
 - Explore API with `concordion <https://concordion.org/>`_ and `swagger <https://swagger.io/>`_
+
+
+----
+
+.. figure:: textrepo-overview.png
+
+   Schematic overview of the |TR|: **a)** search in corpus; **b)** manage versions and metadata of corpus; **c)** download versions and metadata of corpus; **d+e)** add custom indexes that are kept in sync with corpus; **f+g)** store all file types, versions and metadata in a postgres database.
+
 
 Installation
 ------------
@@ -34,8 +42,8 @@ Documentation
 .. toctree::
     :maxdepth: 2
 
-    Overview <overview>
     Basic Usage <usage>
+    Domain model <domain-model>
     Components <components>
     Rest and Tasks API <tr-api>
     Indexing <indexing>
