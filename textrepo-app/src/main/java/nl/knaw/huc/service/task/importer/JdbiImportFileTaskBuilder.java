@@ -1,6 +1,5 @@
 package nl.knaw.huc.service.task.importer;
 
-import com.google.common.io.CountingInputStream;
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.core.Version;
@@ -119,24 +118,13 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
     @Override
     public Version run() {
       return jdbi.inTransaction(th -> {
-        var incomingCountingStream = new CountingInputStream(inputStream);
-        var gzis = new GzipDetectingInputStream(incomingCountingStream);
-        log.debug("gzip: {}", gzis.isGzipCompressed());
-        var realContent = decompressIfNeeded(gzis);
-        var digestComputingStream = new DigestComputingInputStream(realContent, SHA_224);
-        var uncompressedCountingStream = new CountingInputStream(digestComputingStream);
-        var compressedCountingStream = new CountingInputStream(compressInput(uncompressedCountingStream));
-        final var bytes = readAllBytes(compressedCountingStream);
+        var originalContent = decompressIfNeeded(inputStream);
+        var digestComputingStream = new DigestComputingInputStream(originalContent, SHA_224);
+        var compressedInputStream = compressInput(digestComputingStream);
+        final var bytes = readAllBytes(compressedInputStream);
         final var sha224 = digestComputingStream.digestAsHex();
         final var contents = new Contents(sha224, bytes);
-        log.debug(
-            "Contents prepared: length={}; sha224={}, sizes: incoming={}, uncompressed={}, compressed={}",
-            bytes.length,
-            sha224,
-            incomingCountingStream.getCount(),
-            uncompressedCountingStream.getCount(),
-            compressedCountingStream.getCount()
-        );
+        log.debug("Contents prepared: length={}; sha224={}", bytes.length, sha224);
 
         final Document doc = documentFinder.executeIn(th);
         final var file = new HaveFileForDocumentByType(fileIdGenerator, doc, typeName).executeIn(th);
@@ -161,7 +149,8 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
       }
     }
 
-    private InputStream decompressIfNeeded(GzipDetectingInputStream is) {
+    private InputStream decompressIfNeeded(InputStream inputStream) {
+      GzipDetectingInputStream is = new GzipDetectingInputStream(inputStream);
       if (is.isGzipCompressed()) {
         try {
           return new GZIPInputStream(is);
@@ -187,7 +176,7 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
       @Override
       public int read() {
         try {
-          final int nread = super.read();
+          final int nread = in.read();
           if (nread > 0) {
             digest.update((byte) nread);
           }
@@ -198,22 +187,9 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
       }
 
       @Override
-      public int read(@Nonnull byte[] data) {
-        try {
-          final var nread = super.read(data);
-          if (nread > 0) {
-            digest.update(data, 0, nread);
-          }
-          return nread;
-        } catch (IOException e) {
-          throw new BadRequestException("Could not compute digest of posted file (2)", e);
-        }
-      }
-
-      @Override
       public int read(@Nonnull byte[] data, int off, int len) {
         try {
-          final var nread = super.read(data, off, len);
+          final var nread = in.read(data, off, len);
           if (nread > 0) {
             digest.update(data, off, nread);
           }
