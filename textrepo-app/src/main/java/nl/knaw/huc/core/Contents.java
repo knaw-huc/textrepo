@@ -8,6 +8,8 @@ import javax.annotation.Nonnull;
 import java.beans.ConstructorProperties;
 import java.nio.charset.StandardCharsets;
 
+import static nl.knaw.huc.helpers.GzipHelper.GZIP_MAGIC_0;
+import static nl.knaw.huc.helpers.GzipHelper.GZIP_MAGIC_1;
 import static nl.knaw.huc.service.contents.ContentsService.abbreviateMiddle;
 
 /**
@@ -41,12 +43,31 @@ public class Contents {
     return new String(contents, StandardCharsets.UTF_8);
   }
 
+  public String peekContents() {
+    if (contents.length > 1 && contents[0] == GZIP_MAGIC_0 && contents[1] == GZIP_MAGIC_1) {
+      final StringBuilder buf = new StringBuilder(64).append("[gzip] ");
+      final int maxLength = Math.min(contents.length, 16);
+      for (int i = 0; i < maxLength; i++) {
+        buf.append(String.format("%02x", contents[i]));
+        if (i < maxLength - 1) {
+          buf.append(',');
+        }
+      }
+      if (contents.length > maxLength) {
+        buf.append('\u2026'); // ellipsis
+      }
+      return buf.toString();
+    }
+
+    return abbreviateMiddle(contents);
+  }
+
   @Override
   public String toString() {
     return MoreObjects
         .toStringHelper(this)
         .add("sha224", sha224)
-        .add("contents", abbreviateMiddle(this.contents))
+        .add("contents", peekContents())
         .toString();
   }
 }

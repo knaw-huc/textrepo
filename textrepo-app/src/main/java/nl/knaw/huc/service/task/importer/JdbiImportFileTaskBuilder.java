@@ -30,6 +30,8 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import static java.util.Objects.requireNonNull;
+import static nl.knaw.huc.helpers.GzipHelper.GZIP_MAGIC_0;
+import static nl.knaw.huc.helpers.GzipHelper.GZIP_MAGIC_1;
 import static org.apache.commons.codec.digest.MessageDigestAlgorithms.SHA_224;
 
 public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
@@ -128,7 +130,7 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
       final var bytes = readAllBytes(compressedInputStream);
       final var sha224 = digestComputingStream.digestAsHex();
       final var contents = new Contents(sha224, bytes);
-      log.debug("Contents prepared: size={}, sha224={}", bytes.length, sha224);
+      log.debug("Contents prepared, size={}: {}", bytes.length, contents);
 
       // Now that 'contents' is ready, enter transaction to update Document file's version and contents
       return jdbi.inTransaction(th -> {
@@ -211,8 +213,6 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
     }
 
     class GzipDetectingInputStream extends PushbackInputStream {
-      private static final byte GZIP_MAGIC_0 = (byte) GZIPInputStream.GZIP_MAGIC;
-      private static final byte GZIP_MAGIC_1 = (byte) (GZIPInputStream.GZIP_MAGIC >> 8);
 
       private boolean isGzipCompressed = false;
 
@@ -247,9 +247,8 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
 
       public GzipCompressingInputStream(InputStream in) throws IOException {
         this.in = in;
-        // grow the array if we don't have enough space to fulfill the incoming data
-        final OutputStream delegate = new OutputStream() {
 
+        final OutputStream delegate = new OutputStream() {
           private void growBufferIfNeeded(int len) {
             if ((write + len) >= buf.length) {
               // grow the array if we don't have enough space to fulfill the incoming data
