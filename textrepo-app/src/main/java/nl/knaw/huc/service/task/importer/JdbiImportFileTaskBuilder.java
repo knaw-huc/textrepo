@@ -37,7 +37,6 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
   private String externalId;
   private String typeName;
   private String filename;
-  private byte[] contents;
   private boolean allowNewDocument;
   private InputStream inputStream;
 
@@ -69,12 +68,6 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
   @Override
   public ImportFileTaskBuilder forFilename(String name) {
     this.filename = requireNonNull(name);
-    return this;
-  }
-
-  @Override
-  public ImportFileTaskBuilder withContents(byte[] contents) {
-    this.contents = requireNonNull(contents);
     return this;
   }
 
