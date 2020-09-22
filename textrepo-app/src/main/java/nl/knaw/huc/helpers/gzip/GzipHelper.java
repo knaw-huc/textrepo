@@ -1,4 +1,4 @@
-package nl.knaw.huc.helpers;
+package nl.knaw.huc.helpers.gzip;
 
 import java.util.zip.GZIPInputStream;
 

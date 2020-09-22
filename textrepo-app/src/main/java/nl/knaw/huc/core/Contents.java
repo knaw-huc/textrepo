@@ -8,7 +8,7 @@ import javax.annotation.Nonnull;
 import java.beans.ConstructorProperties;
 import java.nio.charset.StandardCharsets;
 
-import static nl.knaw.huc.helpers.GzipHelper.isGzipped;
+import static nl.knaw.huc.helpers.gzip.GzipHelper.isGzipped;
 import static nl.knaw.huc.service.contents.ContentsService.abbreviateMiddle;
 
 /**
