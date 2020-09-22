@@ -74,10 +74,3 @@ create table files_metadata (
   primary key (file_id, key),
   foreign key (file_id) references files (id) on delete cascade
 );
-
--- Large file support via postgres 'large objects' table
-create table large_objects (
-  id serial not null,
-  lob oid,
-  primary key (id)
-);
