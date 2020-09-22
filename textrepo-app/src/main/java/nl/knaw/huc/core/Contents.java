@@ -8,8 +8,7 @@ import javax.annotation.Nonnull;
 import java.beans.ConstructorProperties;
 import java.nio.charset.StandardCharsets;
 
-import static nl.knaw.huc.helpers.GzipHelper.GZIP_MAGIC_0;
-import static nl.knaw.huc.helpers.GzipHelper.GZIP_MAGIC_1;
+import static nl.knaw.huc.helpers.GzipHelper.isGzipped;
 import static nl.knaw.huc.service.contents.ContentsService.abbreviateMiddle;
 
 /**
@@ -44,7 +43,7 @@ public class Contents {
   }
 
   public String peekContents() {
-    if (contents.length > 1 && contents[0] == GZIP_MAGIC_0 && contents[1] == GZIP_MAGIC_1) {
+    if (isGzipped(contents)) {
       final StringBuilder buf = new StringBuilder(64).append("[gzip] ");
       final int maxLength = Math.min(contents.length, 16);
       for (int i = 0; i < maxLength; i++) {

@@ -30,8 +30,7 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import static java.util.Objects.requireNonNull;
-import static nl.knaw.huc.helpers.GzipHelper.GZIP_MAGIC_0;
-import static nl.knaw.huc.helpers.GzipHelper.GZIP_MAGIC_1;
+import static nl.knaw.huc.helpers.GzipHelper.isGzipped;
 import static org.apache.commons.codec.digest.MessageDigestAlgorithms.SHA_224;
 
 public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
@@ -213,7 +212,6 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
     }
 
     class GzipDetectingInputStream extends PushbackInputStream {
-
       private boolean isGzipCompressed = false;
 
       protected GzipDetectingInputStream(InputStream in) {
@@ -224,7 +222,7 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
           int nread = read(magic);
           if (nread > 0) {
             unread(magic, 0, nread);
-            isGzipCompressed = (magic[0] == GZIP_MAGIC_0 && magic[1] == GZIP_MAGIC_1);
+            isGzipCompressed = isGzipped(magic);
           }
         } catch (IOException e) {
           throw new BadRequestException("Could not read input stream of posted file", e);
