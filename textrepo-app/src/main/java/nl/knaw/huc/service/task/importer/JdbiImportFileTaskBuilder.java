@@ -121,7 +121,7 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
         throw new BadRequestException("Could not read posted file", e);
       }
 
-      // Now that 'contents' is ready, enter transaction to update Document file's version and contents
+      // Now that 'contents' is ready, enter transaction to update document, file, version and contents
       return jdbi.inTransaction(transaction -> {
         final var doc = documentFinder.executeIn(transaction);
         final var file = new HaveFileForDocumentByType(fileIdGenerator, doc, typeName).executeIn(transaction);
