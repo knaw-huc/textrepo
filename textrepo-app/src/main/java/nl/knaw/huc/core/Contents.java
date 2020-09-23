@@ -5,8 +5,12 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 
 import javax.annotation.Nonnull;
+import javax.ws.rs.BadRequestException;
 import java.beans.ConstructorProperties;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.zip.GZIPInputStream;
 
 import static nl.knaw.huc.helpers.gzip.GzipHelper.isGzipped;
 import static nl.knaw.huc.service.contents.ContentsService.abbreviateMiddle;
@@ -39,6 +43,14 @@ public class Contents {
   }
 
   public String asUtf8String() {
+    if (isGzipped(contents)) {
+      try {
+        final GZIPInputStream gis = new GZIPInputStream(new ByteArrayInputStream(contents));
+        return new String(gis.readAllBytes(), StandardCharsets.UTF_8);
+      } catch (IOException e) {
+        throw new BadRequestException("Could not gunzip contents", e);
+      }
+    }
     return new String(contents, StandardCharsets.UTF_8);
   }
 
