@@ -3,9 +3,7 @@ package nl.knaw.huc.service.task.importer;
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.core.Version;
-import nl.knaw.huc.helpers.digest.DigestComputingInputStream;
-import nl.knaw.huc.helpers.gzip.GzipCompressingInputStream;
-import nl.knaw.huc.helpers.gzip.GzipDetectingInputStream;
+import nl.knaw.huc.resources.ResourceUtils;
 import nl.knaw.huc.service.task.FindDocumentByExternalId;
 import nl.knaw.huc.service.task.HaveDocumentByExternalId;
 import nl.knaw.huc.service.task.HaveFileForDocumentByType;
@@ -17,12 +15,9 @@ import org.jdbi.v3.core.Jdbi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.BadRequestException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
 import java.util.function.Supplier;
-import java.util.zip.GZIPInputStream;
 
 import static java.util.Objects.requireNonNull;
 
@@ -105,21 +100,7 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
     @Override
     public Version run() {
       // To keep transaction time to a minimum, construct new Content object first, outside the transaction
-      final Contents contents;
-      try {
-        // decompress if necessary, compute digest on (decompressed) content, then compress for storage
-        final var originalContentStream = decompressIfNeeded(inputStream);
-        final var digestComputingStream = new DigestComputingInputStream(originalContentStream);
-        final var compressedInputStream = new GzipCompressingInputStream(digestComputingStream);
-
-        // hog memory to get all the (compressed) input bytes into 'contents'
-        final var bytes = compressedInputStream.readAllBytes();
-        final var sha224 = digestComputingStream.digestAsHex();
-        contents = new Contents(sha224, bytes);
-        log.debug("Contents prepared, size={}: {}", bytes.length, contents);
-      } catch (IOException e) {
-        throw new BadRequestException("Could not read posted file", e);
-      }
+      final Contents contents = ResourceUtils.readContents(inputStream);
 
       // Now that 'contents' is ready, enter transaction to update document, file, version and contents
       return jdbi.inTransaction(transaction -> {
@@ -130,13 +111,6 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
       });
     }
 
-    private InputStream decompressIfNeeded(InputStream inputStream) throws IOException {
-      GzipDetectingInputStream is = new GzipDetectingInputStream(inputStream);
-      if (is.isGzipCompressed()) {
-        return new GZIPInputStream(is);
-      }
-      return is;
-    }
   }
 
 }

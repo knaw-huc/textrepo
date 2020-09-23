@@ -140,7 +140,7 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
         new DeleteDocumentResource(taskBuilderFactory),
         new FilesResource(fileService),
         new DocumentFilesResource(documentFilesService, paginator),
-        new VersionsResource(versionService, maxPayloadSize),
+        new VersionsResource(versionService),
         new VersionContentsResource(versionContentsService),
         new FindResource(taskBuilderFactory),
         new DashboardResource(dashboardService, paginator),

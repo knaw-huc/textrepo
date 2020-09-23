@@ -1,5 +1,7 @@
 package nl.knaw.huc.helpers.gzip;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
 
 public class GzipHelper {
@@ -9,5 +11,13 @@ public class GzipHelper {
 
   public static boolean isGzipped(byte[] bytes) {
     return bytes.length > 1 && bytes[0] == GZIP_MAGIC_0 && bytes[1] == GZIP_MAGIC_1;
+  }
+
+  public static InputStream decompressIfNeeded(InputStream inputStream) throws IOException {
+    GzipDetectingInputStream is = new GzipDetectingInputStream(inputStream);
+    if (is.isGzipCompressed()) {
+      return new GZIPInputStream(is);
+    }
+    return is;
   }
 }

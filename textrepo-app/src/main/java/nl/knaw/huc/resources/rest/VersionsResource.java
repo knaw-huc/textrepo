@@ -29,7 +29,6 @@ import java.util.UUID;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
-import static nl.knaw.huc.core.Contents.fromBytes;
 import static nl.knaw.huc.resources.ResourceUtils.readContents;
 
 @Api(tags = {"versions"})
@@ -40,11 +39,9 @@ public class VersionsResource {
   private static final String PUT_ERROR_MSG = "Not allowed to update a version: create a new version using POST";
 
   private final VersionService versionService;
-  private final int maxPayloadSize;
 
-  public VersionsResource(VersionService versionService, int maxPayloadSize) {
+  public VersionsResource(VersionService versionService) {
     this.versionService = versionService;
-    this.maxPayloadSize = maxPayloadSize;
   }
 
   @POST
@@ -58,7 +55,7 @@ public class VersionsResource {
       @FormDataParam("contents") InputStream inputStream
   ) {
     log.debug("Create version: fileId={}", fileId);
-    var contents = fromBytes(readContents(inputStream, maxPayloadSize));
+    var contents = readContents(inputStream);
     var version = versionService.createNewVersion(fileId, contents);
     log.debug("Created version: {}", version);
     return Response.ok(new ResultVersion(version)).build();

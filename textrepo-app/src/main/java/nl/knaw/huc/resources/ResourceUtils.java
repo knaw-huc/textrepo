@@ -1,21 +1,39 @@
 package nl.knaw.huc.resources;
 
+import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.exceptions.PayloadTooLargeException;
+import nl.knaw.huc.helpers.digest.DigestComputingInputStream;
+import nl.knaw.huc.helpers.gzip.GzipCompressingInputStream;
+import nl.knaw.huc.helpers.gzip.GzipHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.BadRequestException;
 import java.io.IOException;
 import java.io.InputStream;
 
 public class ResourceUtils {
-  public static byte[] readContents(InputStream uploadedInputStream, int maxFileSize) {
-    if (uploadedInputStream == null) {
+  private static final Logger log = LoggerFactory.getLogger(ResourceUtils.class);
+
+  public static Contents readContents(InputStream inputStream) {
+    if (inputStream == null) {
       throw new BadRequestException("File is missing");
     }
 
     try {
-      return new InputStreamLimiter(uploadedInputStream, maxFileSize).readAllBytes();
+      // decompress if necessary, compute digest on (decompressed) content, then compress for storage
+      final var originalContentStream = GzipHelper.decompressIfNeeded(inputStream);
+      final var digestComputingStream = new DigestComputingInputStream(originalContentStream);
+      final var compressedInputStream = new GzipCompressingInputStream(digestComputingStream);
+
+      // hog memory to get all the (compressed) input bytes into 'contents'
+      final var bytes = compressedInputStream.readAllBytes();
+      final var sha224 = digestComputingStream.digestAsHex();
+      final var contents = new Contents(sha224, bytes);
+      log.debug("Contents prepared, size={}: {}", bytes.length, contents);
+      return contents;
     } catch (IOException e) {
-      throw new BadRequestException("Could not read input stream of posted file", e);
+      throw new BadRequestException("Could not read posted file", e);
     }
   }
 
