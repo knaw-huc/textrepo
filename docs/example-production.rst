@@ -3,11 +3,9 @@
 Production Setup Example
 ========================
 
-To keep production data safe, create a production docker-compose file which:
-
-- does not run the concordion tests
-- saves database and index data into its own 'production'-volumes
-
+In production we want to:
+ - backup and restore production data
+ - run integration tests without touching production data
 
 See: ``./example/production/``.
 
