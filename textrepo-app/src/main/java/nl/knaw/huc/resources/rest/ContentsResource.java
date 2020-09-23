@@ -51,8 +51,9 @@ public class ContentsResource {
 
     log.debug("Got contents: {}", contents);
 
+    final byte[] payload = contents.decompressIfCompressedSizeLessThan(2 * 1024 * 1024);
     return Response
-        .ok(contents.getContents(), APPLICATION_OCTET_STREAM)
+        .ok(payload, APPLICATION_OCTET_STREAM)
         .header("Content-Disposition", "attachment;")
         .build();
   }

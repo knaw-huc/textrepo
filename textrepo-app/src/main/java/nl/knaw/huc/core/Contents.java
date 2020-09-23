@@ -42,16 +42,26 @@ public class Contents {
     return contents;
   }
 
+  public byte[] decompressIfCompressedSizeLessThan(int limit) {
+    if (isGzipped(contents) && contents.length < limit) {
+      return decompress();
+    }
+    return contents;
+  }
+
   public String asUtf8String() {
     if (isGzipped(contents)) {
-      try {
-        final GZIPInputStream gis = new GZIPInputStream(new ByteArrayInputStream(contents));
-        return new String(gis.readAllBytes(), StandardCharsets.UTF_8);
-      } catch (IOException e) {
-        throw new BadRequestException("Could not gunzip contents", e);
-      }
+      return new String(decompress(), StandardCharsets.UTF_8);
     }
     return new String(contents, StandardCharsets.UTF_8);
+  }
+
+  private byte[] decompress() {
+    try {
+      return new GZIPInputStream(new ByteArrayInputStream(contents)).readAllBytes();
+    } catch (IOException e) {
+      throw new BadRequestException("Could not decompress GZIP data", e);
+    }
   }
 
   public String peekContents() {
