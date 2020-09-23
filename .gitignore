@@ -8,7 +8,7 @@ dependency-reduced-pom.xml
 **/spacy-ner/model
 docker-compose-local.yml
 
-# ignore local docker-compose settings:
+# ignore local docker-compose set-up:
 /docker-compose.env
 /docker-compose*.yml
 /start*.sh
