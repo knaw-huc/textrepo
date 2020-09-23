@@ -6,4 +6,9 @@ dependency-reduced-pom.xml
 **/__pycache__
 *.swp
 **/spacy-ner/model
-docker-compose-local.yml
+
+# ignore local docker-compose set-up:
+/docker-compose.env
+/docker-compose*.yml
+/start*.sh
+/stop*.sh

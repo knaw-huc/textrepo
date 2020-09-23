@@ -8,7 +8,9 @@ public class PsqlExceptionHelper {
     // These constraints are named postgres constraints, from "postgres/initdb/02-init.sql"
     FILES_TYPE_ID("files_type_id_fkey"),
     VERSIONS_CONTENTS_SHA("versions_contents_sha_fkey"),
-    DOCUMENTS_EXTERNAL_ID_KEY("documents_external_id_key");
+    DOCUMENTS_EXTERNAL_ID_KEY("documents_external_id_key"),
+    DOCUMENTS_METADATA_DOCUMENT_ID_FKEY("documents_metadata_document_id_fkey"),
+    FILES_METADATA_FILE_ID_FKEY("files_metadata_file_id_fkey");
 
     private final String name;
 

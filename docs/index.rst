@@ -3,12 +3,12 @@
 |tr|
 ===============
 
-|tr| offers an API to store, index and retrieve texts, including their versions, formats and metadata.
+|tr| offers an API to store, version and index the texts and metadata of a corpus.
 
 Features
 --------
 
-- Store texts in a uniform domain model
+- Store texts of a corpus in a uniform `domain model <domain-model.html>`_:
    - Keep track of file versions
    - Link all file types to the same source document
    - Store metadata about documents and files
@@ -16,26 +16,34 @@ Features
 - Search files using stock and custom `elasticsearch <https://www.elastic.co/elasticsearch/>`_ indexes
 - Explore API with `concordion <https://concordion.org/>`_ and `swagger <https://swagger.io/>`_
 
+
+----
+
+.. figure:: textrepo-overview.png
+
+   Schematic overview of the |TR|: **a)** search in corpus; **b+c)** manage file types, versions and metadata of corpus; **d+e)** build custom indexes that are automatically kept in sync with corpus; **f+g)** store all data in a unified database model.
+
+
 Installation
 ------------
 
 Prerequisites: docker-compose.
 
-To install the |tr| locally, run in a new directory: ::
+To run the |tr| locally, run in a new directory: ::
 
-    $ git clone https://github.com/knaw-huc/textrepo .
-    $ docker-compose up
+    git clone https://github.com/knaw-huc/textrepo .
+    cd examples/production
+    ./start-prod.sh
 
-
-`Read more <usage.html>`_
+Read more on `basic usage <usage.html>`_
 
 Documentation
 -------------
 .. toctree::
     :maxdepth: 2
 
-    Overview <overview>
-    Basic usage <usage>
+    Basic Usage <usage>
+    Domain model <domain-model>
     Components <components>
     Rest and Tasks API <tr-api>
     Indexing <indexing>

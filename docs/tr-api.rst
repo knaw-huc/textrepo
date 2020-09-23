@@ -3,7 +3,7 @@
 |tr| API
 ========
 
-The |tr| has a REST-full api to retrieve, create, update and delete resources. For certain complex activities a ``task``-endpoint has been created.
+The |tr| has a REST-full api to retrieve, create, update and delete resources as depicted in its `domain model <domain-model.html>`_. For certain complex activities a ``task``-endpoint has been created.
 
 To explore the API, start up the |tr| locally, and checkout swagger or the integration :ref:`endpoints`.
 

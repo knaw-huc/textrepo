@@ -1,5 +1,7 @@
 package nl.knaw.huc.resources.task;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import nl.knaw.huc.service.task.TaskBuilderFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +12,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
+@Api(tags = {"task", "documents"})
 @Path("/task/delete")
 public class DeleteDocumentResource {
 
@@ -22,6 +25,8 @@ public class DeleteDocumentResource {
   }
 
   @DELETE
+  @ApiOperation(value = "Delete a document including its metadata, files, versions and contents. " +
+      "Contents are only only deleted when not referenced by any other versions.")
   @Path("documents/{externalId}")
   public Response deleteDocument(
       @NotBlank @PathParam("externalId") String externalId

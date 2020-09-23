@@ -5,6 +5,7 @@ import nl.knaw.huc.textrepo.util.RestUtils;
 
 import static javax.ws.rs.client.Entity.entity;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
+import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
 import static nl.knaw.huc.textrepo.util.TestUtils.asPrettyJson;
 import static nl.knaw.huc.textrepo.util.TestUtils.replaceUrlParams;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
@@ -30,7 +31,7 @@ public class TestRestFileMetadata extends AbstractConcordionTest {
     final var response = client
         .target(replaceUrlParams(endpoint, id, key))
         .request()
-        .put(entity(value.toString(), APPLICATION_JSON_TYPE));
+        .put(entity(value.toString(), TEXT_PLAIN));
 
     var result = new CreateResult();
     result.status = response.getStatus();
@@ -70,7 +71,7 @@ public class TestRestFileMetadata extends AbstractConcordionTest {
     final var response = client
         .target(replaceUrlParams(endpoint, docId, metadataKey))
         .request()
-        .put(entity(updatedMetadataValue.toString(), APPLICATION_JSON_TYPE));
+        .put(entity(updatedMetadataValue.toString(), TEXT_PLAIN));
 
     var result = new UpdateResult();
     result.status = response.getStatus();

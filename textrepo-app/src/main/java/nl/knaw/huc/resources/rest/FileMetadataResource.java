@@ -27,6 +27,7 @@ import javax.ws.rs.core.Response;
 import java.util.UUID;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
 
 @Api(tags = {"files", "metadata"})
 @Path("/rest/files/{fileId}/metadata")
@@ -66,7 +67,7 @@ public class FileMetadataResource {
   @PUT
   @Path("/{key}")
   @Timed
-  @Consumes(APPLICATION_JSON)
+  @Consumes(TEXT_PLAIN)
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Create or update file metadata entry")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})

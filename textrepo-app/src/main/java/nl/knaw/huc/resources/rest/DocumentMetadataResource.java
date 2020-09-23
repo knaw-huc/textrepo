@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
 
 @Api(tags = {"documents", "metadata"})
 @Path("/rest/documents/{docId}/metadata")
@@ -67,7 +68,7 @@ public class DocumentMetadataResource {
   @PUT
   @Path("/{key}")
   @Timed
-  @Consumes(APPLICATION_JSON)
+  @Consumes(TEXT_PLAIN)
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Create or update document metadata entry")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
