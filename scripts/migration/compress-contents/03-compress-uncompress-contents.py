@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
 
 import gzip
-import json
 import os
 import psycopg2         # may require pip/pip3 install?
 import psycopg2.extras  # for DictCursor
-import requests
 
 textrepo = 'http://localhost:8080/textrepo'
 
