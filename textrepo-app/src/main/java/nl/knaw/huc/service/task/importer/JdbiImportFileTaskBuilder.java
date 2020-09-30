@@ -67,7 +67,7 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
   }
 
   @Override
-  public ImportFileTaskBuilder withInputStream(InputStream inputStream) {
+  public ImportFileTaskBuilder withContents(InputStream inputStream) {
     this.inputStream = inputStream;
     return this;
   }

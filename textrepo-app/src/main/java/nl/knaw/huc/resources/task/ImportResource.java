@@ -66,8 +66,7 @@ public class ImportResource {
                                   .forExternalId(externalId)
                                   .withTypeName(typeName)
                                   .forFilename(fileDetail.getFileName())
-                                  .withInputStream(uploadedInputStream)
-                                  // .withContents(readContents(uploadedInputStream, maxPayloadSize))
+                                  .withContents(uploadedInputStream)
                                   .build();
 
     importTask.run();

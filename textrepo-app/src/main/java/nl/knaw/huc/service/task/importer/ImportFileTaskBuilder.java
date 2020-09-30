@@ -14,7 +14,7 @@ public interface ImportFileTaskBuilder {
 
   ImportFileTaskBuilder forFilename(String name);
 
-  ImportFileTaskBuilder withInputStream(InputStream inputStream);
+  ImportFileTaskBuilder withContents(InputStream inputStream);
 
   Task<Version> build();
 }
