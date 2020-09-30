@@ -24,8 +24,12 @@ restore_volume() {
   # create named but still empty volume:
   docker volume create $volume
 
-  # create dummy alpine container with volume, and unpack archive in it:
-  docker run --rm -v $volume:/recover -v $backup_dir:/backup alpine /bin/sh -c "cd /recover && tar xvf /backup/$archive_name"
+  # create dummy alpine container with volume, and unpack archive in it (using gnu instead of busybox tar):
+  docker run --rm \
+    -v $volume:/recover \
+    -v $backup_dir:/backup \
+    alpine \
+    /bin/sh -c "apk add --no-cache tar && cd /recover && tar xvf /backup/$archive_name"
 }
 
 restore_es_snapshot() {
@@ -33,7 +37,7 @@ restore_es_snapshot() {
   # must not run:
   local container=${1}
 
-  # must not run:
+  # directory containing snapshot repository:
   local container_dir=${2}
 
   # container as named in docker-compose:
