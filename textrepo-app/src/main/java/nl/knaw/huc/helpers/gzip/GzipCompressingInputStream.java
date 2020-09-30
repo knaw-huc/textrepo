@@ -12,10 +12,10 @@ import java.util.zip.GZIPOutputStream;
  * OutputStream. If we want more "pipe like" behaviour where input
  * is compressed on the fly, we need to wrap that incoming InputStream
  * with a compressor which again yields an InputStream.
- * <p>
- * This class gzip-compresses an InputStream yielding an InputStream again.
- * <p>
- * See also https://stackoverflow.com/questions/11036280/compress-an-inputstream-with-gzip
+ *
+ * <p>This class gzip-compresses an InputStream yielding an InputStream again.
+ *
+ * <p>See also https://stackoverflow.com/questions/11036280/compress-an-inputstream-with-gzip
  */
 public class GzipCompressingInputStream extends InputStream {
   private final InputStream in;
