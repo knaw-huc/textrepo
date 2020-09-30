@@ -12,6 +12,12 @@ import java.security.MessageDigest;
 
 import static org.apache.commons.codec.digest.MessageDigestAlgorithms.SHA_224;
 
+/**
+ * Compute (sha224) digest over the contents of an InputStream.
+ * For large files, first reading all bytes then computing digest
+ * over the consumed bytes becomes infeasible memory-wise.
+ * This class computes digest on-the-fly.
+ */
 public class DigestComputingInputStream extends FilterInputStream {
   private final MessageDigest digest;
 
