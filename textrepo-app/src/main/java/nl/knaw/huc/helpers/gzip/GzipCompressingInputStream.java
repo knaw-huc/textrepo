@@ -58,7 +58,7 @@ public class GzipCompressingInputStream extends InputStream {
   @Override
   public int read(@Nonnull byte[] data, int off, int len) throws IOException {
     compressStream();
-    int numBytes = Math.min(len, write - read);
+    var numBytes = Math.min(len, write - read);
     if (numBytes > 0) {
       System.arraycopy(buf, read, data, off, numBytes);
       read += numBytes;
@@ -90,7 +90,7 @@ public class GzipCompressingInputStream extends InputStream {
 
     while (write == 0) {
       // feed the gzip stream data until it spits out a block
-      int val = in.read(readBuf);
+      var val = in.read(readBuf);
       if (val == -1) {
         // nothing left to do, we've hit the end of the stream. finalize and break out
         gz.close();
