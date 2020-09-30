@@ -6,6 +6,17 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.zip.GZIPOutputStream;
 
+
+/**
+ * When compressing, the available gzip helper classes all yield an
+ * OutputStream. If we want more "pipe like" behaviour where input
+ * is compressed on the fly, we need to wrap that incoming InputStream
+ * with a compressor which again yields an InputStream.
+ * <p>
+ * This class gzip-compresses an InputStream yielding an InputStream again.
+ * <p>
+ * See also https://stackoverflow.com/questions/11036280/compress-an-inputstream-with-gzip
+ */
 public class GzipCompressingInputStream extends InputStream {
   private final InputStream in;
   private final GZIPOutputStream gz;
