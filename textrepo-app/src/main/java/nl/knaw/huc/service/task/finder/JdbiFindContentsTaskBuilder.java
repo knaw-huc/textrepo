@@ -56,7 +56,7 @@ public class JdbiFindContentsTaskBuilder implements FindContentsTaskBuilder {
         var result = new LatestFileContents();
         result.setFileId(file.getId());
         result.setTypeId(file.getTypeId());
-        result.setContents(contents.getContents());
+        result.setContents(contents);
         return result;
       });
     }

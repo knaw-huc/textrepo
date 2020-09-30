@@ -29,7 +29,6 @@ import static nl.knaw.huc.resources.HeaderLink.Uri.DOCUMENT_METADATA;
 import static nl.knaw.huc.resources.HeaderLink.Uri.FILE;
 import static nl.knaw.huc.resources.HeaderLink.Uri.FILE_METADATA;
 import static nl.knaw.huc.resources.HeaderLink.Uri.FILE_VERSIONS;
-import static nl.knaw.huc.service.contents.ContentsService.abbreviateMiddle;
 
 /**
  * The /find-task finds resources by external id and possible other parameters
@@ -127,14 +126,14 @@ public class FindResource {
         .build();
 
     final var result = task.run();
-    final var bytes = result.getContents();
-    log.debug("Got latest version contents: {}", abbreviateMiddle(bytes));
+    final var contents = result.getContents();
+    log.debug("Got latest version contents: {}", contents);
 
     final var fileId = result.getFileId();
     final var typeId = result.getTypeId();
-
+    final var payload = contents.decompressIfCompressedSizeLessThan(2 * 1024 * 1024);
     return Response
-        .ok(bytes, APPLICATION_OCTET_STREAM)
+        .ok(payload, APPLICATION_OCTET_STREAM)
         .link(FILE_VERSIONS.build(fileId), VERSION_HISTORY)
         .link(FILE.build(fileId), UP)
         .link(Uri.TYPE.build(typeId), Rel.TYPE)

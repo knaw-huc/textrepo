@@ -52,6 +52,7 @@ import nl.knaw.huc.service.type.TypeService;
 import nl.knaw.huc.service.version.JdbiVersionService;
 import nl.knaw.huc.service.version.content.JdbiVersionContentsService;
 import org.jdbi.v3.core.Jdbi;
+import org.jdbi.v3.postgres.PostgresPlugin;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -139,7 +140,7 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
         new DeleteDocumentResource(taskBuilderFactory),
         new FilesResource(fileService),
         new DocumentFilesResource(documentFilesService, paginator),
-        new VersionsResource(versionService, maxPayloadSize),
+        new VersionsResource(versionService),
         new VersionContentsResource(versionContentsService),
         new FindResource(taskBuilderFactory),
         new DashboardResource(dashboardService, paginator),
@@ -188,6 +189,7 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
         "postgresql"
     );
     jdbi.installPlugin(new SqlObjectPlugin());
+    jdbi.installPlugin(new PostgresPlugin());
     return jdbi;
   }
 

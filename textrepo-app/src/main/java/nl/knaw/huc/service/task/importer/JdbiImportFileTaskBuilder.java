@@ -3,6 +3,7 @@ package nl.knaw.huc.service.task.importer;
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.core.Version;
+import nl.knaw.huc.resources.ResourceUtils;
 import nl.knaw.huc.service.task.FindDocumentByExternalId;
 import nl.knaw.huc.service.task.HaveDocumentByExternalId;
 import nl.knaw.huc.service.task.HaveFileForDocumentByType;
@@ -11,14 +12,18 @@ import nl.knaw.huc.service.task.SetCurrentFileContents;
 import nl.knaw.huc.service.task.SetFileProvenance;
 import nl.knaw.huc.service.task.Task;
 import org.jdbi.v3.core.Jdbi;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.InputStream;
 import java.util.UUID;
 import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
-import static nl.knaw.huc.core.Contents.fromBytes;
 
 public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
+  private static final Logger log = LoggerFactory.getLogger(JdbiImportFileTaskBuilder.class);
+
   private final Jdbi jdbi;
   private final Supplier<UUID> documentIdGenerator;
   private final Supplier<UUID> fileIdGenerator;
@@ -27,8 +32,8 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
   private String externalId;
   private String typeName;
   private String filename;
-  private byte[] contents;
   private boolean allowNewDocument;
+  private InputStream inputStream;
 
   public JdbiImportFileTaskBuilder(Jdbi jdbi, Supplier<UUID> idGenerator) {
     this.jdbi = requireNonNull(jdbi);
@@ -62,8 +67,8 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
   }
 
   @Override
-  public ImportFileTaskBuilder withContents(byte[] contents) {
-    this.contents = requireNonNull(contents);
+  public ImportFileTaskBuilder withContents(InputStream inputStream) {
+    this.inputStream = inputStream;
     return this;
   }
 
@@ -75,31 +80,37 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
     } else {
       documentFinder = new FindDocumentByExternalId(externalId);
     }
-    return new JdbiImportDocumentTask(documentFinder, typeName, filename, fromBytes(contents));
+    return new JdbiImportDocumentTask(documentFinder, typeName, filename, inputStream);
   }
 
   private class JdbiImportDocumentTask implements Task<Version> {
     private final InTransactionProvider<Document> documentFinder;
     private final String typeName;
     private final String filename;
-    private final Contents contents;
+    private final InputStream inputStream;
 
     private JdbiImportDocumentTask(InTransactionProvider<Document> documentFinder,
-                                   String typeName, String filename, Contents contents) {
+                                   String typeName, String filename, InputStream inputStream) {
       this.documentFinder = documentFinder;
       this.typeName = typeName;
       this.filename = filename;
-      this.contents = contents;
+      this.inputStream = inputStream;
     }
 
     @Override
     public Version run() {
+      // To keep transaction time to a minimum, construct new Content object first, outside the transaction
+      final Contents contents = ResourceUtils.readContents(inputStream);
+
+      // Now that 'contents' is ready, enter transaction to update document, file, version and contents
       return jdbi.inTransaction(transaction -> {
-        final Document doc = documentFinder.executeIn(transaction);
+        final var doc = documentFinder.executeIn(transaction);
         final var file = new HaveFileForDocumentByType(fileIdGenerator, doc, typeName).executeIn(transaction);
         new SetFileProvenance(file, filename).executeIn(transaction);
         return new SetCurrentFileContents(versionIdGenerator, file, contents).executeIn(transaction);
       });
     }
+
   }
+
 }
