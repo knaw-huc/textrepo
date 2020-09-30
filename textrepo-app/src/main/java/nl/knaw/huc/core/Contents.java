@@ -5,9 +5,14 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 
 import javax.annotation.Nonnull;
+import javax.ws.rs.BadRequestException;
 import java.beans.ConstructorProperties;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.zip.GZIPInputStream;
 
+import static nl.knaw.huc.helpers.gzip.GzipHelper.isGzipped;
 import static nl.knaw.huc.service.contents.ContentsService.abbreviateMiddle;
 
 /**
@@ -37,8 +42,48 @@ public class Contents {
     return contents;
   }
 
+  public byte[] decompressIfCompressedSizeLessThan(int limit) {
+    if (isGzipped(contents) && contents.length < limit) {
+      return decompress();
+    }
+    return contents;
+  }
+
   public String asUtf8String() {
+    if (isGzipped(contents)) {
+      return new String(decompress(), StandardCharsets.UTF_8);
+    }
     return new String(contents, StandardCharsets.UTF_8);
+  }
+
+  private byte[] decompress() {
+    try {
+      return new GZIPInputStream(new ByteArrayInputStream(contents)).readAllBytes();
+    } catch (IOException e) {
+      throw new BadRequestException("Could not decompress GZIP data", e);
+    }
+  }
+
+  // toString helper to peek into the contents. If compressed show some initial bytes,
+  // if decompressed show head, abbreviated middle part and tail of the contents.
+  // Mostly used / useful in having some indicator of the contents in log files
+  private String peekContents() {
+    if (isGzipped(contents)) {
+      final StringBuilder buf = new StringBuilder(64).append("[gzip] ");
+      final int maxLength = Math.min(contents.length, 16);
+      for (int i = 0; i < maxLength; i++) {
+        buf.append(String.format("%02x", contents[i]));
+        if (i < maxLength - 1) {
+          buf.append(',');
+        }
+      }
+      if (contents.length > maxLength) {
+        buf.append('\u2026'); // ellipsis
+      }
+      return buf.toString();
+    }
+
+    return abbreviateMiddle(contents);
   }
 
   @Override
@@ -46,7 +91,7 @@ public class Contents {
     return MoreObjects
         .toStringHelper(this)
         .add("sha224", sha224)
-        .add("contents", abbreviateMiddle(this.contents))
+        .add("contents", peekContents())
         .toString();
   }
 }

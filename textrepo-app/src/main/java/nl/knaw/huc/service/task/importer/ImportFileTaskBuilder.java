@@ -3,6 +3,8 @@ package nl.knaw.huc.service.task.importer;
 import nl.knaw.huc.core.Version;
 import nl.knaw.huc.service.task.Task;
 
+import java.io.InputStream;
+
 public interface ImportFileTaskBuilder {
   ImportFileTaskBuilder allowNewDocument(boolean allowNewDocument);
 
@@ -12,7 +14,7 @@ public interface ImportFileTaskBuilder {
 
   ImportFileTaskBuilder forFilename(String name);
 
-  ImportFileTaskBuilder withContents(byte[] contents);
+  ImportFileTaskBuilder withContents(InputStream inputStream);
 
   Task<Version> build();
 }
