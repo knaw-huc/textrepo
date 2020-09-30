@@ -1,6 +1,7 @@
 package nl.knaw.huc.service.index;
 
 import nl.knaw.huc.core.TextRepoFile;
+import nl.knaw.huc.resources.HeaderLink;
 import nl.knaw.huc.service.type.TypeService;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.action.index.IndexRequest;
@@ -28,6 +29,8 @@ import java.util.UUID;
 import static java.lang.String.format;
 import static java.lang.String.join;
 import static javax.ws.rs.client.Entity.entity;
+import static nl.knaw.huc.resources.HeaderLink.Rel.ORIGINAL;
+import static nl.knaw.huc.resources.HeaderLink.Uri.FILE;
 import static nl.knaw.huc.service.index.FieldsType.MULTIPART;
 import static org.elasticsearch.common.xcontent.XContentType.JSON;
 
@@ -40,9 +43,16 @@ import static org.elasticsearch.common.xcontent.XContentType.JSON;
  * MappedFileIndexer depends on a REST-service with the following two endpoints:
  * - GET `mapping`
  * - POST `fields`. Files can be posted in two ways:
- * - `original`: POST request with a body containing the file and a Content-Type header containing the file mimetype
- * - `multipart`: POST request with a multipart Content-Type header and a multipart body with one body part containing
- * a Content-Type header with the file mimetype and a
+ * - `original`, POST request with:
+ *    - content-type header with file mimetype
+ *    - link header with url to file resource
+ *    - body containing the file
+ * - `multipart`, POST request with:
+ *    - content-type header with 'multipart/form-data'
+ *    - link header with url to file resource
+ *    - body part named 'file' with:
+ *      - file contents
+ *      - content-type header with file mimetype.
  * MappedFileIndexer is configured in config.yml
  */
 public class MappedIndexer implements Indexer {
@@ -102,7 +112,7 @@ public class MappedIndexer implements Indexer {
       return Optional.empty();
     }
 
-    var response = getFields(latestVersionContents, mimetype);
+    var response = getFields(latestVersionContents, mimetype, file.getId());
     var esFacets = response.readEntity(String.class);
 
     var fieldStatusComplaint = checkFieldStatus(response, esFacets);
@@ -131,12 +141,12 @@ public class MappedIndexer implements Indexer {
     }
   }
 
-  private Response getFields(@Nonnull String latestVersionContents, String mimetype) {
+  private Response getFields(@Nonnull String latestVersionContents, String mimetype, UUID fileId) {
     switch (config.fields.type) {
       case ORIGINAL:
-        return getFieldsOriginal(latestVersionContents, mimetype);
+        return getFieldsOriginal(latestVersionContents, mimetype, fileId);
       case MULTIPART:
-        return getFieldsMultipart(latestVersionContents, mimetype);
+        return getFieldsMultipart(latestVersionContents, mimetype, fileId);
       default:
         throw new IllegalStateException(format(
             "Fields type [%s] of [%s] does not exist",
@@ -146,18 +156,19 @@ public class MappedIndexer implements Indexer {
     }
   }
 
-  private Response getFieldsOriginal(@Nonnull String latestVersionContents, String mimetype) {
+  private Response getFieldsOriginal(@Nonnull String latestVersionContents, String mimetype, UUID fileId) {
     return requestClient
         .target(config.fields.url)
         .request()
+        .header("Link", HeaderLink.create(ORIGINAL, FILE, fileId))
         .post(entity(latestVersionContents, mimetype));
   }
 
-  private Response getFieldsMultipart(@Nonnull String latestVersionContents, String mimetype) {
-    return postMultipart(latestVersionContents.getBytes(), mimetype);
+  private Response getFieldsMultipart(@Nonnull String latestVersionContents, String mimetype, UUID fileId) {
+    return postMultipart(latestVersionContents.getBytes(), mimetype, fileId);
   }
 
-  private Response postMultipart(byte[] bytes, String mimetype) {
+  private Response postMultipart(byte[] bytes, String mimetype, UUID fileId) {
     var contentDisposition = FormDataContentDisposition
         .name("file")
         .size(bytes.length)
@@ -168,7 +179,8 @@ public class MappedIndexer implements Indexer {
 
     var request = requestClient
         .target(config.fields.url)
-        .request();
+        .request()
+        .header("Link", HeaderLink.create(ORIGINAL, FILE, fileId));
 
     var entity = entity(multiPart, multiPart.getMediaType());
 
