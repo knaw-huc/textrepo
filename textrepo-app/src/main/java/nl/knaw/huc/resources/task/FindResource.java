@@ -138,7 +138,7 @@ public class FindResource {
 
     final var result = task.run();
     final var contents = result.getContents();
-    log.debug("Got latest version contents: {}", contents.peekContents());
+    log.debug("Got latest version contents: {}", contents);
 
     final var fileId = result.getFileId();
     final var typeId = result.getTypeId();

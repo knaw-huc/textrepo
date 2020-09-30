@@ -64,7 +64,10 @@ public class Contents {
     }
   }
 
-  public String peekContents() {
+  // toString helper to peek into the contents. If compressed show some initial bytes,
+  // if decompressed show head, abbreviated middle part and tail of the contents.
+  // Mostly used / useful in having some indicator of the contents in log files
+  private String peekContents() {
     if (isGzipped(contents)) {
       final StringBuilder buf = new StringBuilder(64).append("[gzip] ");
       final int maxLength = Math.min(contents.length, 16);
