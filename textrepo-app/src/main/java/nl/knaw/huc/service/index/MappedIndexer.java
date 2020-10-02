@@ -45,14 +45,14 @@ import static org.elasticsearch.common.xcontent.XContentType.JSON;
  * - POST `fields`. Files can be posted in two ways:
  * - `original`, POST request with:
  *    - content-type header with file mimetype
- *    - link header with url to file resource
+ *    - link header with rel=origin and url to file resource
  *    - body containing the file
  * - `multipart`, POST request with:
  *    - content-type header with 'multipart/form-data'
- *    - link header with url to file resource
  *    - body part named 'file' with:
- *      - file contents
  *      - content-type header with file mimetype.
+ *      - link header with rel=origin and url to file resource
+ *      - file contents
  * MappedFileIndexer is configured in config.yml
  */
 public class MappedIndexer implements Indexer {
@@ -174,13 +174,15 @@ public class MappedIndexer implements Indexer {
         .size(bytes.length)
         .build();
 
-    var multiPart = new FormDataMultiPart()
-        .bodyPart(new FormDataBodyPart(contentDisposition, bytes, MediaType.valueOf(mimetype)));
+    var bodyPart = new FormDataBodyPart(contentDisposition, bytes, MediaType.valueOf(mimetype));
+    var originLink = HeaderLink.create(ORIGINAL, FILE, fileId).toString();
+    bodyPart.getHeaders().add("Link", originLink);
+
+    var multiPart = new FormDataMultiPart().bodyPart(bodyPart);
 
     var request = requestClient
         .target(config.fields.url)
-        .request()
-        .header("Link", HeaderLink.create(ORIGINAL, FILE, fileId));
+        .request();
 
     var entity = entity(multiPart, multiPart.getMediaType());
 
