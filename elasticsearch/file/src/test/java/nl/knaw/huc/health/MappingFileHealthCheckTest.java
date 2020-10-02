@@ -1,7 +1,7 @@
 package nl.knaw.huc.health;
 
 import nl.knaw.huc.FileConfiguration;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 

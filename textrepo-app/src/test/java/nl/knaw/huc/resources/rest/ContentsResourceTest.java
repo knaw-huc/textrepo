@@ -38,7 +38,6 @@ public class ContentsResourceTest {
 
   public static final ResourceExtension resource = ResourceExtension
       .builder()
-      .addProvider(MultiPartFeature.class)
       .addResource(new ContentsResource(new ContentsService(FILE_STORAGE)))
       .build();
 

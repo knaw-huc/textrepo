@@ -72,7 +72,8 @@ public class FileResource {
 
     return Response
         .status(200)
-        .entity(fields).build();
+        .entity(fields)
+        .build();
   }
 
 }

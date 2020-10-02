@@ -60,7 +60,6 @@ public class LoggingTest {
 
   public static DropwizardAppExtension<TextRepoConfiguration> application;
 
-
   /*
     To test logging: create test app with DocumentResource and custom config and file logger
    */
