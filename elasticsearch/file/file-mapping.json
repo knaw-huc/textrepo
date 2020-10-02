@@ -1,0 +1,73 @@
+{
+  "mappings": {
+    "dynamic": false,
+    "properties": {
+      "id": {
+        "type": "keyword"
+      },
+      "docExternalId": {
+        "type": "keyword"
+      },
+      "docId": {
+        "type": "keyword"
+      },
+      "mimetype": {
+        "type": "keyword"
+      },
+      "type": {
+        "type": "keyword"
+      },
+      "docMetadata": {
+        "type": "nested",
+        "properties": {
+          "key": {
+            "type": "keyword"
+          },
+          "value": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      },
+      "fileMetadata": {
+        "type": "nested",
+        "properties": {
+          "key": {
+            "type": "keyword"
+          },
+          "value": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      },
+      "versions": {
+        "type": "nested",
+        "properties": {
+          "createdAt": {
+            "type": "date"
+          },
+          "id": {
+            "type": "keyword"
+          },
+          "sha": {
+            "type": "keyword"
+          },
+          "contentsChanged": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  }
+}

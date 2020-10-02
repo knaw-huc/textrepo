@@ -1,0 +1,6 @@
+{
+  "mappings": {
+    "foo": true,
+    "bar": false
+  }
+}
