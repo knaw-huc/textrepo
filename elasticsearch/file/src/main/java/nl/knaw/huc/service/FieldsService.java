@@ -12,8 +12,6 @@ public class FieldsService {
   }
 
   public Fields createFields(
-      @NotNull InputStream inputStream,
-      String mimetype,
       UUID fileId
   ) {
     return new Fields(fileId);

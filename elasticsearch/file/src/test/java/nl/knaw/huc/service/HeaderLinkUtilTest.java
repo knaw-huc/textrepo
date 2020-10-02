@@ -11,7 +11,7 @@ public class HeaderLinkUtilTest {
   @Test
   public void extractId_shouldExtractUuid() {
     var expected = UUID.randomUUID();
-    var extracted = HeaderLinkUtil.extractId("</rest/files/" + expected + ">; rel=\"original\"");
+    var extracted = HeaderLinkUtil.extractUuid("</rest/files/" + expected + ">; rel=\"original\"");
     assertThat(extracted).isEqualTo(expected);
   }
 

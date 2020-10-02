@@ -13,7 +13,7 @@ public class HeaderLinkUtil {
   /**
    * Extract file UUID from header link
    */
-  public static UUID extractId(String headerLinkValue) {
+  public static UUID extractUuid(String headerLinkValue) {
     var url = Link.valueOf(headerLinkValue).getUri().toString();
     var matcher = UUID_PATTERN.matcher(url);
     if (!matcher.find()) {

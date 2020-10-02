@@ -17,7 +17,7 @@ import java.io.InputStream;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
-import static nl.knaw.huc.service.HeaderLinkUtil.extractId;
+import static nl.knaw.huc.service.HeaderLinkUtil.extractUuid;
 
 @Path("/file")
 public class FileResource {
@@ -50,7 +50,6 @@ public class FileResource {
   @Consumes(MULTIPART_FORM_DATA)
   @Produces(APPLICATION_JSON)
   public Response fields(
-      @FormDataParam("file") InputStream inputStream,
       @NotNull @FormDataParam("file") FormDataBodyPart body
   ) {
 
@@ -65,9 +64,7 @@ public class FileResource {
     }
 
     var fields = fieldsService.createFields(
-        inputStream,
-        mimetype,
-        extractId(link)
+        extractUuid(link)
     );
 
     return Response
