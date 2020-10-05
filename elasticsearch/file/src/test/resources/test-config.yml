@@ -5,3 +5,4 @@ logging:
     org.hibernate: ERROR
 mappingFile: ./file-mapping.json
 textrepoHost: http://localhost:1080
+dateFormat: yyyy-MM-dd'T'HH:mm:ss

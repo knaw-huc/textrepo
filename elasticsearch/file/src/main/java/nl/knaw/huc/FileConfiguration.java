@@ -16,6 +16,10 @@ public class FileConfiguration extends Configuration {
   @NotNull
   private String textrepoHost;
 
+  @Valid
+  @NotNull
+  private String dateFormat;
+
   @JsonProperty("mappingFile")
   public String getMappingFile() {
     return mappingFile;
@@ -34,5 +38,15 @@ public class FileConfiguration extends Configuration {
   @JsonProperty("textrepoHost")
   public void setTextrepoHost(String textrepoHost) {
     this.textrepoHost = textrepoHost;
+  }
+
+  @JsonProperty("dateFormat")
+  public String getDateFormat() {
+    return dateFormat;
+  }
+
+  @JsonProperty("dateFormat")
+  public void setDateFormat(String dateFormat) {
+    this.dateFormat = dateFormat;
   }
 }

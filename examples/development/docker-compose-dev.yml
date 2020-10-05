@@ -98,6 +98,7 @@ services:
       - textrepo_network
     environment:
       INTERNAL_TR_HOST: ${INTERNAL_TR_HOST}
+      TR_DATE_FORMAT: ${TR_DATE_FORMAT}
     command: ["./wait-for-it.sh", "elasticsearch:9200",
               "--timeout=0",
               "--",

@@ -1,16 +1,8 @@
 package nl.knaw.huc.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.DocumentContext;
-import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ParseContext;
 import com.jayway.jsonpath.TypeRef;
-import com.jayway.jsonpath.spi.json.JacksonJsonNodeJsonProvider;
-import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import nl.knaw.huc.api.FormVersion;
 import nl.knaw.huc.api.ResultDoc;
 import nl.knaw.huc.api.ResultFields;
@@ -21,20 +13,17 @@ import nl.knaw.huc.exception.TextRepoRequestException;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 
 import javax.ws.rs.client.Client;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
 import static java.lang.String.format;
 
 public class FieldsService {
 
   private static final String FILE_ENDPOINT = "%s/rest/files/%s";
   private static final String FILE_METADATA_ENDPOINT = "%s/rest/files/%s/metadata";
+  private static final String DOC_ENDPOINT = "%s/rest/documents/%s";
   private static final String DOC_METADATA_ENDPOINT = "%s/rest/documents/%s/metadata";
   private static final String TYPE_ENDPOINT = "%s/rest/types/%s";
 
@@ -46,28 +35,14 @@ public class FieldsService {
   private final String textrepoHost;
   private final Client requestClient = JerseyClientBuilder.newClient();
 
-  private static final ObjectMapper objectMapper;
-  private static final ParseContext jsonPath;
+  private final ParseContext jsonPath;
 
-  static {
-    objectMapper = new ObjectMapper();
-    var format = "yyyy-MM-dd'T'HH:mm:ss";
-    objectMapper.setDateFormat(new SimpleDateFormat(format));
-    objectMapper.configure(FAIL_ON_UNKNOWN_PROPERTIES, false);
-    var module = new SimpleModule();
-    module.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(format));
-    module.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(format)));
-    objectMapper.registerModule(module);
-
-    jsonPath = JsonPath.using(Configuration
-        .builder()
-        .mappingProvider(new JacksonMappingProvider(objectMapper))
-        .jsonProvider(new JacksonJsonNodeJsonProvider(objectMapper))
-        .build());
-  }
-
-  public FieldsService(String textrepoHost) {
+  public FieldsService(
+      String textrepoHost,
+      ParseContext jsonPath
+  ) {
     this.textrepoHost = textrepoHost;
+    this.jsonPath = jsonPath;
   }
 
   public ResultFields createFields(UUID fileId) {
@@ -81,35 +56,51 @@ public class FieldsService {
 
     file.setId(fileId);
 
+    addFileResource(fileId, doc, type);
+    addFileMetadataResource(fileId, file);
+    addTypeResource(type);
+    addDocResource(doc);
+    addDocMetadataResource(fileId, doc);
+    addVersionsResource(fileId, fields);
+
+    return fields;
+  }
+
+  private void addFileResource(UUID fileId, ResultDoc doc, ResultType type) {
     var fileJson = getRestResource(FILE_ENDPOINT, fileId);
     doc.setId(UUID.fromString(read(fileJson, "$.docId")));
     type.setId(read(fileJson, "$.typeId"));
+  }
 
+  private void addFileMetadataResource(UUID fileId, ResultFile file) {
+    var fileMetadataJson = getRestResource(FILE_METADATA_ENDPOINT, fileId);
+    file.setMetadata(read(fileMetadataJson, "$"));
+  }
+
+  private void addTypeResource(ResultType type) {
     var typeJson = getRestResource(TYPE_ENDPOINT, type.getId());
     type.setName(read(typeJson, "$.name"));
     type.setMimetype(read(typeJson, "$.mimetype"));
+  }
 
-    var fileMetadataJson = getRestResource(FILE_METADATA_ENDPOINT, fileId);
-    file.setMetadata(read(fileMetadataJson, "$"));
+  private void addDocResource(ResultDoc doc) {
+    var docJson = getRestResource(DOC_ENDPOINT, doc.getId());
+    doc.setExternalId(read(docJson, "$.externalId"));
+  }
 
+  private void addDocMetadataResource(UUID fileId, ResultDoc doc) {
     var docMetadataJson = getRestResource(DOC_METADATA_ENDPOINT, fileId);
     doc.setMetadata(read(docMetadataJson, "$"));
+  }
 
+  private void addVersionsResource(UUID fileId, ResultFields fields) {
     var versionsJson = getRestResource(VERSIONS_ENDPOINT, fileId);
-    List<FormVersion> form = read(versionsJson, "$.items", new TypeRef<List<FormVersion>>() {});
+    var form = read(versionsJson, "$.items", new TypeRef<List<FormVersion>>() {});
     fields.setVersions(new ArrayList<>());
     for (var index = 0; index < form.size(); index++) {
       var result = createResultVersion(form, index);
       fields.getVersions().add(result);
     }
-
-    try {
-      System.out.println("versions? <<" + new ObjectMapper().writeValueAsString(fields.getVersions()) + ">>");
-    } catch (JsonProcessingException e) {
-      e.printStackTrace();
-    }
-
-    return fields;
   }
 
   private ResultVersion createResultVersion(List<FormVersion> formVersions, int index) {
@@ -137,7 +128,7 @@ public class FieldsService {
   }
 
   /**
-   * Read jsonpath in doc
+   * Read jsonpath in parsed doc
    * @throws TextRepoRequestException with msg containing path and json body
    */
   private <T> T read(DocumentContext doc, String path) {
@@ -145,6 +136,10 @@ public class FieldsService {
     return read(doc, path, typeRef);
   }
 
+  /**
+   * Read jsonpath in parsed doc with explicit type
+   * @throws TextRepoRequestException with msg containing path and json body
+   */
   private <T> T read(DocumentContext doc, String path, TypeRef<T> typeRef) {
     try {
       return doc.read(path, typeRef);

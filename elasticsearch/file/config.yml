@@ -5,3 +5,4 @@ logging:
     org.hibernate: ERROR
 mappingFile: ./file-mapping.json
 textrepoHost: ${INTERNAL_TR_HOST}
+dateFormat: ${TR_DATE_FORMAT}

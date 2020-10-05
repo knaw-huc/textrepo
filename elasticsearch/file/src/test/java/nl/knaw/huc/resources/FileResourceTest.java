@@ -118,21 +118,28 @@ public class FileResourceTest {
     assertThat(JsonPath.parse(fields).read("$.file.type.mimetype", String.class)).isEqualTo("application/test");
     assertThat(JsonPath.parse(fields).read("$.file.metadata.foo", String.class)).isEqualTo("bar");
     assertThat(JsonPath.parse(fields).read("$.file.metadata.spam", String.class)).isEqualTo("eggs");
+    assertThat(JsonPath.parse(fields).read("$.doc.id", String.class)).isEqualTo("99999999-f0a0-406e-b01b-b12b9df9a84c");
+    assertThat(JsonPath.parse(fields).read("$.doc.externalId", String.class))
+        .isEqualTo("dat-pak-melk-buiten-de-koelkast");
     assertThat(JsonPath.parse(fields).read("$.doc.metadata.docfoo", String.class)).isEqualTo("docbar");
     assertThat(JsonPath.parse(fields).read("$.doc.metadata.docspam", String.class)).isEqualTo("doceggs");
-
     assertThat(JsonPath.parse(fields).read("$.versions[0].id", String.class)).isEqualTo("33330128-02be-4938-ba84-8d9dd70e19a5");
     assertThat(JsonPath.parse(fields).read("$.versions[0].contentsChanged", Boolean.class)).isEqualTo(true);
+    assertThat(JsonPath.parse(fields).read("$.versions[0].createdAt", String.class)).isEqualTo("2000-01-03T00:00:00");
     assertThat(JsonPath.parse(fields).read("$.versions[1].id", String.class)).isEqualTo("22220128-02be-4938-ba84-8d9dd70e19a5");
     assertThat(JsonPath.parse(fields).read("$.versions[1].contentsChanged", Boolean.class)).isEqualTo(false);
+    assertThat(JsonPath.parse(fields).read("$.versions[1].createdAt", String.class)).isEqualTo("2000-01-02T00:00:00");
     assertThat(JsonPath.parse(fields).read("$.versions[2].id", String.class)).isEqualTo("11110128-02be-4938-ba84-8d9dd70e19a5");
     assertThat(JsonPath.parse(fields).read("$.versions[2].contentsChanged", Boolean.class)).isEqualTo(true);
+    assertThat(JsonPath.parse(fields).read("$.versions[2].createdAt", String.class)).isEqualTo("2000-01-01T00:00:00");
   }
 
   private void startTextrepoMockServer() throws IOException {
     mockEndpoint("/rest/files/[a-f0-9-]*", "textrepo-file.json");
 
     mockEndpoint("/rest/files/[a-f0-9-]*/metadata", "textrepo-file-metadata.json");
+
+    mockEndpoint("/rest/documents/[a-f0-9-]*", "textrepo-doc.json");
 
     mockEndpoint("/rest/documents/[a-f0-9-]*/metadata", "textrepo-doc-metadata.json");
 
