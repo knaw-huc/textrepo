@@ -104,57 +104,54 @@ public class FileResourceTest {
   @Test
   public void testFields_returnsFileId() throws IOException {
     startTextrepoMockServer();
-    var expectations = new ObjectMapper().writeValueAsString(mockServer.retrieveActiveExpectations(request()));
-    System.out.println("expectations: " + expectations);
     var fileContents = getResourceAsBytes("file.txt");
     var fileId = UUID.randomUUID().toString();
 
     var response = postTestContents(fileContents, "text/plain", fileId);
 
     var fields = response.readEntity(String.class);
+
     assertThat(response.getStatus()).isEqualTo(200);
     assertThat(JsonPath.parse(fields).read("$.file.id", String.class)).isEqualTo(fileId);
+    assertThat(JsonPath.parse(fields).read("$.file.type.id", Integer.class)).isEqualTo(3);
+    assertThat(JsonPath.parse(fields).read("$.file.type.name", String.class)).isEqualTo("test-type");
+    assertThat(JsonPath.parse(fields).read("$.file.type.mimetype", String.class)).isEqualTo("application/test");
     assertThat(JsonPath.parse(fields).read("$.file.metadata.foo", String.class)).isEqualTo("bar");
     assertThat(JsonPath.parse(fields).read("$.file.metadata.spam", String.class)).isEqualTo("eggs");
     assertThat(JsonPath.parse(fields).read("$.doc.metadata.docfoo", String.class)).isEqualTo("docbar");
     assertThat(JsonPath.parse(fields).read("$.doc.metadata.docspam", String.class)).isEqualTo("doceggs");
+
+    assertThat(JsonPath.parse(fields).read("$.versions[0].id", String.class)).isEqualTo("33330128-02be-4938-ba84-8d9dd70e19a5");
+    assertThat(JsonPath.parse(fields).read("$.versions[0].contentsChanged", Boolean.class)).isEqualTo(true);
+    assertThat(JsonPath.parse(fields).read("$.versions[1].id", String.class)).isEqualTo("22220128-02be-4938-ba84-8d9dd70e19a5");
+    assertThat(JsonPath.parse(fields).read("$.versions[1].contentsChanged", Boolean.class)).isEqualTo(false);
+    assertThat(JsonPath.parse(fields).read("$.versions[2].id", String.class)).isEqualTo("11110128-02be-4938-ba84-8d9dd70e19a5");
+    assertThat(JsonPath.parse(fields).read("$.versions[2].contentsChanged", Boolean.class)).isEqualTo(true);
   }
 
   private void startTextrepoMockServer() throws IOException {
+    mockEndpoint("/rest/files/[a-f0-9-]*", "textrepo-file.json");
+
+    mockEndpoint("/rest/files/[a-f0-9-]*/metadata", "textrepo-file-metadata.json");
+
+    mockEndpoint("/rest/documents/[a-f0-9-]*/metadata", "textrepo-doc-metadata.json");
+
+    mockEndpoint("/rest/types/[0-9]*", "textrepo-type.json");
+
+    mockEndpoint("/rest/files/[a-f0-9-]*/versions", "textrepo-versions.json");
+  }
+
+  private void mockEndpoint(String endpoint, String responseFilename) throws IOException {
     mockServer.when(
         request()
             .withMethod("GET")
-            .withPath("/rest/files/[a-f0-9-]*")
+            .withPath(endpoint)
     ).respond(
         response()
             .withStatusCode(200)
             .withHeader("content-type: application/json")
-            .withBody(getResourceAsBytes("textrepo-file.json"))
+            .withBody(getResourceAsBytes(responseFilename))
     );
-
-    mockServer.when(
-        request()
-            .withMethod("GET")
-            .withPath("/rest/files/[a-f0-9-]*/metadata")
-    ).respond(
-        response()
-            .withStatusCode(200)
-            .withHeader("content-type: application/json")
-            .withBody(getResourceAsBytes("textrepo-file-metadata.json"))
-    );
-
-    mockServer.when(
-        request()
-            .withMethod("GET")
-            .withPath("/rest/documents/[a-f0-9-]*/metadata")
-    ).respond(
-        response()
-            .withStatusCode(200)
-            .withHeader("content-type: application/json")
-            .withBody(getResourceAsBytes("textrepo-doc-metadata.json"))
-    );
-
-
   }
 
   private Response postTestContents(String bytes, String mimetype, String uuid) {
