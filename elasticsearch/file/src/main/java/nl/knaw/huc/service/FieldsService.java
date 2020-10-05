@@ -22,6 +22,7 @@ public class FieldsService {
 
   private static final String FILE_ENDPOINT = "%s/rest/files/%s";
   private static final String FILE_METADATA_ENDPOINT = "%s/rest/files/%s/metadata";
+  private static final String DOC_METADATA_ENDPOINT = "%s/rest/documents/%s/metadata";
 
   private final String textrepoHost;
   private final Client requestClient = JerseyClientBuilder.newClient();
@@ -54,6 +55,9 @@ public class FieldsService {
 
     var fileMetadata = getRestResource(FILE_METADATA_ENDPOINT, fileId);
     file.setMetadata(read(fileMetadata, "$"));
+
+    var docMetadata = getRestResource(DOC_METADATA_ENDPOINT, fileId);
+    doc.setMetadata(read(docMetadata, "$"));
 
     return fields;
   }

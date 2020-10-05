@@ -69,11 +69,7 @@ public class FileResource {
     var fileId = extractUuid(originLink);
 
     log.info("Create fields for: " + fileId);
-
-    var fields = fieldsService.createFields(
-        fileId
-    );
-
+    var fields = fieldsService.createFields(fileId);
     log.info("Got fields");
 
     return Response
