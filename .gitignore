@@ -8,7 +8,9 @@ dependency-reduced-pom.xml
 **/spacy-ner/model
 
 # ignore local docker-compose set-up:
+/backup*.sh
 /docker-compose.env
 /docker-compose*.yml
+/restore*.sh
 /start*.sh
 /stop*.sh
