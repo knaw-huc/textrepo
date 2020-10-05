@@ -10,6 +10,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MappingFileHealthCheckTest {
 
   @Test
+  public void check_trueIsTrue() {
+    assertThat(true).isEqualTo(true);
+  }
+
+  @Test
   public void check_returnsHealthy_whenMappingFileExists() {
     var filename = "test-mapping-file.json";
     var path = new File("src/test/resources/" + filename).getPath();

@@ -2,55 +2,73 @@
   "mappings": {
     "dynamic": false,
     "properties": {
-      "id": {
-        "type": "keyword"
-      },
-      "docExternalId": {
-        "type": "keyword"
-      },
-      "docId": {
-        "type": "keyword"
-      },
-      "mimetype": {
-        "type": "keyword"
-      },
-      "type": {
-        "type": "keyword"
-      },
-      "docMetadata": {
-        "type": "nested",
+
+      "file": {
         "properties": {
-          "key": {
+          "id": {
             "type": "keyword"
           },
-          "value": {
-            "type": "text",
-            "fields": {
-              "keyword": {
-                "type": "keyword",
-                "ignore_above": 256
+          "type": {
+            "properties": {
+              "id": {
+                "type": "long"
+              },
+              "name": {
+                "type": "keyword"
+              },
+              "mimetype": {
+                "type": "keyword"
+              }
+            }
+          },
+          "metadata": {
+            "type": "nested",
+            "properties": {
+              "key": {
+                "type": "keyword"
+              },
+              "value": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
               }
             }
           }
         }
       },
-      "fileMetadata": {
-        "type": "nested",
+
+      "doc": {
         "properties": {
-          "key": {
+          "id": {
             "type": "keyword"
           },
-          "value": {
-            "type": "text",
-            "fields": {
-              "keyword": {
-                "type": "keyword",
-                "ignore_above": 256
+          "externalId": {
+            "type": "keyword"
+          },
+          "metadata": {
+            "type": "nested",
+            "properties": {
+              "key": {
+                "type": "keyword"
+              },
+              "value": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
               }
             }
           }
         }
       },
+
       "versions": {
         "type": "nested",
         "properties": {

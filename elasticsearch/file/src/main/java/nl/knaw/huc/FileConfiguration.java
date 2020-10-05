@@ -12,6 +12,10 @@ public class FileConfiguration extends Configuration {
   @NotNull
   private String mappingFile;
 
+  @Valid
+  @NotNull
+  private String textrepoHost;
+
   @JsonProperty("mappingFile")
   public String getMappingFile() {
     return mappingFile;
@@ -20,5 +24,15 @@ public class FileConfiguration extends Configuration {
   @JsonProperty("mappingFile")
   public void setMappingFile(String mappingFile) {
     this.mappingFile = mappingFile;
+  }
+
+  @JsonProperty("textrepoHost")
+  public String getTextrepoHost() {
+    return textrepoHost;
+  }
+
+  @JsonProperty("textrepoHost")
+  public void setTextrepoHost(String textrepoHost) {
+    this.textrepoHost = textrepoHost;
   }
 }

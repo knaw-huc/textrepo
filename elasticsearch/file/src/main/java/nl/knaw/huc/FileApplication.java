@@ -32,7 +32,7 @@ public class FileApplication extends Application<FileConfiguration> {
 
   @Override
   public void run(FileConfiguration config, Environment environment) {
-    var contentsService = new FieldsService();
+    var contentsService = new FieldsService(config.getTextrepoHost());
     var mappingService = new MappingService(config);
     var contentsResource = new FileResource(contentsService, mappingService);
     environment.jersey().register(contentsResource);

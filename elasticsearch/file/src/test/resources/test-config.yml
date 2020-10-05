@@ -1,2 +1,7 @@
+logging:
+  level: INFO
+  loggers:
+    nl.knaw.huc: DEBUG
+    org.hibernate: ERROR
 mappingFile: ./file-mapping.json
-
+textrepoHost: http://localhost:1080
