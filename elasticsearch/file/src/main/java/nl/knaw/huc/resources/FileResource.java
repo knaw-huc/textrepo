@@ -61,12 +61,12 @@ public class FileResource {
       throw new IllegalArgumentException("Content-Type of file body part is missing");
     }
 
-    var link = body.getHeaders().get("Link").get(0);
-    if (link == null) {
+    var originLink = body.getHeaders().get("Link").get(0);
+    if (originLink == null) {
       throw new IllegalArgumentException("Origin Link of file body part is missing");
     }
 
-    var fileId = extractUuid(link);
+    var fileId = extractUuid(originLink);
 
     log.info("Create fields for: " + fileId);
 

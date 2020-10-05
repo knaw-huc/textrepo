@@ -4,6 +4,7 @@ import io.dropwizard.Application;
 import io.dropwizard.forms.MultiPartBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import nl.knaw.huc.exception.TextRepoRequestExceptionMapper;
 import nl.knaw.huc.health.MappingFileHealthCheck;
 import nl.knaw.huc.resources.FileResource;
 import nl.knaw.huc.service.FieldsService;
@@ -17,7 +18,7 @@ public class FileApplication extends Application<FileConfiguration> {
 
   public static void main(final String[] args) throws Exception {
     new FileApplication().run(args);
-    log.info("File app started");
+    log.info("File Indexer started");
   }
 
   @Override
@@ -34,8 +35,9 @@ public class FileApplication extends Application<FileConfiguration> {
   public void run(FileConfiguration config, Environment environment) {
     var contentsService = new FieldsService(config.getTextrepoHost());
     var mappingService = new MappingService(config);
-    var contentsResource = new FileResource(contentsService, mappingService);
-    environment.jersey().register(contentsResource);
+    var fileResource = new FileResource(contentsService, mappingService);
+    environment.jersey().register(fileResource);
+    environment.jersey().register(new TextRepoRequestExceptionMapper());
     environment.healthChecks().register("mapping file", new MappingFileHealthCheck(config));
   }
 
