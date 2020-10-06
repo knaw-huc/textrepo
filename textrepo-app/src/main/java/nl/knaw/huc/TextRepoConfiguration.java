@@ -2,7 +2,6 @@ package nl.knaw.huc;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;
-import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.db.DataSourceFactory;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import nl.knaw.huc.service.index.MappedIndexerConfiguration;
@@ -17,10 +16,6 @@ public class TextRepoConfiguration extends Configuration {
   @Valid
   @NotNull
   private DataSourceFactory database = new DataSourceFactory();
-
-  @Valid
-  @NotNull
-  private JerseyClientConfiguration jerseyClient = new JerseyClientConfiguration();
 
   @Valid
   @NotNull
@@ -41,16 +36,6 @@ public class TextRepoConfiguration extends Configuration {
   @Valid
   @NotNull
   private String dateFormat = "";
-
-  @JsonProperty("jerseyClient")
-  public JerseyClientConfiguration getJerseyClientConfiguration() {
-    return jerseyClient;
-  }
-
-  @JsonProperty("jerseyClient")
-  public void setJerseyClientConfiguration(JerseyClientConfiguration jerseyClient) {
-    this.jerseyClient = jerseyClient;
-  }
 
   @JsonProperty("database")
   public void setDataSourceFactory(DataSourceFactory factory) {
