@@ -28,6 +28,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(DropwizardExtensionsSupport.class)
 public class ContentsResourceTest {
   private static final ContentsStorage FILE_STORAGE = mock(ContentsStorage.class);
+  private static final int CONTENT_DECOMPRESSION_LIMIT = 10;
 
   private static final String sha224 = "55d4c44f5bc05762d8807f75f3f24b4095afa583ef70ac97eaf7afc6";
   private static final String contents = "hello test";
@@ -39,7 +40,7 @@ public class ContentsResourceTest {
   public static final ResourceExtension resource = ResourceExtension
       .builder()
       .addProvider(MultiPartFeature.class)
-      .addResource(new ContentsResource(new ContentsService(FILE_STORAGE)))
+      .addResource(new ContentsResource(new ContentsService(FILE_STORAGE), CONTENT_DECOMPRESSION_LIMIT))
       .build();
 
   @BeforeEach

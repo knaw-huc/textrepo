@@ -42,8 +42,8 @@ public class Contents {
     return contents;
   }
 
-  public byte[] decompressIfCompressedSizeLessThan(int limit) {
-    if (isGzipped(contents) && contents.length < limit) {
+  public byte[] decompressIfCompressedSizeLessThan(int limitInBytes) {
+    if (isGzipped(contents) && contents.length < limitInBytes) {
       return decompress();
     }
     return contents;

@@ -26,9 +26,12 @@ public class ContentsResource {
 
   private static final Logger log = LoggerFactory.getLogger(ContentsResource.class);
   private final ContentsService contentsService;
+  private final int decompressLimit;
 
-  public ContentsResource(ContentsService contentsService) {
+  public ContentsResource(ContentsService contentsService, int contentDecompressionLimit) {
     this.contentsService = contentsService;
+    this.decompressLimit = contentDecompressionLimit;
+    log.debug("contentDecompressionLimit={}", decompressLimit);
   }
 
   @GET
@@ -51,7 +54,7 @@ public class ContentsResource {
 
     log.debug("Got contents: {}", contents);
 
-    final byte[] payload = contents.decompressIfCompressedSizeLessThan(2 * 1024 * 1024);
+    final byte[] payload = contents.decompressIfCompressedSizeLessThan(decompressLimit);
     return Response
         .ok(payload, APPLICATION_OCTET_STREAM)
         .header("Content-Disposition", "attachment;")

@@ -53,9 +53,12 @@ public class FindResource {
   private static final Logger log = LoggerFactory.getLogger(FindResource.class);
 
   private final TaskBuilderFactory factory;
+  private final int decompressLimit;
 
-  public FindResource(TaskBuilderFactory factory) {
+  public FindResource(TaskBuilderFactory factory, int contentDecompressionLimit) {
     this.factory = factory;
+    this.decompressLimit = contentDecompressionLimit;
+    log.debug("contentDecompressionLimit={}", decompressLimit);
   }
 
   @GET
@@ -142,7 +145,7 @@ public class FindResource {
 
     final var fileId = result.getFileId();
     final var typeId = result.getTypeId();
-    final byte[] payload = contents.decompressIfCompressedSizeLessThan(2 * 1024 * 1024);
+    final byte[] payload = contents.decompressIfCompressedSizeLessThan(decompressLimit);
     return Response
         .ok(payload, APPLICATION_OCTET_STREAM)
         .link(FILE_VERSIONS.build(fileId), REL_VERSION_HISTORY)

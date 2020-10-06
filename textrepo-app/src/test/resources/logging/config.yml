@@ -12,6 +12,9 @@ database:
   driverClass: org.postgresql.Driver
   url: jdbc:postgresql://postgres:5432/textrepo
 
+limits:
+  contentDecompressionLimit: 2
+
 logging:
   level: INFO
   loggers:
@@ -27,7 +30,7 @@ logging:
       archivedLogFilenamePattern: ./target/testlog-%d.log.gz
       archivedFileCount: 1
 
-indexers: []
+indexers: [ ]
 
 swagger:
   resourcePackage: nl.knaw.huc.resources

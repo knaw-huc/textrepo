@@ -11,6 +11,7 @@ import io.dropwizard.setup.Environment;
 import io.federecio.dropwizard.swagger.SwaggerBundle;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import nl.knaw.huc.exceptions.MethodNotAllowedExceptionMapper;
+import nl.knaw.huc.helpers.Limits;
 import nl.knaw.huc.helpers.Paginator;
 import nl.knaw.huc.resources.dashboard.DashboardResource;
 import nl.knaw.huc.resources.rest.ContentsResource;
@@ -104,8 +105,6 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
   public void run(TextRepoConfiguration config, Environment environment) {
     final Supplier<UUID> uuidGenerator = UUID::randomUUID;
 
-    final var maxPayloadSize = 100 * 1024 * 1024; // TODO: arbitrary, get from configuration and figure out sane default
-
     var jdbi = createJdbi(config, environment);
     var contentsStoreService = new JdbiContentsStorage(jdbi);
     var contentsService = new ContentsService(contentsStoreService);
@@ -128,21 +127,23 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
     var paginator = new Paginator(config.getPagination());
     var dashboardService = new JdbiDashboardService(jdbi);
 
+    var limits = config.getResourceLimits();
+    final var contentDecompressionLimit = limits.contentDecompressionLimit * Limits.BYTES_PER_KB;
     var resources = Arrays.asList(
-        new ContentsResource(contentsService),
+        new ContentsResource(contentsService, contentDecompressionLimit),
         new TypesResource(typeService),
         new FileMetadataResource(metadataService),
         new FileVersionsResource(versionService, paginator),
         new DocumentsResource(documentService, paginator),
         new DocumentMetadataResource(documentMetadataService),
-        new ImportResource(taskBuilderFactory, maxPayloadSize),
+        new ImportResource(taskBuilderFactory),
         new IndexResource(taskBuilderFactory),
         new DeleteDocumentResource(taskBuilderFactory),
         new FilesResource(fileService),
         new DocumentFilesResource(documentFilesService, paginator),
         new VersionsResource(versionService),
-        new VersionContentsResource(versionContentsService),
-        new FindResource(taskBuilderFactory),
+        new VersionContentsResource(versionContentsService, contentDecompressionLimit),
+        new FindResource(taskBuilderFactory, contentDecompressionLimit),
         new DashboardResource(dashboardService, paginator),
         new MetadataResource(documentMetadataService),
         new RegisterIdentifiersResource(taskBuilderFactory)

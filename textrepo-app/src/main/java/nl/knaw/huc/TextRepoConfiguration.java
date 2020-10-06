@@ -32,6 +32,10 @@ public class TextRepoConfiguration extends Configuration {
 
   @Valid
   @NotNull
+  private ResourceLimits resourceLimits;
+
+  @Valid
+  @NotNull
   private PaginationConfiguration pagination = new PaginationConfiguration();
 
   @Valid
@@ -67,6 +71,16 @@ public class TextRepoConfiguration extends Configuration {
   public void setSwaggerBundleConfiguration(
       SwaggerBundleConfiguration swaggerBundleConfiguration) {
     this.swaggerBundleConfiguration = swaggerBundleConfiguration;
+  }
+
+  @JsonProperty("limits")
+  public ResourceLimits getResourceLimits() {
+    return resourceLimits;
+  }
+
+  @JsonProperty("limits")
+  public void setResourceLimits(ResourceLimits resourceLimits) {
+    this.resourceLimits = resourceLimits;
   }
 
   @JsonProperty("indexers")
