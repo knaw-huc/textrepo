@@ -27,7 +27,7 @@ public class TextRepoConfiguration extends Configuration {
 
   @Valid
   @NotNull
-  private ResourceLimits resourceLimits;
+  private ResourceLimits resourceLimits = new ResourceLimits();
 
   @Valid
   @NotNull
