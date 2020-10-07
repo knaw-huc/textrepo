@@ -4,6 +4,7 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.ParseContext;
 import com.jayway.jsonpath.TypeRef;
 import nl.knaw.huc.api.FormVersion;
+import nl.knaw.huc.api.ResultContentsLastModified;
 import nl.knaw.huc.api.ResultDoc;
 import nl.knaw.huc.api.ResultFields;
 import nl.knaw.huc.api.ResultFile;
@@ -12,6 +13,7 @@ import nl.knaw.huc.api.ResultVersion;
 import nl.knaw.huc.exception.TextRepoRequestException;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.client.Client;
 import java.util.ArrayList;
 import java.util.List;
@@ -101,6 +103,7 @@ public class FieldsService {
       var result = createResultVersion(form, index);
       fields.getVersions().add(result);
     }
+    fields.setContentsLastModified(createContentsLastModified(fields));
   }
 
   private ResultVersion createResultVersion(List<FormVersion> formVersions, int index) {
@@ -125,6 +128,21 @@ public class FieldsService {
     }
     var previous = allVersions.get(currentIndex + 1);
     return !current.getSha().equals(previous.getSha());
+  }
+
+  private ResultContentsLastModified createContentsLastModified(ResultFields fields) {
+    var firstVersionWithLatestContents = fields
+        .getVersions()
+        .stream()
+        .filter(ResultVersion::getContentsChanged)
+        .findFirst()
+        .orElseThrow(() -> new NotFoundException("No version with contentsChanged found"));
+
+    var result = new ResultContentsLastModified();
+    result.setContentsSha(firstVersionWithLatestContents.getSha());
+    result.setDateTime(firstVersionWithLatestContents.getCreatedAt());
+    result.setVersionId(firstVersionWithLatestContents.getId());
+    return result;
   }
 
   /**

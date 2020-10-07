@@ -9,6 +9,7 @@ public class ResultFields {
   private ResultFile file;
   private ResultDoc doc;
   private List<ResultVersion> versions;
+  private ResultContentsLastModified contentsLastModified;
 
   public ResultFields() {
   }
@@ -40,4 +41,12 @@ public class ResultFields {
     this.versions = versions;
   }
 
+  @JsonProperty
+  public ResultContentsLastModified getContentsLastModified() {
+    return contentsLastModified;
+  }
+
+  public void setContentsLastModified(ResultContentsLastModified contentsLastModified) {
+    this.contentsLastModified = contentsLastModified;
+  }
 }

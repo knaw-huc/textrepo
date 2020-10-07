@@ -69,6 +69,20 @@
         }
       },
 
+      "contentsLastModified": {
+        "properties": {
+          "dateTime": {
+            "type": "date"
+          },
+          "contentsSha": {
+            "type": "keyword"
+          },
+          "versionId": {
+            "type": "keyword"
+          }
+        }
+      },
+
       "versions": {
         "type": "nested",
         "properties": {
