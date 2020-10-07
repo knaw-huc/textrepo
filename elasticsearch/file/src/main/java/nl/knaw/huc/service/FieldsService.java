@@ -1,8 +1,9 @@
 package nl.knaw.huc.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.ParseContext;
-import com.jayway.jsonpath.TypeRef;
 import nl.knaw.huc.api.FormVersion;
 import nl.knaw.huc.api.ResultContentsLastModified;
 import nl.knaw.huc.api.ResultDoc;
@@ -10,16 +11,16 @@ import nl.knaw.huc.api.ResultFields;
 import nl.knaw.huc.api.ResultFile;
 import nl.knaw.huc.api.ResultType;
 import nl.knaw.huc.api.ResultVersion;
-import nl.knaw.huc.exception.TextRepoRequestException;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 
-import javax.ws.rs.NotFoundException;
 import javax.ws.rs.client.Client;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import static java.lang.String.format;
+import static nl.knaw.huc.service.ResourceUtil.getResource;
+import static nl.knaw.huc.service.ResourceUtil.read;
 
 public class FieldsService {
 
@@ -38,13 +39,16 @@ public class FieldsService {
   private final Client requestClient = JerseyClientBuilder.newClient();
 
   private final ParseContext jsonPath;
+  private final int pageSize;
 
   public FieldsService(
       String textrepoHost,
-      ParseContext jsonPath
+      ParseContext jsonPath,
+      int pageSize
   ) {
     this.textrepoHost = textrepoHost;
     this.jsonPath = jsonPath;
+    this.pageSize = pageSize;
   }
 
   public ResultFields createFields(UUID fileId) {
@@ -96,37 +100,48 @@ public class FieldsService {
   }
 
   private void addVersionsResource(UUID fileId, ResultFields fields) {
-    var versionsJson = getRestResource(VERSIONS_ENDPOINT, fileId);
-    var form = read(versionsJson, "$.items", new TypeRef<List<FormVersion>>() {});
-    fields.setVersions(new ArrayList<>());
-    for (var index = 0; index < form.size(); index++) {
-      var result = createResultVersion(form, index);
-      fields.getVersions().add(result);
-    }
+    var versions = new ArrayList<ResultVersion>();
+    fields.setVersions(versions);
+    getAllVersions(fileId, versions);
+    setContentsModified(versions);
     fields.setContentsLastModified(createContentsLastModified(fields));
   }
 
-  private ResultVersion createResultVersion(List<FormVersion> formVersions, int index) {
-    var form = formVersions.get(index);
+  private void getAllVersions(UUID fileId, ArrayList<ResultVersion> versions) {
+    var versionsUrl = createUrl(textrepoHost, fileId, VERSIONS_ENDPOINT);
+    var pageTurner = new PageTurner<FormVersion>(versionsUrl, 0, pageSize, jsonPath);
+    pageTurner.turn((List<FormVersion> formVersions) -> {
+      formVersions.forEach((form) -> versions.add(createResultVersion(form)));
+    });
+  }
+
+  private void setContentsModified(ArrayList<ResultVersion> versions) {
+    for (var index = 0; index < versions.size(); index++) {
+      versions
+          .get(index)
+          .setContentsModified(contentsModified(versions, index));
+    }
+  }
+
+  private ResultVersion createResultVersion(FormVersion form) {
     var result = new ResultVersion();
     result.setId(form.getId());
     result.setSha(form.getSha());
     result.setCreatedAt(form.getCreatedAt());
-    result.setContentsChanged(isContentsChanged(formVersions, index, result));
     return result;
   }
 
   /**
-   * Determine if contents of current version has changed with regard to previous version
+   * Determine if contents sha of current version has changed with regard to previous version
    * Assume all versions are sorted from newest to oldest
    */
-  private boolean isContentsChanged(List<FormVersion> allVersions, int currentIndex, ResultVersion current) {
-
+  private boolean contentsModified(List<ResultVersion> allVersions, int currentIndex) {
     var isFirstVersion = allVersions.size() == currentIndex + 1;
     if (isFirstVersion) {
       return true;
     }
     var previous = allVersions.get(currentIndex + 1);
+    var current = allVersions.get(currentIndex);
     return !current.getSha().equals(previous.getSha());
   }
 
@@ -134,9 +149,9 @@ public class FieldsService {
     var firstVersionWithLatestContents = fields
         .getVersions()
         .stream()
-        .filter(ResultVersion::getContentsChanged)
+        .filter(ResultVersion::getContentsModified)
         .findFirst()
-        .orElseThrow(() -> new NotFoundException("No version with contentsChanged found"));
+        .orElseThrow(() -> new IllegalStateException("No version with contentsModified found"));
 
     var result = new ResultContentsLastModified();
     result.setContentsSha(firstVersionWithLatestContents.getSha());
@@ -145,43 +160,17 @@ public class FieldsService {
     return result;
   }
 
-  /**
-   * Read jsonpath in parsed doc
-   * @throws TextRepoRequestException with msg containing path and json body
-   */
-  private <T> T read(DocumentContext doc, String path) {
-    TypeRef<T> typeRef = new TypeRef<>() {};
-    return read(doc, path, typeRef);
-  }
-
-  /**
-   * Read jsonpath in parsed doc with explicit type
-   * @throws TextRepoRequestException with msg containing path and json body
-   */
-  private <T> T read(DocumentContext doc, String path, TypeRef<T> typeRef) {
-    try {
-      return doc.read(path, typeRef);
-    } catch (Exception ex) {
-      throw new TextRepoRequestException(format(
-          "Could not get path %s in json %s",
-          path, doc.jsonString()
-      ), ex);
-    }
-  }
-
   private DocumentContext getRestResource(String endpoint, Object id) {
-    var url = format(endpoint, textrepoHost, id);
-    var response = requestClient
+    var url = createUrl(textrepoHost, id, endpoint);
+    var request = requestClient
         .target(url)
-        .request()
-        .get();
-    if (response.getStatus() != 200) {
-      throw new TextRepoRequestException(format(
-          "Unexpected response status of [%s]: got %s instead of 200",
-          url, response.getStatus()
-      ));
-    }
+        .request();
+    var response = getResource(url, request);
     return jsonPath.parse(response.readEntity(String.class));
+  }
+
+  private String createUrl(String host, Object id, String endpoint) {
+    return format(endpoint, host, id);
   }
 
 }

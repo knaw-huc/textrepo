@@ -20,6 +20,10 @@ public class FileConfiguration extends Configuration {
   @NotNull
   private String dateFormat;
 
+  @Valid
+  @NotNull
+  private Integer pageSize;
+
   @JsonProperty("mappingFile")
   public String getMappingFile() {
     return mappingFile;
@@ -48,5 +52,15 @@ public class FileConfiguration extends Configuration {
   @JsonProperty("dateFormat")
   public void setDateFormat(String dateFormat) {
     this.dateFormat = dateFormat;
+  }
+
+  @JsonProperty("pageSize")
+  public Integer getPageSize() {
+    return pageSize;
+  }
+
+  @JsonProperty("pageSize")
+  public void setPageSize(Integer pageSize) {
+    this.pageSize = pageSize;
   }
 }

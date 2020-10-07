@@ -1,6 +1,5 @@
 package nl.knaw.huc;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.jayway.jsonpath.Configuration;
@@ -22,7 +21,6 @@ import org.slf4j.LoggerFactory;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
 import static java.time.format.DateTimeFormatter.ofPattern;
@@ -63,9 +61,9 @@ public class FileApplication extends Application<FileConfiguration> {
         .jsonProvider(new JacksonJsonNodeJsonProvider(objectMapper))
         .build());
 
-    var contentsService = new FieldsService(config.getTextrepoHost(), jsonPath);
+    var fieldsService = new FieldsService(config.getTextrepoHost(), jsonPath, config.getPageSize());
     var mappingService = new MappingService(config);
-    var fileResource = new FileResource(contentsService, mappingService);
+    var fileResource = new FileResource(fieldsService, mappingService);
     environment.jersey().register(fileResource);
     environment.jersey().register(new TextRepoRequestExceptionMapper());
     environment.healthChecks().register("mapping file", new MappingFileHealthCheck(config));

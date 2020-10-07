@@ -29,4 +29,4 @@ Each file-index-document contains the following information of a single textrepo
 - **$.doc** contains document fields id, externalId
 - **$.doc.metadata** contains metadata as key-value pairs
 - **$.versions** contains versions, ordered from newest to oldest
-- **$.versions[*].contentsChanged**: marks if the version contents differ from the contents of the previous version
+- **$.versions[*].contentsModified**: marks if the version contents differ from the contents of the previous version

@@ -9,7 +9,7 @@ public class ResultVersion {
   private UUID id;
   private LocalDateTime createdAt;
   private String sha;
-  private Boolean contentsChanged;
+  private Boolean contentsModified;
 
   @JsonProperty
   public UUID getId() {
@@ -39,11 +39,11 @@ public class ResultVersion {
   }
 
   @JsonProperty
-  public Boolean getContentsChanged() {
-    return contentsChanged;
+  public Boolean getContentsModified() {
+    return contentsModified;
   }
 
-  public void setContentsChanged(Boolean contentsChanged) {
-    this.contentsChanged = contentsChanged;
+  public void setContentsModified(Boolean contentsModified) {
+    this.contentsModified = contentsModified;
   }
 }

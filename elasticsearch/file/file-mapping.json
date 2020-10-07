@@ -95,7 +95,7 @@
           "sha": {
             "type": "keyword"
           },
-          "contentsChanged": {
+          "contentsModified": {
             "type": "boolean"
           }
         }
