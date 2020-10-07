@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [v1.9]
 ### Added
 - 'contentDecompressionLimit' (kB) configures plain/gzip output cutoff in HTTP results
+- docker-compose.yml and docker-compose.env need TR\_CONTENT\_DECOMPRESSION\_LIMIT stanzas
 ### Changed
 - Use timestamp without time zone in versions and documents tables
 - Use (gzip) compressed contents in contents table (migration code available)
