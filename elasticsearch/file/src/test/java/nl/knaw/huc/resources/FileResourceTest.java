@@ -102,27 +102,32 @@ public class FileResourceTest {
   }
 
   @Test
-  public void testFields_returnsFileId() throws IOException {
+  public void testFields_returnsFileDoc() throws IOException {
     startTextrepoMockServer();
     var fileContents = getResourceAsBytes("file.txt");
     var fileId = UUID.randomUUID().toString();
 
     var response = postTestContents(fileContents, "text/plain", fileId);
-
     var fields = response.readEntity(String.class);
 
     assertThat(response.getStatus()).isEqualTo(200);
+    // file:
     assertThat(JsonPath.parse(fields).read("$.file.id", String.class)).isEqualTo(fileId);
+    // file type:
     assertThat(JsonPath.parse(fields).read("$.file.type.id", Integer.class)).isEqualTo(3);
     assertThat(JsonPath.parse(fields).read("$.file.type.name", String.class)).isEqualTo("test-type");
     assertThat(JsonPath.parse(fields).read("$.file.type.mimetype", String.class)).isEqualTo("application/test");
+    // file metadata:
     assertThat(JsonPath.parse(fields).read("$.file.metadata.foo", String.class)).isEqualTo("bar");
     assertThat(JsonPath.parse(fields).read("$.file.metadata.spam", String.class)).isEqualTo("eggs");
+    // document:
     assertThat(JsonPath.parse(fields).read("$.doc.id", String.class)).isEqualTo("99999999-f0a0-406e-b01b-b12b9df9a84c");
     assertThat(JsonPath.parse(fields).read("$.doc.externalId", String.class))
         .isEqualTo("dat-pak-melk-buiten-de-koelkast");
+    // document metadata:
     assertThat(JsonPath.parse(fields).read("$.doc.metadata.docfoo", String.class)).isEqualTo("docbar");
     assertThat(JsonPath.parse(fields).read("$.doc.metadata.docspam", String.class)).isEqualTo("doceggs");
+    // versions:
     assertThat(JsonPath.parse(fields).read("$.versions[0].id", String.class)).isEqualTo("33330128-02be-4938-ba84-8d9dd70e19a5");
     assertThat(JsonPath.parse(fields).read("$.versions[0].contentsChanged", Boolean.class)).isEqualTo(true);
     assertThat(JsonPath.parse(fields).read("$.versions[0].createdAt", String.class)).isEqualTo("2000-01-03T00:00:00");
