@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.ParseContext;
+import com.jayway.jsonpath.TypeRef;
 import nl.knaw.huc.api.FormVersion;
 import nl.knaw.huc.api.ResultContentsLastModified;
 import nl.knaw.huc.api.ResultDoc;
@@ -109,8 +110,10 @@ public class FieldsService {
 
   private void getAllVersions(UUID fileId, ArrayList<ResultVersion> versions) {
     var versionsUrl = createUrl(textrepoHost, fileId, VERSIONS_ENDPOINT);
-    var pageTurner = new PageTurner<FormVersion>(versionsUrl, 0, pageSize, jsonPath);
-    pageTurner.turn((List<FormVersion> formVersions) -> {
+    var ref = new TypeRef<List<FormVersion>>() {};
+
+    var pageTurner = new PageTurner<>(versionsUrl, 0, pageSize, jsonPath, ref);
+    pageTurner.turn(formVersions -> {
       formVersions.forEach((form) -> versions.add(createResultVersion(form)));
     });
   }

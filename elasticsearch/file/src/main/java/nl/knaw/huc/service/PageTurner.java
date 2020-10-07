@@ -3,15 +3,14 @@ package nl.knaw.huc.service;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.ParseContext;
 import com.jayway.jsonpath.TypeRef;
-import nl.knaw.huc.api.FormVersion;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.client.Client;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -22,16 +21,32 @@ import static nl.knaw.huc.service.ResourceUtil.read;
  * - query params limit
  * - zero-based offset
  * For every page: pass json contents of `$.items` to reader
+ * ```
+ * {
+ * "items": [],
+ * "total": number
+ * }
+ * ```
+ *
+ * <p>T is type of item in $.items.
+ * JsonPath needs TypeRef to infer type correctly
  */
 public class PageTurner<T> {
 
   private static final Client client = JerseyClientBuilder.newClient();
+  private final TypeRef<List<T>> itemType;
   private final ParseContext jsonPath;
   private final URI paginated;
   private final int limit;
   private int offset;
 
-  public PageTurner(String url, int offset, int limit, ParseContext jsonPath) {
+  public PageTurner(
+      String url,
+      int offset,
+      int limit,
+      ParseContext jsonPath,
+      TypeRef<List<T>> itemType
+  ) {
     try {
       this.paginated = new URL(url).toURI();
     } catch (MalformedURLException | URISyntaxException e) {
@@ -40,12 +55,13 @@ public class PageTurner<T> {
     this.offset = offset;
     this.limit = limit;
     this.jsonPath = jsonPath;
+    this.itemType = itemType;
   }
 
   /**
    * Turn the pages and pass the `$.items` of each page to reader
    */
-  public void turn(Consumer<List<FormVersion>> reader) {
+  public void turn(Consumer<List<T>> reader) {
 
     // set total number of items after retrieving first page:
     var total = -1;
@@ -55,8 +71,7 @@ public class PageTurner<T> {
       if (total == -1) {
         total = read(page, "$.total");
       }
-      TypeRef<ArrayList<FormVersion>> typeRef = new TypeRef<>() {};
-      ArrayList<FormVersion> read = read(page, "items", typeRef);
+      var read = read(page, "items", itemType);
       reader.accept(read);
       offset = offset + limit;
     }
