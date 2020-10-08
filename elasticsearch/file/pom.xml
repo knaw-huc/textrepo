@@ -20,7 +20,7 @@
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <mainClass>nl.knaw.huc.FileApp</mainClass>
+    <mainClass>nl.knaw.huc.FileIndexer</mainClass>
     <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
     <maven-checkstyle-plugin.version>3.0.0</maven-checkstyle-plugin.version>
 
@@ -234,7 +234,7 @@
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                  <mainClass>nl.knaw.huc.TextRepoApp</mainClass>
+                  <mainClass>nl.knaw.huc.FileIndexer</mainClass>
                 </transformer>
               </transformers>
             </configuration>

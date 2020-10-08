@@ -7,7 +7,7 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
-import nl.knaw.huc.FileApplication;
+import nl.knaw.huc.FileIndexer;
 import nl.knaw.huc.FileConfiguration;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
@@ -59,7 +59,7 @@ public class FileResourceTest {
       );
 
       var fileConfiguration = factory.build(configFile);
-      application = new DropwizardAppExtension<>(FileApplication.class, fileConfiguration);
+      application = new DropwizardAppExtension<>(FileIndexer.class, fileConfiguration);
 
     } catch (IOException | ConfigurationException ex) {
       throw new RuntimeException("Could not init test app", ex);

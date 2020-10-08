@@ -25,12 +25,12 @@ import java.time.LocalDateTime;
 import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
 import static java.time.format.DateTimeFormatter.ofPattern;
 
-public class FileApplication extends Application<FileConfiguration> {
+public class FileIndexer extends Application<FileConfiguration> {
 
-  private static final Logger log = LoggerFactory.getLogger(FileApplication.class);
+  private static final Logger log = LoggerFactory.getLogger(FileIndexer.class);
 
   public static void main(final String[] args) throws Exception {
-    new FileApplication().run(args);
+    new FileIndexer().run(args);
     log.info("File Indexer started");
   }
 
