@@ -99,10 +99,10 @@ services:
     environment:
       INTERNAL_TR_HOST: ${INTERNAL_TR_HOST}
       TR_DATE_FORMAT: ${TR_DATE_FORMAT}
-    command: ["./wait-for-it.sh", "elasticsearch:9200",
-              "--timeout=0",
-              "--",
-              "./start.sh"]
+    command: [
+        "./wait-for-it.sh", "elasticsearch:9200", "--timeout=0", "--",
+        "./start.sh"
+    ]
 
   textrepo-app:
     container_name: tr_textrepo
@@ -171,6 +171,7 @@ services:
       FULL_TEXT_INDEX: ${FULL_TEXT_INDEX}
       CUSTOM_INDEX: ${CUSTOM_INDEX}
       AUTOCOMPLETE_INDEX: ${AUTOCOMPLETE_INDEX}
+      FILE_INDEX: ${FILE_INDEX}
 
 networks:
   textrepo_network:

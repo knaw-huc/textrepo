@@ -18,6 +18,7 @@ public class Config {
   public static final String FULL_TEXT_INDEX = requireNonBlank("FULL_TEXT_INDEX");
   public static final String CUSTOM_INDEX = requireNonBlank("CUSTOM_INDEX");
   public static final String AUTOCOMPLETE_INDEX = requireNonBlank("AUTOCOMPLETE_INDEX");
+  public static final String FILE_INDEX = requireNonBlank("FILE_INDEX");
 
   public static final String HOST = HTTP_APP_HOST;
   public static final String TYPES_URL = HOST + "/rest/types";
@@ -25,7 +26,8 @@ public class Config {
   public static final List<String> INDICES = newArrayList(
       FULL_TEXT_INDEX,
       CUSTOM_INDEX,
-      AUTOCOMPLETE_INDEX
+      AUTOCOMPLETE_INDEX,
+      FILE_INDEX
   );
   public static final String TEXT_TYPE = "text";
   public static final String TEXT_MIMETYPE = "text/plain";
