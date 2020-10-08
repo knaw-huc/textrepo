@@ -37,7 +37,7 @@ import static org.mockserver.model.HttpResponse.response;
 import static org.mockserver.verify.VerificationTimes.once;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-public class FileResourcePageWalkerTest {
+public class FileResourcePageTurnerTest {
 
   private static ClientAndServer mockServer;
   private static final int mockPort = 1080;

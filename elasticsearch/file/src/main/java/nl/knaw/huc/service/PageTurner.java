@@ -5,7 +5,6 @@ import com.jayway.jsonpath.ParseContext;
 import com.jayway.jsonpath.TypeRef;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 
-import javax.validation.constraints.NotNull;
 import javax.ws.rs.client.Client;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -17,10 +16,10 @@ import java.util.function.Consumer;
 import static nl.knaw.huc.service.ResourceUtil.read;
 
 /**
- * Turn the pages of a paginated resource based on:
- * - query params limit
- * - zero-based offset
- * For every page: pass json contents of `$.items` to reader
+ * Turn the pages of a paginated resource based on query params:
+ * - limit
+ * - offset (zero-based)
+ * The following json-page-structure is expected:
  * ```
  * {
  * "items": [],
@@ -59,7 +58,11 @@ public class PageTurner<T> {
   }
 
   /**
-   * Turn the pages and pass the `$.items` of each page to reader
+   * Turn the pages and pass `$.items` of each page to `reader`
+   * JsonPath wil map `$.items` to a `List< T >`
+   *
+   * <p>Type T should refer to a class annotated and ready to be used
+   * by the 'Json-smart provider' (Jackson or Gson) configured in JsonPath
    */
   public void turn(Consumer<List<T>> reader) {
 
@@ -71,8 +74,8 @@ public class PageTurner<T> {
       if (total == -1) {
         total = read(page, "$.total");
       }
-      var read = read(page, "items", itemType);
-      reader.accept(read);
+      var items = read(page, "items", itemType);
+      reader.accept(items);
       offset = offset + limit;
     }
   }
