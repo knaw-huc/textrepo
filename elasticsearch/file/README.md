@@ -20,13 +20,14 @@ curl -X POST '<index-host>/_search' -H 'Content-Type:application/json' \
   -d '{"suggest":{"keyword-suggest":{"prefix":"<term>", "completion":{"field":"suggest","skip_duplicates":true,"size":5}}},"_source":false}'
 ```
 
-# Structure of file-index:
+# Structure of file index:
 Each file-index-document contains the following information of a single textrepo-file:  
 
-- **$.file** containers file fields id and type
-- **$.file.type** contains fields id, name and mimetype
-- **$.file.metadata** contains metadata as key-value pairs
-- **$.doc** contains document fields id, externalId
-- **$.doc.metadata** contains metadata as key-value pairs
-- **$.versions** contains versions, ordered from newest to oldest
+- **$.file**: object with id and:
+- **$.file.type**: object with id, name mimetype
+- **$.file.metadata[]**: array of nested objects, contains metadata as key-value pairs
+- **$.doc**: object with id, externalId and:
+- **$.doc.metadata[]**: array of nested objects, contains metadata as key-value pairs
+- **$.contentsLastModified** object with sha of latest contents, id of first version with latest sha, and its date-time of creation
+- **$.versions[]**: array of nested objects, ordered from newest to oldest, with id, sha, createdAt, and:
 - **$.versions[*].contentsModified**: marks if the version contents differ from the contents of the previous version
