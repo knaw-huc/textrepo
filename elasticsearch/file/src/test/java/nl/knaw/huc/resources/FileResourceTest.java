@@ -1,5 +1,6 @@
 package nl.knaw.huc.resources;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.jsonpath.JsonPath;
 import io.dropwizard.configuration.ConfigurationException;
 import io.dropwizard.configuration.YamlConfigurationFactory;
@@ -31,6 +32,7 @@ import java.util.UUID;
 
 import static javax.ws.rs.client.Entity.entity;
 import static nl.knaw.huc.TestUtils.getResourceAsBytes;
+import static nl.knaw.huc.service.JsonPathFactory.withJackson;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
@@ -106,6 +108,7 @@ public class FileResourceTest {
 
     var response = postTestContents(fileContents, "text/plain", fileId);
     var fields = response.readEntity(String.class);
+
     assertThat(response.getStatus()).isEqualTo(200);
     // file:
     assertThat(JsonPath.parse(fields).read("$.file.id", String.class)).isEqualTo(fileId);
@@ -143,7 +146,25 @@ public class FileResourceTest {
         .isEqualTo("33334942a9d96e2965f2a0f9d06b5878822111580fe061b038720330");
     assertThat(JsonPath.parse(fields).read("$.contentsLastModified.versionId", String.class))
         .isEqualTo("33330128-02be-4938-ba84-8d9dd70e19a5");
+    // check indexer has requested resources from all TR endpoints:
+    mockRequests.forEach((mr) -> mockServer.verify(mr, once()));
+  }
 
+  @Test
+  public void testFields_handlesFileWithoutDocument() throws IOException {
+    var mockRequests = startTextrepoMockServer_withoutDocuments();
+    var fileContents = getResourceAsBytes("file.txt");
+    var fileId = UUID.randomUUID().toString();
+
+    var response = postTestContents(fileContents, "text/plain", fileId);
+    var fields = response.readEntity(String.class);
+
+    assertThat(response.getStatus()).isEqualTo(200);
+    // file:
+    assertThat(JsonPath.parse(fields).read("$.file.id", String.class)).isEqualTo(fileId);
+    // check document is empty:
+    var node = withJackson().parse(fields).read("$.doc", JsonNode.class);
+    assertThat(node.isEmpty()).isTrue();
     // check indexer has requested resources from all TR endpoints:
     mockRequests.forEach((mr) -> mockServer.verify(mr, once()));
   }
@@ -158,6 +179,15 @@ public class FileResourceTest {
     requests.add(mockEndpoint("/rest/files/[a-f0-9-]*/metadata", "textrepo-file-metadata.json"));
     requests.add(mockEndpoint("/rest/documents/[a-f0-9-]*", "textrepo-doc.json"));
     requests.add(mockEndpoint("/rest/documents/[a-f0-9-]*/metadata", "textrepo-doc-metadata.json"));
+    requests.add(mockEndpoint("/rest/types/[0-9]*", "textrepo-type.json"));
+    requests.add(mockEndpoint("/rest/files/[a-f0-9-]*/versions", "textrepo-versions.json"));
+    return requests;
+  }
+
+  private ArrayList<HttpRequest> startTextrepoMockServer_withoutDocuments() throws IOException {
+    var requests = new ArrayList<HttpRequest>();
+    requests.add(mockEndpoint("/rest/files/[a-f0-9-]*", "textrepo-file-without-document.json"));
+    requests.add(mockEndpoint("/rest/files/[a-f0-9-]*/metadata", "textrepo-file-metadata.json"));
     requests.add(mockEndpoint("/rest/types/[0-9]*", "textrepo-type.json"));
     requests.add(mockEndpoint("/rest/files/[a-f0-9-]*/versions", "textrepo-versions.json"));
     return requests;

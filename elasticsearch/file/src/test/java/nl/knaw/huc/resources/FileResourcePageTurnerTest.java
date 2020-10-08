@@ -1,5 +1,6 @@
 package nl.knaw.huc.resources;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.jsonpath.JsonPath;
 import io.dropwizard.configuration.ConfigurationException;
 import io.dropwizard.configuration.YamlConfigurationFactory;
@@ -31,6 +32,7 @@ import java.util.UUID;
 
 import static javax.ws.rs.client.Entity.entity;
 import static nl.knaw.huc.TestUtils.getResourceAsBytes;
+import static nl.knaw.huc.service.JsonPathFactory.withJackson;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
@@ -84,7 +86,14 @@ public class FileResourcePageTurnerTest {
 
   @Test
   public void testFields_retrievesAllVersionPages() throws IOException {
+    // start resource mocks:
     var mockRequests = startTextrepoMockServer();
+    // start version page resource mocks:
+    var versionsEndpoint = "/rest/files/[a-f0-9-]*/versions";
+    mockRequests.add(mockEndpointPage(versionsEndpoint, "textrepo-versions-page1.json", 0, 2));
+    mockRequests.add(mockEndpointPage(versionsEndpoint, "textrepo-versions-page2.json", 2, 2));
+    mockRequests.add(mockEndpointPage(versionsEndpoint, "textrepo-versions-page3.json", 4, 2));
+    // create test file:
     var fileContents = getResourceAsBytes("file.txt");
     var fileId = UUID.randomUUID().toString();
 
@@ -118,6 +127,31 @@ public class FileResourcePageTurnerTest {
     mockRequests.forEach((mr) -> mockServer.verify(mr, once()));
   }
 
+  @Test
+  public void testFields_handlesZeroVersions() throws IOException {
+    // start resource mocks:
+    var mockRequests = startTextrepoMockServer();
+    // start version page resource mocks:
+    var versionsEndpoint = "/rest/files/[a-f0-9-]*/versions";
+    mockRequests.add(mockEndpointPage(versionsEndpoint, "textrepo-versions-page1-no-versions.json", 0, 2));
+    // create test file:
+    var fileContents = getResourceAsBytes("file.txt");
+    var fileId = UUID.randomUUID().toString();
+
+    var response = postTestContents(fileContents, "text/plain", fileId);
+    var fields = response.readEntity(String.class);
+
+    assertThat(response.getStatus()).isEqualTo(200);
+    assertThat(JsonPath.parse(fields).read("$.file.id", String.class)).isEqualTo(fileId);
+    // check versions array is empty:
+    assertThat(JsonPath.parse(fields).read("$.versions.length()", Integer.class)).isEqualTo(0);
+    // check contentsLastModified is empty:
+    var node = withJackson().parse(fields).read("$.contentsLastModified", JsonNode.class);
+    assertThat(node.isEmpty()).isTrue();
+    // check indexer has requested resources from all TR endpoints:
+    mockRequests.forEach((mr) -> mockServer.verify(mr, once()));
+  }
+
   private String getHost() {
     return "http://localhost:" + application.getLocalPort();
   }
@@ -130,11 +164,6 @@ public class FileResourcePageTurnerTest {
     requests.add(mockEndpoint("/rest/documents/[a-f0-9-]*", "textrepo-doc.json"));
     requests.add(mockEndpoint("/rest/documents/[a-f0-9-]*/metadata", "textrepo-doc-metadata.json"));
     requests.add(mockEndpoint("/rest/types/[0-9]*", "textrepo-type.json"));
-
-    var versionsEndpoint = "/rest/files/[a-f0-9-]*/versions";
-    requests.add(mockEndpointPage(versionsEndpoint, "textrepo-versions-page1.json", 0, 2));
-    requests.add(mockEndpointPage(versionsEndpoint, "textrepo-versions-page2.json", 2, 2));
-    requests.add(mockEndpointPage(versionsEndpoint, "textrepo-versions-page3.json", 4, 2));
 
     return requests;
   }

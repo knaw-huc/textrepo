@@ -17,6 +17,7 @@ import org.glassfish.jersey.client.JerseyClientBuilder;
 import javax.ws.rs.client.Client;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static java.lang.String.format;
@@ -66,8 +67,11 @@ public class FieldsService {
     addFileResource(fileId, doc, type);
     addFileMetadataResource(fileId, file);
     addTypeResource(type);
-    addDocResource(doc);
-    addDocMetadataResource(fileId, doc);
+    var hasDocument = fields.getDoc().getId() != null;
+    if (hasDocument) {
+      addDocResource(doc);
+      addDocMetadataResource(fileId, doc);
+    }
     addVersionsResource(fileId, fields);
 
     return fields;
@@ -75,7 +79,10 @@ public class FieldsService {
 
   private void addFileResource(UUID fileId, ResultDoc doc, ResultType type) {
     var fileJson = getRestResource(FILE_ENDPOINT, fileId);
-    doc.setId(UUID.fromString(read(fileJson, "$.docId")));
+    String docId = read(fileJson, "$.docId");
+    if (docId != null) {
+      doc.setId(UUID.fromString(docId));
+    }
     type.setId(read(fileJson, "$.typeId"));
   }
 
@@ -110,7 +117,8 @@ public class FieldsService {
 
   private void getAllVersions(UUID fileId, ArrayList<ResultVersion> versions) {
     var versionsUrl = createUrl(textrepoHost, fileId, VERSIONS_ENDPOINT);
-    var ref = new TypeRef<List<FormVersion>>() {};
+    var ref = new TypeRef<List<FormVersion>>() {
+    };
 
     var pageTurner = new PageTurner<>(versionsUrl, 0, pageSize, jsonPath, ref);
     pageTurner.turn(formVersions -> {
@@ -153,13 +161,15 @@ public class FieldsService {
         .getVersions()
         .stream()
         .filter(ResultVersion::getContentsModified)
-        .findFirst()
-        .orElseThrow(() -> new IllegalStateException("No version with contentsModified found"));
+        .findFirst();
 
     var result = new ResultContentsLastModified();
-    result.setContentsSha(firstVersionWithLatestContents.getSha());
-    result.setDateTime(firstVersionWithLatestContents.getCreatedAt());
-    result.setVersionId(firstVersionWithLatestContents.getId());
+    if (firstVersionWithLatestContents.isPresent()) {
+      var version = firstVersionWithLatestContents.get();
+      result.setContentsSha(version.getSha());
+      result.setDateTime(version.getCreatedAt());
+      result.setVersionId(version.getId());
+    }
     return result;
   }
 
