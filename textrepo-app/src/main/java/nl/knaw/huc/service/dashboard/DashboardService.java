@@ -8,7 +8,7 @@ import nl.knaw.huc.core.PageParams;
 import java.util.Map;
 
 public interface DashboardService {
-  int countOrphans();
+  long countOrphans();
 
   DocumentsOverview getDocumentsOverview();
 

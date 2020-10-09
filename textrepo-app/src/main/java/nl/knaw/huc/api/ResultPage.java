@@ -7,10 +7,10 @@ import java.util.List;
 public class ResultPage<T> {
 
   private final List<T> items;
-  private final int total;
+  private final long total;
   private final ResultPageParams page;
 
-  public ResultPage(List<T> items, int total, ResultPageParams page) {
+  public ResultPage(List<T> items, long total, ResultPageParams page) {
     this.items = items;
     this.total = total;
     this.page = page;
@@ -22,7 +22,7 @@ public class ResultPage<T> {
   }
 
   @JsonProperty
-  public int getTotal() {
+  public long getTotal() {
     return total;
   }
 

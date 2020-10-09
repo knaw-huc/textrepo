@@ -47,5 +47,5 @@ public interface DocumentFilesDao {
   @SqlQuery("select count(*)" +
       "from documents_files as df left join files as f on f.id = df.file_id " +
       "where df.document_id = ?")
-  int countByDocumentId(UUID docId);
+  long countByDocumentId(UUID docId);
 }

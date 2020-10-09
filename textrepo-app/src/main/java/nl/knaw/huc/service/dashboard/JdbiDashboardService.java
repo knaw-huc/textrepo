@@ -18,7 +18,7 @@ public class JdbiDashboardService implements DashboardService {
   }
 
   @Override
-  public int countOrphans() {
+  public long countOrphans() {
     return dashboard().countOrphans();
   }
 
