@@ -1,0 +1,9 @@
+{
+  "query": {
+    "term": {
+      "file.type.name": {
+        "value": "{type}"
+      }
+    }
+  }
+}

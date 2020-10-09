@@ -41,8 +41,11 @@ public class TestFileIndexer extends AbstractConcordionTest {
   private String file1;
   private String file2;
   private String dateTime;
-  private String searchByDocMetadata = getResourceAsString("es-queries/search-by-doc-metadata.json");
-  private String searchByContentsLastModified = getResourceAsString("es-queries/search-by-contents-last-modified.json");
+
+  private final String searchByFileType = getResourceAsString("es-queries/search-by-file-type.json");
+  private final String searchByDocMetadata = getResourceAsString("es-queries/search-by-doc-metadata.json");
+  private final String searchByContentsLastModified =
+      getResourceAsString("es-queries/search-by-contents-last-modified.json");
 
   private static final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -70,7 +73,9 @@ public class TestFileIndexer extends AbstractConcordionTest {
   }
 
   public String createFiles() {
-    file1 = RestUtils.createFile(doc1, textTypeId);
+    // file 1 is of type foo:
+    file1 = RestUtils.createFile(doc1, fooTypeId);
+    // file 1 is of type text:
     file2 = RestUtils.createFile(doc2, textTypeId);
     return toJson(asList(file1, file2));
   }
@@ -98,6 +103,10 @@ public class TestFileIndexer extends AbstractConcordionTest {
     return toJson(versionIds);
   }
 
+  public String getEsQuerySearchByFileType() {
+    return asPrettyJson(searchByFileType);
+  }
+
   public String getEsQuerySearchByDocMetadata() {
     return asPrettyJson(searchByDocMetadata);
   }
@@ -114,6 +123,23 @@ public class TestFileIndexer extends AbstractConcordionTest {
     public int status;
     public String body;
     public String found;
+  }
+
+  public DocMetadataResult searchEsQuerySearchByFileType(
+      String fileType
+  ) {
+    var result = new DocMetadataResult();
+    var query = this.searchByFileType
+        .replace("{type}", fileType);
+    var response = searchEs(query);
+    result.status = response.getStatus();
+    var body = response.readEntity(String.class);
+    result.body = asPrettyJson(body);
+    var found = jsonPath.parse(body).read("$.hits.hits[*]._source.file.id", new TypeRef<List<String>>() {});
+    result.found = found.size() == 1 && found.contains(file2)
+        ? "correct file"
+        : format("expected %s but got %s", file2, Arrays.toString(found.toArray()));
+    return result;
   }
 
   public DocMetadataResult searchEsQuerySearchByDocMetadata(
@@ -155,14 +181,6 @@ public class TestFileIndexer extends AbstractConcordionTest {
       return new ObjectMapper().writeValueAsString(items);
     } catch (JsonProcessingException e) {
       throw new RuntimeException("Could not create json from: " + Arrays.toString(items.toArray()));
-    }
-  }
-
-  private List<String> fromJson(String items) {
-    try {
-      return asList(new ObjectMapper().readValue(items, String[].class));
-    } catch (JsonProcessingException e) {
-      throw new RuntimeException("Could not create list from: " + items);
     }
   }
 

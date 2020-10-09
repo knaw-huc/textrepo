@@ -14,8 +14,23 @@ To search the index, we first create:
  - each with two files: [ ](- "c:echo=#fileIds")
  - each file with zero or two versions: [ ](- "c:echo=#versionIds")
 
+## Find by file type
+When can search files by type using the following query:
+
+[ ](- "ext:embed=getEsQuerySearchByFileType()")
+
+ - where `{type}` is [`text`](- "#fileType")
+
+[ ](- "#result=searchEsQuerySearchByFileType(#fileType)")
+
+ - The response status should be: [200](- "?=#result.status");
+ - The response should contain [correct file](- "?=#result.found");
+
+Full response:
+[ ](- "ext:embed=#result.body")
+
 ## Find by document metadata
-When can search by document metadata key and values pairs using the following query:
+We can search by document metadata key and values pairs using the following query:
 
 [ ](- "ext:embed=getEsQuerySearchByDocMetadata()")
 
@@ -31,7 +46,8 @@ Full response:
 [ ](- "ext:embed=#result.body")
 
 ## Find by latest modification time of contents
-When can search by modification date using the following query:
+Different versions of a file can have the same contents and hash.
+To check what version is the last version with changed contents, we can run the following query:
 
 [ ](- "ext:embed=getEsQuerySearchByContentsLastModified()")
 
