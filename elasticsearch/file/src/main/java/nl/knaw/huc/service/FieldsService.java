@@ -10,6 +10,7 @@ import nl.knaw.huc.api.ResultContentsLastModified;
 import nl.knaw.huc.api.ResultDoc;
 import nl.knaw.huc.api.ResultFields;
 import nl.knaw.huc.api.ResultFile;
+import nl.knaw.huc.api.ResultMetadataEntry;
 import nl.knaw.huc.api.ResultType;
 import nl.knaw.huc.api.ResultVersion;
 import org.glassfish.jersey.client.JerseyClientBuilder;
@@ -17,8 +18,10 @@ import org.glassfish.jersey.client.JerseyClientBuilder;
 import javax.ws.rs.client.Client;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static nl.knaw.huc.service.ResourceUtil.getResource;
@@ -88,7 +91,13 @@ public class FieldsService {
 
   private void addFileMetadataResource(UUID fileId, ResultFile file) {
     var fileMetadataJson = getRestResource(FILE_METADATA_ENDPOINT, fileId);
-    file.setMetadata(read(fileMetadataJson, "$"));
+    Map<String, String> form = read(fileMetadataJson, "$");
+    var metadata = form
+        .entrySet()
+        .stream()
+        .map((entry) -> new ResultMetadataEntry(entry.getKey(), entry.getValue()))
+        .collect(Collectors.toList());
+    file.setMetadata(metadata);
   }
 
   private void addTypeResource(ResultType type) {
@@ -104,7 +113,13 @@ public class FieldsService {
 
   private void addDocMetadataResource(UUID docId, ResultDoc doc) {
     var docMetadataJson = getRestResource(DOC_METADATA_ENDPOINT, docId);
-    doc.setMetadata(read(docMetadataJson, "$"));
+    Map<String, String> form = read(docMetadataJson, "$");
+    var metadata = form
+        .entrySet()
+        .stream()
+        .map((entry) -> new ResultMetadataEntry(entry.getKey(), entry.getValue()))
+        .collect(Collectors.toList());
+    doc.setMetadata(metadata);
   }
 
   private void addVersionsResource(UUID fileId, ResultFields fields) {
@@ -117,8 +132,7 @@ public class FieldsService {
 
   private void getAllVersions(UUID fileId, ArrayList<ResultVersion> versions) {
     var versionsUrl = createUrl(textrepoHost, fileId, VERSIONS_ENDPOINT);
-    var ref = new TypeRef<List<FormVersion>>() {
-    };
+    var ref = new TypeRef<List<FormVersion>>() {};
 
     var pageTurner = new PageTurner<>(versionsUrl, 0, pageSize, jsonPath, ref);
     pageTurner.turn(formVersions -> {

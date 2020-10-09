@@ -117,15 +117,19 @@ public class FileResourceTest {
     assertThat(JsonPath.parse(fields).read("$.file.type.name", String.class)).isEqualTo("test-type");
     assertThat(JsonPath.parse(fields).read("$.file.type.mimetype", String.class)).isEqualTo("application/test");
     // file metadata:
-    assertThat(JsonPath.parse(fields).read("$.file.metadata.foo", String.class)).isEqualTo("bar");
-    assertThat(JsonPath.parse(fields).read("$.file.metadata.spam", String.class)).isEqualTo("eggs");
+    assertThat(JsonPath.parse(fields).read("$.file.metadata[0].key", String.class)).isEqualTo("foo");
+    assertThat(JsonPath.parse(fields).read("$.file.metadata[0].value", String.class)).isEqualTo("bar");
+    assertThat(JsonPath.parse(fields).read("$.file.metadata[1].key", String.class)).isEqualTo("spam");
+    assertThat(JsonPath.parse(fields).read("$.file.metadata[1].value", String.class)).isEqualTo("eggs");
     // document:
     assertThat(JsonPath.parse(fields).read("$.doc.id", String.class)).isEqualTo("99999999-f0a0-406e-b01b-b12b9df9a84c");
     assertThat(JsonPath.parse(fields).read("$.doc.externalId", String.class))
         .isEqualTo("dat-pak-melk-buiten-de-koelkast");
     // document metadata:
-    assertThat(JsonPath.parse(fields).read("$.doc.metadata.docfoo", String.class)).isEqualTo("docbar");
-    assertThat(JsonPath.parse(fields).read("$.doc.metadata.docspam", String.class)).isEqualTo("doceggs");
+    assertThat(JsonPath.parse(fields).read("$.doc.metadata[0].key", String.class)).isEqualTo("docfoo");
+    assertThat(JsonPath.parse(fields).read("$.doc.metadata[0].value", String.class)).isEqualTo("docbar");
+    assertThat(JsonPath.parse(fields).read("$.doc.metadata[1].key", String.class)).isEqualTo("docspam");
+    assertThat(JsonPath.parse(fields).read("$.doc.metadata[1].value", String.class)).isEqualTo("doceggs");
     // versions:
     assertThat(JsonPath.parse(fields).read("$.versions[0].id", String.class))
         .isEqualTo("33330128-02be-4938-ba84-8d9dd70e19a5");

@@ -2,13 +2,13 @@ package nl.knaw.huc.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.Map;
+import java.util.List;
 import java.util.UUID;
 
 public class ResultDoc {
   private UUID id;
   private String externalId;
-  private Map<String, String> metadata;
+  private List<ResultMetadataEntry> metadata;
 
   @JsonProperty
   public UUID getId() {
@@ -29,11 +29,11 @@ public class ResultDoc {
   }
 
   @JsonProperty
-  public Map<String, String> getMetadata() {
+  public List<ResultMetadataEntry> getMetadata() {
     return metadata;
   }
 
-  public void setMetadata(Map<String, String> metadata) {
+  public void setMetadata(List<ResultMetadataEntry> metadata) {
     this.metadata = metadata;
   }
 }
