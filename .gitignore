@@ -9,7 +9,7 @@ dependency-reduced-pom.xml
 
 # ignore local docker-compose set-up:
 /backup*.sh
-/docker-compose.env
+/docker-compose*.env
 /docker-compose*.yml
 /restore*.sh
 /start*.sh
