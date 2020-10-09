@@ -7,10 +7,10 @@ import java.util.List;
 public class Page<T> {
 
   private final List<T> items;
-  private final int total;
+  private final long total;
   private final PageParams params;
 
-  public Page(List<T> items, int total, PageParams params) {
+  public Page(List<T> items, long total, PageParams params) {
     this.items = items;
     this.total = total;
     this.params = params;
@@ -20,7 +20,7 @@ public class Page<T> {
     return items;
   }
 
-  public int getTotal() {
+  public long getTotal() {
     return total;
   }
 
