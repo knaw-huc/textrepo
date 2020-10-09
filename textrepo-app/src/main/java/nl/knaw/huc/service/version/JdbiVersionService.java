@@ -64,11 +64,11 @@ public class JdbiVersionService implements VersionService {
   ) {
     contentsService.addContents(contents);
     var latestVersionContents = contents.asUtf8String();
-    indexers.forEach(indexer -> indexer.index(file, latestVersionContents));
-
     var id = uuidGenerator.get();
     var newVersion = new Version(id, file.getId(), contents.getSha224());
-    return versions().insert(newVersion);
+    newVersion = versions().insert(newVersion);
+    indexers.forEach(indexer -> indexer.index(file, latestVersionContents));
+    return newVersion;
   }
 
   @Override
