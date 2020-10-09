@@ -24,7 +24,7 @@ import javax.ws.rs.core.Response;
 import java.util.UUID;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
+import static nl.knaw.huc.helpers.ContentsHelper.getContentsAsAttachment;
 
 @Api(tags = {"versions", "contents"})
 @Path("/rest/versions/{versionId}/contents")
@@ -64,11 +64,7 @@ public class VersionContentsResource {
     var contents = contentsService.getByVersionId(versionId);
     log.debug("Got version contents: {}", contents);
 
-    final byte[] payload = contents.decompressIfCompressedSizeLessThan(decompressLimit);
-    return Response
-        .ok(payload, APPLICATION_OCTET_STREAM)
-        .header("Content-Disposition", "attachment;")
-        .build();
+    return getContentsAsAttachment(contents, decompressLimit).build();
   }
 
   @PUT

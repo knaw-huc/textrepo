@@ -28,6 +28,7 @@ import java.util.Map;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
 import static javax.ws.rs.core.UriBuilder.fromResource;
+import static nl.knaw.huc.helpers.ContentsHelper.getContentsAsAttachment;
 
 /**
  * The /find-task finds resources by external id and possible other parameters
@@ -143,15 +144,10 @@ public class FindResource {
     final var contents = result.getContents();
     log.debug("Got latest version contents: {}", contents);
 
-    final var fileId = result.getFileId();
-    final var typeId = result.getTypeId();
-    final byte[] payload = contents.decompressIfCompressedSizeLessThan(decompressLimit);
-    return Response
-        .ok(payload, APPLICATION_OCTET_STREAM)
-        .link(FILE_VERSIONS.build(fileId), REL_VERSION_HISTORY)
-        .link(FILES.build(fileId), REL_UP)
-        .link(TYPES.build(typeId), REL_TYPE)
-        .header("Content-Disposition", "attachment;")
+    return getContentsAsAttachment(contents, decompressLimit)
+        .link(FILE_VERSIONS.build(result.getFileId()), REL_VERSION_HISTORY)
+        .link(FILES.build(result.getFileId()), REL_UP)
+        .link(TYPES.build(result.getTypeId()), REL_TYPE)
         .build();
   }
 

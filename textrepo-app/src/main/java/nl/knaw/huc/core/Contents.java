@@ -9,9 +9,9 @@ import javax.ws.rs.BadRequestException;
 import java.beans.ConstructorProperties;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPInputStream;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static nl.knaw.huc.helpers.gzip.GzipHelper.isGzipped;
 import static nl.knaw.huc.service.contents.ContentsService.abbreviateMiddle;
 
@@ -42,26 +42,23 @@ public class Contents {
     return contents;
   }
 
-  public byte[] decompressIfCompressedSizeLessThan(int limitInBytes) {
-    if (isGzipped(contents) && contents.length < limitInBytes) {
-      return decompress();
-    }
-    return contents;
+  public boolean canDecompressInMemory(int limitInBytes) {
+    return isGzipped(contents) && contents.length < limitInBytes;
   }
 
-  public String asUtf8String() {
-    if (isGzipped(contents)) {
-      return new String(decompress(), StandardCharsets.UTF_8);
-    }
-    return new String(contents, StandardCharsets.UTF_8);
-  }
-
-  private byte[] decompress() {
+  public byte[] decompress() {
     try {
       return new GZIPInputStream(new ByteArrayInputStream(contents)).readAllBytes();
     } catch (IOException e) {
       throw new BadRequestException("Could not decompress GZIP data", e);
     }
+  }
+
+  public String asUtf8String() {
+    if (isGzipped(contents)) {
+      return new String(decompress(), UTF_8);
+    }
+    return new String(contents, UTF_8);
   }
 
   // toString helper to peek into the contents. If compressed show some initial bytes,

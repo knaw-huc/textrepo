@@ -19,6 +19,7 @@ import javax.ws.rs.core.Response;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
+import static nl.knaw.huc.helpers.ContentsHelper.getContentsAsAttachment;
 
 @Api(tags = {"contents"})
 @Path("/rest/contents")
@@ -54,11 +55,7 @@ public class ContentsResource {
 
     log.debug("Got contents: {}", contents);
 
-    final byte[] payload = contents.decompressIfCompressedSizeLessThan(decompressLimit);
-    return Response
-        .ok(payload, APPLICATION_OCTET_STREAM)
-        .header("Content-Disposition", "attachment;")
-        .build();
+    return getContentsAsAttachment(contents, decompressLimit).build();
   }
 
 }
