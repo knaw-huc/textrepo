@@ -21,7 +21,7 @@ public interface DashboardDao {
   DocumentsOverview getDocumentsOverview();
 
   @SqlQuery
-  int countOrphans();
+  long countOrphans();
 
   @SqlQuery
   @RegisterConstructorMapper(Document.class)

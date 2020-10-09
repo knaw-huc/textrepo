@@ -24,7 +24,7 @@ import javax.ws.rs.core.Response;
 import java.util.UUID;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
+import static nl.knaw.huc.helpers.ContentsHelper.getContentsAsAttachment;
 
 @Api(tags = {"versions", "contents"})
 @Path("/rest/versions/{versionId}/contents")
@@ -36,9 +36,12 @@ public class VersionContentsResource {
   private static final String DELETE_ERROR_MSG = "Not allowed to delete contents of version: delete version instead";
 
   private final VersionContentsService contentsService;
+  private final int decompressLimit;
 
-  public VersionContentsResource(VersionContentsService contentsService) {
+  public VersionContentsResource(VersionContentsService contentsService, int contentDecompressionLimit) {
     this.contentsService = contentsService;
+    this.decompressLimit = contentDecompressionLimit;
+    log.debug("contentDecompressionLimit={}", decompressLimit);
   }
 
   @POST
@@ -61,11 +64,7 @@ public class VersionContentsResource {
     var contents = contentsService.getByVersionId(versionId);
     log.debug("Got version contents: {}", contents);
 
-    final byte[] payload = contents.decompressIfCompressedSizeLessThan(2 * 1024 * 1024);
-    return Response
-        .ok(payload, APPLICATION_OCTET_STREAM)
-        .header("Content-Disposition", "attachment;")
-        .build();
+    return getContentsAsAttachment(contents, decompressLimit).build();
   }
 
   @PUT

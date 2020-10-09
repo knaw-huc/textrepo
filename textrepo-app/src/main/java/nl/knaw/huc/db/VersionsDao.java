@@ -46,7 +46,7 @@ public interface VersionsDao {
   @SqlQuery("select count(*) from versions " +
       "where file_id = :fileId " +
       "and (:createdAfter\\:\\:timestamp is null or created_at >= :createdAfter\\:\\:timestamp)")
-  int countByFileId(
+  long countByFileId(
       @Bind("fileId") UUID fileId,
       @Bind("createdAfter") LocalDateTime createdAfter
   );

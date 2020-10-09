@@ -29,6 +29,8 @@ import static nl.knaw.huc.resources.HeaderLink.Uri.DOCUMENT_METADATA;
 import static nl.knaw.huc.resources.HeaderLink.Uri.FILE;
 import static nl.knaw.huc.resources.HeaderLink.Uri.FILE_METADATA;
 import static nl.knaw.huc.resources.HeaderLink.Uri.FILE_VERSIONS;
+import static javax.ws.rs.core.UriBuilder.fromResource;
+import static nl.knaw.huc.helpers.ContentsHelper.getContentsAsAttachment;
 
 /**
  * The /find-task finds resources by external id and possible other parameters
@@ -42,9 +44,12 @@ public class FindResource {
   private static final Logger log = LoggerFactory.getLogger(FindResource.class);
 
   private final TaskBuilderFactory factory;
+  private final int decompressLimit;
 
-  public FindResource(TaskBuilderFactory factory) {
+  public FindResource(TaskBuilderFactory factory, int contentDecompressionLimit) {
     this.factory = factory;
+    this.decompressLimit = contentDecompressionLimit;
+    log.debug("contentDecompressionLimit={}", decompressLimit);
   }
 
   @GET
@@ -129,15 +134,10 @@ public class FindResource {
     final var contents = result.getContents();
     log.debug("Got latest version contents: {}", contents);
 
-    final var fileId = result.getFileId();
-    final var typeId = result.getTypeId();
-    final var payload = contents.decompressIfCompressedSizeLessThan(2 * 1024 * 1024);
-    return Response
-        .ok(payload, APPLICATION_OCTET_STREAM)
-        .link(FILE_VERSIONS.build(fileId), VERSION_HISTORY)
-        .link(FILE.build(fileId), UP)
-        .link(Uri.TYPE.build(typeId), Rel.TYPE)
-        .header("Content-Disposition", "attachment;")
+    return getContentsAsAttachment(contents, decompressLimit)
+        .link(FILE_VERSIONS.build(result.getFileId()), VERSION_HISTORY)
+        .link(FILE.build(result.getFileId()), UP)
+        .link(Uri.TYPE.build(result.getTypeId()), Rel.TYPE)
         .build();
   }
 

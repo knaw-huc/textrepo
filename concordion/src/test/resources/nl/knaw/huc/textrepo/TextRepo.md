@@ -6,7 +6,7 @@
 
 ## Rest API
 
-A user of the Text Repository can retrieve, create, update and delete resources using a REST-full API:
+A user of the Text Repository can retrieve, create, update and delete resources using a REST-ful API:
 
  - [Document collection](rest/TestRestDocumentCollection.md "c:run")
  - [Documents](rest/TestRestDocuments.md "c:run")

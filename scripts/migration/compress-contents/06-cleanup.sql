@@ -3,4 +3,4 @@
 -- See https://www.postgresql.org/docs/9.1/sql-vacuum.html on how 'aggressive'
 -- VACUUM FULL is vs. a regular VACUUM
 
-VACUUM FULL
+VACUUM FULL;

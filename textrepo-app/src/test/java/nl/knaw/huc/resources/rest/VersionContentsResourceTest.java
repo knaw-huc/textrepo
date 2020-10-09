@@ -4,7 +4,6 @@ import com.jayway.jsonpath.JsonPath;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.testing.junit5.ResourceExtension;
 import nl.knaw.huc.exceptions.MethodNotAllowedExceptionMapper;
-import nl.knaw.huc.service.store.ContentsStorage;
 import nl.knaw.huc.service.version.content.VersionContentsService;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.junit.jupiter.api.Test;
@@ -20,12 +19,12 @@ import static org.mockito.Mockito.mock;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
 public class VersionContentsResourceTest {
-  private static final ContentsStorage FILE_STORAGE = mock(ContentsStorage.class);
+  private static final int CONTENT_DECOMPRESSION_LIMIT = 10;
 
   public static final ResourceExtension resource = ResourceExtension
       .builder()
       .addProvider(MultiPartFeature.class)
-      .addResource(new VersionContentsResource(mock(VersionContentsService.class)))
+      .addResource(new VersionContentsResource(mock(VersionContentsService.class), CONTENT_DECOMPRESSION_LIMIT))
       .addResource(new MethodNotAllowedExceptionMapper())
       .build();
 

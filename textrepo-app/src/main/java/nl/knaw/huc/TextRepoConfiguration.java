@@ -2,7 +2,6 @@ package nl.knaw.huc;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;
-import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.db.DataSourceFactory;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import nl.knaw.huc.service.index.MappedIndexerConfiguration;
@@ -20,10 +19,6 @@ public class TextRepoConfiguration extends Configuration {
 
   @Valid
   @NotNull
-  private JerseyClientConfiguration jerseyClient = new JerseyClientConfiguration();
-
-  @Valid
-  @NotNull
   private SwaggerBundleConfiguration swaggerBundleConfiguration = new SwaggerBundleConfiguration();
 
   @Valid
@@ -32,21 +27,15 @@ public class TextRepoConfiguration extends Configuration {
 
   @Valid
   @NotNull
+  private ResourceLimits resourceLimits = new ResourceLimits();
+
+  @Valid
+  @NotNull
   private PaginationConfiguration pagination = new PaginationConfiguration();
 
   @Valid
   @NotNull
   private String dateFormat = "";
-
-  @JsonProperty("jerseyClient")
-  public JerseyClientConfiguration getJerseyClientConfiguration() {
-    return jerseyClient;
-  }
-
-  @JsonProperty("jerseyClient")
-  public void setJerseyClientConfiguration(JerseyClientConfiguration jerseyClient) {
-    this.jerseyClient = jerseyClient;
-  }
 
   @JsonProperty("database")
   public void setDataSourceFactory(DataSourceFactory factory) {
@@ -67,6 +56,16 @@ public class TextRepoConfiguration extends Configuration {
   public void setSwaggerBundleConfiguration(
       SwaggerBundleConfiguration swaggerBundleConfiguration) {
     this.swaggerBundleConfiguration = swaggerBundleConfiguration;
+  }
+
+  @JsonProperty("limits")
+  public ResourceLimits getResourceLimits() {
+    return resourceLimits;
+  }
+
+  @JsonProperty("limits")
+  public void setResourceLimits(ResourceLimits resourceLimits) {
+    this.resourceLimits = resourceLimits;
   }
 
   @JsonProperty("indexers")

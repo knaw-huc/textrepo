@@ -31,12 +31,9 @@ public class ImportResource {
 
   private static final Logger log = LoggerFactory.getLogger(ImportResource.class);
   private final TaskBuilderFactory factory;
-  private final int maxPayloadSize;
 
-  public ImportResource(TaskBuilderFactory factory, int maxPayloadSize) {
+  public ImportResource(TaskBuilderFactory factory) {
     this.factory = factory;
-    this.maxPayloadSize = maxPayloadSize;
-    log.info("ImportFileResource configured with maxPayloadSize={}", maxPayloadSize);
   }
 
   @POST

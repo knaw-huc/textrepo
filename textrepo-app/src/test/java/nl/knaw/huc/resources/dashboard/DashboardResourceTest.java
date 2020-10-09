@@ -187,6 +187,7 @@ class DashboardResourceTest {
     assertThat(actualCounts).containsExactly(entryA, entryB, entryC);
   }
 
+  @SafeVarargs
   private static Map<String, Integer> createCounts(final Map.Entry<String, Integer>... entries) {
     final Map<String, Integer> counts = new LinkedHashMap<>(); // Map.of(...) does not preserve order
     for (final var e : entries) {
