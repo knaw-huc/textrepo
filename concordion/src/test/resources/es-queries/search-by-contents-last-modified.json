@@ -1,0 +1,9 @@
+{
+  "query": {
+    "range": {
+      "contentsLastModified.dateTime": {
+        "gte": "{dateTime}"
+      }
+    }
+  }
+}

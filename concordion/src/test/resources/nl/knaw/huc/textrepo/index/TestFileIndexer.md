@@ -5,8 +5,8 @@ The file indexer creates and indexes a summary of each file, including its docum
 Below you can find some example queries as how to use the file index.
 
 [ ](- "#docIds=createDocuments()")
-[ ](- "#fileIds=createFiles(#docIds)")
-[ ](- "#versionIds=createVersions(#fileIds)")
+[ ](- "#fileIds=createFiles()")
+[ ](- "#versionIds=createVersions()")
 
 To search the index, we first create: 
 
@@ -23,6 +23,21 @@ When can search by document metadata key and values pairs using the following qu
  - where `{value}` is [`bar`](- "#docMetaValue")
 
 [ ](- "#result=searchEsQuerySearchByDocMetadata(#docMetaKey, #docMetaValue)")
+
+ - The response status should be: [200](- "?=#result.status");
+ - The response should contain [correct file](- "?=#result.found");
+
+Full response:
+[ ](- "ext:embed=#result.body")
+
+## Find by latest modification time of contents
+When can search by modification date using the following query:
+
+[ ](- "ext:embed=getEsQuerySearchByContentsLastModified()")
+
+ - where `{dateTime}` is [ ](- "c:echo=getDateTime()")
+
+[ ](- "#result=searchEsQuerySearchByContentsLastModified()")
 
  - The response status should be: [200](- "?=#result.status");
  - The response should contain [correct file](- "?=#result.found");
