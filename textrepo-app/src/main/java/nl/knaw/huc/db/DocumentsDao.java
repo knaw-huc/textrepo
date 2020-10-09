@@ -50,7 +50,7 @@ public interface DocumentsDao {
       "where (:externalId is null or external_id like :externalId) " +
       "and (:createdAfter\\:\\:timestamp is null or created_at >= :createdAfter\\:\\:timestamp)"
   )
-  int countBy(@Bind("externalId") String externalId, @Bind("createdAfter") LocalDateTime createdAfter);
+  long countBy(@Bind("externalId") String externalId, @Bind("createdAfter") LocalDateTime createdAfter);
 
   @SqlQuery("insert into documents (id, external_id) values (:id, :externalId) " +
       "on conflict (id) do update set external_id = excluded.external_id " +
