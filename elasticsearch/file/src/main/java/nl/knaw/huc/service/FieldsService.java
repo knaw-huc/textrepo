@@ -70,7 +70,7 @@ public class FieldsService {
     var hasDocument = fields.getDoc().getId() != null;
     if (hasDocument) {
       addDocResource(doc);
-      addDocMetadataResource(fileId, doc);
+      addDocMetadataResource(doc.getId(), doc);
     }
     addVersionsResource(fileId, fields);
 
@@ -102,8 +102,8 @@ public class FieldsService {
     doc.setExternalId(read(docJson, "$.externalId"));
   }
 
-  private void addDocMetadataResource(UUID fileId, ResultDoc doc) {
-    var docMetadataJson = getRestResource(DOC_METADATA_ENDPOINT, fileId);
+  private void addDocMetadataResource(UUID docId, ResultDoc doc) {
+    var docMetadataJson = getRestResource(DOC_METADATA_ENDPOINT, docId);
     doc.setMetadata(read(docMetadataJson, "$"));
   }
 
