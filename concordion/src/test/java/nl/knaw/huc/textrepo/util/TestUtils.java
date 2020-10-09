@@ -53,51 +53,6 @@ public class TestUtils {
     }
   }
 
-  public static String getFileId(String location) {
-    var pattern = Pattern.compile(".*\\/files\\/(.*)\\/latest");
-    return getId(location, pattern);
-  }
-
-  private static String getId(String location, Pattern pattern) {
-    var matcher = pattern.matcher(location);
-    if (matcher.matches()) {
-      return matcher.group(1);
-    }
-    throw new IllegalStateException(format("No file id in location [%s]", location));
-  }
-
-  public static Optional<String> getLocation(Response response) {
-    return Optional.ofNullable(response.getHeaderString("Location"));
-  }
-
-  public static Response postFileWithFilename(
-      Client client, URL filesEndpoint, String filename, byte[] content
-  ) {
-    log.info("Posting file [{}] to [{}]", filename, filesEndpoint);
-    var contentDisposition = FormDataContentDisposition
-        .name("contents")
-        .fileName(filename)
-        .size(content.length)
-        .build();
-
-    final var multiPart = new FormDataMultiPart()
-        .field("type", TEXT_TYPE)
-        .bodyPart(new FormDataBodyPart(
-            contentDisposition,
-            content,
-            APPLICATION_OCTET_STREAM_TYPE)
-        );
-
-    final var request = client
-        .register(MultiPartFeature.class)
-        .target(filesEndpoint.toString())
-        .request();
-
-    final var entity = entity(multiPart, multiPart.getMediaType());
-
-    return request.post(entity);
-  }
-
   public static void sleepMs(int timeout) {
     try {
       MILLISECONDS.sleep(timeout);
