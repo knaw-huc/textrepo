@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Resources now send 'Content-Encoding: gzip' when sending gzip'd contents
 - Database queries using 'count' now use 'long' as their Java counterpart (was: int)
 
+### Fixed
+- Use `tar.gz` instead of `tar` as backup extension
+
 ## [v1.9]
 ### Added
 - 'contentDecompressionLimit' (kB) configures plain/gzip output cutoff in HTTP results
