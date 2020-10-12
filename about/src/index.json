@@ -1,0 +1,12 @@
+{
+  "description": "${ABOUT_TR_DESCRIPTION}",
+  "version": "${TR_VERSION}",
+  "urls": {
+    "textrepo": "${NGINX_VERTUAL_HOST_SCHEME}${NGINX_VIRTUAL_HOST}${NGINX_LOCATION}swagger/",
+    "healthcheck": "${NGINX_VERTUAL_HOST_SCHEME}${NGINX_VIRTUAL_HOST}/healthcheck/",
+    "elasticsearch": "${NGINX_VERTUAL_HOST_SCHEME}${NGINX_VIRTUAL_HOST}/index/_aliases",
+    "concordion": "${NGINX_VERTUAL_HOST_SCHEME}${NGINX_VIRTUAL_HOST}/concordion/",
+    "documentation": "${ABOUT_TR_DOCUMENTATION}",
+    "sourcecode": "${ABOUT_TR_SOURCECODE}"
+  }
+}

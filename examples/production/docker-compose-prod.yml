@@ -50,13 +50,14 @@ services:
       - textrepo-app
     volumes:
       - concordiondata:/concordion:ro
+      - aboutdata:/about:ro
     ports:
       - ${NGINX_LISTEN}:${NGINX_LISTEN}
     environment:
       VIRTUAL_HOST: ${NGINX_VIRTUAL_HOST}
       NGINX_LISTEN: ${NGINX_LISTEN}
       NGINX_LOCATION: ${NGINX_LOCATION}
-      NGINX_ROOT_REDIRECT: ${NGINX_ROOT_REDIRECT}
+      CONCORDION_ROOT_REDIRECT: ${CONCORDION_ROOT_REDIRECT}
 
   autocomplete-indexer:
     container_name: tr_autocomplete
@@ -117,6 +118,23 @@ services:
       TR_PAGINATION_DEFAULT_LIMIT: ${TR_PAGINATION_DEFAULT_LIMIT}
       TR_DATE_FORMAT: ${TR_DATE_FORMAT}
 
+  about:
+    container_name: tr_about
+    image: knawhuc/textrepo-about:${TR_VERSION}
+    build: ./about
+    networks:
+      - textrepo_network
+    volumes:
+      - aboutdata:/about
+    environment:
+      TR_VERSION: ${TR_VERSION}
+      ABOUT_TR_DESCRIPTION: ${ABOUT_TR_DESCRIPTION}
+      ABOUT_TR_DOCUMENTATION: ${ABOUT_TR_DOCUMENTATION}
+      ABOUT_TR_SOURCECODE: ${ABOUT_TR_SOURCECODE}
+      NGINX_VERTUAL_HOST_SCHEME: ${NGINX_VERTUAL_HOST_SCHEME}
+      NGINX_VIRTUAL_HOST: ${NGINX_VIRTUAL_HOST}
+      NGINX_LOCATION: ${NGINX_LOCATION}
+
 networks:
   textrepo_network:
 
@@ -128,4 +146,6 @@ volumes:
   concordiondata:
     driver: local
   postgresdata-prod:
+    driver: local
+  aboutdata:
     driver: local
