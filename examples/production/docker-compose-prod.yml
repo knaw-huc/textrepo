@@ -121,7 +121,6 @@ services:
   about:
     container_name: tr_about
     image: knawhuc/textrepo-about:${TR_VERSION}
-    build: ./about
     networks:
       - textrepo_network
     volumes:
