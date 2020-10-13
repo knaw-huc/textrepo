@@ -8,10 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Show 'about' page `index.html` (with link to `index.json`) on nginx landing page, with version info and links to services, documentation and source code.
+- Resources now send 'Content-Encoding: gzip' when sending gzip'd contents
 
 ### Changed
+- Renamed env var `TR_VERSION` to `DOCKER_TAG` 
+ (as it is named in docker builds: https://docs.docker.com/docker-hub/builds/advanced)
 - Renamed env var `NGINX_ROOT_REDIRECT` to `CONCORDION_ROOT_REDIRECT`
-- Resources now send 'Content-Encoding: gzip' when sending gzip'd contents
 - Database queries using 'count' now use 'long' as their Java counterpart (was: int)
 
 ### Fixed

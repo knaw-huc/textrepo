@@ -13,6 +13,7 @@ import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import nl.knaw.huc.exceptions.MethodNotAllowedExceptionMapper;
 import nl.knaw.huc.helpers.Limits;
 import nl.knaw.huc.helpers.Paginator;
+import nl.knaw.huc.resources.about.AboutResource;
 import nl.knaw.huc.resources.dashboard.DashboardResource;
 import nl.knaw.huc.resources.rest.ContentsResource;
 import nl.knaw.huc.resources.rest.DocumentFilesResource;
@@ -146,7 +147,8 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
         new FindResource(taskBuilderFactory, contentDecompressionLimit),
         new DashboardResource(dashboardService, paginator),
         new MetadataResource(documentMetadataService),
-        new RegisterIdentifiersResource(taskBuilderFactory)
+        new RegisterIdentifiersResource(taskBuilderFactory),
+        new AboutResource(config)
     );
 
     environment.jersey().register(new MethodNotAllowedExceptionMapper());
