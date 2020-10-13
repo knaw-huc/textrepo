@@ -5,8 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-- Resources now send 'Content-Encoding: gzip' when sending gzip'd contents
-- Database queries using 'count' now use 'long' as their Java counterpart (was: int)
+- [TT-631] When yielding contents, return gzip'd content when 'Accept-Encoding: gzip'
+- [TT-645] Resources now send 'Content-Encoding: gzip' when sending gzip'd contents
+- [TT-574] Database queries using 'count' now use 'long' as their Java counterpart (was: int)
 
 ### Fixed
 - Use `tar.gz` instead of `tar` as backup extension
