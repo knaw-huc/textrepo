@@ -129,8 +129,9 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
     var dashboardService = new JdbiDashboardService(jdbi);
 
     var limits = config.getResourceLimits();
-    final var contentDecompressionLimit = limits.contentDecompressionLimit * Limits.BYTES_PER_KB;
+    var contentDecompressionLimit = limits.contentDecompressionLimit * Limits.BYTES_PER_KB;
     var contentsHelper = new ContentsHelper(contentDecompressionLimit);
+
     var resources = Arrays.asList(
         new ContentsResource(contentsService, contentsHelper),
         new TypesResource(typeService),

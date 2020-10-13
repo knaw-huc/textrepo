@@ -16,6 +16,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -24,6 +25,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import java.util.UUID;
 
+import static javax.ws.rs.core.HttpHeaders.ACCEPT_ENCODING;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 @Api(tags = {"versions", "contents"})
@@ -57,13 +59,14 @@ public class VersionContentsResource {
   @ApiOperation(value = "Retrieve version contents")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultVersion.class, message = "OK")})
   public Response get(
+      @HeaderParam(ACCEPT_ENCODING) String acceptEncoding,
       @PathParam("versionId") @NotNull @Valid UUID versionId
   ) {
     log.debug("Get version contents: versionId={}", versionId);
     var contents = contentsService.getByVersionId(versionId);
     log.debug("Got version contents: {}", contents);
 
-    return contentsHelper.getContentsAsAttachment(contents).build();
+    return contentsHelper.asAttachment(contents, acceptEncoding).build();
   }
 
   @PUT

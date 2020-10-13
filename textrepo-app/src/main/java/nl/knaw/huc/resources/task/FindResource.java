@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -26,6 +27,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import java.util.Map;
 
+import static javax.ws.rs.core.HttpHeaders.ACCEPT_ENCODING;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
 import static javax.ws.rs.core.UriBuilder.fromResource;
@@ -129,6 +131,7 @@ public class FindResource {
       @ApiResponse(code = 200, message = "OK"),
       @ApiResponse(code = 404, message = "Given type, document or supposed contents could not be found")})
   public Response getLatestFileVersionContent(
+      @HeaderParam(ACCEPT_ENCODING) String acceptEncoding,
       @NotNull @PathParam("externalId") String documentId,
       @NotNull @QueryParam("type") String typeName
   ) {
@@ -143,7 +146,7 @@ public class FindResource {
     final var contents = result.getContents();
     log.debug("Got latest version contents: {}", contents);
 
-    return contentsHelper.getContentsAsAttachment(contents)
+    return contentsHelper.asAttachment(contents, acceptEncoding)
                          .link(FILE_VERSIONS.build(result.getFileId()), REL_VERSION_HISTORY)
                          .link(FILES.build(result.getFileId()), REL_UP)
                          .link(TYPES.build(result.getTypeId()), REL_TYPE)

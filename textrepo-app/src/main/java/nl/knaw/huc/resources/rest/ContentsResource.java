@@ -13,11 +13,13 @@ import org.slf4j.LoggerFactory;
 import javax.validation.constraints.NotBlank;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
+import static javax.ws.rs.core.HttpHeaders.ACCEPT_ENCODING;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
 
@@ -41,6 +43,7 @@ public class ContentsResource {
   @ApiOperation(value = "Retrieve contents")
   @ApiResponses(value = {@ApiResponse(code = 200, response = byte[].class, message = "OK")})
   public Response get(
+      @HeaderParam(ACCEPT_ENCODING) String acceptEncoding,
       @PathParam("sha") @NotBlank String sha
   ) {
     log.debug("Get contents: sha={}", sha);
@@ -54,7 +57,7 @@ public class ContentsResource {
 
     log.debug("Got contents: {}", contents);
 
-    return contentsHelper.getContentsAsAttachment(contents).build();
+    return contentsHelper.asAttachment(contents, acceptEncoding).build();
   }
 
 }
