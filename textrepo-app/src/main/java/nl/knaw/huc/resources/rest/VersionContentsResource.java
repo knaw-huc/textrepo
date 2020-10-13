@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.ResultVersion;
 import nl.knaw.huc.exceptions.MethodNotAllowedException;
+import nl.knaw.huc.helpers.ContentsHelper;
 import nl.knaw.huc.service.version.content.VersionContentsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +25,6 @@ import javax.ws.rs.core.Response;
 import java.util.UUID;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static nl.knaw.huc.helpers.ContentsHelper.getContentsAsAttachment;
 
 @Api(tags = {"versions", "contents"})
 @Path("/rest/versions/{versionId}/contents")
@@ -36,12 +36,11 @@ public class VersionContentsResource {
   private static final String DELETE_ERROR_MSG = "Not allowed to delete contents of version: delete version instead";
 
   private final VersionContentsService contentsService;
-  private final int decompressLimit;
+  private final ContentsHelper contentsHelper;
 
-  public VersionContentsResource(VersionContentsService contentsService, int contentDecompressionLimit) {
+  public VersionContentsResource(VersionContentsService contentsService, ContentsHelper contentsHelper) {
     this.contentsService = contentsService;
-    this.decompressLimit = contentDecompressionLimit;
-    log.debug("contentDecompressionLimit={}", decompressLimit);
+    this.contentsHelper = contentsHelper;
   }
 
   @POST
@@ -64,7 +63,7 @@ public class VersionContentsResource {
     var contents = contentsService.getByVersionId(versionId);
     log.debug("Got version contents: {}", contents);
 
-    return getContentsAsAttachment(contents, decompressLimit).build();
+    return contentsHelper.getContentsAsAttachment(contents).build();
   }
 
   @PUT

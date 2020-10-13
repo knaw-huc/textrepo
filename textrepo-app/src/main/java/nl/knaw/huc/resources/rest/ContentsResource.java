@@ -5,6 +5,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import nl.knaw.huc.helpers.ContentsHelper;
 import nl.knaw.huc.service.contents.ContentsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +20,6 @@ import javax.ws.rs.core.Response;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
-import static nl.knaw.huc.helpers.ContentsHelper.getContentsAsAttachment;
 
 @Api(tags = {"contents"})
 @Path("/rest/contents")
@@ -27,12 +27,11 @@ public class ContentsResource {
 
   private static final Logger log = LoggerFactory.getLogger(ContentsResource.class);
   private final ContentsService contentsService;
-  private final int decompressLimit;
+  private final ContentsHelper contentsHelper;
 
-  public ContentsResource(ContentsService contentsService, int contentDecompressionLimit) {
+  public ContentsResource(ContentsService contentsService, ContentsHelper contentsHelper) {
     this.contentsService = contentsService;
-    this.decompressLimit = contentDecompressionLimit;
-    log.debug("contentDecompressionLimit={}", decompressLimit);
+    this.contentsHelper = contentsHelper;
   }
 
   @GET
@@ -55,7 +54,7 @@ public class ContentsResource {
 
     log.debug("Got contents: {}", contents);
 
-    return getContentsAsAttachment(contents, decompressLimit).build();
+    return contentsHelper.getContentsAsAttachment(contents).build();
   }
 
 }

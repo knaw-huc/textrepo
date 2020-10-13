@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import nl.knaw.huc.helpers.ContentsHelper;
 import nl.knaw.huc.resources.rest.DocumentMetadataResource;
 import nl.knaw.huc.resources.rest.DocumentsResource;
 import nl.knaw.huc.resources.rest.FileMetadataResource;
@@ -28,7 +29,6 @@ import java.util.Map;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
 import static javax.ws.rs.core.UriBuilder.fromResource;
-import static nl.knaw.huc.helpers.ContentsHelper.getContentsAsAttachment;
 
 /**
  * The /find-task finds resources by external id and possible other parameters
@@ -54,12 +54,11 @@ public class FindResource {
   private static final Logger log = LoggerFactory.getLogger(FindResource.class);
 
   private final TaskBuilderFactory factory;
-  private final int decompressLimit;
+  private final ContentsHelper contentsHelper;
 
-  public FindResource(TaskBuilderFactory factory, int contentDecompressionLimit) {
+  public FindResource(TaskBuilderFactory factory, ContentsHelper contentsHelper) {
     this.factory = factory;
-    this.decompressLimit = contentDecompressionLimit;
-    log.debug("contentDecompressionLimit={}", decompressLimit);
+    this.contentsHelper = contentsHelper;
   }
 
   @GET
@@ -144,11 +143,11 @@ public class FindResource {
     final var contents = result.getContents();
     log.debug("Got latest version contents: {}", contents);
 
-    return getContentsAsAttachment(contents, decompressLimit)
-        .link(FILE_VERSIONS.build(result.getFileId()), REL_VERSION_HISTORY)
-        .link(FILES.build(result.getFileId()), REL_UP)
-        .link(TYPES.build(result.getTypeId()), REL_TYPE)
-        .build();
+    return contentsHelper.getContentsAsAttachment(contents)
+                         .link(FILE_VERSIONS.build(result.getFileId()), REL_VERSION_HISTORY)
+                         .link(FILES.build(result.getFileId()), REL_UP)
+                         .link(TYPES.build(result.getTypeId()), REL_TYPE)
+                         .build();
   }
 
 }
