@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Show 'about' page `index.html` (with link to `index.json`) on nginx landing page, with version info and links to services, documentation and source code.
+- Show version and configuration info at root of textrepo API
 - Resources now send 'Content-Encoding: gzip' when sending gzip'd contents
 
 ### Changed
