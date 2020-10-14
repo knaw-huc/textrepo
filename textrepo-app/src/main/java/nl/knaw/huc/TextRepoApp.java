@@ -130,6 +130,7 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
 
     var limits = config.getResourceLimits();
     var contentDecompressionLimit = limits.contentDecompressionLimit * Limits.BYTES_PER_KB;
+    log.debug("contentDecompressionLimit={}", contentDecompressionLimit);
     var contentsHelper = new ContentsHelper(contentDecompressionLimit);
 
     var resources = Arrays.asList(

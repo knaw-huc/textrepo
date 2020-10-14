@@ -23,7 +23,6 @@ public class ContentsHelper {
 
   public ContentsHelper(int contentDecompressionLimit) {
     this.contentDecompressionLimit = contentDecompressionLimit;
-    log.debug("contentDecompressionLimit={}", contentDecompressionLimit);
   }
 
   public ResponseBuilder asAttachment(@Nonnull Contents contents, @Nullable String acceptEncoding) {
