@@ -68,7 +68,7 @@ create_es_snapshot() {
 
 BACKUP_DIR=~/backup
 CONTAINER_DIR=/var/lib/textrepo/data
-ARCHIVE_NAME=postgresdata-prod-volume.tar
+ARCHIVE_NAME=postgresdata-prod-volume.tar.gz
 CONTAINER=tr_postgres
 backup_volume $BACKUP_DIR $CONTAINER_DIR $ARCHIVE_NAME $CONTAINER
 
@@ -77,7 +77,7 @@ backup_volume $BACKUP_DIR $CONTAINER_DIR $ARCHIVE_NAME $CONTAINER
 
 BACKUP_DIR=~/backup
 CONTAINER_DIR=/snapshot-repo
-ARCHIVE_NAME=esdata-prod-volume.tar
+ARCHIVE_NAME=esdata-prod-volume.tar.gz
 CONTAINER=tr_elasticsearch
 SERVICE=elasticsearch
 

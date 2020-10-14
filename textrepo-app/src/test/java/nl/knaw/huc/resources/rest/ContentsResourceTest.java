@@ -3,6 +3,7 @@ package nl.knaw.huc.resources.rest;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.testing.junit5.ResourceExtension;
 import nl.knaw.huc.core.Contents;
+import nl.knaw.huc.helpers.ContentsHelper;
 import nl.knaw.huc.service.contents.ContentsService;
 import nl.knaw.huc.service.store.ContentsStorage;
 import org.apache.commons.io.IOUtils;
@@ -29,6 +30,7 @@ import static org.mockito.Mockito.when;
 public class ContentsResourceTest {
   private static final ContentsStorage FILE_STORAGE = mock(ContentsStorage.class);
   private static final int CONTENT_DECOMPRESSION_LIMIT = 10;
+  private static final ContentsHelper CONTENTS_HELPER = new ContentsHelper(CONTENT_DECOMPRESSION_LIMIT);
 
   private static final String sha224 = "55d4c44f5bc05762d8807f75f3f24b4095afa583ef70ac97eaf7afc6";
   private static final String contents = "hello test";
@@ -39,7 +41,7 @@ public class ContentsResourceTest {
 
   public static final ResourceExtension resource = ResourceExtension
       .builder()
-      .addResource(new ContentsResource(new ContentsService(FILE_STORAGE), CONTENT_DECOMPRESSION_LIMIT))
+      .addResource(new ContentsResource(new ContentsService(FILE_STORAGE), CONTENTS_HELPER))
       .build();
 
   @BeforeEach

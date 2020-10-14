@@ -72,7 +72,7 @@ restore_es_snapshot() {
 BACKUP_DIR=~/backup
 PREFIX=$(basename $(pwd))
 VOLUME=${PREFIX}_postgresdata-prod
-ARCHIVE_NAME=postgresdata-prod-volume.tar
+ARCHIVE_NAME=postgresdata-prod-volume.tar.gz
 CONTAINER=tr_postgres
 
 restore_volume $VOLUME $BACKUP_DIR $ARCHIVE_NAME $CONTAINER
@@ -83,7 +83,7 @@ restore_volume $VOLUME $BACKUP_DIR $ARCHIVE_NAME $CONTAINER
 BACKUP_DIR=~/backup
 PREFIX=$(basename $(pwd))
 VOLUME=${PREFIX}_essnapshotdata-prod
-ARCHIVE_NAME=esdata-prod-volume.tar
+ARCHIVE_NAME=esdata-prod-volume.tar.gz
 CONTAINER=tr_elasticsearch
 CONTAINER_DIR=/snapshot-repo
 SERVICE=elasticsearch

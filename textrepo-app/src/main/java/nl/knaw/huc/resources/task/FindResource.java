@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import nl.knaw.huc.helpers.ContentsHelper;
 import nl.knaw.huc.resources.HeaderLink.Rel;
 import nl.knaw.huc.resources.HeaderLink.Uri;
 import nl.knaw.huc.service.task.TaskBuilderFactory;
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -19,6 +21,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.util.Map;
 
+import static javax.ws.rs.core.HttpHeaders.ACCEPT_ENCODING;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
 import static nl.knaw.huc.resources.HeaderLink.Rel.ORIGINAL;
@@ -30,7 +33,6 @@ import static nl.knaw.huc.resources.HeaderLink.Uri.FILE;
 import static nl.knaw.huc.resources.HeaderLink.Uri.FILE_METADATA;
 import static nl.knaw.huc.resources.HeaderLink.Uri.FILE_VERSIONS;
 import static javax.ws.rs.core.UriBuilder.fromResource;
-import static nl.knaw.huc.helpers.ContentsHelper.getContentsAsAttachment;
 
 /**
  * The /find-task finds resources by external id and possible other parameters
@@ -44,12 +46,11 @@ public class FindResource {
   private static final Logger log = LoggerFactory.getLogger(FindResource.class);
 
   private final TaskBuilderFactory factory;
-  private final int decompressLimit;
+  private final ContentsHelper contentsHelper;
 
-  public FindResource(TaskBuilderFactory factory, int contentDecompressionLimit) {
+  public FindResource(TaskBuilderFactory factory, ContentsHelper contentsHelper) {
     this.factory = factory;
-    this.decompressLimit = contentDecompressionLimit;
-    log.debug("contentDecompressionLimit={}", decompressLimit);
+    this.contentsHelper = contentsHelper;
   }
 
   @GET
@@ -120,6 +121,7 @@ public class FindResource {
       @ApiResponse(code = 200, message = "OK"),
       @ApiResponse(code = 404, message = "Given type, document or supposed contents could not be found")})
   public Response getLatestFileVersionContent(
+      @HeaderParam(ACCEPT_ENCODING) String acceptEncoding,
       @NotNull @PathParam("externalId") String documentId,
       @NotNull @QueryParam("type") String typeName
   ) {
@@ -134,7 +136,8 @@ public class FindResource {
     final var contents = result.getContents();
     log.debug("Got latest version contents: {}", contents);
 
-    return getContentsAsAttachment(contents, decompressLimit)
+    return contentsHelper
+        .asAttachment(contents, acceptEncoding)
         .link(FILE_VERSIONS.build(result.getFileId()), VERSION_HISTORY)
         .link(FILE.build(result.getFileId()), UP)
         .link(Uri.TYPE.build(result.getTypeId()), Rel.TYPE)
