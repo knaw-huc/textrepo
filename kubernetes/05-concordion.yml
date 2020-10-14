@@ -31,7 +31,7 @@ spec:
     spec:
       containers:
       - args:
-        - /utils/wait-for-it.sh
+        - /scripts/wait-for-it.sh
         - textrepo-app:8080
         - --timeout=0
         - --

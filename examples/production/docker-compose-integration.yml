@@ -5,9 +5,9 @@ services:
     container_name: tr_postgres
     image: knawhuc/textrepo-postgres:${DOCKER_TAG}
     networks:
-    - textrepo_network
+      - textrepo_network
     ports:
-    - 5432:5432
+      - 5432:5432
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
@@ -34,25 +34,25 @@ services:
         soft: -1
         hard: -1
     volumes:
-    - esdata:/usr/share/elasticsearch/data
-    - essnapshotdata:/snapshot-repo
+      - esdata:/usr/share/elasticsearch/data
+      - essnapshotdata:/snapshot-repo
     ports:
-    - 9200
+      - 9200
     networks:
-    - textrepo_network
+      - textrepo_network
 
   nginx:
     container_name: tr_nginx
     image: knawhuc/textrepo-nginx:${DOCKER_TAG}
     networks:
-    - textrepo_network
+      - textrepo_network
     depends_on:
-    - textrepo-app
+      - textrepo-app
     volumes:
-    - concordiondata:/concordion:ro
-    - aboutdata:/about:ro
+      - concordiondata:/concordion:ro
+      - aboutdata:/about:ro
     ports:
-    - ${NGINX_LISTEN}:${NGINX_LISTEN}
+      - ${NGINX_LISTEN}:${NGINX_LISTEN}
     environment:
       VIRTUAL_HOST: ${NGINX_VIRTUAL_HOST}
       NGINX_LISTEN: ${NGINX_LISTEN}
@@ -66,10 +66,12 @@ services:
       - 8080
     networks:
       - textrepo_network
-    command: ["/utils/wait-for-it.sh", "elasticsearch:9200",
-              "--timeout=0",
-              "--",
-              "java", "-jar", "/indexer/autocomplete.jar", "server", "config.yml"]
+    volumes:
+      - ./scripts/wait-for-it.sh:/indexer/wait-for-it.sh
+    command: [
+        "./wait-for-it.sh", "elasticsearch:9200", "--timeout=0", "--",
+        "java", "-jar", "autocomplete.jar", "server", "config.yml"
+    ]
 
   full-text-indexer:
     container_name: tr_full-text
@@ -78,22 +80,29 @@ services:
       - 8080
     networks:
       - textrepo_network
-    command: ["/utils/wait-for-it.sh", "elasticsearch:9200",
-              "--timeout=0",
-              "--",
-              "java", "-jar", "/indexer/full-text.jar", "server", "config.yml"]
+    volumes:
+      - ./scripts/wait-for-it.sh:/indexer/wait-for-it.sh
+    command: [
+        "./wait-for-it.sh", "elasticsearch:9200", "--timeout=0", "--",
+        "java", "-jar", "full-text.jar", "server", "config.yml"
+    ]
 
   textrepo-app:
     container_name: tr_textrepo
     image: knawhuc/textrepo-app:${DOCKER_TAG}
+    depends_on:
+      - postgres
     ports:
-    - 8080
-    - 8081:8081
+      - 8080
+        - 8081
     networks:
-    - textrepo_network
-    command: ["./wait-for-it.sh", "autocomplete-indexer:8080", "--timeout=0", "--",
-              "./wait-for-it.sh", "postgres:${POSTGRES_PORT}", "--timeout=0", "--",
-              "./start.sh"
+      - textrepo_network
+    volumes:
+      - ./scripts/wait-for-it.sh:/textrepo-app/wait-for-it.sh
+    command: [
+        "./wait-for-it.sh", "autocomplete-indexer:8080", "--timeout=0", "--",
+        "./wait-for-it.sh", "full-text-indexer:8080", "--timeout=0", "--",
+        "./start.sh"
     ]
     environment:
       TR_DATABASE_DRIVER_CLASS: ${TR_DATABASE_DRIVER_CLASS}
@@ -117,23 +126,24 @@ services:
       TR_PAGINATION_DEFAULT_OFFSET: ${TR_PAGINATION_DEFAULT_OFFSET}
       TR_PAGINATION_DEFAULT_LIMIT: ${TR_PAGINATION_DEFAULT_LIMIT}
       TR_DATE_FORMAT: ${TR_DATE_FORMAT}
+      TR_CONTENT_DECOMPRESSION_LIMIT: ${TR_CONTENT_DECOMPRESSION_LIMIT}
 
   concordion:
     container_name: tr_concordion
     image: knawhuc/textrepo-concordion:${DOCKER_TAG}
     ports:
-    - 8080
+      - 8080
     networks:
-    - textrepo_network
-    command: [
-      "/utils/wait-for-it.sh", "textrepo-app:8080",
-      "--timeout=0",
-      "--",
-      # run tests and keep container up:
-      "/bin/bash", "-c", "mvn clean test ; tail -f /dev/null"
-    ]
+      - textrepo_network
     volumes:
-    - concordiondata:/concordion
+      - concordiondata:/concordion
+      - ~/.m2/repository:/root/.m2/repository
+      - ./scripts/wait-for-it.sh:/concordion/wait-for-it.sh
+    command: [
+        "./wait-for-it.sh", "textrepo-app:8080", "--timeout=0", "--",
+      # run tests and keep container up:
+        "/bin/bash", "-c", "mvn clean test ; tail -f /dev/null"
+    ]
     environment:
       ES_HOST: ${CONCORDION_ES_HOST}
       APP_HOST: ${CONCORDION_APP_HOST}
