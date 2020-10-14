@@ -1,0 +1,21 @@
+{
+  "items": [
+    {
+      "id": "11110128-02be-4938-ba84-8d9dd70e19a5",
+      "fileId": "aa3e6e4b-30bd-4c92-8cf7-1297646a4c04",
+      "createdAt": "2000-01-01T00:00:00",
+      "contentsSha": "99994942a9d96e2965f2a0f9d06b5878822111580fe061b038720330"
+    },
+    {
+      "id": "00000128-02be-4938-ba84-8d9dd70e19a5",
+      "fileId": "aa3e6e4b-30bd-4c92-8cf7-1297646a4c04",
+      "createdAt": "1999-12-31T00:00:00",
+      "contentsSha": "99994942a9d96e2965f2a0f9d06b5878822111580fe061b038720330"
+    }
+  ],
+  "total": 5,
+  "page": {
+    "limit": 2,
+    "offset": 2
+  }
+}

@@ -4,31 +4,35 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import nl.knaw.huc.resources.rest.DocumentMetadataResource;
-import nl.knaw.huc.resources.rest.DocumentsResource;
-import nl.knaw.huc.resources.rest.FileMetadataResource;
-import nl.knaw.huc.resources.rest.FileVersionsResource;
-import nl.knaw.huc.resources.rest.FilesResource;
-import nl.knaw.huc.resources.rest.TypesResource;
+import nl.knaw.huc.helpers.ContentsHelper;
+import nl.knaw.huc.resources.HeaderLink.Rel;
+import nl.knaw.huc.resources.HeaderLink.Uri;
 import nl.knaw.huc.service.task.TaskBuilderFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Link;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import java.util.Map;
 
+import static javax.ws.rs.core.HttpHeaders.ACCEPT_ENCODING;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
+import static nl.knaw.huc.resources.HeaderLink.Rel.ORIGINAL;
+import static nl.knaw.huc.resources.HeaderLink.Rel.UP;
+import static nl.knaw.huc.resources.HeaderLink.Rel.VERSION_HISTORY;
+import static nl.knaw.huc.resources.HeaderLink.Uri.DOCUMENT;
+import static nl.knaw.huc.resources.HeaderLink.Uri.DOCUMENT_METADATA;
+import static nl.knaw.huc.resources.HeaderLink.Uri.FILE;
+import static nl.knaw.huc.resources.HeaderLink.Uri.FILE_METADATA;
+import static nl.knaw.huc.resources.HeaderLink.Uri.FILE_VERSIONS;
 import static javax.ws.rs.core.UriBuilder.fromResource;
-import static nl.knaw.huc.helpers.ContentsHelper.getContentsAsAttachment;
 
 /**
  * The /find-task finds resources by external id and possible other parameters
@@ -39,27 +43,14 @@ import static nl.knaw.huc.helpers.ContentsHelper.getContentsAsAttachment;
 @Api(tags = {"task", "find"})
 public class FindResource {
 
-  public static final String REL_ORIGINAL = "original";
-  public static final String REL_TYPE = Link.TYPE;
-  public static final String REL_UP = "up";
-  public static final String REL_VERSION_HISTORY = "version-history";
-
-  private static final UriBuilder DOCUMENTS = fromResource(DocumentsResource.class).path("/{id}");
-  private static final UriBuilder DOCUMENT_METADATA = fromResource(DocumentMetadataResource.class);
-  private static final UriBuilder FILES = fromResource(FilesResource.class).path("/{id}");
-  private static final UriBuilder FILE_METADATA = fromResource(FileMetadataResource.class);
-  private static final UriBuilder FILE_VERSIONS = fromResource(FileVersionsResource.class);
-  private static final UriBuilder TYPES = fromResource(TypesResource.class).path("/{id}");
-
   private static final Logger log = LoggerFactory.getLogger(FindResource.class);
 
   private final TaskBuilderFactory factory;
-  private final int decompressLimit;
+  private final ContentsHelper contentsHelper;
 
-  public FindResource(TaskBuilderFactory factory, int contentDecompressionLimit) {
+  public FindResource(TaskBuilderFactory factory, ContentsHelper contentsHelper) {
     this.factory = factory;
-    this.decompressLimit = contentDecompressionLimit;
-    log.debug("contentDecompressionLimit={}", decompressLimit);
+    this.contentsHelper = contentsHelper;
   }
 
   @GET
@@ -84,8 +75,8 @@ public class FindResource {
 
     return Response
         .ok(result.getMetadata(), APPLICATION_JSON)
-        .link(DOCUMENT_METADATA.build(docId), REL_ORIGINAL)
-        .link(DOCUMENTS.build(docId), REL_UP)
+        .link(DOCUMENT_METADATA.build(docId), ORIGINAL)
+        .link(DOCUMENT.build(docId), UP)
         .build();
   }
 
@@ -115,9 +106,9 @@ public class FindResource {
 
     return Response
         .ok(result.getMetadata(), APPLICATION_JSON)
-        .link(FILE_METADATA.build(fileId), REL_ORIGINAL)
-        .link(FILES.build(fileId), REL_UP)
-        .link(TYPES.build(typeId), REL_TYPE)
+        .link(FILE_METADATA.build(fileId), ORIGINAL)
+        .link(FILE.build(fileId), UP)
+        .link(Uri.TYPE.build(typeId), Rel.TYPE)
         .build();
   }
 
@@ -130,6 +121,7 @@ public class FindResource {
       @ApiResponse(code = 200, message = "OK"),
       @ApiResponse(code = 404, message = "Given type, document or supposed contents could not be found")})
   public Response getLatestFileVersionContent(
+      @HeaderParam(ACCEPT_ENCODING) String acceptEncoding,
       @NotNull @PathParam("externalId") String documentId,
       @NotNull @QueryParam("type") String typeName
   ) {
@@ -144,10 +136,11 @@ public class FindResource {
     final var contents = result.getContents();
     log.debug("Got latest version contents: {}", contents);
 
-    return getContentsAsAttachment(contents, decompressLimit)
-        .link(FILE_VERSIONS.build(result.getFileId()), REL_VERSION_HISTORY)
-        .link(FILES.build(result.getFileId()), REL_UP)
-        .link(TYPES.build(result.getTypeId()), REL_TYPE)
+    return contentsHelper
+        .asAttachment(contents, acceptEncoding)
+        .link(FILE_VERSIONS.build(result.getFileId()), VERSION_HISTORY)
+        .link(FILE.build(result.getFileId()), UP)
+        .link(Uri.TYPE.build(result.getTypeId()), Rel.TYPE)
         .build();
   }
 

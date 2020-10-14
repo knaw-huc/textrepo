@@ -7,13 +7,17 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
 import javax.ws.rs.client.Client;
 
+import java.net.URI;
+
 import static java.lang.String.format;
 import static javax.ws.rs.client.Entity.entity;
 import static javax.ws.rs.client.Entity.json;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
+import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
 import static nl.knaw.huc.textrepo.Config.HOST;
 import static nl.knaw.huc.textrepo.Config.TYPES_URL;
+import static nl.knaw.huc.textrepo.util.TestUtils.replaceUrlParams;
 
 public class RestUtils {
 
@@ -30,6 +34,17 @@ public class RestUtils {
 
     var body = response.readEntity(String.class);
     return JsonPath.parse(body).read("$.id");
+  }
+
+  /**
+   *
+   */
+  public static void createDocumentMetadata(String id, String key, String value) {
+    var url = replaceUrlParams("/rest/documents/{id}/metadata/{key}", id, key);
+    client
+        .target(url)
+        .request()
+        .put(entity(value, TEXT_PLAIN));
   }
 
   public static int createType(String type, String mimetype) {

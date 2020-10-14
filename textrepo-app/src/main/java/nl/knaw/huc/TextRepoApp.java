@@ -11,6 +11,7 @@ import io.dropwizard.setup.Environment;
 import io.federecio.dropwizard.swagger.SwaggerBundle;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import nl.knaw.huc.exceptions.MethodNotAllowedExceptionMapper;
+import nl.knaw.huc.helpers.ContentsHelper;
 import nl.knaw.huc.helpers.Limits;
 import nl.knaw.huc.helpers.Paginator;
 import nl.knaw.huc.resources.about.AboutResource;
@@ -109,7 +110,6 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
     var jdbi = createJdbi(config, environment);
     var contentsStoreService = new JdbiContentsStorage(jdbi);
     var contentsService = new ContentsService(contentsStoreService);
-    var metadataService = new JdbiFileMetadataService(jdbi);
     var typeService = new JdbiTypeService(jdbi);
 
     var indexers = createElasticCustomFacetIndexers(config, typeService);
@@ -129,9 +129,13 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
     var dashboardService = new JdbiDashboardService(jdbi);
 
     var limits = config.getResourceLimits();
-    final var contentDecompressionLimit = limits.contentDecompressionLimit * Limits.BYTES_PER_KB;
+    var contentDecompressionLimit = limits.contentDecompressionLimit * Limits.BYTES_PER_KB;
+    var contentsHelper = new ContentsHelper(contentDecompressionLimit);
+
+    var metadataService = new JdbiFileMetadataService(jdbi);
+
     var resources = Arrays.asList(
-        new ContentsResource(contentsService, contentDecompressionLimit),
+        new ContentsResource(contentsService, contentsHelper),
         new TypesResource(typeService),
         new FileMetadataResource(metadataService),
         new FileVersionsResource(versionService, paginator),
@@ -143,8 +147,8 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
         new FilesResource(fileService),
         new DocumentFilesResource(documentFilesService, paginator),
         new VersionsResource(versionService),
-        new VersionContentsResource(versionContentsService, contentDecompressionLimit),
-        new FindResource(taskBuilderFactory, contentDecompressionLimit),
+        new VersionContentsResource(versionContentsService, contentsHelper),
+        new FindResource(taskBuilderFactory, contentsHelper),
         new DashboardResource(dashboardService, paginator),
         new MetadataResource(documentMetadataService),
         new RegisterIdentifiersResource(taskBuilderFactory),

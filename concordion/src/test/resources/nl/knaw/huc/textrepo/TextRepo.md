@@ -1,7 +1,8 @@
 # Text Repository Acceptance Tests
 
  - [Health checks](TestHealthChecks.md "c:run")
- - [Autocomplete indexer](TestAutocompleteIndexer.md "c:run")
+ - [File indexer](index/TestFileIndexer.md "c:run")
+ - [Autocomplete indexer](index/TestAutocompleteIndexer.md "c:run")
 
 ## Rest API
 

@@ -1,6 +1,7 @@
-package nl.knaw.huc.textrepo;
+package nl.knaw.huc.textrepo.index;
 
 import com.jayway.jsonpath.JsonPath;
+import nl.knaw.huc.textrepo.AbstractConcordionTest;
 import nl.knaw.huc.textrepo.util.RestUtils;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 

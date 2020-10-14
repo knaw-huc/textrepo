@@ -44,7 +44,7 @@ public abstract class AbstractConcordionTest {
   protected static int textTypeId;
   protected static int fooTypeId;
 
-  static Client client() {
+  protected static Client client() {
     return client;
   }
 

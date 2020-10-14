@@ -3,6 +3,8 @@ package nl.knaw.huc.resources.rest;
 import ch.qos.logback.classic.Level;
 import com.jayway.jsonpath.JsonPath;
 import io.dropwizard.logging.BootstrapLogging;
+import io.dropwizard.testing.ResourceHelpers;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.testing.junit5.ResourceExtension;
 import nl.knaw.huc.PaginationConfiguration;
