@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class ContentsHelperTest {
   // $ echo lorem | xxd
-  // 00000000: 6c6f 7265 6d                             lorem.
+  // 00000000: 6c6f 7265 6d0a                           lorem.
   private static final byte[] LOREM_RAW = {
       0x6c, 0x6f, 0x72, 0x65, 0x6d, 0x0a
   };
