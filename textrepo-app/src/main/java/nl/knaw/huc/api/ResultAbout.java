@@ -21,6 +21,7 @@ public class ResultAbout {
         .stream()
         .map(ResultIndexer::new)
         .collect(toList());
+
   }
 
   public ResultAboutVersion getVersion() {

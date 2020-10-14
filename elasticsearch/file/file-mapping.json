@@ -1,0 +1,105 @@
+{
+  "mappings": {
+    "dynamic": false,
+    "properties": {
+
+      "file": {
+        "properties": {
+          "id": {
+            "type": "keyword"
+          },
+          "type": {
+            "properties": {
+              "id": {
+                "type": "long"
+              },
+              "name": {
+                "type": "keyword"
+              },
+              "mimetype": {
+                "type": "keyword"
+              }
+            }
+          },
+          "metadata": {
+            "type": "nested",
+            "properties": {
+              "key": {
+                "type": "keyword"
+              },
+              "value": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+
+      "doc": {
+        "properties": {
+          "id": {
+            "type": "keyword"
+          },
+          "externalId": {
+            "type": "keyword"
+          },
+          "metadata": {
+            "type": "nested",
+            "properties": {
+              "key": {
+                "type": "keyword"
+              },
+              "value": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+
+      "contentsLastModified": {
+        "properties": {
+          "dateTime": {
+            "type": "date"
+          },
+          "contentsSha": {
+            "type": "keyword"
+          },
+          "versionId": {
+            "type": "keyword"
+          }
+        }
+      },
+
+      "versions": {
+        "type": "nested",
+        "properties": {
+          "createdAt": {
+            "type": "date"
+          },
+          "id": {
+            "type": "keyword"
+          },
+          "sha": {
+            "type": "keyword"
+          },
+          "contentsModified": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  }
+}

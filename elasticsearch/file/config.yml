@@ -1,0 +1,9 @@
+logging:
+  level: INFO
+  loggers:
+    nl.knaw.huc: DEBUG
+    org.hibernate: ERROR
+mappingFile: ./file-mapping.json
+textrepoHost: ${INTERNAL_TR_HOST}
+dateFormat: ${TR_DATE_FORMAT}
+pageSize: 10

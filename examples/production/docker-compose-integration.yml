@@ -87,6 +87,23 @@ services:
         "java", "-jar", "full-text.jar", "server", "config.yml"
     ]
 
+  file-indexer:
+    container_name: tr_file_indexer
+    image: knawhuc/textrepo-file-indexer:${DOCKER_TAG}
+    ports:
+      - 8080
+    networks:
+      - textrepo_network
+    environment:
+      INTERNAL_TR_HOST: ${INTERNAL_TR_HOST}
+      TR_DATE_FORMAT: ${TR_DATE_FORMAT}
+    volumes:
+      - ./scripts/wait-for-it.sh:/indexer/wait-for-it.sh
+    command: [
+        "./wait-for-it.sh", "elasticsearch:9200", "--timeout=0", "--",
+        "./start.sh"
+    ]
+
   textrepo-app:
     container_name: tr_textrepo
     image: knawhuc/textrepo-app:${DOCKER_TAG}
@@ -155,6 +172,7 @@ services:
       FULL_TEXT_INDEX: ${FULL_TEXT_INDEX}
       CUSTOM_INDEX: ${CUSTOM_INDEX}
       AUTOCOMPLETE_INDEX: ${AUTOCOMPLETE_INDEX}
+      FILE_INDEX: ${FILE_INDEX}
 
   about:
     container_name: tr_about
@@ -164,7 +182,6 @@ services:
     volumes:
       - aboutdata:/about
     environment:
-      DOCKER_TAG: ${DOCKER_TAG}
       ABOUT_TR_DESCRIPTION: ${ABOUT_TR_DESCRIPTION}
       ABOUT_TR_DOCUMENTATION: ${ABOUT_TR_DOCUMENTATION}
       ABOUT_TR_SOURCECODE: ${ABOUT_TR_SOURCECODE}

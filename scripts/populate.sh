@@ -41,7 +41,7 @@ echo "Created second document with id: $DOC_ID"
 DOC_METADATA_KEY='test-doc-key'
 curl -X PUT \
   "$HOST/documents/$DOC_ID/metadata/$DOC_METADATA_KEY" \
-  -H 'Content-Type: application/json' \
+  -H 'Content-Type: text/plain' \
   -d 'test-value' \
   > /dev/null
 echo "Created document metadata with key: $DOC_METADATA_KEY"
@@ -57,7 +57,7 @@ FILE_METADATA_KEY='test-file-key'
 curl -X PUT \
   "localhost:8080/textrepo/rest/files/$TEXT_FILE_ID/metadata/$FILE_METADATA_KEY" \
   -d 'test-value' \
-  -H 'Content-Type: application/json' \
+  -H 'Content-Type: text/plain' \
   > /dev/null
 echo "Created file metadata with key: $FILE_METADATA_KEY"
 
