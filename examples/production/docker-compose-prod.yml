@@ -126,7 +126,6 @@ services:
     volumes:
       - aboutdata:/about
     environment:
-      DOCKER_TAG: ${DOCKER_TAG}
       ABOUT_TR_DESCRIPTION: ${ABOUT_TR_DESCRIPTION}
       ABOUT_TR_DOCUMENTATION: ${ABOUT_TR_DOCUMENTATION}
       ABOUT_TR_SOURCECODE: ${ABOUT_TR_SOURCECODE}
