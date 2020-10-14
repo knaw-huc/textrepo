@@ -5,8 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import javax.ws.rs.core.HttpHeaders;
-
+import static javax.ws.rs.core.HttpHeaders.CONTENT_ENCODING;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ContentsHelperTest {
@@ -24,6 +23,9 @@ class ContentsHelperTest {
       0x00, 0x03, (byte) 0xcb, (byte) 0xc9, 0x2f, 0x4a, (byte) 0xcd, (byte) 0xe5,
       0x02, 0x00, 0x36, 0x13, 0x3a, 0x6a, 0x06, 0x00, 0x00, 0x00
   };
+
+  private static final String GZIP_ENCODING = "gzip";
+
   private static final Contents CONTENTS = new Contents("just-a-test-not-a-real-sha224", LOREM_GZ);
   private static final int SUFFICIENT_SPACE_TO_DECOMPRESS = LOREM_GZ.length * 2;
   private static final int INSUFFICIENT_SPACE_TO_DECOMPRESS = LOREM_GZ.length / 2;
@@ -33,7 +35,7 @@ class ContentsHelperTest {
     var sut = new ContentsHelper(SUFFICIENT_SPACE_TO_DECOMPRESS);
     final var responseBuilder = sut.asAttachment(CONTENTS, null);
     final var response = responseBuilder.build();
-    assertThat(response.getHeaderString(HttpHeaders.CONTENT_ENCODING)).isNull();
+    assertThat(response.getHeaderString(CONTENT_ENCODING)).isNull();
     assertThat((byte[]) response.getEntity()).containsExactly(LOREM_RAW);
   }
 
@@ -42,7 +44,7 @@ class ContentsHelperTest {
     var sut = new ContentsHelper(INSUFFICIENT_SPACE_TO_DECOMPRESS);
     final var responseBuilder = sut.asAttachment(CONTENTS, null);
     final var response = responseBuilder.build();
-    assertThat(response.getHeaderString(HttpHeaders.CONTENT_ENCODING)).isEqualTo("gzip");
+    assertThat(response.getHeaderString(CONTENT_ENCODING)).isEqualTo(GZIP_ENCODING);
     assertThat((byte[]) response.getEntity()).containsExactly(LOREM_GZ);
   }
 
@@ -52,7 +54,7 @@ class ContentsHelperTest {
     var sut = new ContentsHelper(SUFFICIENT_SPACE_TO_DECOMPRESS);
     final var responseBuilder = sut.asAttachment(CONTENTS, acceptEncoding);
     final var response = responseBuilder.build();
-    assertThat(response.getHeaderString(HttpHeaders.CONTENT_ENCODING)).isEqualTo("gzip");
+    assertThat(response.getHeaderString(CONTENT_ENCODING)).isEqualTo(GZIP_ENCODING);
     assertThat((byte[]) response.getEntity()).containsExactly(LOREM_GZ);
   }
 
@@ -62,7 +64,7 @@ class ContentsHelperTest {
     var sut = new ContentsHelper(SUFFICIENT_SPACE_TO_DECOMPRESS);
     final var responseBuilder = sut.asAttachment(CONTENTS, acceptEncoding);
     final var response = responseBuilder.build();
-    assertThat(response.getHeaderString(HttpHeaders.CONTENT_ENCODING)).isNull();
+    assertThat(response.getHeaderString(CONTENT_ENCODING)).isNull();
     assertThat((byte[]) response.getEntity()).containsExactly(LOREM_RAW);
   }
 }
