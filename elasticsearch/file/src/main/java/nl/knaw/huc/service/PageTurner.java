@@ -76,7 +76,7 @@ public class PageTurner<T> {
       }
       var items = read(page, "items", itemType);
       reader.accept(items);
-      offset = offset + limit;
+      offset += limit;
     }
   }
 
