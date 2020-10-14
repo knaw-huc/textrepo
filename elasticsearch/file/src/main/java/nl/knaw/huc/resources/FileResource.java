@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -56,12 +57,12 @@ public class FileResource {
   ) {
     var mimetype = body.getMediaType().toString();
     if (mimetype == null) {
-      throw new IllegalArgumentException("Content-Type of file body part is missing");
+      throw new BadRequestException("Content-Type of file body part is missing");
     }
 
     var originLink = body.getHeaders().get("Link").get(0);
     if (originLink == null) {
-      throw new IllegalArgumentException("Origin Link of file body part is missing");
+      throw new BadRequestException("Origin Link of file body part is missing");
     }
 
     var fileId = extractUuid(originLink);
