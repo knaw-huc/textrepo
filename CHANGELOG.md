@@ -6,9 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.11]
+
 ### Added
-File indexer, more info in readme: `./elasticsearch/file`
-Origin Link header to indexer fields request
+- File indexer, more info in readme: `./elasticsearch/file`
+- Origin Link header to indexer fields request
 
 ### Changed
 - Resources now send 'Content-Encoding: gzip' when sending gzip'd contents
