@@ -154,7 +154,6 @@ services:
       - textrepo_network
     volumes:
       - concordiondata:/concordion
-      - ~/.m2/repository:/root/.m2/repository
       - ./scripts/wait-for-it.sh:/concordion/wait-for-it.sh
     command: [
         "./wait-for-it.sh", "textrepo-app:8080", "--timeout=0", "--",
