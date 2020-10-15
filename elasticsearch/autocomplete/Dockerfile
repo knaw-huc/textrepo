@@ -8,6 +8,5 @@ WORKDIR /indexer
 COPY --from=builder /build/target/autocomplete-1.0-SNAPSHOT.jar /indexer/autocomplete.jar
 COPY ./config.yml /indexer/
 COPY ./autocomplete-mapping.json /indexer/
-COPY ./scripts/wait-for-it.sh /utils/
 
 CMD java -jar /indexer/autocomplete.jar server config.yml

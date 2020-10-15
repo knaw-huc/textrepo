@@ -15,10 +15,11 @@ Text repository indexer that recognizes named entities using spacy, flask and do
       - 8080
     networks:
       - textrepo_network
-    command: ["/utils/wait-for-it.sh", "elasticsearch:9200",
-              "--timeout=0",
-              "--",
-              "python", "/tagger/py/main.py"
+    volumes:
+      - ./scripts/wait-for-it.sh:/tagger/wait-for-it.sh
+    command: [
+        "./wait-for-it.sh", "elasticsearch:9200", "--timeout=0", "--",
+        "python", "/tagger/py/main.py"
     ]
     volumes:
       - ./elasticsearch/spacy-ner/model:/tagger/model

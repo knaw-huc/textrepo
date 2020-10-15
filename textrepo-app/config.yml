@@ -17,6 +17,7 @@ logging:
   appenders: ${TR_LOGGING_APPENDERS}
 indexers: ${TR_INDEXERS}
 limits:
+  # in kB:
   contentDecompressionLimit: ${TR_CONTENT_DECOMPRESSION_LIMIT}
 swagger:
   schemes: ${TR_SWAGGER_SCHEMES}
