@@ -2,12 +2,12 @@ package nl.knaw.huc;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class PaginationConfiguration {
+public class VersionConfiguration {
 
   @JsonProperty
-  public int defaultLimit;
+  public String tag;
 
   @JsonProperty
-  public int defaultOffset;
+  public String commit;
 
 }

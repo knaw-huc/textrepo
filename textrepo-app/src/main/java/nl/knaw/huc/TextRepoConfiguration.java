@@ -37,6 +37,10 @@ public class TextRepoConfiguration extends Configuration {
   @NotNull
   private String dateFormat = "";
 
+  @Valid
+  @NotNull
+  private VersionConfiguration version = new VersionConfiguration();
+
   @JsonProperty("database")
   public void setDataSourceFactory(DataSourceFactory factory) {
     this.database = factory;
@@ -96,5 +100,15 @@ public class TextRepoConfiguration extends Configuration {
   @JsonProperty("dateFormat")
   public void setDateFormat(String dateFormat) {
     this.dateFormat = dateFormat;
+  }
+
+  @JsonProperty("version")
+  public VersionConfiguration getVersion() {
+    return version;
+  }
+
+  @JsonProperty("version")
+  public void setVersion(VersionConfiguration version) {
+    this.version = version;
   }
 }

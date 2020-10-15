@@ -3,7 +3,7 @@ version: '3'
 services:
   postgres:
     container_name: tr_postgres
-    image: knawhuc/textrepo-postgres:${TR_VERSION}
+    image: knawhuc/textrepo-postgres:${DOCKER_TAG}
     networks:
     - textrepo_network
     ports:
@@ -20,7 +20,7 @@ services:
 
   elasticsearch:
     container_name: tr_elasticsearch
-    image: knawhuc/textrepo-elasticsearch:${TR_VERSION}
+    image: knawhuc/textrepo-elasticsearch:${DOCKER_TAG}
     environment:
       - node.name=${ES_NODE_NAME}
       - cluster.initial_master_nodes=${ES_CLUSTER_INITIAL_MASTER_NODES}
@@ -43,24 +43,25 @@ services:
 
   nginx:
     container_name: tr_nginx
-    image: knawhuc/textrepo-nginx:${TR_VERSION}
+    image: knawhuc/textrepo-nginx:${DOCKER_TAG}
     networks:
     - textrepo_network
     depends_on:
     - textrepo-app
     volumes:
     - concordiondata:/concordion:ro
+    - aboutdata:/about:ro
     ports:
     - ${NGINX_LISTEN}:${NGINX_LISTEN}
     environment:
       VIRTUAL_HOST: ${NGINX_VIRTUAL_HOST}
       NGINX_LISTEN: ${NGINX_LISTEN}
       NGINX_LOCATION: ${NGINX_LOCATION}
-      NGINX_ROOT_REDIRECT: ${NGINX_ROOT_REDIRECT}
+      CONCORDION_ROOT_REDIRECT: ${CONCORDION_ROOT_REDIRECT}
 
   autocomplete-indexer:
     container_name: tr_autocomplete
-    image: knawhuc/textrepo-autocomplete-indexer:${TR_VERSION}
+    image: knawhuc/textrepo-autocomplete-indexer:${DOCKER_TAG}
     ports:
       - 8080
     networks:
@@ -72,7 +73,7 @@ services:
 
   full-text-indexer:
     container_name: tr_full-text
-    image: knawhuc/textrepo-full-text-indexer:${TR_VERSION}
+    image: knawhuc/textrepo-full-text-indexer:${DOCKER_TAG}
     ports:
       - 8080
     networks:
@@ -84,7 +85,7 @@ services:
 
   file-indexer:
     container_name: tr_file_indexer
-    image: knawhuc/textrepo-file-indexer:${TR_VERSION}
+    image: knawhuc/textrepo-file-indexer:${DOCKER_TAG}
     ports:
       - 8080
     networks:
@@ -99,7 +100,7 @@ services:
 
   textrepo-app:
     container_name: tr_textrepo
-    image: knawhuc/textrepo-app:${TR_VERSION}
+    image: knawhuc/textrepo-app:${DOCKER_TAG}
     ports:
     - 8080
     - 8081:8081
@@ -135,7 +136,7 @@ services:
 
   concordion:
     container_name: tr_concordion
-    image: knawhuc/textrepo-concordion:${TR_VERSION}
+    image: knawhuc/textrepo-concordion:${DOCKER_TAG}
     ports:
     - 8080
     networks:
@@ -162,6 +163,21 @@ services:
       AUTOCOMPLETE_INDEX: ${AUTOCOMPLETE_INDEX}
       FILE_INDEX: ${FILE_INDEX}
 
+  about:
+    container_name: tr_about
+    image: knawhuc/textrepo-about:${DOCKER_TAG}
+    networks:
+      - textrepo_network
+    volumes:
+      - aboutdata:/about
+    environment:
+      ABOUT_TR_DESCRIPTION: ${ABOUT_TR_DESCRIPTION}
+      ABOUT_TR_DOCUMENTATION: ${ABOUT_TR_DOCUMENTATION}
+      ABOUT_TR_SOURCECODE: ${ABOUT_TR_SOURCECODE}
+      NGINX_VIRTUAL_HOST_SCHEME: ${NGINX_VIRTUAL_HOST_SCHEME}
+      NGINX_VIRTUAL_HOST: ${NGINX_VIRTUAL_HOST}
+      NGINX_LOCATION: ${NGINX_LOCATION}
+
 networks:
   textrepo_network:
 
@@ -173,4 +189,6 @@ volumes:
   concordiondata:
     driver: local
   postgresdata:
+    driver: local
+  aboutdata:
     driver: local
