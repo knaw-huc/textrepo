@@ -1,0 +1,15 @@
+{
+  "description": "${ABOUT_TR_DESCRIPTION}",
+  "tag": "${DOCKER_TAG}",
+  "commit": "${SOURCE_COMMIT}",
+  "urls": {
+    "textrepo": "${NGINX_VIRTUAL_HOST_SCHEME}${NGINX_VIRTUAL_HOST}${NGINX_LOCATION}",
+    "swagger": "${NGINX_VIRTUAL_HOST_SCHEME}${NGINX_VIRTUAL_HOST}${NGINX_LOCATION}swagger/",
+    "healthcheck": "${NGINX_VIRTUAL_HOST_SCHEME}${NGINX_VIRTUAL_HOST}/healthcheck/",
+    "elasticsearch": "${NGINX_VIRTUAL_HOST_SCHEME}${NGINX_VIRTUAL_HOST}/index/",
+    "indices": "${NGINX_VIRTUAL_HOST_SCHEME}${NGINX_VIRTUAL_HOST}/index/_cat/indices/?format=json",
+    "concordion": "${NGINX_VIRTUAL_HOST_SCHEME}${NGINX_VIRTUAL_HOST}/concordion/",
+    "documentation": "${ABOUT_TR_DOCUMENTATION}",
+    "sourcecode": "${ABOUT_TR_SOURCECODE}"
+  }
+}

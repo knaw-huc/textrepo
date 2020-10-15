@@ -26,3 +26,6 @@ pagination:
   defaultOffset: ${TR_PAGINATION_DEFAULT_OFFSET}
   defaultLimit: ${TR_PAGINATION_DEFAULT_LIMIT}
 dateFormat: ${TR_DATE_FORMAT}
+version:
+  tag: ${DOCKER_TAG}
+  commit: ${SOURCE_COMMIT}

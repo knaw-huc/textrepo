@@ -10,7 +10,7 @@ Text repository indexer that recognizes named entities using spacy, flask and do
 ```
   spacy-ner-indexer:
     container_name: tr_spacy-ner
-    image: knawhuc/textrepo-spacy-ner-indexer:${TR_VERSION}
+    image: knawhuc/textrepo-spacy-ner-indexer:${DOCKER_TAG}
     ports:
       - 8080
     networks:
