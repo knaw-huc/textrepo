@@ -12,12 +12,12 @@ import nl.knaw.huc.service.MappingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AutocompleteApplication extends Application<AutocompleteConfiguration> {
+public class AutocompleteIndexer extends Application<AutocompleteConfiguration> {
 
-  private static final Logger log = LoggerFactory.getLogger(AutocompleteApplication.class);
+  private static final Logger log = LoggerFactory.getLogger(AutocompleteIndexer.class);
 
   public static void main(final String[] args) throws Exception {
-    new AutocompleteApplication().run(args);
+    new AutocompleteIndexer().run(args);
     log.info("Autocomplete app started");
   }
 

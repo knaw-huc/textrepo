@@ -1,20 +1,25 @@
 package nl.knaw.huc.resources;
 
 import com.jayway.jsonpath.JsonPath;
-import io.dropwizard.testing.junit.DropwizardAppRule;
-import nl.knaw.huc.AutocompleteApplication;
+import io.dropwizard.configuration.ConfigurationException;
+import io.dropwizard.configuration.YamlConfigurationFactory;
+import io.dropwizard.jackson.Jackson;
+import io.dropwizard.jersey.validation.Validators;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
+import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import nl.knaw.huc.AutocompleteConfiguration;
+import nl.knaw.huc.AutocompleteIndexer;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockserver.integration.ClientAndServer;
 
-import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.File;
 import java.io.IOException;
 
 import static java.lang.String.format;
@@ -22,23 +27,41 @@ import static javax.ws.rs.client.Entity.entity;
 import static nl.knaw.huc.TestUtils.getResourceAsBytes;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@ExtendWith(DropwizardExtensionsSupport.class)
 public class AutocompleteResourceTest {
 
-  @ClassRule
-  public static DropwizardAppRule<AutocompleteConfiguration> RULE =
-      new DropwizardAppRule<>(AutocompleteApplication.class, System.getProperty("user.dir") + "/src/test/resources/test-config.yml");
+  private static ClientAndServer mockServer;
+  private static final int mockPort = 1080;
 
-  @Before
-  public void setUp() {
-    client = RULE.client();
-    client.register(MultiPartFeature.class);
+  private static final File configFile = new File("src/test/resources/test-config.yml");
+
+  public static DropwizardAppExtension<AutocompleteConfiguration> application;
+
+  /*
+    To test logging: create test app with DocumentResource and custom config and file logger
+   */
+  static {
+    try {
+      var factory = new YamlConfigurationFactory<>(
+          AutocompleteConfiguration.class,
+          Validators.newValidator(),
+          Jackson.newObjectMapper(),
+          "dw"
+      );
+
+      var fileConfiguration = factory.build(configFile);
+      application = new DropwizardAppExtension<>(AutocompleteIndexer.class, fileConfiguration);
+
+    } catch (IOException | ConfigurationException ex) {
+      throw new RuntimeException("Could not init test app", ex);
+    }
   }
-
-  private Client client;
 
   @Test
   public void testMapping_returnsMapping() throws IOException {
-    var response = client
+    var response = application
+        .client()
+        .register(MultiPartFeature.class)
         .target(getTestUrl("/mapping"))
         .request().get();
 
@@ -95,7 +118,9 @@ public class AutocompleteResourceTest {
     var multiPart = new FormDataMultiPart()
         .bodyPart(bodyPart);
 
-    var request = client
+    var request = application
+        .client()
+        .register(MultiPartFeature.class)
         .target(getTestUrl("/fields"))
         .request();
 
@@ -105,7 +130,7 @@ public class AutocompleteResourceTest {
   }
 
   private String getTestUrl(String endpoint) {
-    var port = RULE.getLocalPort();
+    var port = application.getLocalPort();
     var host = "http://localhost";
     return format("%s:%d/autocomplete%s", host, port, endpoint);
   }

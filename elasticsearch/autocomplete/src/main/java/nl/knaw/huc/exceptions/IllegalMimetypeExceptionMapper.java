@@ -1,6 +1,5 @@
 package nl.knaw.huc.exceptions;
 
-import nl.knaw.huc.AutocompleteApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

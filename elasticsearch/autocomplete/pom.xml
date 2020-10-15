@@ -20,26 +20,26 @@
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <mainClass>nl.knaw.huc.AutocompleteApplication</mainClass>
+    <mainClass>nl.knaw.huc.AutocompleteIndexer</mainClass>
     <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
     <maven-checkstyle-plugin.version>3.0.0</maven-checkstyle-plugin.version>
 
-    <checkstyle.config.location>https://raw.githubusercontent.com/knaw-huc/checkstyle/master/checkstyle_config.xml</checkstyle.config.location>
+    <checkstyle.config.location>https://raw.githubusercontent.com/knaw-huc/checkstyle/master/checkstyle_config.xml
+    </checkstyle.config.location>
 
-    <dropwizard.version>1.3.13</dropwizard.version>
-    <jaxb.api.version>${json-path.version}-b180725.0427</jaxb.api.version>
-    <jaxb.runtime.version>2.4.0-b180725.0644</jaxb.runtime.version>
-    <jdbi3-sqlobject.version>3.9.1</jdbi3-sqlobject.version>
+    <dropwizard.version>2.0.13</dropwizard.version>
     <json-path.version>2.4.0</json-path.version>
     <mockito-core.version>3.0.0</mockito-core.version>
-    <postgresql.version>42.2.6</postgresql.version>
+    <mockserver.version>5.4.1</mockserver.version>
+    <junit5.version>5.6.0</junit5.version>
+
   </properties>
 
   <dependencyManagement>
     <dependencies>
       <dependency>
         <groupId>io.dropwizard</groupId>
-        <artifactId>dropwizard-bom</artifactId>
+        <artifactId>dropwizard-dependencies</artifactId>
         <version>${dropwizard.version}</version>
         <type>pom</type>
         <scope>import</scope>
@@ -48,7 +48,12 @@
   </dependencyManagement>
 
   <dependencies>
+    <dependency>
+      <groupId>io.dropwizard</groupId>
+      <artifactId>dropwizard-core</artifactId>
+    </dependency>
 
+    <!-- Client: -->
     <dependency>
       <groupId>io.dropwizard</groupId>
       <artifactId>dropwizard-client</artifactId>
@@ -58,6 +63,12 @@
       <groupId>io.dropwizard</groupId>
       <artifactId>dropwizard-forms</artifactId>
       <version>${dropwizard.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.jayway.jsonpath</groupId>
+      <artifactId>json-path</artifactId>
+      <version>${json-path.version}</version>
     </dependency>
 
     <!-- Apache Tika: -->
@@ -88,7 +99,49 @@
     <dependency>
       <groupId>io.dropwizard</groupId>
       <artifactId>dropwizard-testing</artifactId>
-      <version>${dropwizard.version}</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>${junit5.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jersey.test-framework.providers</groupId>
+      <artifactId>jersey-test-framework-provider-inmemory</artifactId>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.servlet</groupId>
+          <artifactId>javax.servlet-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jersey.test-framework.providers</groupId>
+      <artifactId>jersey-test-framework-provider-grizzly2</artifactId>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.servlet</groupId>
+          <artifactId>javax.servlet-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
@@ -97,9 +150,40 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>com.jayway.jsonpath</groupId>
-      <artifactId>json-path</artifactId>
-      <version>${json-path.version}</version>
+      <groupId>com.sun.xml.bind</groupId>
+      <artifactId>jaxb-impl</artifactId>
+      <version>2.3.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>3.14.0</version>
+    </dependency>
+
+    <!-- mock server -->
+    <dependency>
+      <groupId>org.mock-server</groupId>
+      <artifactId>mockserver-netty</artifactId>
+      <version>${mockserver.version}</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.mock-server</groupId>
+      <artifactId>mockserver-client-java</artifactId>
+      <version>${mockserver.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+        </exclusion>
+      </exclusions>
       <scope>test</scope>
     </dependency>
 
@@ -109,23 +193,21 @@
       <artifactId>commons-io</artifactId>
       <version>2.6</version>
     </dependency>
-
-    <!-- Add missing Java 11 modules: -->
     <dependency>
-      <groupId>javax.xml.bind</groupId>
-      <artifactId>jaxb-api</artifactId>
-      <version>${jaxb.api.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.glassfish.jaxb</groupId>
-      <artifactId>jaxb-runtime</artifactId>
-      <version>${jaxb.runtime.version}</version>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.9</version>
     </dependency>
 
   </dependencies>
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.22.2</version>
+      </plugin>
 
       <!-- checkstyle -->
       <plugin>
@@ -176,7 +258,7 @@
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                  <mainClass>nl.knaw.huc.AutocompleteApplication</mainClass>
+                  <mainClass>${mainClass}</mainClass>
                 </transformer>
               </transformers>
             </configuration>
@@ -237,6 +319,22 @@
     </plugins>
   </build>
 
+  <reporting>
+    <plugins>
+      <plugin>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>2.8.1</version>
+        <configuration>
+          <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+          <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.10.3</version>
+      </plugin>
+    </plugins>
+  </reporting>
   <profiles>
     <profile>
       <id>java11+</id>
