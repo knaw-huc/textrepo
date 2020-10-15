@@ -11,7 +11,7 @@
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>Text Repository</name>
+  <name>Elasticsearch File Indexer</name>
 
   <properties>
     <java.version>11</java.version>

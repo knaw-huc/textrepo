@@ -12,12 +12,12 @@ import nl.knaw.huc.service.MappingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FullTextApplication extends Application<FullTextConfiguration> {
+public class FullTextIndexer extends Application<FullTextConfiguration> {
 
-  private static final Logger log = LoggerFactory.getLogger(FullTextApplication.class);
+  private static final Logger log = LoggerFactory.getLogger(FullTextIndexer.class);
 
   public static void main(final String[] args) throws Exception {
-    new FullTextApplication().run(args);
+    new FullTextIndexer().run(args);
     log.info("Full-text app started");
   }
 

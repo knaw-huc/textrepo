@@ -1,20 +1,25 @@
 package nl.knaw.huc.resources;
 
 import com.jayway.jsonpath.JsonPath;
-import io.dropwizard.testing.junit.DropwizardAppRule;
-import nl.knaw.huc.FullTextApplication;
+import io.dropwizard.configuration.ConfigurationException;
+import io.dropwizard.configuration.YamlConfigurationFactory;
+import io.dropwizard.jackson.Jackson;
+import io.dropwizard.jersey.validation.Validators;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
+import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
+import nl.knaw.huc.FullTextIndexer;
 import nl.knaw.huc.FullTextConfiguration;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockserver.integration.ClientAndServer;
 
-import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.File;
 import java.io.IOException;
 
 import static java.lang.String.format;
@@ -22,27 +27,42 @@ import static javax.ws.rs.client.Entity.entity;
 import static nl.knaw.huc.TestUtils.getResourceAsBytes;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@ExtendWith(DropwizardExtensionsSupport.class)
 public class FullTextResourceTest {
 
-  @ClassRule
-  public static DropwizardAppRule<FullTextConfiguration> RULE =
-      new DropwizardAppRule<>(
-          FullTextApplication.class, System.getProperty("user.dir") + "/src/test/resources/test-config.yml");
+  private static ClientAndServer mockServer;
+  private static final int mockPort = 1080;
 
-  @Before
-  public void setUp() {
-    client = RULE.client();
-    client.register(MultiPartFeature.class);
+  private static final File configFile = new File("src/test/resources/test-config.yml");
+
+  public static DropwizardAppExtension<FullTextConfiguration> application;
+
+  /*
+    To test logging: create test app with DocumentResource and custom config and file logger
+   */
+  static {
+    try {
+      var factory = new YamlConfigurationFactory<>(
+          FullTextConfiguration.class,
+          Validators.newValidator(),
+          Jackson.newObjectMapper(),
+          "dw"
+      );
+
+      var fileConfiguration = factory.build(configFile);
+      application = new DropwizardAppExtension<>(FullTextIndexer.class, fileConfiguration);
+
+    } catch (IOException | ConfigurationException ex) {
+      throw new RuntimeException("Could not init test app", ex);
+    }
   }
-
-  private Client client;
 
   @Test
   public void testTypes_returnsArrayOfTypes() {
-    var response = client
-        .target(getTestUrl("/types"))
-        .request()
-        .get();
+    var response = application.client()
+                              .target(getTestUrl("/types"))
+                              .request()
+                              .get();
     var fields = response.readEntity(String.class);
     assertThat(response.getStatus()).isEqualTo(200);
     assertThat(JsonPath.parse(fields).read("$.[0]", String.class)).isEqualTo("application/xml");
@@ -51,9 +71,9 @@ public class FullTextResourceTest {
 
   @Test
   public void testMapping_returnsMapping() {
-    var response = client
-        .target(getTestUrl("/mapping"))
-        .request().get();
+    var response = application.client()
+                              .target(getTestUrl("/mapping"))
+                              .request().get();
 
     assertThat(response.getStatus()).isEqualTo(200);
     var fields = response.readEntity(String.class);
@@ -85,7 +105,8 @@ public class FullTextResourceTest {
     var response = postTestContents(fileContents, "application/xml");
     var fields = response.readEntity(String.class);
     assertThat(response.getStatus()).isEqualTo(200);
-    assertThat(JsonPath.parse(fields).read("$.contents", String.class)).isEqualToIgnoringWhitespace("mijzelf hoofd knie en tenen");
+    assertThat(JsonPath.parse(fields).read("$.contents", String.class))
+        .isEqualToIgnoringWhitespace("mijzelf hoofd knie en tenen");
   }
 
   @Test
@@ -105,7 +126,8 @@ public class FullTextResourceTest {
   @Test
   public void testFields_returnsFullText_whenDocx() throws IOException {
     var fileContents = getResourceAsBytes("file.docx");
-    var response = postTestContents(fileContents, "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+    var response =
+        postTestContents(fileContents, "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
     var fields = response.readEntity(String.class);
     assertThat(response.getStatus()).isEqualTo(200);
     assertThat(JsonPath.parse(fields).read("$.contents", String.class)).isEqualTo("Een beetje gek dat bestaat niet\n" +
@@ -128,7 +150,9 @@ public class FullTextResourceTest {
     var multiPart = new FormDataMultiPart()
         .bodyPart(bodyPart);
 
-    var request = client
+    var request = application
+        .client()
+        .register(MultiPartFeature.class)
         .target(getTestUrl("/fields"))
         .request();
 
@@ -138,7 +162,7 @@ public class FullTextResourceTest {
   }
 
   private String getTestUrl(String endpoint) {
-    var port = RULE.getLocalPort();
+    var port = application.getLocalPort();
     var host = "http://localhost";
     return format("%s:%d/full-text%s", host, port, endpoint);
   }

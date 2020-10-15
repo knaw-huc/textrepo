@@ -1,12 +1,15 @@
 package nl.knaw.huc.health;
 
+import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import nl.knaw.huc.FullTextConfiguration;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@ExtendWith(DropwizardExtensionsSupport.class)
 public class MappingFileHealthCheckTest {
 
   @Test
