@@ -6,12 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.11]
+
 ### Added
-- File indexer: for more info, see readme: `./elasticsearch/file`
-- Origin Link header to indexer fields request
 - Show 'about' page `index.html` (with link to `index.json`) on nginx landing page, with version info and links to services, documentation and source code.
 - Show version and configuration info at root of textrepo API
 - Resources now send 'Content-Encoding: gzip' when sending gzip'd contents
+- File indexer, more info in readme: `./elasticsearch/file`
+- Origin Link header to indexer fields request
 
 ### Changed
 - Renamed env var `TR_VERSION` to `DOCKER_TAG` 
