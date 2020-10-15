@@ -65,10 +65,10 @@ services:
       - 8080
     networks:
       - textrepo_network
-    command: ["/utils/wait-for-it.sh", "elasticsearch:9200",
-              "--timeout=0",
-              "--",
-              "java", "-jar", "/indexer/autocomplete.jar", "server", "config.yml"]
+    command: [ "/utils/wait-for-it.sh", "elasticsearch:9200",
+               "--timeout=0",
+               "--",
+               "java", "-jar", "/indexer/autocomplete.jar", "server", "config.yml" ]
 
   full-text-indexer:
     container_name: tr_full-text
@@ -77,10 +77,25 @@ services:
       - 8080
     networks:
       - textrepo_network
-    command: ["/utils/wait-for-it.sh", "elasticsearch:9200",
-              "--timeout=0",
-              "--",
-              "java", "-jar", "/indexer/full-text.jar", "server", "config.yml"]
+    command: [ "/utils/wait-for-it.sh", "elasticsearch:9200",
+               "--timeout=0",
+               "--",
+               "java", "-jar", "/indexer/full-text.jar", "server", "config.yml" ]
+
+  file-indexer:
+    container_name: tr_file_indexer
+    image: knawhuc/textrepo-file-indexer:${TR_VERSION}
+    ports:
+      - 8080
+    networks:
+      - textrepo_network
+    environment:
+      INTERNAL_TR_HOST: ${INTERNAL_TR_HOST}
+      TR_DATE_FORMAT: ${TR_DATE_FORMAT}
+    command: [
+        "./wait-for-it.sh", "elasticsearch:9200", "--timeout=0", "--",
+        "./start.sh"
+    ]
 
   textrepo-app:
     container_name: tr_textrepo
@@ -90,10 +105,10 @@ services:
       - 8081:8081
     networks:
       - textrepo_network
-    command: ["./wait-for-it.sh", "autocomplete-indexer:8080", "--timeout=0", "--",
-              "./wait-for-it.sh", "postgres:${POSTGRES_PORT}", "--timeout=0", "--",
-              "./start.sh"
-              ]
+    command: [ "./wait-for-it.sh", "autocomplete-indexer:8080", "--timeout=0", "--",
+               "./wait-for-it.sh", "postgres:${POSTGRES_PORT}", "--timeout=0", "--",
+               "./start.sh"
+    ]
     environment:
       TR_DATABASE_DRIVER_CLASS: ${TR_DATABASE_DRIVER_CLASS}
       TR_DATABASE_USER: ${TR_DATABASE_USER}

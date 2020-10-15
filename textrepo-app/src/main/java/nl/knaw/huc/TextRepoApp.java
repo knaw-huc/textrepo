@@ -109,7 +109,6 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
     var jdbi = createJdbi(config, environment);
     var contentsStoreService = new JdbiContentsStorage(jdbi);
     var contentsService = new ContentsService(contentsStoreService);
-    var metadataService = new JdbiFileMetadataService(jdbi);
     var typeService = new JdbiTypeService(jdbi);
 
     var indexers = createElasticCustomFacetIndexers(config, typeService);
@@ -130,8 +129,9 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
 
     var limits = config.getResourceLimits();
     var contentDecompressionLimit = limits.contentDecompressionLimit * Limits.BYTES_PER_KB;
-    log.debug("contentDecompressionLimit={}", contentDecompressionLimit);
     var contentsHelper = new ContentsHelper(contentDecompressionLimit);
+
+    var metadataService = new JdbiFileMetadataService(jdbi);
 
     var resources = Arrays.asList(
         new ContentsResource(contentsService, contentsHelper),

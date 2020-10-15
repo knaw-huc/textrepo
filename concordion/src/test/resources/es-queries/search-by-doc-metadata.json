@@ -1,0 +1,15 @@
+{
+  "query": {
+    "nested": {
+      "path": "doc.metadata",
+      "query": {
+        "bool": {
+          "must": [
+            { "match": { "doc.metadata.key": "{key}" }},
+            { "match": { "doc.metadata.value":  "{value}" }}
+          ]
+        }
+      }
+    }
+  }
+}

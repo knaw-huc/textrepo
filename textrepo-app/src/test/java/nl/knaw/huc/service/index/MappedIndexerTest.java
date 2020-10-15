@@ -50,8 +50,8 @@ public class MappedIndexerTest {
   public void index_usesOriginal_whenFieldsTypeIsOriginal() throws IndexerException {
     var fieldsType = ORIGINAL.getName();
     var config = createConfig(fieldsType);
-    var testId = UUID.randomUUID();
-    var testFile = new TextRepoFile(testId, (short) 1);
+    var testFileId = UUID.randomUUID();
+    var testFile = new TextRepoFile(testFileId, (short) 1);
     var latestVersionContents = "latest version contents";
     var typeService = mock(TypeService.class);
     when(typeService.getType(anyShort())).thenReturn(new Type("txt", "text/plain"));
@@ -63,7 +63,8 @@ public class MappedIndexerTest {
         .withMethod("POST")
         .withPath("/fields")
         .withBody(latestVersionContents)
-        .withHeader("Content-Type", "text/plain");
+        .withHeader("Content-Type", "text/plain")
+        .withHeader("Link", "</rest/files/" + testFileId + ">; rel=\"original\"");
     mockServer.verify(postFieldsRequest);
   }
 
@@ -71,8 +72,8 @@ public class MappedIndexerTest {
   public void index_usesMultipartFormData_whenFieldsTypeIsMultipart() throws IndexerException {
     var fieldsType = MULTIPART.getName();
     var config = createConfig(fieldsType);
-    var testId = UUID.randomUUID();
-    var testFile = new TextRepoFile(testId, (short) 1);
+    var testFileId = UUID.randomUUID();
+    var testFile = new TextRepoFile(testFileId, (short) 1);
     var latestVersionContents = "latest version contents";
     var mimetype = "text/plain";
     var typeService = mock(TypeService.class);
@@ -85,7 +86,11 @@ public class MappedIndexerTest {
         .withMethod("POST")
         .withPath("/fields")
         .withHeader("Content-Type", "multipart/form-data.*")
-        .withBody(regex("(.|\n|\r)*Content-Type: text/plain(.|\n|\r)*name=\"file\"(.|\n|\r)*latest version contents(.|\n|\r)*"));
+        .withBody(regex("(.|\n|\r)*" +
+            "Link: </rest/files/" + testFileId + ">; rel=\"original\"(.|\n|\r)*" +
+            "Content-Type: text/plain(.|\n|\r)*" +
+            "name=\"file\"(.|\n|\r)*" +
+            "latest version contents(.|\n|\r)*"));
     mockServer.verify(postFieldsRequest);
   }
 
@@ -95,8 +100,8 @@ public class MappedIndexerTest {
   ) throws IndexerException {
     mockServer.when(
         request()
-        .withMethod("GET")
-        .withPath("/mapping")
+            .withMethod("GET")
+            .withPath("/mapping")
     ).respond(
         response()
             .withStatusCode(200)
@@ -104,8 +109,8 @@ public class MappedIndexerTest {
     );
     mockServer.when(
         request()
-        .withMethod("PUT")
-        .withPath("/test-index-name")
+            .withMethod("PUT")
+            .withPath("/test-index-name")
     ).respond(
         response()
             .withStatusCode(200)
