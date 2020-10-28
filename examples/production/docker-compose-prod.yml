@@ -168,7 +168,7 @@ volumes:
     driver: local
   essnapshotdata-prod:
     driver: local
-  # display test results from non-production volume:
+  # expose test results from non-production volume:
   concordiondata:
     driver: local
   postgresdata-prod:
