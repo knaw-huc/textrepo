@@ -9,13 +9,8 @@ Run locally
 Production setup
 ****************
 
-The easiest way would be to start the |tr| in 'prod' setup, as found in ``examples/development``.
-Run: ::
-
-  cd examples/production
-  ./run-prod.sh
-
-The production setup does not build images but downloads the images from docker hub.
+To start the |tr| without building any containers, start it as described in the `production example <https://github.com/knaw-huc/textrepo/tree/master/examples/production>`_.
+This docker-compose setup does not build images but downloads the images from docker hub.
 
 Development setup
 *****************

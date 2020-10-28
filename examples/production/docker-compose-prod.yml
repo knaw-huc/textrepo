@@ -1,4 +1,6 @@
 version: '3'
+# docker-compose file for production setup
+# -> uses production volumes for production data
 
 services:
   postgres:
@@ -166,6 +168,7 @@ volumes:
     driver: local
   essnapshotdata-prod:
     driver: local
+  # display test results from non-production volume:
   concordiondata:
     driver: local
   postgresdata-prod:
