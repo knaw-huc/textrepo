@@ -1,4 +1,6 @@
 version: '3'
+# docker-compose file for running integration tests
+# -> does not use production volumes (see also docker-compose-prod.yml)
 
 services:
   postgres:
@@ -111,7 +113,7 @@ services:
       - postgres
     ports:
       - 8080
-        - 8081
+      - 8081
     networks:
       - textrepo_network
     volumes:
