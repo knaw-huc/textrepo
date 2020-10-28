@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+[v1.12.1]
+### Fixed
+- Show commit and tag name in textrepo-app and about images using docker build hooks
+
 ## [v1.12]
 - Fixed various build issues to get things going on Docker Hub
 
