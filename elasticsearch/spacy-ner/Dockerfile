@@ -1,9 +1,10 @@
 FROM python:3.8
-WORKDIR /tagger
 
 RUN pip install spacy flask
 
-COPY ./py/ /tagger/py/
-COPY ./mapping.json /tagger/mapping.json
+WORKDIR /indexer
+COPY ./py/ /indexer/py/
+COPY ./mapping.json /indexer/mapping.json
+COPY ./scripts/start.sh /indexer/
 
-CMD python /tagger/py/main.py
+CMD ["./start.sh"]
