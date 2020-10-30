@@ -72,7 +72,7 @@ services:
     - ./scripts/wait-for-it.sh:/indexer/wait-for-it.sh
     command: [
         "./wait-for-it.sh", "elasticsearch:9200", "--timeout=0", "--",
-        "java", "-jar", "autocomplete.jar", "server", "config.yml"
+        "./start.sh"
     ]
 
   full-text-indexer:
@@ -86,7 +86,7 @@ services:
       - ./scripts/wait-for-it.sh:/indexer/wait-for-it.sh
     command: [
         "./wait-for-it.sh", "elasticsearch:9200", "--timeout=0", "--",
-        "java", "-jar", "full-text.jar", "server", "config.yml"
+        "./start.sh"
     ]
 
   file-indexer:
