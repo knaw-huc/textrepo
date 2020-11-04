@@ -100,7 +100,7 @@ public class ResourcesBuilder {
     return this;
   }
 
-  public ResourcesBuilder metadataService(@Nonnull FileMetadataService fileMetadataService) {
+  public ResourcesBuilder fileMetadataService(@Nonnull FileMetadataService fileMetadataService) {
     this.fileMetadataService = fileMetadataService;
     return this;
   }

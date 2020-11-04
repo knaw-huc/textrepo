@@ -94,20 +94,19 @@ public class LoggingTest {
   public void documentResource_shouldLogUniqueRequestIdSetByLoggingRequestEventListener_whenMultipleRequestFired()
       throws InterruptedException, IOException {
 
+    // Mock creation of documents:
     var documents = new ArrayList<Document>();
     documents.add(new Document(null, null, null));
     var page = new Page<>(documents, 0, new PageParams(0, 10));
     when(documentService.getAll(anyString(), isNull(), any())).thenReturn(page);
-    when(
-        documentService.getAll(anyString(), isNull(), any())
-    ).thenAnswer(invocation -> {
+    when(documentService.getAll(anyString(), isNull(), any())).thenAnswer(invocation -> {
       var items = new ArrayList<Document>();
       var doc = new Document(UUID.randomUUID(), invocation.getArgument(0, String.class), now());
       items.add(doc);
       return new Page<>(items, 1, new PageParams(10, 0));
     });
 
-    // Requests:
+    // Perform requests:
     var testExternalIds = Collections.synchronizedCollection(new ArrayList<String>());
     var requestsToPerform = 10;
     assertThat(application.client().target(endpoint).request()).isNotNull();
@@ -127,8 +126,7 @@ public class LoggingTest {
     assertThat(testExternalIds).doesNotContainNull();
     assertThat(testExternalIds).hasSize(requestsToPerform);
 
-    var testlogFile = logFile;
-    var logging = FileUtils.readFileToString(testlogFile, "UTF-8");
+    var logging = FileUtils.readFileToString(logFile, "UTF-8");
 
     testExternalIds.forEach((testExternalId) ->
         assertThat(logging).contains(testExternalId)
