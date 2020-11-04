@@ -105,6 +105,7 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
     var versionService = new JdbiVersionService(jdbi, contentsService, indexers, uuidGenerator);
 
     var resources = new ResourcesBuilder(config)
+        .contentsService(contentsService)
         .contentsHelper(new ContentsHelper(contentDecompressionLimit))
         .documentFilesService(new JdbiDocumentFilesService(jdbi))
         .dashboardService(new JdbiDashboardService(jdbi))
