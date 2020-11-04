@@ -26,6 +26,7 @@ import nl.knaw.huc.resources.rest.FilesResource;
 import nl.knaw.huc.resources.rest.MetadataResource;
 import nl.knaw.huc.resources.rest.TypesResource;
 import nl.knaw.huc.resources.rest.VersionContentsResource;
+import nl.knaw.huc.resources.rest.VersionMetadataResource;
 import nl.knaw.huc.resources.rest.VersionsResource;
 import nl.knaw.huc.resources.task.DeleteDocumentResource;
 import nl.knaw.huc.resources.task.FindResource;
@@ -54,6 +55,7 @@ import nl.knaw.huc.service.type.JdbiTypeService;
 import nl.knaw.huc.service.type.TypeService;
 import nl.knaw.huc.service.version.JdbiVersionService;
 import nl.knaw.huc.service.version.content.JdbiVersionContentsService;
+import nl.knaw.huc.service.version.metadata.JdbiVersionMetadataService;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.postgres.PostgresPlugin;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
@@ -121,6 +123,7 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
         .withIdGenerator(uuidGenerator);
     var versionService = new JdbiVersionService(jdbi, contentsService, indexers, uuidGenerator);
     var versionContentsService = new JdbiVersionContentsService(jdbi);
+    var versionMetadataService = new JdbiVersionMetadataService(jdbi);
     var fileService = new JdbiFileService(jdbi, versionService, uuidGenerator);
     var documentFilesService = new JdbiDocumentFilesService(jdbi);
     var documentService = new JdbiDocumentService(jdbi, uuidGenerator);
@@ -135,24 +138,25 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
     var metadataService = new JdbiFileMetadataService(jdbi);
 
     var resources = Arrays.asList(
+        new AboutResource(config),
         new ContentsResource(contentsService, contentsHelper),
-        new TypesResource(typeService),
-        new FileMetadataResource(metadataService),
-        new FileVersionsResource(versionService, paginator),
+        new DashboardResource(dashboardService, paginator),
+        new DeleteDocumentResource(taskBuilderFactory),
+        new DocumentFilesResource(documentFilesService, paginator),
         new DocumentsResource(documentService, paginator),
         new DocumentMetadataResource(documentMetadataService),
+        new FileMetadataResource(metadataService),
+        new FileVersionsResource(versionService, paginator),
+        new FindResource(taskBuilderFactory, contentsHelper),
+        new FilesResource(fileService),
         new ImportResource(taskBuilderFactory),
         new IndexResource(taskBuilderFactory),
-        new DeleteDocumentResource(taskBuilderFactory),
-        new FilesResource(fileService),
-        new DocumentFilesResource(documentFilesService, paginator),
-        new VersionsResource(versionService),
-        new VersionContentsResource(versionContentsService, contentsHelper),
-        new FindResource(taskBuilderFactory, contentsHelper),
-        new DashboardResource(dashboardService, paginator),
         new MetadataResource(documentMetadataService),
         new RegisterIdentifiersResource(taskBuilderFactory),
-        new AboutResource(config)
+        new TypesResource(typeService),
+        new VersionContentsResource(versionContentsService, contentsHelper),
+        new VersionMetadataResource(versionMetadataService),
+        new VersionsResource(versionService)
     );
 
     environment.jersey().register(new MethodNotAllowedExceptionMapper());
