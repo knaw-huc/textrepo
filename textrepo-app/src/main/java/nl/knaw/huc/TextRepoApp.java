@@ -14,25 +14,7 @@ import nl.knaw.huc.exceptions.MethodNotAllowedExceptionMapper;
 import nl.knaw.huc.helpers.ContentsHelper;
 import nl.knaw.huc.helpers.Limits;
 import nl.knaw.huc.helpers.Paginator;
-import nl.knaw.huc.resources.about.AboutResource;
-import nl.knaw.huc.resources.dashboard.DashboardResource;
-import nl.knaw.huc.resources.rest.ContentsResource;
-import nl.knaw.huc.resources.rest.DocumentFilesResource;
-import nl.knaw.huc.resources.rest.DocumentMetadataResource;
-import nl.knaw.huc.resources.rest.DocumentsResource;
-import nl.knaw.huc.resources.rest.FileMetadataResource;
-import nl.knaw.huc.resources.rest.FileVersionsResource;
-import nl.knaw.huc.resources.rest.FilesResource;
-import nl.knaw.huc.resources.rest.MetadataResource;
-import nl.knaw.huc.resources.rest.TypesResource;
-import nl.knaw.huc.resources.rest.VersionContentsResource;
-import nl.knaw.huc.resources.rest.VersionMetadataResource;
-import nl.knaw.huc.resources.rest.VersionsResource;
-import nl.knaw.huc.resources.task.DeleteDocumentResource;
-import nl.knaw.huc.resources.task.FindResource;
-import nl.knaw.huc.resources.task.ImportResource;
-import nl.knaw.huc.resources.task.IndexResource;
-import nl.knaw.huc.resources.task.RegisterIdentifiersResource;
+import nl.knaw.huc.resources.ResourcesBuilder;
 import nl.knaw.huc.service.contents.ContentsService;
 import nl.knaw.huc.service.dashboard.JdbiDashboardService;
 import nl.knaw.huc.service.datetime.LocalDateTimeParamConverterProvider;
@@ -66,7 +48,6 @@ import javax.annotation.Nonnull;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -119,45 +100,26 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
     healthChecks.putAll(createElasticsearchHealthChecks(config));
     healthChecks.putAll(createIndexerHealthChecks(config));
 
-    var taskBuilderFactory = new JdbiTaskFactory(jdbi, indexers)
-        .withIdGenerator(uuidGenerator);
-    var versionService = new JdbiVersionService(jdbi, contentsService, indexers, uuidGenerator);
-    var versionContentsService = new JdbiVersionContentsService(jdbi);
-    var versionMetadataService = new JdbiVersionMetadataService(jdbi);
-    var fileService = new JdbiFileService(jdbi, versionService, uuidGenerator);
-    var documentFilesService = new JdbiDocumentFilesService(jdbi);
-    var documentService = new JdbiDocumentService(jdbi, uuidGenerator);
-    var documentMetadataService = new JdbiDocumentMetadataService(jdbi);
-    var paginator = new Paginator(config.getPagination());
-    var dashboardService = new JdbiDashboardService(jdbi);
-
     var limits = config.getResourceLimits();
     var contentDecompressionLimit = limits.contentDecompressionLimit * Limits.BYTES_PER_KB;
-    var contentsHelper = new ContentsHelper(contentDecompressionLimit);
+    var versionService = new JdbiVersionService(jdbi, contentsService, indexers, uuidGenerator);
 
-    var metadataService = new JdbiFileMetadataService(jdbi);
-
-    var resources = Arrays.asList(
-        new AboutResource(config),
-        new ContentsResource(contentsService, contentsHelper),
-        new DashboardResource(dashboardService, paginator),
-        new DeleteDocumentResource(taskBuilderFactory),
-        new DocumentFilesResource(documentFilesService, paginator),
-        new DocumentsResource(documentService, paginator),
-        new DocumentMetadataResource(documentMetadataService),
-        new FileMetadataResource(metadataService),
-        new FileVersionsResource(versionService, paginator),
-        new FindResource(taskBuilderFactory, contentsHelper),
-        new FilesResource(fileService),
-        new ImportResource(taskBuilderFactory),
-        new IndexResource(taskBuilderFactory),
-        new MetadataResource(documentMetadataService),
-        new RegisterIdentifiersResource(taskBuilderFactory),
-        new TypesResource(typeService),
-        new VersionContentsResource(versionContentsService, contentsHelper),
-        new VersionMetadataResource(versionMetadataService),
-        new VersionsResource(versionService)
-    );
+    var resources = new ResourcesBuilder(config)
+        .contentsHelper(new ContentsHelper(contentDecompressionLimit))
+        .documentFilesService(new JdbiDocumentFilesService(jdbi))
+        .dashboardService(new JdbiDashboardService(jdbi))
+        .documentService(new JdbiDocumentService(jdbi, uuidGenerator))
+        .documentMetadataService(new JdbiDocumentMetadataService(jdbi))
+        .fileService(new JdbiFileService(jdbi, versionService, uuidGenerator))
+        .metadataService(new JdbiFileMetadataService(jdbi))
+        .paginator(new Paginator(config.getPagination()))
+        .taskBuilderFactory(new JdbiTaskFactory(jdbi, indexers)
+            .withIdGenerator(uuidGenerator))
+        .typeService(typeService)
+        .versionContentsService(new JdbiVersionContentsService(jdbi))
+        .versionMetadataService(new JdbiVersionMetadataService(jdbi))
+        .versionService(versionService)
+        .build();
 
     environment.jersey().register(new MethodNotAllowedExceptionMapper());
     resources.forEach((resource) -> environment.jersey().register(resource));

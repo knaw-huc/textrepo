@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public interface VersionMetadataDao {
+
   @SqlUpdate("insert into versions_metadata (version_id, key, value) values (:id, :key, :value)")
   void insert(@Bind("id") UUID versionId, @BindBean MetadataEntry metadataEntry);
 
