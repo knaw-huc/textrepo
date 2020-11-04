@@ -1,5 +1,5 @@
 -- Version metadata: each entry is a key-value pair linked to a version.
-create table version_metadata (
+create table versions_metadata (
   version_id uuid not null,
   key varchar not null,
   value text,
