@@ -72,7 +72,7 @@ services:
       - ./scripts/wait-for-it.sh:/indexer/wait-for-it.sh
     command: [
         "./wait-for-it.sh", "elasticsearch:9200", "--timeout=0", "--",
-        "java", "-jar", "autocomplete.jar", "server", "config.yml"
+        "./start.sh"
     ]
 
   full-text-indexer:
@@ -86,7 +86,7 @@ services:
       - ./scripts/wait-for-it.sh:/indexer/wait-for-it.sh
     command: [
         "./wait-for-it.sh", "elasticsearch:9200", "--timeout=0", "--",
-        "java", "-jar", "full-text.jar", "server", "config.yml"
+        "./start.sh"
     ]
 
   file-indexer:
@@ -159,8 +159,7 @@ services:
       - ./scripts/wait-for-it.sh:/concordion/wait-for-it.sh
     command: [
         "./wait-for-it.sh", "textrepo-app:8080", "--timeout=0", "--",
-      # run tests and keep container up:
-        "/bin/bash", "-c", "mvn clean test ; tail -f /dev/null"
+        "./start.sh"
     ]
     environment:
       ES_HOST: ${CONCORDION_ES_HOST}
