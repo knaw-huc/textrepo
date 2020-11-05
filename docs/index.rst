@@ -11,7 +11,7 @@ Features
 - Store texts of a corpus in a uniform `domain model <domain-model.html>`_:
    - Keep track of file versions
    - Link all file types to the same source document
-   - Store metadata about documents and files
+   - Store metadata about documents, files and versions
 - Use Rest API to create, read, update and delete your texts
 - Search files using stock and custom `elasticsearch <https://www.elastic.co/elasticsearch/>`_ indexes
 - Explore API with `concordion <https://concordion.org/>`_ and `swagger <https://swagger.io/>`_
