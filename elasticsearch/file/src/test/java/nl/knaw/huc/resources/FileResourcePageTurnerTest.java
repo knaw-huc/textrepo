@@ -89,11 +89,9 @@ public class FileResourcePageTurnerTest {
   public void testFields_retrievesAllVersionPages() throws IOException {
     // start resource mocks:
     var mockRequests = startTextrepoMockServer();
-    // start version page resource mocks:
-    var versionsEndpoint = "/rest/files/[a-f0-9-]*/versions";
-    mockRequests.add(mockEndpointPage(versionsEndpoint, "textrepo-versions-page1.json", 0, 2));
-    mockRequests.add(mockEndpointPage(versionsEndpoint, "textrepo-versions-page2.json", 2, 2));
-    mockRequests.add(mockEndpointPage(versionsEndpoint, "textrepo-versions-page3.json", 4, 2));
+    startTextrepoMockServer_versionEndpoints(mockRequests);
+
+
     // create test file:
     var fileContents = getResourceAsBytes("file.txt");
     var fileId = UUID.randomUUID().toString();
@@ -127,6 +125,28 @@ public class FileResourcePageTurnerTest {
 
     // check indexer has requested resources from all TR endpoints:
     mockRequests.forEach((mr) -> mockServer.verify(mr, once()));
+  }
+
+  private void startTextrepoMockServer_versionEndpoints(
+      ArrayList<HttpRequest> mockRequests
+  ) throws IOException {
+
+    var versionsEndpoint = "/rest/files/[a-f0-9-]*/versions";
+
+    mockRequests.add(mockEndpointPage(versionsEndpoint, "textrepo-versions-page1.json", 0, 2));
+    mockRequests.add(mockEndpointPage(versionsEndpoint, "textrepo-versions-page2.json", 2, 2));
+    mockRequests.add(mockEndpointPage(versionsEndpoint, "textrepo-versions-page3.json", 4, 2));
+    mockRequests.add(mockEndpoint("/rest/versions/33330128-02be-4938-ba84-8d9dd70e19a5/metadata",
+        "textrepo-no-metadata.json"));
+    mockRequests
+        .add(mockEndpoint("/rest/versions/22220128-02be-4938-ba84-8d9dd70e19a5/metadata", "textrepo-no-metadata.json"));
+    mockRequests
+        .add(mockEndpoint("/rest/versions/11110128-02be-4938-ba84-8d9dd70e19a5/metadata", "textrepo-no-metadata.json"));
+    mockRequests
+        .add(mockEndpoint("/rest/versions/00000128-02be-4938-ba84-8d9dd70e19a5/metadata", "textrepo-no-metadata.json"));
+    mockRequests
+        .add(mockEndpoint("/rest/versions/99990128-02be-4938-ba84-8d9dd70e19a5/metadata", "textrepo-no-metadata.json"));
+
   }
 
   @Test

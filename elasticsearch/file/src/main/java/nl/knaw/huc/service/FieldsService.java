@@ -1,7 +1,5 @@
 package nl.knaw.huc.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.ParseContext;
 import com.jayway.jsonpath.TypeRef;
@@ -19,7 +17,6 @@ import javax.ws.rs.client.Client;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -39,6 +36,8 @@ public class FieldsService {
    * List of versions, newest first:
    */
   private static final String VERSIONS_ENDPOINT = "%s/rest/files/%s/versions";
+
+  private static final String VERSION_METADATA_ENDPOINT = "%s/rest/versions/%s/metadata";
 
   private final String textrepoHost;
   private final Client requestClient = JerseyClientBuilder.newClient();
@@ -68,12 +67,12 @@ public class FieldsService {
     file.setId(fileId);
 
     addFileResource(fileId, doc, type);
-    addFileMetadataResource(fileId, file);
+    file.setMetadata(retrieveMetadata(FILE_METADATA_ENDPOINT, fileId));
     addTypeResource(type);
     var hasDocument = fields.getDoc().getId() != null;
     if (hasDocument) {
       addDocResource(doc);
-      addDocMetadataResource(doc.getId(), doc);
+      doc.setMetadata(retrieveMetadata(DOC_METADATA_ENDPOINT, doc.getId()));
     }
     addVersionsResource(fileId, fields);
 
@@ -89,17 +88,6 @@ public class FieldsService {
     type.setId(read(fileJson, "$.typeId"));
   }
 
-  private void addFileMetadataResource(UUID fileId, ResultFile file) {
-    var fileMetadataJson = getRestResource(FILE_METADATA_ENDPOINT, fileId);
-    Map<String, String> form = read(fileMetadataJson, "$");
-    var metadata = form
-        .entrySet()
-        .stream()
-        .map((entry) -> new ResultMetadataEntry(entry.getKey(), entry.getValue()))
-        .collect(Collectors.toList());
-    file.setMetadata(metadata);
-  }
-
   private void addTypeResource(ResultType type) {
     var typeJson = getRestResource(TYPE_ENDPOINT, type.getId());
     type.setName(read(typeJson, "$.name"));
@@ -111,15 +99,14 @@ public class FieldsService {
     doc.setExternalId(read(docJson, "$.externalId"));
   }
 
-  private void addDocMetadataResource(UUID docId, ResultDoc doc) {
-    var docMetadataJson = getRestResource(DOC_METADATA_ENDPOINT, docId);
+  private List<ResultMetadataEntry> retrieveMetadata(String endpoint, UUID id) {
+    var docMetadataJson = getRestResource(endpoint, id);
     Map<String, String> form = read(docMetadataJson, "$");
-    var metadata = form
+    return form
         .entrySet()
         .stream()
         .map((entry) -> new ResultMetadataEntry(entry.getKey(), entry.getValue()))
         .collect(Collectors.toList());
-    doc.setMetadata(metadata);
   }
 
   private void addVersionsResource(UUID fileId, ResultFields fields) {
@@ -128,6 +115,7 @@ public class FieldsService {
     getAllVersions(fileId, versions);
     setContentsModified(versions);
     fields.setContentsLastModified(createContentsLastModified(fields));
+    versions.forEach(version -> version.setMetadata(retrieveMetadata(VERSION_METADATA_ENDPOINT, version.getId())));
   }
 
   private void getAllVersions(UUID fileId, ArrayList<ResultVersion> versions) {
