@@ -10,6 +10,9 @@ Do not forget to include:
 
 ## [Unreleased]
 
+## Added
+- Version metadata, see: `./postgres/initdb/04-add-version-metadata-table.sql`
+
 [v1.12.1]
 ### Fixed
 - Show commit and tag name in textrepo-app and about images using docker build hooks
