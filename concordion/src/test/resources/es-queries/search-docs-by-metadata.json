@@ -1,0 +1,24 @@
+{
+  "_source": ["doc"],
+  "query": {
+    "nested": {
+      "path": "doc.metadata",
+      "query": {
+        "bool": {
+          "must": [
+            { "match": { "doc.metadata.key": "{key}" }},
+            { "match": { "doc.metadata.value":  "{value}" }}
+          ]
+        }
+      }
+    }
+  },
+  "collapse": {"field": "doc.id"},
+  "aggs": {
+    "total": {
+      "cardinality": {
+        "field": "doc.id"
+      }
+    }
+  }
+}

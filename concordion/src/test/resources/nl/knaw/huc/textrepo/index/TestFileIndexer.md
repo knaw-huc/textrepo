@@ -61,6 +61,41 @@ To check what version is the last version with changed contents, we can run the 
 Full response:
 [ ](- "ext:embed=#result.body")
 
+# Other examples
 
+## Find files by type and latest modification time of contents
+
+Find all files by `{type}` that have versions with changed contents at or after `{dateTime}`:
+
+[ ](- "ext:embed=getEsQuerySearchByFileTypeAndContentsLastModified()")
+
+ - where `{dateTime}` is [ ](- "c:echo=getDateTime()")
+ - where `{type}` is [`text`](- "#type")
+
+[ ](- "#result=searchEsQuerySearchByFileTypeAndContentsLastModified(#type)")
+
+ - The response status should be: [200](- "?=#result.status");
+ - The response should contain [correct file](- "?=#result.found");
+
+Full response:
+[ ](- "ext:embed=#result.body")
+
+
+## Find documents by metadata
+
+Find all documents by document metadata `{key}` and `{value}`, including an aggregated count of found _documents_:
+
+[ ](- "ext:embed=getEsQuerySearchDocsByMetadata()")
+
+ - where `{key}` is [`foo`](- "#docMetaKey")
+ - where `{value}` is [`bar`](- "#docMetaValue")
+
+[ ](- "#result=searchEsQueryDocsByMetadata(#docMetaKey, #docMetaValue)")
+
+ - The response status should be: [200](- "?=#result.status");
+ - The response should contain [correct document](- "?=#result.found");
+
+Full response:
+[ ](- "ext:embed=#result.body")
 
 
