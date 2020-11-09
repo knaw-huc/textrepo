@@ -25,6 +25,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import java.util.UUID;
 
+import static java.util.Objects.requireNonNull;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT_ENCODING;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
@@ -41,8 +42,8 @@ public class VersionContentsResource {
   private final ContentsHelper contentsHelper;
 
   public VersionContentsResource(VersionContentsService contentsService, ContentsHelper contentsHelper) {
-    this.contentsService = contentsService;
-    this.contentsHelper = contentsHelper;
+    this.contentsService = requireNonNull(contentsService);
+    this.contentsHelper = requireNonNull(contentsHelper);
   }
 
   @POST

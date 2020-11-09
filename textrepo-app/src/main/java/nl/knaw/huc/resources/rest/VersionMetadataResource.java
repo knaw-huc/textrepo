@@ -26,6 +26,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import java.util.UUID;
 
+import static java.util.Objects.requireNonNull;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
 
@@ -39,7 +40,7 @@ public class VersionMetadataResource {
   private final VersionMetadataService versionMetadataService;
 
   public VersionMetadataResource(VersionMetadataService versionMetadataService) {
-    this.versionMetadataService = versionMetadataService;
+    this.versionMetadataService = requireNonNull(versionMetadataService);
   }
 
   @POST

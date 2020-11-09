@@ -23,6 +23,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import java.util.Map;
 
+import static java.util.Objects.requireNonNull;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.UriBuilder.fromResource;
 import static nl.knaw.huc.helpers.Paginator.toResult;
@@ -42,8 +43,8 @@ public class DashboardResource {
   private final Paginator paginator;
 
   public DashboardResource(DashboardService dashboardService, Paginator paginator) {
-    this.dashboardService = dashboardService;
-    this.paginator = paginator;
+    this.dashboardService = requireNonNull(dashboardService);
+    this.paginator = requireNonNull(paginator);
   }
 
   @GET

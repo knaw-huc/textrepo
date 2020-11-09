@@ -34,10 +34,16 @@ import nl.knaw.huc.service.type.TypeService;
 import nl.knaw.huc.service.version.VersionService;
 import nl.knaw.huc.service.version.content.VersionContentsService;
 import nl.knaw.huc.service.version.metadata.VersionMetadataService;
+import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
+
+import static org.apache.commons.lang3.Validate.notNull;
 
 public class ResourcesBuilder {
   private final TextRepoConfiguration config;

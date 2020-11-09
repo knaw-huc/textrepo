@@ -27,6 +27,7 @@ import javax.ws.rs.core.Response;
 import java.util.Map;
 import java.util.UUID;
 
+import static java.util.Objects.requireNonNull;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
 
@@ -42,7 +43,7 @@ public class DocumentMetadataResource {
   public DocumentMetadataResource(
       DocumentMetadataService documentMetadataService
   ) {
-    this.documentMetadataService = documentMetadataService;
+    this.documentMetadataService = requireNonNull(documentMetadataService);
   }
 
   @POST
