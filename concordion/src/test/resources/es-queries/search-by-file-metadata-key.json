@@ -2,12 +2,11 @@
   "_source": ["file.id"],
   "query": {
     "nested": {
-      "path": "doc.metadata",
+      "path": "file.metadata",
       "query": {
         "bool": {
           "must": [
-            { "match": { "doc.metadata.key": "{key}" }},
-            { "match": { "doc.metadata.value":  "{value}" }}
+            { "match": { "file.metadata.key": "{key}" }}
           ]
         }
       }

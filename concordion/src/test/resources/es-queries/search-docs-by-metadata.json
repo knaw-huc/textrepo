@@ -1,5 +1,5 @@
 {
-  "_source": ["file.id"],
+  "_source": ["doc"],
   "query": {
     "nested": {
       "path": "doc.metadata",
@@ -10,6 +10,14 @@
             { "match": { "doc.metadata.value":  "{value}" }}
           ]
         }
+      }
+    }
+  },
+  "collapse": {"field": "doc.id"},
+  "aggs": {
+    "total": {
+      "cardinality": {
+        "field": "doc.id"
       }
     }
   }

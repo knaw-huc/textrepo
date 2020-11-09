@@ -1,0 +1,15 @@
+{
+  "_source": ["file.id", "contentsLastModified.dateTime", "versions"],
+  "query": {
+    "bool": {"must":  [
+      {"term": {
+        "file.type.name": "{type}"
+      }},
+      {"range": {
+        "contentsLastModified.dateTime": {
+          "gte": "{dateTime}"
+        }
+      }}
+    ]}
+  }
+}

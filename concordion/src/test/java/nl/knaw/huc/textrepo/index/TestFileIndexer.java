@@ -14,7 +14,6 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -46,6 +45,12 @@ public class TestFileIndexer extends AbstractConcordionTest {
   private final String searchByDocMetadata = getResourceAsString("es-queries/search-by-doc-metadata.json");
   private final String searchByContentsLastModified =
       getResourceAsString("es-queries/search-by-contents-last-modified.json");
+  private final String searchByFileTypeAndContentsLastModified =
+      getResourceAsString("es-queries/search-by-file-type-and-contents-modified.json");
+  private final String searchDocsByMetadata =
+      getResourceAsString("es-queries/search-docs-by-metadata.json");
+  private final String searchByFileMetadataKey =
+      getResourceAsString("es-queries/search-by-file-metadata-key.json");
 
   private static final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -75,8 +80,12 @@ public class TestFileIndexer extends AbstractConcordionTest {
   public String createFiles() {
     // file 1 is of type foo:
     file1 = RestUtils.createFile(doc1, fooTypeId);
+    RestUtils.createFileMetadata(file1, "file-foo", "bar");
+
     // file 1 is of type text:
     file2 = RestUtils.createFile(doc2, textTypeId);
+    RestUtils.createFileMetadata(file2, "file-foo", "bas");
+
     return toJson(asList(file1, file2));
   }
 
@@ -120,11 +129,11 @@ public class TestFileIndexer extends AbstractConcordionTest {
   }
 
   public static class DocMetadataResult {
+
     public int status;
     public String body;
     public String found;
   }
-
   public DocMetadataResult searchEsQuerySearchByFileType(
       String fileType
   ) {
@@ -161,6 +170,31 @@ public class TestFileIndexer extends AbstractConcordionTest {
     return result;
   }
 
+  public String getEsQuerySearchByFileMetadataKey() {
+    return asPrettyJson(searchByFileMetadataKey);
+  }
+
+  public DocMetadataResult searchEsQuerySearchByFileMetadataKey(
+      String fileMetaKey
+  ) {
+    var result = new DocMetadataResult();
+    var query = this.searchByFileMetadataKey
+        .replace("{key}", fileMetaKey);
+
+    var response = searchEs(query);
+    result.status = response.getStatus();
+    var body = response.readEntity(String.class);
+
+    result.body = asPrettyJson(body);
+
+    var found = jsonPath.parse(body).read("$.hits.hits[*]._source.file.id", new TypeRef<List<String>>() {});
+    result.found = found.size() == 2 && found.contains(file1) && found.contains(file2)
+        ? "correct files"
+        : format("expected %s but got %s", Arrays.toString(new String[]{file1, file2}), Arrays.toString(found.toArray()));
+
+    return result;
+  }
+
   public DocMetadataResult searchEsQuerySearchByContentsLastModified() {
     var result = new DocMetadataResult();
     var query = this.searchByContentsLastModified
@@ -193,6 +227,59 @@ public class TestFileIndexer extends AbstractConcordionTest {
         .target(indexToUrl(FILE_INDEX) + "/_search")
         .request()
         .post(entity(query, APPLICATION_JSON_TYPE));
+  }
+
+  public String getEsQuerySearchByFileTypeAndContentsLastModified() throws IOException {
+    return asPrettyJson(searchByFileTypeAndContentsLastModified);
+  }
+
+  public DocMetadataResult searchEsQuerySearchByFileTypeAndContentsLastModified(
+      String type
+  ) {
+    var result = new DocMetadataResult();
+    var query = this.searchByFileTypeAndContentsLastModified
+        .replace("{dateTime}", this.getDateTime())
+        .replace("{type}", type);
+
+    var response = searchEs(query);
+    result.status = response.getStatus();
+    var body = response.readEntity(String.class);
+
+    result.body = asPrettyJson(body);
+
+    var found = jsonPath.parse(body).read("$.hits.hits[*]._source.file.id", new TypeRef<List<String>>() {});
+    result.found = found.size() == 1 && found.contains(file2)
+        ? "correct file"
+        : format("expected %s but got %s", file2, Arrays.toString(found.toArray()));
+
+    return result;
+  }
+
+  public String getEsQuerySearchDocsByMetadata() throws IOException {
+    return asPrettyJson(searchDocsByMetadata);
+  }
+
+  public DocMetadataResult searchEsQueryDocsByMetadata(
+      String docMetaKey,
+      String docMetaValue
+  ) {
+    var result = new DocMetadataResult();
+    var query = this.searchDocsByMetadata
+        .replace("{key}", docMetaKey)
+        .replace("{value}", docMetaValue);
+
+    var response = searchEs(query);
+    result.status = response.getStatus();
+    var body = response.readEntity(String.class);
+
+    result.body = asPrettyJson(body);
+
+    var found = jsonPath.parse(body).read("$.hits.hits[*]._source.doc.id", new TypeRef<List<String>>() {});
+    result.found = found.size() == 1 && found.contains(doc1)
+        ? "correct document"
+        : format("expected %s but got %s", doc1, Arrays.toString(found.toArray()));
+
+    return result;
   }
 
 }

@@ -7,8 +7,6 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
 import javax.ws.rs.client.Client;
 
-import java.net.URI;
-
 import static java.lang.String.format;
 import static javax.ws.rs.client.Entity.entity;
 import static javax.ws.rs.client.Entity.json;
@@ -36,11 +34,16 @@ public class RestUtils {
     return JsonPath.parse(body).read("$.id");
   }
 
-  /**
-   *
-   */
   public static void createDocumentMetadata(String id, String key, String value) {
-    var url = replaceUrlParams("/rest/documents/{id}/metadata/{key}", id, key);
+    createMetadata(id, key, value, "/rest/documents/{id}/metadata/{key}");
+  }
+
+  public static void createFileMetadata(String id, String key, String value) {
+    createMetadata(id, key, value, "/rest/files/{id}/metadata/{key}");
+  }
+
+  private static void createMetadata(String id, String key, String value, String endpoint) {
+    var url = replaceUrlParams(endpoint, id, key);
     client
         .target(url)
         .request()
