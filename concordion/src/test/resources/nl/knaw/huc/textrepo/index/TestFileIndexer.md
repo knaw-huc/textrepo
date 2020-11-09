@@ -14,7 +14,7 @@ To search the index, we first create:
  - each with two files: [ ](- "c:echo=#fileIds")
  - each file with zero or two versions: [ ](- "c:echo=#versionIds")
 
-## Find by file type
+## Find files by file type
 When can search files by type using the following query:
 
 [ ](- "ext:embed=getEsQuerySearchByFileType()")
@@ -29,7 +29,7 @@ When can search files by type using the following query:
 Full response:
 [ ](- "ext:embed=#result.body")
 
-## Find by document metadata
+## Find files by document metadata
 We can search by document metadata key and values pairs using the following query:
 
 [ ](- "ext:embed=getEsQuerySearchByDocMetadata()")
@@ -45,7 +45,25 @@ We can search by document metadata key and values pairs using the following quer
 Full response:
 [ ](- "ext:embed=#result.body")
 
-## Find by latest modification time of contents
+
+
+## Find files by metadata key only
+
+Search for a file metadata key, ignoring the value it has.
+
+[ ](- "ext:embed=getEsQuerySearchByFileMetadataKey()")
+
+ - where `{key}` is [`file-foo`](- "#fileMetaKey")
+
+[ ](- "#result=searchEsQuerySearchByFileMetadataKey(#fileMetaKey)")
+
+ - The response status should be: [200](- "?=#result.status");
+ - The response should contain [correct files](- "?=#result.found");
+
+Full response:
+[ ](- "ext:embed=#result.body")
+
+## Find files by latest modification time of contents
 Different versions of a file can have the same contents and hash.
 To check what version is the last version with changed contents, we can run the following query:
 
@@ -97,5 +115,3 @@ Find all documents by document metadata `{key}` and `{value}`, including an aggr
 
 Full response:
 [ ](- "ext:embed=#result.body")
-
-

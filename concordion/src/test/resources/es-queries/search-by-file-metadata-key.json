@@ -1,0 +1,15 @@
+{
+  "_source": ["file.id"],
+  "query": {
+    "nested": {
+      "path": "file.metadata",
+      "query": {
+        "bool": {
+          "must": [
+            { "match": { "file.metadata.key": "{key}" }}
+          ]
+        }
+      }
+    }
+  }
+}
