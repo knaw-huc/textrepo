@@ -18,7 +18,7 @@ public class GetDocumentMetadata implements InTransactionProvider<Map<String, St
   @Override
   public Map<String, String> executeIn(Handle transaction) {
     var docMetadataDao = transaction.attach(DocumentMetadataDao.class);
-    return docMetadataDao.getByDocumentId(docId);
+    return docMetadataDao.getMetadataByDocumentId(docId);
   }
 
 }

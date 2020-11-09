@@ -16,17 +16,17 @@ public interface DocumentMetadataDao {
   @SqlUpdate("insert into documents_metadata (document_id, key, value) values (:id, :key, :value)")
   void insert(@Bind("id") UUID docId, @BindBean MetadataEntry metadataEntry);
 
-  @SqlQuery("select key, value from documents_metadata where document_id = ?")
-  @KeyColumn("key")
-  @ValueColumn("value")
-  Map<String, String> getByDocumentId(@Bind UUID docId);
-
   @SqlUpdate("insert into documents_metadata (document_id, key, value) values (:id, :key, :value) " +
       "on conflict (document_id, key) do update set value = excluded.value")
   boolean upsert(@Bind("id") UUID docId, @BindBean MetadataEntry metadataEntry);
 
   @SqlUpdate("delete from documents_metadata where document_id = :id and key = :key")
   void delete(@Bind("id") UUID docId, @Bind("key") String key);
+
+  @SqlQuery("select key, value from documents_metadata where document_id = ?")
+  @KeyColumn("key")
+  @ValueColumn("value")
+  Map<String, String> getMetadataByDocumentId(@Bind("id") UUID docId);
 
   @SqlQuery("select document_id from documents_metadata where key = :key")
   List<UUID> findByMetadataKey(@Bind("key") String key);

@@ -16,15 +16,15 @@ public interface VersionMetadataDao {
   @SqlUpdate("insert into versions_metadata (version_id, key, value) values (:id, :key, :value)")
   void insert(@Bind("id") UUID versionId, @BindBean MetadataEntry metadataEntry);
 
-  @SqlUpdate("insert into versions_metadata (version_id, key, value) values (:versionId, :e.key, :e.value) " +
+  @SqlUpdate("insert into versions_metadata (version_id, key, value) values (:versionId, :key, :value) " +
       "on conflict (version_id, key) do update set value = excluded.value")
-  void upsert(@Bind("versionId") UUID versionId, @BindBean("e") MetadataEntry metadataEntry);
+  void upsert(@Bind("versionId") UUID versionId, @BindBean MetadataEntry metadataEntry);
 
   @SqlUpdate("delete from versions_metadata where version_id = :id and key = :key")
   void delete(@Bind("id") UUID versionId, @Bind("key") String key);
 
-  @SqlQuery("select key, value from versions_metadata where version_id = ?")
+  @SqlQuery("select key, value from versions_metadata where version_id = :id")
   @KeyColumn("key")
   @ValueColumn("value")
-  Map<String, String> getMetadataByVersionId(@Bind UUID versionId);
+  Map<String, String> getMetadataByVersionId(@Bind("id") UUID versionId);
 }
