@@ -1,4 +1,5 @@
 {
+  "_source": ["file.id"],
   "query": {
     "nested": {
       "path": "doc.metadata",
