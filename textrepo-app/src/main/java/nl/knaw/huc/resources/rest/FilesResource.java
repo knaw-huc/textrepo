@@ -25,6 +25,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import java.util.UUID;
 
+import static java.util.Objects.requireNonNull;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 @Api(tags = {"files"})
@@ -36,7 +37,7 @@ public class FilesResource {
   private final FileService fileService;
 
   public FilesResource(FileService fileService) {
-    this.fileService = fileService;
+    this.fileService = requireNonNull(fileService);
   }
 
   @POST

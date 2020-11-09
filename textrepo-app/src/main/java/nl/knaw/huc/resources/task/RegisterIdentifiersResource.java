@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 
+import static java.util.Objects.requireNonNull;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 @Api(tags = {"task", "register"})
@@ -26,7 +27,7 @@ public class RegisterIdentifiersResource {
   private final TaskBuilderFactory factory;
 
   public RegisterIdentifiersResource(TaskBuilderFactory factory) {
-    this.factory = factory;
+    this.factory = requireNonNull(factory);
   }
 
   @POST

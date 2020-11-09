@@ -19,6 +19,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
+import static java.util.Objects.requireNonNull;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT_ENCODING;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
@@ -32,8 +33,8 @@ public class ContentsResource {
   private final ContentsHelper contentsHelper;
 
   public ContentsResource(ContentsService contentsService, ContentsHelper contentsHelper) {
-    this.contentsService = contentsService;
-    this.contentsHelper = contentsHelper;
+    this.contentsService = requireNonNull(contentsService);
+    this.contentsHelper = requireNonNull(contentsHelper);
   }
 
   @GET

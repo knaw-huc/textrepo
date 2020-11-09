@@ -110,41 +110,81 @@ public class FileResourceTest {
     var response = postTestContents(fileContents, "text/plain", fileId);
     var fields = response.readEntity(String.class);
 
-    assertThat(response.getStatus()).isEqualTo(200);
+    assertThat(response.getStatus())
+        .isEqualTo(200);
+
     // file:
-    DocumentContext json = JsonPath.parse(fields);
-    assertThat(json.read("$.file.id", String.class)).isEqualTo(fileId);
+    var json = JsonPath.parse(fields);
+
+    System.out.println("json: " + fields);
+
+    assertThat(json.read("$.file.id", String.class))
+        .isEqualTo(fileId);
+
     // file type:
-    assertThat(json.read("$.file.type.id", Integer.class)).isEqualTo(3);
-    assertThat(json.read("$.file.type.name", String.class)).isEqualTo("test-type");
-    assertThat(json.read("$.file.type.mimetype", String.class)).isEqualTo("application/test");
+    assertThat(json.read("$.file.type.id", Integer.class))
+        .isEqualTo(3);
+    assertThat(json.read("$.file.type.name", String.class))
+        .isEqualTo("test-type");
+    assertThat(json.read("$.file.type.mimetype", String.class))
+        .isEqualTo("application/test");
+
     // file metadata:
-    assertThat(json.read("$.file.metadata[0].key", String.class)).isEqualTo("foo");
-    assertThat(json.read("$.file.metadata[0].value", String.class)).isEqualTo("bar");
-    assertThat(json.read("$.file.metadata[1].key", String.class)).isEqualTo("spam");
-    assertThat(json.read("$.file.metadata[1].value", String.class)).isEqualTo("eggs");
+    assertThat(json.read("$.file.metadata[0].key", String.class))
+        .isEqualTo("foo");
+    assertThat(json.read("$.file.metadata[0].value", String.class))
+        .isEqualTo("bar");
+    assertThat(json.read("$.file.metadata[1].key", String.class))
+        .isEqualTo("spam");
+    assertThat(json.read("$.file.metadata[1].value", String.class))
+        .isEqualTo("eggs");
+
     // document:
-    assertThat(json.read("$.doc.id", String.class)).isEqualTo("99999999-f0a0-406e-b01b-b12b9df9a84c");
+    assertThat(json.read("$.doc.id", String.class))
+        .isEqualTo("99999999-f0a0-406e-b01b-b12b9df9a84c");
     assertThat(json.read("$.doc.externalId", String.class))
         .isEqualTo("dat-pak-melk-buiten-de-koelkast");
+
     // document metadata:
-    assertThat(json.read("$.doc.metadata[0].key", String.class)).isEqualTo("docfoo");
-    assertThat(json.read("$.doc.metadata[0].value", String.class)).isEqualTo("docbar");
-    assertThat(json.read("$.doc.metadata[1].key", String.class)).isEqualTo("docspam");
-    assertThat(json.read("$.doc.metadata[1].value", String.class)).isEqualTo("doceggs");
+    assertThat(json.read("$.doc.metadata[0].key", String.class))
+        .isEqualTo("docfoo");
+    assertThat(json.read("$.doc.metadata[0].value", String.class))
+        .isEqualTo("docbar");
+    assertThat(json.read("$.doc.metadata[1].key", String.class))
+        .isEqualTo("docspam");
+    assertThat(json.read("$.doc.metadata[1].value", String.class))
+        .isEqualTo("doceggs");
+
     // versions:
     assertThat(json.read("$.versions[0].id", String.class))
         .isEqualTo("33330128-02be-4938-ba84-8d9dd70e19a5");
-    assertThat(json.read("$.versions[0].contentsModified", Boolean.class)).isEqualTo(true);
-    assertThat(json.read("$.versions[0].createdAt", String.class)).isEqualTo("2000-01-03T00:00:00");
+    assertThat(json.read("$.versions[0].contentsModified", Boolean.class))
+        .isEqualTo(true);
+    assertThat(json.read("$.versions[0].createdAt", String.class))
+        .isEqualTo("2000-01-03T00:00:00");
     assertThat(json.read("$.versions[1].id", String.class))
         .isEqualTo("22220128-02be-4938-ba84-8d9dd70e19a5");
-    assertThat(json.read("$.versions[1].contentsModified", Boolean.class)).isEqualTo(false);
-    assertThat(json.read("$.versions[1].createdAt", String.class)).isEqualTo("2000-01-02T00:00:00");
+    assertThat(json.read("$.versions[1].contentsModified", Boolean.class))
+        .isEqualTo(false);
+    assertThat(json.read("$.versions[1].createdAt", String.class))
+        .isEqualTo("2000-01-02T00:00:00");
     assertThat(json.read("$.versions[2].id", String.class))
         .isEqualTo("11110128-02be-4938-ba84-8d9dd70e19a5");
-    assertThat(json.read("$.versions[2].contentsModified", Boolean.class)).isEqualTo(true);
-    assertThat(json.read("$.versions[2].createdAt", String.class)).isEqualTo("2000-01-01T00:00:00");
+    assertThat(json.read("$.versions[2].contentsModified", Boolean.class))
+        .isEqualTo(true);
+    assertThat(json.read("$.versions[2].createdAt", String.class))
+        .isEqualTo("2000-01-01T00:00:00");
+
+    // version metadata:
+    assertThat(json.read("$.versions[0].metadata[0].key", String.class))
+        .isEqualTo("versionfoo");
+    assertThat(json.read("$.versions[0].metadata[0].value", String.class))
+        .isEqualTo("versionbar");
+    assertThat(json.read("$.versions[0].metadata[1].key", String.class))
+        .isEqualTo("versionspam");
+    assertThat(json.read("$.versions[0].metadata[1].value", String.class))
+        .isEqualTo("versioneggs");
+
     // contentsLastModified:
     assertThat(json.read("$.contentsLastModified.dateTime", String.class))
         .isEqualTo("2000-01-03T00:00:00");
@@ -152,6 +192,7 @@ public class FileResourceTest {
         .isEqualTo("33334942a9d96e2965f2a0f9d06b5878822111580fe061b038720330");
     assertThat(json.read("$.contentsLastModified.versionId", String.class))
         .isEqualTo("33330128-02be-4938-ba84-8d9dd70e19a5");
+
     // check indexer has requested resources from all TR endpoints:
     mockRequests.forEach((mr) -> mockServer.verify(mr, once()));
   }
@@ -188,6 +229,9 @@ public class FileResourceTest {
     requests.add(mockEndpoint("/rest/documents/[a-f0-9-]*/metadata", "textrepo-doc-metadata.json"));
     requests.add(mockEndpoint("/rest/types/[0-9]*", "textrepo-type.json"));
     requests.add(mockEndpoint("/rest/files/[a-f0-9-]*/versions", "textrepo-versions.json"));
+    requests.add(mockEndpoint("/rest/versions/33330128-02be-4938-ba84-8d9dd70e19a5/metadata", "textrepo-version-metadata.json"));
+    requests.add(mockEndpoint("/rest/versions/22220128-02be-4938-ba84-8d9dd70e19a5/metadata", "textrepo-no-metadata.json"));
+    requests.add(mockEndpoint("/rest/versions/11110128-02be-4938-ba84-8d9dd70e19a5/metadata", "textrepo-no-metadata.json"));
     return requests;
   }
 
@@ -197,24 +241,10 @@ public class FileResourceTest {
     requests.add(mockEndpoint("/rest/files/[a-f0-9-]*/metadata", "textrepo-file-metadata.json"));
     requests.add(mockEndpoint("/rest/types/[0-9]*", "textrepo-type.json"));
     requests.add(mockEndpoint("/rest/files/[a-f0-9-]*/versions", "textrepo-versions.json"));
+    requests.add(mockEndpoint("/rest/versions/33330128-02be-4938-ba84-8d9dd70e19a5/metadata", "textrepo-no-metadata.json"));
+    requests.add(mockEndpoint("/rest/versions/22220128-02be-4938-ba84-8d9dd70e19a5/metadata", "textrepo-no-metadata.json"));
+    requests.add(mockEndpoint("/rest/versions/11110128-02be-4938-ba84-8d9dd70e19a5/metadata", "textrepo-no-metadata.json"));
     return requests;
-  }
-
-  private HttpRequest mockEndpointPage(String versionsEndpoint, String versionPage, int offset, int limit) throws IOException {
-    var request = request()
-        .withMethod("GET")
-        .withPath(versionsEndpoint)
-        .withQueryStringParameter("limit", "" + limit)
-        .withQueryStringParameter("offset", "" + offset);
-    mockServer.when(
-        request
-    ).respond(
-        response()
-            .withStatusCode(200)
-            .withHeader("content-type: application/json")
-            .withBody(getResourceAsBytes(versionPage))
-    );
-    return request;
   }
 
   private HttpRequest mockEndpoint(String endpoint, String responseFilename) throws IOException {

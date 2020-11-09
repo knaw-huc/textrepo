@@ -12,6 +12,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
+import static java.util.Objects.requireNonNull;
+
 @Api(tags = {"task", "documents"})
 @Path("/task/delete")
 public class DeleteDocumentResource {
@@ -21,7 +23,7 @@ public class DeleteDocumentResource {
   private final TaskBuilderFactory factory;
 
   public DeleteDocumentResource(TaskBuilderFactory factory) {
-    this.factory = factory;
+    this.factory = requireNonNull(factory);
   }
 
   @DELETE

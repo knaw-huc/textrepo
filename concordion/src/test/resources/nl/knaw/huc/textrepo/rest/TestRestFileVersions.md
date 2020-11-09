@@ -1,4 +1,4 @@
-# Test `/rest/file/{id}/versions`
+# Test `/rest/files/{id}/versions`
 
 A file can have multiple versions.
 

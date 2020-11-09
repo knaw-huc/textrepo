@@ -22,6 +22,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import java.util.UUID;
 
+import static java.util.Objects.requireNonNull;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static nl.knaw.huc.helpers.Paginator.toResult;
 
@@ -37,8 +38,8 @@ public class DocumentFilesResource {
       DocumentFilesService documentFilesService,
       Paginator paginator
   ) {
-    this.documentFilesService = documentFilesService;
-    this.paginator = paginator;
+    this.documentFilesService = requireNonNull(documentFilesService);
+    this.paginator = requireNonNull(paginator);
   }
 
   @GET

@@ -21,6 +21,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.util.Map;
 
+import static java.util.Objects.requireNonNull;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT_ENCODING;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
@@ -49,8 +50,8 @@ public class FindResource {
   private final ContentsHelper contentsHelper;
 
   public FindResource(TaskBuilderFactory factory, ContentsHelper contentsHelper) {
-    this.factory = factory;
-    this.contentsHelper = contentsHelper;
+    this.factory = requireNonNull(factory);
+    this.contentsHelper = requireNonNull(contentsHelper);
   }
 
   @GET

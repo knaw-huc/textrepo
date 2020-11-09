@@ -6,9 +6,9 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.MetadataEntry;
-import nl.knaw.huc.api.ResultDocumentMetadataEntry;
+import nl.knaw.huc.api.ResultVersionMetadataEntry;
 import nl.knaw.huc.exceptions.MethodNotAllowedException;
-import nl.knaw.huc.service.document.metadata.DocumentMetadataService;
+import nl.knaw.huc.service.version.metadata.VersionMetadataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,26 +24,23 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
-import java.util.Map;
 import java.util.UUID;
 
 import static java.util.Objects.requireNonNull;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
 
-@Api(tags = {"documents", "metadata"})
-@Path("/rest/documents/{docId}/metadata")
-public class DocumentMetadataResource {
+@Api(tags = {"versions", "metadata"})
+@Path("/rest/versions/{versionId}/metadata")
+public class VersionMetadataResource {
 
-  private static final Logger log = LoggerFactory.getLogger(DocumentMetadataResource.class);
+  private static final Logger log = LoggerFactory.getLogger(VersionMetadataResource.class);
   private static final String POST_ERROR_MSG = "Not allowed to post metadata: use put instead";
 
-  private final DocumentMetadataService documentMetadataService;
+  private final VersionMetadataService versionMetadataService;
 
-  public DocumentMetadataResource(
-      DocumentMetadataService documentMetadataService
-  ) {
-    this.documentMetadataService = requireNonNull(documentMetadataService);
+  public VersionMetadataResource(VersionMetadataService versionMetadataService) {
+    this.versionMetadataService = requireNonNull(versionMetadataService);
   }
 
   @POST
@@ -55,15 +52,17 @@ public class DocumentMetadataResource {
   }
 
   @GET
+  @Timed
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Retrieve document metadata")
-  public Map<String, String> get(
-      @PathParam("docId") @NotNull @Valid UUID docId
+  @ApiOperation(value = "Retrieve version metadata")
+  @ApiResponses(value = {@ApiResponse(code = 200, responseContainer = "Map", response = String.class, message = "OK")})
+  public Response get(
+      @PathParam("versionId") @NotNull @Valid UUID versionId
   ) {
-    log.debug("Get document metadata: docId={}", docId);
-    var metadata = documentMetadataService.getByDocId(docId);
-    log.debug("Got document metadata: {}", metadata);
-    return metadata;
+    log.debug("Get version metadata: versionId={}", versionId);
+    var metadata = versionMetadataService.getMetadata(versionId);
+    log.debug("Got version metadata: {}", metadata);
+    return Response.ok(metadata).build();
   }
 
   @PUT
@@ -71,18 +70,18 @@ public class DocumentMetadataResource {
   @Timed
   @Consumes(TEXT_PLAIN)
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Create or update document metadata entry")
+  @ApiOperation(value = "Create or update version metadata entry")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
-  public Response update(
-      @PathParam("docId") @NotNull @Valid UUID docId,
-      @PathParam("key") @NotBlank String key,
+  public Response put(
+      @PathParam("versionId") @Valid UUID versionId,
+      @PathParam("key") @NotNull String key,
       @NotNull String value
   ) {
-    log.debug("Update metadata: docId={}, key={}, value={}", docId, key, value);
+    log.debug("Update or create version metadata: versionId={}, key={}, value={}", versionId, key, value);
     var entry = new MetadataEntry(key, value);
-    documentMetadataService.upsert(docId, entry);
-    log.debug("Updated metadata: docId={}, entry={}", docId, entry);
-    return Response.ok(new ResultDocumentMetadataEntry(docId, entry)).build();
+    versionMetadataService.upsert(versionId, entry);
+    log.debug("Updated or created version metadata");
+    return Response.ok(new ResultVersionMetadataEntry(versionId, entry)).build();
   }
 
   @DELETE
@@ -93,12 +92,12 @@ public class DocumentMetadataResource {
   @ApiOperation(value = "Delete document metadata entry")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
   public Response delete(
-      @PathParam("docId") @NotNull @Valid UUID docId,
+      @PathParam("versionId") @NotNull @Valid UUID versionId,
       @PathParam("key") @NotBlank String key
   ) {
-    log.debug("Delete metadata: docId={}, key={}", docId, key);
-    documentMetadataService.delete(docId, key);
-    log.debug("Deleted metadata");
+    log.debug("Delete version metadata: versionId={}, key={}", versionId, key);
+    versionMetadataService.delete(versionId, key);
+    log.debug("Deleted version metadata");
     return Response.ok().build();
   }
 

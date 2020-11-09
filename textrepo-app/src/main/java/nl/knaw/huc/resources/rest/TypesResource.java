@@ -21,6 +21,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
+import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
@@ -33,7 +34,7 @@ public class TypesResource {
   private final TypeService typeService;
 
   public TypesResource(TypeService typeService) {
-    this.typeService = typeService;
+    this.typeService = requireNonNull(typeService);
   }
 
   @POST
