@@ -1,8 +1,6 @@
 # Text Repository Acceptance Tests
 
  - [Health checks](TestHealthChecks.md "c:run")
- - [File indexer](index/TestFileIndexer.md "c:run")
- - [Autocomplete indexer](index/TestAutocompleteIndexer.md "c:run")
 
 ## Rest API
 
@@ -20,7 +18,7 @@ A user of the Text Repository can retrieve, create, update and delete resources 
  - [Version contents](rest/TestRestVersionContents.md "c:run")
  - [Contents](rest/TestRestContents.md "c:run")
 
-# Task API
+## Task API
 
 The Text Repository offers `task`-endpoints to perform a single, complex task within a single request:
 
@@ -30,8 +28,13 @@ The Text Repository offers `task`-endpoints to perform a single, complex task wi
  - [Index files by type](task/TestIndexFilesByType.md "c:run")
  - [Index files by index name](task/TestIndexFilesByIndexName.md "c:run")
  
-# Dashboard
+## Dashboard
 
 The Text Repository offers various diagnostics about the state of documents:
 
  - [Show count of documents lacking files and / or metadata](dashboard/TestDashboard.md "c:run")
+
+## Indexers
+
+ - [File indexer](index/TestFileIndexer.md "c:run")
+ - [Autocomplete indexer](index/TestAutocompleteIndexer.md "c:run")
