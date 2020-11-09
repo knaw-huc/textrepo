@@ -74,7 +74,7 @@ public class VersionMetadataResource {
   public Response put(
       @PathParam("versionId") @Valid UUID versionId,
       @PathParam("key") @NotNull String key,
-      @NotBlank String value
+      @NotNull String value
   ) {
     log.debug("Update or create version metadata: versionId={}, key={}, value={}", versionId, key, value);
     var entry = new MetadataEntry(key, value);

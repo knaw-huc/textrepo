@@ -74,7 +74,7 @@ public class FileMetadataResource {
   public Response put(
       @PathParam("fileId") @Valid UUID fileId,
       @PathParam("key") @NotNull String key,
-      @NotBlank String value
+      @NotNull String value
   ) {
     log.debug("Update or create file metadata: fileId={}, key={}, value={}", fileId, key, value);
     var entry = new MetadataEntry(key, value);

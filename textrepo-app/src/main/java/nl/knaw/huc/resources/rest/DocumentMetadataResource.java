@@ -75,7 +75,7 @@ public class DocumentMetadataResource {
   public Response update(
       @PathParam("docId") @NotNull @Valid UUID docId,
       @PathParam("key") @NotBlank String key,
-      String value
+      @NotNull String value
   ) {
     log.debug("Update metadata: docId={}, key={}, value={}", docId, key, value);
     var entry = new MetadataEntry(key, value);
