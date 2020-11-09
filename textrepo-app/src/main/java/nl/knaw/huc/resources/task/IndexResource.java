@@ -11,6 +11,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
+import static java.util.Objects.requireNonNull;
+
 @Api(tags = {"task", "index"})
 @Path("task/index")
 public class IndexResource {
@@ -20,7 +22,7 @@ public class IndexResource {
   private final TaskBuilderFactory factory;
 
   public IndexResource(TaskBuilderFactory factory) {
-    this.factory = factory;
+    this.factory = requireNonNull(factory);
   }
 
   @POST

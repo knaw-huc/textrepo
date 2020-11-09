@@ -97,6 +97,23 @@
           },
           "contentsModified": {
             "type": "boolean"
+          },
+          "metadata": {
+            "type": "nested",
+            "properties": {
+              "key": {
+                "type": "keyword"
+              },
+              "value": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              }
+            }
           }
         }
       }

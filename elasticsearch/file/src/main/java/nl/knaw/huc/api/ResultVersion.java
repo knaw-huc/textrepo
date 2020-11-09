@@ -3,6 +3,7 @@ package nl.knaw.huc.api;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public class ResultVersion {
@@ -10,6 +11,7 @@ public class ResultVersion {
   private LocalDateTime createdAt;
   private String sha;
   private Boolean contentsModified;
+  private List<ResultMetadataEntry> metadata;
 
   @JsonProperty
   public UUID getId() {
@@ -46,4 +48,14 @@ public class ResultVersion {
   public void setContentsModified(Boolean contentsModified) {
     this.contentsModified = contentsModified;
   }
+
+  @JsonProperty
+  public List<ResultMetadataEntry> getMetadata() {
+    return metadata;
+  }
+
+  public void setMetadata(List<ResultMetadataEntry> metadata) {
+    this.metadata = metadata;
+  }
+
 }

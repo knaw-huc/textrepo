@@ -22,6 +22,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.io.InputStream;
 
+import static java.util.Objects.requireNonNull;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
 
@@ -33,7 +34,7 @@ public class ImportResource {
   private final TaskBuilderFactory factory;
 
   public ImportResource(TaskBuilderFactory factory) {
-    this.factory = factory;
+    this.factory = requireNonNull(factory);
   }
 
   @POST

@@ -15,6 +15,7 @@ A user of the Text Repository can retrieve, create, update and delete resources 
  - [File metadata](rest/TestRestFileMetadata.md "c:run")
  - [File versions](rest/TestRestFileVersions.md "c:run")
  - [Versions](rest/TestRestVersions.md "c:run")
+ - [Version metadata](rest/TestRestVersionMetadata.md "c:run")
  - [Version contents](rest/TestRestVersionContents.md "c:run")
  - [Contents](rest/TestRestContents.md "c:run")
 

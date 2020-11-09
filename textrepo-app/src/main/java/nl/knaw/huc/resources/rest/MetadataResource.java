@@ -14,6 +14,7 @@ import javax.ws.rs.Produces;
 import java.util.List;
 import java.util.UUID;
 
+import static java.util.Objects.requireNonNull;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 @Api(tags = {"metadata"})
@@ -24,7 +25,7 @@ public class MetadataResource {
   private final DocumentMetadataService documentMetadataService;
 
   public MetadataResource(DocumentMetadataService documentMetadataService) {
-    this.documentMetadataService = documentMetadataService;
+    this.documentMetadataService = requireNonNull(documentMetadataService);
   }
 
   @GET

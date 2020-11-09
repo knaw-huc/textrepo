@@ -27,7 +27,7 @@ public class TextRepoConfiguration extends Configuration {
 
   @Valid
   @NotNull
-  private ResourceLimits resourceLimits = new ResourceLimits();
+  private ResourceLimitsConfiguration resourceLimits = new ResourceLimitsConfiguration();
 
   @Valid
   @NotNull
@@ -63,12 +63,12 @@ public class TextRepoConfiguration extends Configuration {
   }
 
   @JsonProperty("limits")
-  public ResourceLimits getResourceLimits() {
+  public ResourceLimitsConfiguration getResourceLimits() {
     return resourceLimits;
   }
 
   @JsonProperty("limits")
-  public void setResourceLimits(ResourceLimits resourceLimits) {
+  public void setResourceLimits(ResourceLimitsConfiguration resourceLimits) {
     this.resourceLimits = resourceLimits;
   }
 

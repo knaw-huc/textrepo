@@ -23,6 +23,7 @@ import javax.ws.rs.core.Response;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static java.util.Objects.requireNonNull;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static nl.knaw.huc.helpers.Paginator.toResult;
 
@@ -39,8 +40,8 @@ public class FileVersionsResource {
       VersionService versionService,
       Paginator paginator
   ) {
-    this.versionService = versionService;
-    this.paginator = paginator;
+    this.versionService = requireNonNull(versionService);
+    this.paginator = requireNonNull(paginator);
   }
 
   @GET

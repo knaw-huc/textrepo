@@ -12,7 +12,6 @@ import java.util.UUID;
 
 import static java.lang.String.format;
 import static nl.knaw.huc.helpers.PsqlExceptionHelper.Constraint.DOCUMENTS_METADATA_DOCUMENT_ID_FKEY;
-import static nl.knaw.huc.helpers.PsqlExceptionHelper.Constraint.VERSIONS_CONTENTS_SHA;
 import static nl.knaw.huc.helpers.PsqlExceptionHelper.violatesConstraint;
 
 public class JdbiDocumentMetadataService implements DocumentMetadataService {
@@ -29,7 +28,7 @@ public class JdbiDocumentMetadataService implements DocumentMetadataService {
 
   @Override
   public Map<String, String> getByDocId(UUID docId) {
-    return metadata().getByDocumentId(docId);
+    return metadata().getMetadataByDocumentId(docId);
   }
 
   @Override
