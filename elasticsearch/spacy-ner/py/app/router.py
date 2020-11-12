@@ -23,7 +23,7 @@ def home():
 
 @app.route(ROOT + '/mapping', methods=['GET'])
 def mapping():
-    return send_file('/tagger/mapping.json', 'application/json')
+    return send_file('../../mapping.json', 'application/json')
 
 
 @app.route(ROOT + '/fields', methods=['POST'])

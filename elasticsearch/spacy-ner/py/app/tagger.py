@@ -1,6 +1,6 @@
 import spacy
 
-nlp = spacy.load('/tagger/model/')
+nlp = spacy.load('./model/')
 
 def tag(text):
     result = []
