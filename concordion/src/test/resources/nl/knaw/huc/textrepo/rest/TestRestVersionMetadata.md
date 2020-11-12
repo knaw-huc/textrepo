@@ -1,4 +1,4 @@
-# Test `/rest/version/{id}/metadata`
+# Test `/rest/versions/{id}/metadata`
 
 A version has metadata: a map of key-value pairs. 
 
