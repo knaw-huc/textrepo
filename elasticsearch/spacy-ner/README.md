@@ -40,7 +40,11 @@ Text repository indexer that recognizes named entities using spacy, flask and do
       - elasticsearch:9200
 ```
 
-- Add some text versions to the text repository suitable for your model.
+- Check service is running: 
+  - `docker exec -ti <container> curl localhost:8080/spacy-ner`
+  - `docker exec -ti <container> curl -XPOST -F 'file=Amsterdam' localhost:8080/spacy-ner/fields`
+
+- Add some text versions to the text repository relevant to your model.
 
 - Query elasticsearch index:
 ```shell script
