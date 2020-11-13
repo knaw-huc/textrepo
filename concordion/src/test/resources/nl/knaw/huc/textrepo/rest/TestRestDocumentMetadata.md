@@ -1,4 +1,4 @@
-# Test `/rest/document/{id}/metadata`
+# Test `/rest/documents/{id}/metadata`
 
 A document has metadata: a map of key-value pairs. 
 

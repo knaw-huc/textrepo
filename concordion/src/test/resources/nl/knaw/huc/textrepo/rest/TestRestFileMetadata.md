@@ -1,4 +1,4 @@
-# Test `/rest/file/{id}/metadata`
+# Test `/rest/files/{id}/metadata`
 
 A file has metadata: a map of key-value pairs. 
 
