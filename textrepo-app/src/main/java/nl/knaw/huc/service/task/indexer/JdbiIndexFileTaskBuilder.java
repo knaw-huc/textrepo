@@ -1,13 +1,16 @@
 package nl.knaw.huc.service.task.indexer;
 
 import nl.knaw.huc.core.TextRepoFile;
+import nl.knaw.huc.core.Version;
 import nl.knaw.huc.db.FilesDao;
 import nl.knaw.huc.db.TypesDao;
 import nl.knaw.huc.service.index.Indexer;
 import nl.knaw.huc.service.task.FindDocumentByExternalId;
 import nl.knaw.huc.service.task.FindDocumentFileByType;
-import nl.knaw.huc.service.task.GetLatestFileContents;
+import nl.knaw.huc.service.task.GetLatestOptionalFileVersion;
+import nl.knaw.huc.service.task.GetVersionContent;
 import nl.knaw.huc.service.task.Task;
+import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,10 +85,13 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
       return jdbi.inTransaction(txn -> {
         final var doc = new FindDocumentByExternalId(externalId).executeIn(txn);
         final var file = new FindDocumentFileByType(doc, typeName).executeIn(txn);
-        final var contents = new GetLatestFileContents(file).executeIn(txn);
+        var version = new GetLatestOptionalFileVersion(file).executeIn(txn);
+        var contents = getVersionContentsOrEmptyString(txn, version);
         final var results = new ArrayList<String>();
         indexers.forEach((indexer) -> {
-          var result = indexer.getClass().getName() + " - " + indexer.index(file, contents.asUtf8String()).orElse("Ok");
+          var indexerName = indexer.getClass().getName();
+          var indexResult = indexer.index(file, contents).orElse("Ok");
+          var result = indexerName + " - " + indexResult;
           results.add(result);
           log.info(result);
         });
@@ -135,10 +141,10 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
     private void indexFile(TextRepoFile file) {
       log.debug("Indexing file: {}", file.getId());
       jdbi.useTransaction(txn -> {
-        final var contents = new GetLatestFileContents(file).executeIn(txn);
-
+        var version = new GetLatestOptionalFileVersion(file).executeIn(txn);
+        var contents = getVersionContentsOrEmptyString(txn, version);
         indexers.forEach((indexer) -> {
-          var result = indexer.index(file, contents.asUtf8String());
+          var result = indexer.index(file, contents);
           result.ifPresent((str) -> log.warn(indexer.getClass().getName() + " - " + str));
         });
         filesAffected++;
@@ -147,11 +153,11 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
   }
 
   /**
-   * Index files by indexer name
+   * Index or reindex single index with all relevant files, including those without versions
    */
   public class JdbiIndexAllFilesByIndexTask implements Task<String> {
-    private final Logger log = LoggerFactory.getLogger(JdbiIndexAllFilesTask.class);
 
+    private final Logger log = LoggerFactory.getLogger(JdbiIndexAllFilesTask.class);
     private final Indexer indexer;
 
     private int filesAffected = 0;
@@ -196,11 +202,27 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
     private void indexFile(TextRepoFile file) {
       log.debug("Indexing file: {}", file.getId());
       jdbi.useTransaction(txn -> {
-        final var contents = new GetLatestFileContents(file).executeIn(txn);
-        var result = indexer.index(file, contents.asUtf8String());
+        var version = new GetLatestOptionalFileVersion(file).executeIn(txn);
+        var contents = getVersionContentsOrEmptyString(txn, version);
+        var result = indexer.index(file, contents);
         result.ifPresent((str) -> log.warn(indexer.getClass().getName() + " - " + str));
         filesAffected++;
       });
     }
+
+  }
+
+  /**
+   * Retrieve version contents, or return an empty string when no version present
+   */
+  private String getVersionContentsOrEmptyString(Handle txn, Optional<Version> version) {
+    String contents;
+    if (version.isEmpty()) {
+      log.info("No version found, using empty string");
+      contents = "";
+    } else {
+      contents = new GetVersionContent(version.get()).executeIn(txn).asUtf8String();
+    }
+    return contents;
   }
 }

@@ -13,6 +13,12 @@ Do not forget to include:
 ## Added
 - Version metadata, see: `./postgres/initdb/04-add-version-metadata-table.sql`
 
+## Changed
+- Set `shm_size` in docker-compose setup to increase default 64mb limit 
+
+## Fixed
+- Continue indexing by indexer when bumping into a file without versions
+
 [v1.12.1]
 ### Fixed
 - Show commit and tag name in textrepo-app and about images using docker build hooks
