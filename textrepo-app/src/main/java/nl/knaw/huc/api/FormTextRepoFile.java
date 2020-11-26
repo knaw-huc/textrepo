@@ -13,12 +13,12 @@ public class FormTextRepoFile {
   private UUID docId;
 
   @NotNull(message = "is mandatory")
-  private final short typeId;
+  private Short typeId;
 
   @JsonCreator
   public FormTextRepoFile(
       @JsonProperty("docId") UUID docId,
-      @JsonProperty("typeId") short typeId
+      @JsonProperty("typeId") Short typeId
   ) {
     this.docId = docId;
     this.typeId = typeId;
