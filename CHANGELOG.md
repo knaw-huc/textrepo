@@ -18,7 +18,7 @@ Do not forget to include:
 
 ## Fixed
 - Continue indexing by indexer when bumping into a file without versions
-- Autocomplete indexer can handle empty files 
+- Autocomplete and full-text indexers can handle empty files now 
 
 [v1.12.1]
 ### Fixed
