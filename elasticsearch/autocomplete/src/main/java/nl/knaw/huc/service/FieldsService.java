@@ -13,8 +13,8 @@ import org.apache.tika.sax.BodyContentHandler;
 import org.xml.sax.SAXException;
 
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.BadRequestException;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -25,7 +25,6 @@ import java.util.StringTokenizer;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.frequency;
 import static java.util.stream.Collectors.toCollection;
-import static org.apache.commons.io.IOUtils.copy;
 
 public class FieldsService {
 
@@ -53,11 +52,7 @@ public class FieldsService {
 
   private Fields fromTxt(@NotNull InputStream inputStream) {
     String text;
-    try {
-      text = IOUtils.toString(inputStream, UTF_8);
-    } catch (IOException e) {
-      throw new IllegalArgumentException("Input stream could not be converted to string");
-    }
+    text = getString(inputStream);
     return createFields(text);
   }
 
@@ -92,25 +87,41 @@ public class FieldsService {
   }
 
   private String extractText(InputStream xml) {
+    var bytes = getBytes(xml);
+    if (bytes.length == 0) {
+      return "";
+    }
+
     var handler = new BodyContentHandler(-1);
     var metadata = new Metadata();
     var parseContext = new ParseContext();
-
-    var baos = new ByteArrayOutputStream();
-    try {
-      copy(xml, baos);
-    } catch (IOException ex) {
-      throw new IllegalStateException("Could not copy inputstream", ex);
-    }
-    var bytes = baos.toByteArray();
 
     var xmlParser = new XMLParser();
     try {
       xmlParser.parse(new ByteArrayInputStream(bytes), handler, metadata, parseContext);
     } catch (IOException | SAXException | TikaException ex) {
-      throw new IllegalArgumentException("Could not parse xml file", ex);
+      throw new BadRequestException("Could not parse xml file", ex);
     }
     return handler.toString();
   }
 
+  private byte[] getBytes(InputStream inputStream) {
+    byte[] bytes;
+    try {
+      bytes = IOUtils.toByteArray(inputStream);
+    } catch (IOException ex) {
+      throw new IllegalArgumentException("Contents could not be converted to byte array", ex);
+    }
+    return bytes;
+  }
+
+  private String getString(InputStream inputStream) {
+    String text;
+    try {
+      text = IOUtils.toString(inputStream, UTF_8);
+    } catch (IOException ex) {
+      throw new IllegalArgumentException("Contents could not be converted to string", ex);
+    }
+    return text;
+  }
 }

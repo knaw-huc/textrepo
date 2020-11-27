@@ -59,7 +59,7 @@ public class IndexResource {
 
   @POST
   @Path("/{name}")
-  @ApiOperation("Index all files of a single index")
+  @ApiOperation("Index or reindex single index with all relevant files, including those without versions")
   public Response indexSingleIndex(@PathParam("name") String name) {
     log.debug("Index all files of index: index={}", name);
     final var task = factory

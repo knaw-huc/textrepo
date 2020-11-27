@@ -13,6 +13,7 @@ import org.apache.tika.sax.BodyContentHandler;
 import org.xml.sax.SAXException;
 
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.BadRequestException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -59,13 +60,16 @@ public class FieldsService {
 
   private Fields parseWithTika(InputStream inputStream, AbstractParser parser) {
     var bytes = getBytes(inputStream);
+    if (bytes.length == 0) {
+      return new Fields("");
+    }
     var metadata = new Metadata();
     var parseContext = new ParseContext();
     var handler = new BodyContentHandler(-1);
     try {
       parser.parse(new ByteArrayInputStream(bytes), handler, metadata, parseContext);
     } catch (IOException | SAXException | TikaException ex) {
-      throw new IllegalArgumentException("Could not parse file using tika", ex);
+      throw new BadRequestException("Could not parse file using tika", ex);
     }
     return new Fields(handler.toString());
   }
@@ -75,7 +79,7 @@ public class FieldsService {
     try {
       copy(xml, baos);
     } catch (IOException ex) {
-      throw new IllegalStateException("Could not copy inputstream", ex);
+      throw new BadRequestException("Could not copy inputstream", ex);
     }
     return baos.toByteArray();
   }
