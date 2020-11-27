@@ -10,15 +10,19 @@ Do not forget to include:
 
 ## [Unreleased]
 
-## Added
-- Version metadata, see: `./postgres/initdb/04-add-version-metadata-table.sql`
-
-## Changed
-- Set `shm_size` in docker-compose setup to increase default 64mb limit 
+## [1.13.1]
 
 ## Fixed
 - Continue indexing by indexer when bumping into a file without versions
 - Autocomplete and full-text indexers can handle empty files now 
+
+### Changed
+- Set `shm_size` in docker-compose setup to increase default 64mb limit 
+
+## [1.13.0]
+
+### Added
+- Version metadata, see: `./postgres/initdb/04-add-version-metadata-table.sql`
 
 [v1.12.1]
 ### Fixed
