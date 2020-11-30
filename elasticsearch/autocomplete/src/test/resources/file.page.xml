@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<PcGts>
+  <schemaLocation/>
+  <Metadata/>
+  <Page imageWidth="0" imageHeight="0">
+    <ReadingOrder/>
+    <TextRegion orientation="0.0">
+      <Coords/>
+      <TextEquiv/>
+      <TextLine xheight="0">
+        <idString/>
+        <Coords points="2149,115 2231,115">
+          <Point/>
+        </Coords>
+        <Baseline points="2149,116 2150,116"/>
+        <TextEquiv>
+          <TextEquiv>
+            <Unicode>Twee glazen jenever veranderen een man meer dan honderdduizenden jaren evolutie.</Unicode>
+            <PlainText/>
+          </TextEquiv>
+          <PlainText/>
+        </TextEquiv>
+        <TextStyle/>
+      </TextLine>
+    </TextRegion>
+    <PrintSpace/>
+  </Page>
+  <pcGtsId/>
+</PcGts>

@@ -17,6 +17,10 @@ public enum SupportedType {
     this.mimetype = mimetype;
   }
 
+  public static boolean exists(String mimetype) {
+    return stream(values()).anyMatch(st -> st.mimetype.equals(mimetype));
+  }
+
   public String getMimetype() {
     return mimetype;
   }
@@ -27,9 +31,17 @@ public enum SupportedType {
         return supportedType;
       }
     }
-    throw new IllegalMimetypeException(format(
-        "Unexpected mimetype: got [%s] but should be one of [%s]",
-        mimetype, stream(values()).map(v -> "" + v.getMimetype()).collect(joining(", ")))
-    );
+    throw unexpectedMimetype(mimetype);
+  }
+
+  public static IllegalMimetypeException unexpectedMimetype(String mimetype) {
+    return new IllegalMimetypeException(format(
+        "Unexpected mimetype: got [%s] but should be one of [%s] or their subtypes",
+        mimetype, supported()
+    ));
+  }
+
+  private static String supported() {
+    return stream(values()).map(v -> "" + v.getMimetype()).collect(joining(", "));
   }
 }

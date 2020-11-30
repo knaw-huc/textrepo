@@ -9,6 +9,7 @@ import nl.knaw.huc.health.MappingFileHealthCheck;
 import nl.knaw.huc.resources.AutocompleteResource;
 import nl.knaw.huc.service.FieldsService;
 import nl.knaw.huc.service.MappingService;
+import nl.knaw.huc.service.SubtypeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +36,8 @@ public class AutocompleteIndexer extends Application<AutocompleteConfiguration> 
   public void run(AutocompleteConfiguration config, Environment environment) {
     var contentsService = new FieldsService(config);
     var mappingService = new MappingService(config);
-    var contentsResource = new AutocompleteResource(contentsService, mappingService);
+    var subtypeService = new SubtypeService(config.getMimetypeSubtypes());
+    var contentsResource = new AutocompleteResource(contentsService, mappingService, subtypeService);
 
     environment.jersey().register(new IllegalMimetypeExceptionMapper());
     environment.jersey().register(contentsResource);
