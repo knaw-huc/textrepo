@@ -124,8 +124,8 @@ public class AutocompleteResourceTest {
   public void testTypes_returnsMimetypesAndSubtypes() throws IOException {
     var response = application.client().target(getTestUrl("/types")).request().get();
     var types = response.readEntity(String.class);
-    assertThat(types).isEqualTo("{\"types\":[{\"mimetype\":\"application/xml\",\"subtypes\":[\"application/vnd.prima" +
-        ".page+xml\"]},{\"mimetype\":\"text/plain\",\"subtypes\":[]}]}");
+    assertThat(types).isEqualTo("{\"types\":[{\"mimetype\":\"application/xml\",\"subtypes\":[\"" +
+        "application/vnd.prima.page+xml\"]},{\"mimetype\":\"text/plain\",\"subtypes\":[]}]}");
   }
 
   private Response postTestContents(byte[] bytes, String mimetype) {
