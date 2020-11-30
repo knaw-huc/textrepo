@@ -10,6 +10,12 @@ Do not forget to include:
 
 ## [Unreleased]
 
+### Changed
+- Autocomplete and full-text indexers now index "subtypes" of a mimetype as if they where that mimetype. E.g. pagexml of 'application/vnd.prima.page+xml' is indexed as ordinary xml or 'application/xml'. See `Added` for new env vars.
+
+### Added
+- Environment variables: AUTOCOMPLETE_XML_SUBTYPES, AUTOCOMPLETE_TXT_SUBTYPES, FULL_TEXT_XML_SUBTYPES, FULL_TEXT_TXT_SUBTYPES
+
 ## [1.13.1]
 
 ## Fixed

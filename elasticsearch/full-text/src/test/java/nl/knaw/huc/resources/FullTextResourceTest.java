@@ -7,8 +7,8 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
-import nl.knaw.huc.FullTextIndexer;
 import nl.knaw.huc.FullTextConfiguration;
+import nl.knaw.huc.FullTextIndexer;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
@@ -59,14 +59,15 @@ public class FullTextResourceTest {
 
   @Test
   public void testTypes_returnsArrayOfTypes() {
-    var response = application.client()
-                              .target(getTestUrl("/types"))
-                              .request()
-                              .get();
+    var response = application
+        .client()
+        .target(getTestUrl("/types"))
+        .request()
+        .get();
     var fields = response.readEntity(String.class);
     assertThat(response.getStatus()).isEqualTo(200);
-    assertThat(JsonPath.parse(fields).read("$.[0]", String.class)).isEqualTo("application/xml");
-    assertThat(JsonPath.parse(fields).read("$.length()", Integer.class)).isEqualTo(4);
+    assertThat(JsonPath.parse(fields).read("$.types.[0].mimetype", String.class)).isEqualTo("application/xml");
+    assertThat(JsonPath.parse(fields).read("$.types.length()", Integer.class)).isEqualTo(4);
   }
 
   @Test
@@ -87,7 +88,8 @@ public class FullTextResourceTest {
     var response = postTestContents(fileContents, "text/plain");
     var fields = response.readEntity(String.class);
     assertThat(response.getStatus()).isEqualTo(200);
-    assertThat(fields).isEqualTo("{\"contents\":\"Scheepenen als in den hoofde gemelt\\n\"}");
+    assertThat(JsonPath.parse(fields).read("$.contents", String.class))
+        .isEqualToIgnoringWhitespace("Scheepenen als in den hoofde gemelt");
   }
 
   @Test
@@ -110,17 +112,30 @@ public class FullTextResourceTest {
   }
 
   @Test
+  public void testFields_returnsFullText_whenPageXml() throws IOException {
+    var fileContents = getResourceAsBytes("file.page.xml");
+    var response = postTestContents(fileContents, "application/vnd.prima.page+xml");
+    var fields = response.readEntity(String.class);
+    assertThat(response.getStatus()).isEqualTo(200);
+    assertThat(JsonPath.parse(fields).read("$.contents", String.class))
+        .isEqualToIgnoringWhitespace(
+            "Twee glazen jenever veranderen een man meer dan honderdduizenden jaren evolutie.");
+  }
+
+  @Test
   public void testFields_returnsFullText_whenOdt() throws IOException {
     var fileContents = getResourceAsBytes("file.odt");
     var response = postTestContents(fileContents, "application/vnd.oasis.opendocument.text");
     var fields = response.readEntity(String.class);
     assertThat(response.getStatus()).isEqualTo(200);
-    assertThat(JsonPath.parse(fields).read("$.contents", String.class)).isEqualTo("Hoofd, " +
-        "schouders, knie en teen, knie en teen\n" +
-        "Hoofd, schouders, knie en teen, knie en teen\n" +
-        "Hoofd, schouders, knie en teen, knie en teen\n" +
-        "Oren, ogen, puntje van je neus\n" +
-        "Hoofd, schouders, knie en teen, knie en teen\n");
+    assertThat(JsonPath.parse(fields).read("$.contents", String.class)).isEqualToIgnoringWhitespace(
+        "Hoofd, " +
+            "schouders, knie en teen, knie en teen\n" +
+            "Hoofd, schouders, knie en teen, knie en teen\n" +
+            "Hoofd, schouders, knie en teen, knie en teen\n" +
+            "Oren, ogen, puntje van je neus\n" +
+            "Hoofd, schouders, knie en teen, knie en teen\n"
+    );
   }
 
   @Test
@@ -130,14 +145,17 @@ public class FullTextResourceTest {
         postTestContents(fileContents, "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
     var fields = response.readEntity(String.class);
     assertThat(response.getStatus()).isEqualTo(200);
-    assertThat(JsonPath.parse(fields).read("$.contents", String.class)).isEqualTo("Een beetje gek dat bestaat niet\n" +
-        "Gaan we gek doen?\n" +
-        "Het voelt alsof we gek gaan doen\n" +
-        "Een beetje gek, niet als toen\n" +
-        "Gaan we gek doen?\n" +
-        "Het voelt alsof we gek gaan doen\n" +
-        "Of wel een beetje, een beetje gek als toen\n" +
-        "Een beetje gek dat bestaat niet, het is helemaal of niks\n");
+    System.out.println("gekdoen:" + fields);
+    assertThat(JsonPath.parse(fields).read("$.contents", String.class)).isEqualToIgnoringWhitespace(
+        "Een beetje gek dat bestaat niet\n" +
+            "Gaan we gek doen?\n" +
+            "Het voelt alsof we gek gaan doen\n" +
+            "Een beetje gek, niet als toen\n" +
+            "Gaan we gek doen?\n" +
+            "Het voelt alsof we gek gaan doen\n" +
+            "Of wel een beetje, een beetje gek als toen\n" +
+            "Een beetje gek dat bestaat niet, het is helemaal of niks\n"
+    );
   }
 
   private Response postTestContents(byte[] bytes, String mimetype) {

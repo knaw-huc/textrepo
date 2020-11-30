@@ -67,6 +67,9 @@ services:
   autocomplete-indexer:
     container_name: tr_autocomplete
     image: knawhuc/textrepo-autocomplete-indexer:${DOCKER_TAG}
+    environment:
+      AUTOCOMPLETE_XML_SUBTYPES: ${AUTOCOMPLETE_XML_SUBTYPES}
+      AUTOCOMPLETE_TXT_SUBTYPES: ${AUTOCOMPLETE_TXT_SUBTYPES}
     build: ./elasticsearch/autocomplete
     ports:
       - 8080
@@ -82,6 +85,9 @@ services:
   full-text-indexer:
     container_name: tr_full-text
     image: knawhuc/textrepo-full-text-indexer:${DOCKER_TAG}
+    environment:
+      FULL_TEXT_XML_SUBTYPES: ${FULL_TEXT_XML_SUBTYPES}
+      FULL_TEXT_TXT_SUBTYPES: ${FULL_TEXT_TXT_SUBTYPES}
     build: ./elasticsearch/full-text
     ports:
       - 8080

@@ -1,9 +1,10 @@
 package nl.knaw.huc.resources;
 
 import com.codahale.metrics.annotation.Timed;
-import nl.knaw.huc.core.SupportedType;
+import nl.knaw.huc.api.MimetypeSubtypesResult;
 import nl.knaw.huc.service.FieldsService;
 import nl.knaw.huc.service.MappingService;
+import nl.knaw.huc.service.SubtypeService;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
@@ -16,6 +17,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import java.io.InputStream;
 
+import static java.util.Arrays.stream;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
 
@@ -24,13 +26,27 @@ public class AutocompleteResource {
 
   private final FieldsService fieldsService;
   private final MappingService mappingService;
+  private final SubtypeService subtypeService;
 
   public AutocompleteResource(
       FieldsService fieldsService,
-      MappingService mappingService
+      MappingService mappingService,
+      SubtypeService subtypeService
   ) {
     this.fieldsService = fieldsService;
     this.mappingService = mappingService;
+    this.subtypeService = subtypeService;
+  }
+
+  @GET
+  @Path("/types")
+  @Timed
+  @Produces(APPLICATION_JSON)
+  public Response types() {
+    return Response
+        .status(200)
+        .entity(new MimetypeSubtypesResult(subtypeService.getMimetypeSubtypes()))
+        .build();
   }
 
   @GET
@@ -56,12 +72,11 @@ public class AutocompleteResource {
     if (body.getMediaType() == null) {
       throw new IllegalArgumentException("Content-Type of file body part is missing");
     }
-    var mimetype = body.getMediaType().toString();
+    var mimetype = subtypeService.determine(body.getMediaType().toString());
     var fields = fieldsService.createFieldsForType(
         inputStream,
-        SupportedType.fromString(mimetype)
+        mimetype
     );
-
     return Response
         .status(200)
         .entity(fields).build();

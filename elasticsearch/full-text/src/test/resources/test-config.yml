@@ -1,2 +1,4 @@
 mappingFile: ./full-text-mapping.json
-
+mimetypeSubtypes:
+  - mimetype: 'application/xml'
+    subtypes: [application/vnd.prima.page+xml]

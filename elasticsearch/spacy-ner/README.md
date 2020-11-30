@@ -16,13 +16,12 @@ Text repository indexer that recognizes named entities using spacy, flask and do
     networks:
       - textrepo_network
     volumes:
-      - ./scripts/wait-for-it.sh:/tagger/wait-for-it.sh
       - ./elasticsearch/spacy-ner/model:/indexer/model
+      - ./scripts/wait-for-it.sh:/indexer/wait-for-it.sh
     command: [
-        "./wait-for-it.sh", "elasticsearch:9200", "--timeout=0", "--",
+        "/indexer/wait-for-it.sh", "elasticsearch:9200", "--timeout=0", "--",
         "./start.sh"
     ]
-
 ```
 
 - Add to `TR_INDEXERS` in `./docker-compose.env`:

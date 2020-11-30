@@ -1,6 +1,0 @@
-logging:
-  level: INFO
-  loggers:
-    nl.knaw.huc: DEBUG
-    org.hibernate: ERROR
-mappingFile: ./full-text-mapping.json

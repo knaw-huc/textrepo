@@ -108,6 +108,26 @@ public class AutocompleteResourceTest {
     assertThat(fields).contains("Unexpected mimetype: got [application/pdf] but should be one of [");
   }
 
+  @Test
+  public void testFields_returnsCompletionSuggesterInput_whenPageXml() throws IOException {
+    var fileContents = getResourceAsBytes("file.page.xml");
+    var response = postTestContents(fileContents, "application/vnd.prima.page+xml");
+    assertThat(response.getStatus()).isEqualTo(200);
+    var fields = response.readEntity(String.class);
+    var firstInput = JsonPath.parse(fields).read("$.suggest[0].input");
+    assertThat(firstInput).isEqualTo("evolutie");
+    var firstWeight = JsonPath.parse(fields).read("$.suggest[0].weight");
+    assertThat(firstWeight).isEqualTo(1);
+  }
+
+  @Test
+  public void testTypes_returnsMimetypesAndSubtypes() throws IOException {
+    var response = application.client().target(getTestUrl("/types")).request().get();
+    var types = response.readEntity(String.class);
+    assertThat(types).isEqualTo("{\"types\":[{\"mimetype\":\"application/xml\",\"subtypes\":[\"" +
+        "application/vnd.prima.page+xml\"]},{\"mimetype\":\"text/plain\",\"subtypes\":[]}]}");
+  }
+
   private Response postTestContents(byte[] bytes, String mimetype) {
     var contentDisposition = FormDataContentDisposition
         .name("file")

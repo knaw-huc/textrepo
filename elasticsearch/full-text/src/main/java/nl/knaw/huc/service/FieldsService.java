@@ -51,7 +51,7 @@ public class FieldsService {
   private Fields fromTxt(@NotNull InputStream inputStream) {
     String text;
     try {
-      text = IOUtils.toString(inputStream, UTF_8);
+      text = cleanUp(IOUtils.toString(inputStream, UTF_8));
     } catch (IOException e) {
       throw new IllegalArgumentException("Input stream could not be converted to string");
     }
@@ -71,7 +71,7 @@ public class FieldsService {
     } catch (IOException | SAXException | TikaException ex) {
       throw new BadRequestException("Could not parse file using tika", ex);
     }
-    return new Fields(handler.toString());
+    return new Fields(cleanUp(handler.toString()));
   }
 
   private byte[] getBytes(InputStream xml) {
@@ -84,4 +84,9 @@ public class FieldsService {
     return baos.toByteArray();
   }
 
+  private String cleanUp(String contents) {
+    return contents
+        .trim()
+        .replaceAll(" +", " ");
+  }
 }

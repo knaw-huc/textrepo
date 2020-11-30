@@ -65,3 +65,12 @@ Indexers and their ES indexes can be configured with ``$TR_INDEXERS`` in  ``dock
       hosts:
         -       # list of strings, host urls
 
+
+Default indexers
+----------------
+
+The textrepo contains a number of default indexers:
+
+- `Full-text indexer <https://github.com/knaw-huc/textrepo/tree/master/elasticsearch/full-text>`_: for basic full-text search queries
+- `Autocomplete indexer <https://github.com/knaw-huc/textrepo/tree/master/elasticsearch/autocomplete>`_: for autocomplete suggestions
+- `File indexer <https://github.com/knaw-huc/textrepo/tree/master/elasticsearch/file>`_: for searching the metadata of documents, files and versions

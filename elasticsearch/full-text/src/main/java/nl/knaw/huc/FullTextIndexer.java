@@ -9,6 +9,7 @@ import nl.knaw.huc.health.MappingFileHealthCheck;
 import nl.knaw.huc.resources.FullTextResource;
 import nl.knaw.huc.service.FieldsService;
 import nl.knaw.huc.service.MappingService;
+import nl.knaw.huc.service.SubtypeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +36,9 @@ public class FullTextIndexer extends Application<FullTextConfiguration> {
   public void run(FullTextConfiguration config, Environment environment) {
     var contentsService = new FieldsService(config);
     var mappingService = new MappingService(config);
-    var contentsResource = new FullTextResource(contentsService, mappingService);
+    var subtypeService = new SubtypeService(config.getMimetypeSubtypes());
+
+    var contentsResource = new FullTextResource(contentsService, mappingService, subtypeService);
     environment.jersey().register(contentsResource);
     environment.healthChecks().register("mapping file", new MappingFileHealthCheck(config));
     environment.jersey().register(new IllegalMimetypeExceptionMapper());

@@ -1,9 +1,11 @@
 package nl.knaw.huc.resources;
 
 import com.codahale.metrics.annotation.Timed;
+import nl.knaw.huc.api.MimetypeSubtypesResult;
 import nl.knaw.huc.core.SupportedType;
 import nl.knaw.huc.service.FieldsService;
 import nl.knaw.huc.service.MappingService;
+import nl.knaw.huc.service.SubtypeService;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
@@ -30,13 +32,16 @@ public class FullTextResource {
 
   private final FieldsService fieldsService;
   private final MappingService mappingService;
+  private final SubtypeService subtypeService;
 
   public FullTextResource(
       FieldsService fieldsService,
-      MappingService mappingService
+      MappingService mappingService,
+      SubtypeService subtypeService
   ) {
     this.fieldsService = fieldsService;
     this.mappingService = mappingService;
+    this.subtypeService = subtypeService;
   }
 
   @GET
@@ -44,12 +49,9 @@ public class FullTextResource {
   @Timed
   @Produces(APPLICATION_JSON)
   public Response types() {
-    var mimetypes = stream(SupportedType.values())
-        .map(SupportedType::getMimetype)
-        .collect(toList());
     return Response
         .status(200)
-        .entity(mimetypes)
+        .entity(new MimetypeSubtypesResult(subtypeService.getMimetypeSubtypes()))
         .build();
   }
 
@@ -77,10 +79,10 @@ public class FullTextResource {
     if (body.getMediaType() == null) {
       throw new IllegalArgumentException("Content-Type of file body part is missing");
     }
-    var mimetype = body.getMediaType().toString();
+    var mimetype = subtypeService.determine(body.getMediaType().toString());
     var fields = fieldsService.createFields(
         inputStream,
-        SupportedType.fromString(mimetype)
+        mimetype
     );
 
     return Response
