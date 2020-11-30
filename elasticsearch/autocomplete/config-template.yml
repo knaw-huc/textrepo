@@ -5,4 +5,9 @@ logging:
     org.hibernate: ERROR
 minKeywordLength: 3
 keywordDelimiters: " \t\n\r\f,.:;?![]'="
+mimetypeSubtypes:
+  - mimetype: 'application/xml'
+    subtypes: ${AUTOCOMPLETE_XML_SUBTYPES}
+  - mimetype: 'text/plain'
+    subtypes: ${AUTOCOMPLETE_TXT_SUBTYPES}
 mappingFile: ./autocomplete-mapping.json
