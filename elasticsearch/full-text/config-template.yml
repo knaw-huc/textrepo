@@ -1,0 +1,11 @@
+logging:
+  level: INFO
+  loggers:
+    nl.knaw.huc: DEBUG
+    org.hibernate: ERROR
+mappingFile: ./full-text-mapping.json
+mimetypeSubtypes:
+  - mimetype: 'application/xml'
+    subtypes: ${FULL_TEXT_XML_SUBTYPES}
+  - mimetype: 'text/plain'
+    subtypes: ${FULL_TEXT_TXT_SUBTYPES}
