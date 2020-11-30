@@ -51,11 +51,17 @@ public class FieldsService {
   private Fields fromTxt(@NotNull InputStream inputStream) {
     String text;
     try {
-      text = IOUtils.toString(inputStream, UTF_8);
+      text = this.cleanUp(IOUtils.toString(inputStream, UTF_8));
     } catch (IOException e) {
       throw new IllegalArgumentException("Input stream could not be converted to string");
     }
     return new Fields(text);
+  }
+
+  private String cleanUp(String contents) {
+    return contents
+        .trim()
+        .replaceAll(" +", " ");
   }
 
   private Fields parseWithTika(InputStream inputStream, AbstractParser parser) {
@@ -71,7 +77,7 @@ public class FieldsService {
     } catch (IOException | SAXException | TikaException ex) {
       throw new BadRequestException("Could not parse file using tika", ex);
     }
-    return new Fields(handler.toString());
+    return new Fields(this.cleanUp(handler.toString()));
   }
 
   private byte[] getBytes(InputStream xml) {
