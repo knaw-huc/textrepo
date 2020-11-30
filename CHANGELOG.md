@@ -8,7 +8,7 @@ Do not forget to include:
  - Changes in the environment variables
  - Changes to the database
 
-## [Unreleased]
+## [1.14.0]
 
 ### Changed
 - Autocomplete and full-text indexers now index "subtypes" of a mimetype as if they where that mimetype. E.g. pagexml of 'application/vnd.prima.page+xml' is indexed as ordinary xml or 'application/xml'. See `Added` for new env vars.
