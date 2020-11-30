@@ -1,4 +1,4 @@
-# Full-text indexer
+# File indexer
 
 Run: see `../../README.md`
 
