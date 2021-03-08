@@ -50,14 +50,14 @@ public class DocumentMetadataResource {
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = POST_ERROR_MSG)
   @ApiResponses(value = {@ApiResponse(code = 405, message = POST_ERROR_MSG)})
-  public Response post() {
+  public Response postDocumentMetadataIsNotAllowed() {
     throw new MethodNotAllowedException(POST_ERROR_MSG);
   }
 
   @GET
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Retrieve document metadata")
-  public Map<String, String> get(
+  public Map<String, String> getDocumentMetadata(
       @PathParam("docId") @NotNull @Valid UUID docId
   ) {
     log.debug("Get document metadata: docId={}", docId);
@@ -73,7 +73,7 @@ public class DocumentMetadataResource {
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Create or update document metadata entry")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
-  public Response update(
+  public Response putDocumentMetadataEntry(
       @PathParam("docId") @NotNull @Valid UUID docId,
       @PathParam("key") @NotBlank String key,
       @NotNull String value
@@ -92,7 +92,7 @@ public class DocumentMetadataResource {
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Delete document metadata entry")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
-  public Response delete(
+  public Response deleteDocumentMetadataEntry(
       @PathParam("docId") @NotNull @Valid UUID docId,
       @PathParam("key") @NotBlank String key
   ) {

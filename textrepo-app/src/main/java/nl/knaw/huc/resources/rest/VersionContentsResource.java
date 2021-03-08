@@ -50,7 +50,7 @@ public class VersionContentsResource {
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = POST_ERROR_MSG)
   @ApiResponses(value = {@ApiResponse(code = 405, message = POST_ERROR_MSG)})
-  public Response post() {
+  public Response postVersionContentsIsNotAllowed() {
     throw new MethodNotAllowedException(POST_ERROR_MSG);
   }
 
@@ -59,7 +59,7 @@ public class VersionContentsResource {
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Retrieve version contents")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultVersion.class, message = "OK")})
-  public Response get(
+  public Response getVersionContents(
       @HeaderParam(ACCEPT_ENCODING) String acceptEncoding,
       @PathParam("versionId") @NotNull @Valid UUID versionId
   ) {
@@ -74,7 +74,7 @@ public class VersionContentsResource {
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = PUT_ERROR_MSG)
   @ApiResponses(value = {@ApiResponse(code = 405, message = PUT_ERROR_MSG)})
-  public Response put() {
+  public Response putVersionContentsIsNotAllowed() {
     throw new MethodNotAllowedException(PUT_ERROR_MSG);
   }
 
@@ -82,7 +82,7 @@ public class VersionContentsResource {
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = DELETE_ERROR_MSG)
   @ApiResponses(value = {@ApiResponse(code = 405, message = DELETE_ERROR_MSG)})
-  public Response delete() {
+  public Response deleteVersionContentsIsNotAllowed() {
     throw new MethodNotAllowedException(DELETE_ERROR_MSG);
   }
 

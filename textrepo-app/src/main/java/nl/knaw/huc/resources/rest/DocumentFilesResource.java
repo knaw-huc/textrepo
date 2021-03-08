@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.FormPageParams;
-import nl.knaw.huc.api.ResultDocument;
+import nl.knaw.huc.api.ResultPage;
 import nl.knaw.huc.api.ResultTextRepoFile;
 import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.helpers.Paginator;
@@ -45,8 +45,8 @@ public class DocumentFilesResource {
   @GET
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Retrieve document files")
-  @ApiResponses(value = {@ApiResponse(code = 200, response = ResultDocument.class, message = "OK")})
-  public Response get(
+  @ApiResponses(value = {@ApiResponse(code = 200, response = ResultPage.class, message = "OK")})
+  public Response getDocumentFiles(
       @PathParam("docId") @Valid UUID docId,
       @BeanParam FormPageParams pageParams
   ) {

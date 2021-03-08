@@ -47,7 +47,7 @@ public class FileMetadataResource {
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = POST_ERROR_MSG)
   @ApiResponses(value = {@ApiResponse(code = 405, message = POST_ERROR_MSG)})
-  public Response post() {
+  public Response postFileMetadata() {
     throw new MethodNotAllowedException(POST_ERROR_MSG);
   }
 
@@ -56,7 +56,7 @@ public class FileMetadataResource {
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Retrieve file metadata")
   @ApiResponses(value = {@ApiResponse(code = 200, responseContainer = "Map", response = String.class, message = "OK")})
-  public Response get(
+  public Response getFileMetadata(
       @PathParam("fileId") @NotNull @Valid UUID fileId
   ) {
     log.debug("Get file metadata: fileId={}", fileId);
@@ -72,7 +72,7 @@ public class FileMetadataResource {
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Create or update file metadata entry")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
-  public Response put(
+  public Response putFileMetadataEntry(
       @PathParam("fileId") @Valid UUID fileId,
       @PathParam("key") @NotNull String key,
       @NotNull String value
@@ -89,9 +89,9 @@ public class FileMetadataResource {
   @Timed
   @Consumes(APPLICATION_JSON)
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Delete document metadata entry")
+  @ApiOperation(value = "Delete file metadata entry")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
-  public Response delete(
+  public Response deleteFileMetadataEntry(
       @PathParam("fileId") @NotNull @Valid UUID fileId,
       @PathParam("key") @NotBlank String key
   ) {
