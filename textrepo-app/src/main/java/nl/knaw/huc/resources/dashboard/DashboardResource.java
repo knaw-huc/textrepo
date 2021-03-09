@@ -60,7 +60,7 @@ public class DashboardResource {
   @Path("/orphans")
   @Produces(APPLICATION_JSON)
   @ApiOperation("Find orphans: documents with neither metadata nor any associated files")
-  @ApiResponses(value = {@ApiResponse(code = 200, response = ResultDocument.class, message = "OK")})
+  @ApiResponses(value = {@ApiResponse(code = 200, response = ResultPage.class, message = "OK")})
   public ResultPage<ResultDocument> findOrphans(@BeanParam FormPageParams pageParams) {
     log.debug("Find orphans, pageParams={}", pageParams);
     var orphans = dashboardService.findOrphans(paginator.fromForm(pageParams));

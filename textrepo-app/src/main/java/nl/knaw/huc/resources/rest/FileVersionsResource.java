@@ -49,7 +49,7 @@ public class FileVersionsResource {
   @Produces(APPLICATION_JSON)
   @ApiOperation("Retrieve file versions, newest first")
   @ApiResponses({@ApiResponse(code = 200, response = ResultVersion.class, message = "OK")})
-  public Response getVersions(
+  public Response getFileVersions(
       @PathParam("fileId") @Valid UUID fileId,
       @BeanParam FormPageParams pageParams,
       @QueryParam("createdAfter") LocalDateTime createdAfter

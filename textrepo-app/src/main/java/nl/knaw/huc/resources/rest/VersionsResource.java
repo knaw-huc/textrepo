@@ -51,7 +51,7 @@ public class VersionsResource {
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Create version")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultVersion.class, message = "OK")})
-  public Response post(
+  public Response createVersion(
       @FormDataParam("fileId") UUID fileId,
       @FormDataParam("contents") InputStream inputStream
   ) {
@@ -68,7 +68,7 @@ public class VersionsResource {
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Retrieve version")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultVersion.class, message = "OK")})
-  public Response get(
+  public Response getVersion(
       @PathParam("id") @NotNull @Valid UUID id
   ) {
     log.debug("Get version: id={}", id);
@@ -83,7 +83,7 @@ public class VersionsResource {
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = PUT_ERROR_MSG)
   @ApiResponses(value = {@ApiResponse(code = 405, message = PUT_ERROR_MSG)})
-  public Response put(
+  public Response putVersionIsNotAllowed(
       @PathParam("id") @Valid UUID id,
       @Valid FormVersion form
   ) {
@@ -94,7 +94,7 @@ public class VersionsResource {
   @Path("/{id}")
   @ApiOperation(value = "Delete version")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
-  public Response delete(
+  public Response deleteVersion(
       @PathParam("id") @Valid UUID id
   ) {
     log.debug("Delete version: id={}", id);

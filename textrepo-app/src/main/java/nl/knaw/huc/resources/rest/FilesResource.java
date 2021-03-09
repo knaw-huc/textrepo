@@ -45,7 +45,7 @@ public class FilesResource {
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Create file")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultTextRepoFile.class, message = "OK")})
-  public Response post(
+  public Response createFile(
       @Valid FormTextRepoFile form
   ) {
     log.debug("Create file: form={}", form);
@@ -60,7 +60,7 @@ public class FilesResource {
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Retrieve file")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultTextRepoFile.class, message = "OK")})
-  public Response get(
+  public Response getFile(
       @PathParam("id") @NotNull @Valid UUID id
   ) {
     log.debug("Get file: id={}", id);
@@ -76,7 +76,7 @@ public class FilesResource {
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Create or update file")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultTextRepoFile.class, message = "OK")})
-  public Response put(
+  public Response putFile(
       @PathParam("id") @Valid UUID id,
       @Valid FormTextRepoFile form
   ) {
@@ -90,7 +90,7 @@ public class FilesResource {
   @Path("/{id}")
   @ApiOperation(value = "Delete file")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
-  public Response delete(
+  public Response deleteFile(
       @PathParam("id") @Valid UUID id
   ) {
     log.debug("Delete file: id={}", id);

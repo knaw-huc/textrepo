@@ -41,7 +41,7 @@ public class TypesResource {
   @Consumes(APPLICATION_JSON)
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Create type")
-  public Response post(
+  public Response createType(
       @Valid @NotNull FormType form
   ) {
     var type = new Type(form.getName(), form.getMimetype());
@@ -54,7 +54,7 @@ public class TypesResource {
   @GET
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Retrieve types")
-  public Response getAll() {
+  public Response getTypes() {
     log.debug("Retrieve all types");
     var all = typeService
         .list()
@@ -69,7 +69,7 @@ public class TypesResource {
   @Path("/{id}")
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Retrieve types")
-  public Response get(
+  public Response getType(
       @NotNull @PathParam("id") Short id
   ) {
     log.debug("Retrieve type: id={}", id);
@@ -83,7 +83,7 @@ public class TypesResource {
   @Consumes(APPLICATION_JSON)
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Create or update type")
-  public Response put(
+  public Response putType(
       @NotNull @PathParam("id") Short id,
       @NotNull @Valid FormType form
   ) {
@@ -98,7 +98,7 @@ public class TypesResource {
   @DELETE
   @Path("/{id}")
   @ApiOperation(value = "Delete type")
-  public Response delete(
+  public Response deleteType(
       @NotNull @PathParam("id") Short id
   ) {
     log.debug("Delete type: id={}", id);

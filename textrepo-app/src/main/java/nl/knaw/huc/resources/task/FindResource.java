@@ -33,7 +33,6 @@ import static nl.knaw.huc.resources.HeaderLink.Uri.DOCUMENT_METADATA;
 import static nl.knaw.huc.resources.HeaderLink.Uri.FILE;
 import static nl.knaw.huc.resources.HeaderLink.Uri.FILE_METADATA;
 import static nl.knaw.huc.resources.HeaderLink.Uri.FILE_VERSIONS;
-import static javax.ws.rs.core.UriBuilder.fromResource;
 
 /**
  * The /find-task finds resources by external id and possible other parameters
@@ -62,7 +61,7 @@ public class FindResource {
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "OK"),
       @ApiResponse(code = 404, message = "Given document could not be found")})
-  public Response getDocumentMetadata(
+  public Response getDocumentMetadataForExternalId(
       @NotNull @PathParam("externalId") String externalId
   ) {
     log.debug("Find metadata of document: externalId={}", externalId);
@@ -89,7 +88,7 @@ public class FindResource {
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "OK"),
       @ApiResponse(code = 404, message = "Given file could not be found")})
-  public Response getFileMetadata(
+  public Response getFileMetadataForExternalId(
       @NotNull @PathParam("externalId") String externalId,
       @NotNull @QueryParam("type") String typeName
   ) {

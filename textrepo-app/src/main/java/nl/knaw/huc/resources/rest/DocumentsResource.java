@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.FormDocument;
 import nl.knaw.huc.api.FormPageParams;
 import nl.knaw.huc.api.ResultDocument;
+import nl.knaw.huc.api.ResultPage;
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.helpers.Paginator;
 import nl.knaw.huc.service.document.DocumentService;
@@ -54,7 +55,7 @@ public class DocumentsResource {
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Create document")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultDocument.class, message = "OK")})
-  public Response post(
+  public Response createDocument(
       @Valid FormDocument form
   ) {
     log.debug("Create document: {}", form);
@@ -66,8 +67,8 @@ public class DocumentsResource {
   @GET
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Retrieve documents, newest first")
-  @ApiResponses(value = {@ApiResponse(code = 200, response = ResultDocument.class, message = "OK")})
-  public Response get(
+  @ApiResponses(value = {@ApiResponse(code = 200, response = ResultPage.class, message = "OK")})
+  public Response getDocuments(
       @QueryParam("externalId") String externalId,
       @QueryParam("createdAfter") LocalDateTime createdAfter,
       @BeanParam FormPageParams pageParams
@@ -85,7 +86,7 @@ public class DocumentsResource {
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Retrieve document")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultDocument.class, message = "OK")})
-  public Response get(
+  public Response getDocument(
       @PathParam("id") @Valid UUID id
   ) {
     log.debug("Get document: id={}", id);
@@ -104,7 +105,7 @@ public class DocumentsResource {
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Create or update document")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultDocument.class, message = "OK")})
-  public Response put(
+  public Response putDocument(
       @PathParam("id") @Valid UUID id,
       @Valid FormDocument form
   ) {
@@ -118,7 +119,7 @@ public class DocumentsResource {
   @Path("/{id}")
   @ApiOperation(value = "Delete document")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
-  public Response delete(
+  public Response deleteDocument(
       @PathParam("id") @Valid UUID id
   ) {
     log.debug("Delete document: id={}", id);

@@ -47,7 +47,7 @@ public class VersionMetadataResource {
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = POST_ERROR_MSG)
   @ApiResponses(value = {@ApiResponse(code = 405, message = POST_ERROR_MSG)})
-  public Response post() {
+  public Response postVersionMetadataIsNotAllowed() {
     throw new MethodNotAllowedException(POST_ERROR_MSG);
   }
 
@@ -56,7 +56,7 @@ public class VersionMetadataResource {
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Retrieve version metadata")
   @ApiResponses(value = {@ApiResponse(code = 200, responseContainer = "Map", response = String.class, message = "OK")})
-  public Response get(
+  public Response getVersionMetadata(
       @PathParam("versionId") @NotNull @Valid UUID versionId
   ) {
     log.debug("Get version metadata: versionId={}", versionId);
@@ -72,7 +72,7 @@ public class VersionMetadataResource {
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Create or update version metadata entry")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
-  public Response put(
+  public Response putVersionMetadataEntry(
       @PathParam("versionId") @Valid UUID versionId,
       @PathParam("key") @NotNull String key,
       @NotNull String value
@@ -89,9 +89,9 @@ public class VersionMetadataResource {
   @Timed
   @Consumes(APPLICATION_JSON)
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Delete document metadata entry")
+  @ApiOperation(value = "Delete version metadata entry")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
-  public Response delete(
+  public Response deleteVersionMetadataEntry(
       @PathParam("versionId") @NotNull @Valid UUID versionId,
       @PathParam("key") @NotBlank String key
   ) {
