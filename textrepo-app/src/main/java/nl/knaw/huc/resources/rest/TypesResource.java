@@ -2,6 +2,8 @@ package nl.knaw.huc.resources.rest;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.FormType;
 import nl.knaw.huc.api.ResultType;
 import nl.knaw.huc.core.Type;
@@ -41,6 +43,7 @@ public class TypesResource {
   @Consumes(APPLICATION_JSON)
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Create type")
+  @ApiResponses(value = {@ApiResponse(code = 200, response = ResultType.class, message = "OK")})
   public Response createType(
       @Valid @NotNull FormType form
   ) {
@@ -54,6 +57,8 @@ public class TypesResource {
   @GET
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Retrieve types")
+  @ApiResponses(value = {@ApiResponse(code = 200, response = ResultType.class, responseContainer = "List",
+      message = "OK")})
   public Response getTypes() {
     log.debug("Retrieve all types");
     var all = typeService
@@ -68,7 +73,8 @@ public class TypesResource {
   @GET
   @Path("/{id}")
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Retrieve types")
+  @ApiOperation(value = "Retrieve type")
+  @ApiResponses(value = {@ApiResponse(code = 200, response = ResultType.class, message = "OK")})
   public Response getType(
       @NotNull @PathParam("id") Short id
   ) {
@@ -83,6 +89,7 @@ public class TypesResource {
   @Consumes(APPLICATION_JSON)
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Create or update type")
+  @ApiResponses(value = {@ApiResponse(code = 200, response = ResultType.class, message = "OK")})
   public Response putType(
       @NotNull @PathParam("id") Short id,
       @NotNull @Valid FormType form
@@ -98,6 +105,7 @@ public class TypesResource {
   @DELETE
   @Path("/{id}")
   @ApiOperation(value = "Delete type")
+  @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
   public Response deleteType(
       @NotNull @PathParam("id") Short id
   ) {

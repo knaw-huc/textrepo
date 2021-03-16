@@ -47,7 +47,7 @@ public class FileMetadataResource {
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = POST_ERROR_MSG)
   @ApiResponses(value = {@ApiResponse(code = 405, message = POST_ERROR_MSG)})
-  public Response postFileMetadata() {
+  public Response postFileMetadataIsNotAllowed() {
     throw new MethodNotAllowedException(POST_ERROR_MSG);
   }
 
