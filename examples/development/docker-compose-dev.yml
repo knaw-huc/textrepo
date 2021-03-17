@@ -25,6 +25,7 @@ services:
   elasticsearch:
     container_name: tr_elasticsearch
     image: knawhuc/textrepo-elasticsearch:${DOCKER_TAG}
+    build: ./elasticsearch
     environment:
       - node.name=${ES_NODE_NAME}
       - cluster.initial_master_nodes=${ES_CLUSTER_INITIAL_MASTER_NODES}
