@@ -4,6 +4,7 @@ import com.jayway.jsonpath.JsonPath;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.testing.junit5.ResourceExtension;
 import nl.knaw.huc.exceptions.MethodNotAllowedExceptionMapper;
+import nl.knaw.huc.helpers.ContentsHelper;
 import nl.knaw.huc.resources.view.ViewBuilderFactory;
 import nl.knaw.huc.service.version.content.VersionContentsService;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;

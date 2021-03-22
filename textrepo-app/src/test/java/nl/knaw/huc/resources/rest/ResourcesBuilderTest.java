@@ -2,6 +2,7 @@ package nl.knaw.huc.resources.rest;
 
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import nl.knaw.huc.TextRepoConfiguration;
+import nl.knaw.huc.helpers.ContentsHelper;
 import nl.knaw.huc.helpers.Paginator;
 import nl.knaw.huc.resources.ResourcesBuilder;
 import nl.knaw.huc.resources.view.ViewBuilderFactory;

@@ -1,4 +1,4 @@
-package nl.knaw.huc.resources.rest;
+package nl.knaw.huc.helpers;
 
 import nl.knaw.huc.core.Contents;
 import org.slf4j.Logger;

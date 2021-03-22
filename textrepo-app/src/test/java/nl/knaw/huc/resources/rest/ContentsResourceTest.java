@@ -3,6 +3,7 @@ package nl.knaw.huc.resources.rest;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.testing.junit5.ResourceExtension;
 import nl.knaw.huc.core.Contents;
+import nl.knaw.huc.helpers.ContentsHelper;
 import nl.knaw.huc.service.contents.ContentsService;
 import nl.knaw.huc.service.store.ContentsStorage;
 import org.apache.commons.io.IOUtils;

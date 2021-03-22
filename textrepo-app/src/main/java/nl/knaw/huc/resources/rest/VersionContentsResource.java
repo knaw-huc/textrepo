@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.ResultVersion;
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.exceptions.MethodNotAllowedException;
+import nl.knaw.huc.helpers.ContentsHelper;
 import nl.knaw.huc.resources.view.ViewBuilderFactory;
 import nl.knaw.huc.service.version.content.VersionContentsService;
 import org.slf4j.Logger;

@@ -1,10 +1,10 @@
 package nl.knaw.huc.resources;
 
 import nl.knaw.huc.TextRepoConfiguration;
+import nl.knaw.huc.helpers.ContentsHelper;
 import nl.knaw.huc.helpers.Paginator;
 import nl.knaw.huc.resources.about.AboutResource;
 import nl.knaw.huc.resources.dashboard.DashboardResource;
-import nl.knaw.huc.resources.rest.ContentsHelper;
 import nl.knaw.huc.resources.rest.ContentsResource;
 import nl.knaw.huc.resources.rest.DocumentFilesResource;
 import nl.knaw.huc.resources.rest.DocumentMetadataResource;
