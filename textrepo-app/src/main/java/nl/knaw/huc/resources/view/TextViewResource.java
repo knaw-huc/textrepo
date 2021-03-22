@@ -39,12 +39,12 @@ public class TextViewResource {
     }
     final var text = contents.asUtf8String();
     final var maxOffset = text.length() - 1;
-    if (startOffset >= text.length()) {
+    if (startOffset > maxOffset) {
       throw new BadRequestException(
           format("startOffset must be <= %d, but is: %d", maxOffset, startOffset)
       );
     }
-    if (endOffset >= text.length()) {
+    if (endOffset > maxOffset) {
       throw new BadRequestException(
           format("endOffset must be <= %d, but is: %d", maxOffset, endOffset)
       );
