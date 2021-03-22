@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -24,8 +25,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Function;
 
+import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT_ENCODING;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -42,9 +48,12 @@ public class VersionContentsResource {
   private final VersionContentsService contentsService;
   private final ContentsHelper contentsHelper;
 
+  private final ExcerptResourceFactory resourceFactory;
+
   public VersionContentsResource(VersionContentsService contentsService, ContentsHelper contentsHelper) {
     this.contentsService = requireNonNull(contentsService);
     this.contentsHelper = requireNonNull(contentsHelper);
+    resourceFactory = new ExcerptResourceFactory();
   }
 
   @POST
@@ -67,6 +76,18 @@ public class VersionContentsResource {
     return contentsHelper.asAttachment(getContents(versionId), acceptEncoding).build();
   }
 
+  @Path("{view}")
+  public Object getVersionContentsView(
+      @PathParam("versionId") @NotNull @Valid UUID versionId,
+      @PathParam("view") @NotNull String view
+  ) {
+    log.debug("view: [{}]", view);
+    return resourceFactory
+        .createView(view)
+        .orElseThrow(() -> new BadRequestException(format("Unknown view: %s", view)))
+        .apply(getContents(versionId));
+  }
+
   private Contents getContents(UUID versionId) {
     log.debug("Get version contents: versionId={}", versionId);
     var contents = contentsService.getByVersionId(versionId);
@@ -74,11 +95,16 @@ public class VersionContentsResource {
     return contents;
   }
 
-  @Path("textcharrange")
-  public VersionCharRangeResource getVersionContentsChars(
-      @PathParam("versionId") @NotNull @Valid UUID versionId
-  ) {
-    return new VersionCharRangeResource(getContents(versionId));
+  static class ExcerptResourceFactory {
+    private static final Map<String, Function<Contents, Object>> registry = new HashMap<>();
+
+    public ExcerptResourceFactory() {
+      registry.put("text", VersionCharRangeResource::new);
+    }
+
+    public Optional<Function<Contents, Object>> createView(String view) {
+      return Optional.ofNullable(registry.get(view));
+    }
   }
 
   public static class VersionCharRangeResource {
