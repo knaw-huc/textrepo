@@ -30,25 +30,11 @@ public class TextViewResource {
       @PathParam("endOffset") @NotNull int endOffset
   ) {
     log.debug("getCharRange: sha224={}, range=[{}:{}]", contents.getSha224(), startOffset, endOffset);
-    if (startOffset < 0) {
-      throw new BadRequestException(format("startOffset must be >= 0, but is: %d", startOffset));
-    }
-    if (endOffset < startOffset) {
-      throw new BadRequestException(
-          format("endOffset must be >= startOffset (%d), but is: %d", startOffset, endOffset));
-    }
+    checkOffsets(startOffset, endOffset);
+
     final var text = contents.asUtf8String();
-    final var maxOffset = text.length() - 1;
-    if (startOffset > maxOffset) {
-      throw new BadRequestException(
-          format("startOffset must be <= %d, but is: %d", maxOffset, startOffset)
-      );
-    }
-    if (endOffset > maxOffset) {
-      throw new BadRequestException(
-          format("endOffset must be <= %d, but is: %d", maxOffset, endOffset)
-      );
-    }
+    checkLimits(startOffset, endOffset, text.length() - 1);
+
     return Response.ok(text.substring(startOffset, endOffset + 1)).build();
   }
 
@@ -59,24 +45,40 @@ public class TextViewResource {
       @PathParam("endOffset") @NotNull int endOffset
   ) {
     log.debug("getLineRange: sha224={}, range=[{}:{}]", contents.getSha224(), startOffset, endOffset);
-    if (startOffset < 0) {
-      throw new BadRequestException(format("startOffset must be >= 0, but is: %d", startOffset));
-    }
-    if (endOffset < startOffset) {
-      throw new BadRequestException(
-          format("endOffset must be >= startOffset (%d), but is: %d", startOffset, endOffset));
-    }
+    checkOffsets(startOffset, endOffset);
+
     var lines = contents.asUtf8String().split("\\R");
-    if (startOffset >= lines.length || endOffset >= lines.length) {
-      throw new BadRequestException(
-          format("Requested line interval [%d:%d] exceeds source text line count: %d",
-              startOffset, endOffset, lines.length)
-      );
-    }
+    checkLimits(startOffset, endOffset, lines.length - 1);
+
     var joiner = new StringJoiner("\n", "", "\n");
     for (int lineNo = startOffset; lineNo <= endOffset; lineNo++) {
       joiner.add(lines[lineNo]);
     }
+
     return Response.ok(joiner.toString()).build();
+  }
+
+  private void checkOffsets(int start, int end) {
+    if (start < 0) {
+      throw new BadRequestException(
+          format("startOffset must be >= 0, but is: %d", start));
+    }
+
+    if (end < start) {
+      throw new BadRequestException(
+          format("endOffset must be >= startOffset (%d), but is: %d", start, end));
+    }
+  }
+
+  private void checkLimits(int start, int end, int limit) {
+    if (start > limit) {
+      throw new BadRequestException(
+          format("startOffset is limited by source text; must be <= %d, but is: %d", limit, start));
+    }
+
+    if (end > limit) {
+      throw new BadRequestException(
+          format("endOffset is limited by source text; must be <= %d, but is: %d", limit, end));
+    }
   }
 }
