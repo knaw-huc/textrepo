@@ -1,10 +1,10 @@
 package nl.knaw.huc.resources;
 
 import nl.knaw.huc.TextRepoConfiguration;
-import nl.knaw.huc.helpers.ContentsHelper;
 import nl.knaw.huc.helpers.Paginator;
 import nl.knaw.huc.resources.about.AboutResource;
 import nl.knaw.huc.resources.dashboard.DashboardResource;
+import nl.knaw.huc.resources.rest.ContentsHelper;
 import nl.knaw.huc.resources.rest.ContentsResource;
 import nl.knaw.huc.resources.rest.DocumentFilesResource;
 import nl.knaw.huc.resources.rest.DocumentMetadataResource;
@@ -22,6 +22,7 @@ import nl.knaw.huc.resources.task.FindResource;
 import nl.knaw.huc.resources.task.ImportResource;
 import nl.knaw.huc.resources.task.IndexResource;
 import nl.knaw.huc.resources.task.RegisterIdentifiersResource;
+import nl.knaw.huc.resources.view.ViewBuilderFactory;
 import nl.knaw.huc.service.contents.ContentsService;
 import nl.knaw.huc.service.dashboard.DashboardService;
 import nl.knaw.huc.service.document.DocumentService;
@@ -55,6 +56,7 @@ public class ResourcesBuilder {
   private TypeService typeService;
   private VersionContentsService versionContentsService;
   private VersionMetadataService versionMetadataService;
+  private ViewBuilderFactory viewBuilderFactory;
 
   public ResourcesBuilder(@Nonnull TextRepoConfiguration config) {
     this.config = config;
@@ -130,6 +132,11 @@ public class ResourcesBuilder {
     return this;
   }
 
+  public ResourcesBuilder viewBuilderFactory(@Nonnull ViewBuilderFactory viewBuilderFactory) {
+    this.viewBuilderFactory = viewBuilderFactory;
+    return this;
+  }
+
   /**
    * Build TextRepo Jersey resources
    *
@@ -153,7 +160,7 @@ public class ResourcesBuilder {
         new MetadataResource(documentMetadataService),
         new RegisterIdentifiersResource(taskBuilderFactory),
         new TypesResource(typeService),
-        new VersionContentsResource(versionContentsService, contentsHelper),
+        new VersionContentsResource(versionContentsService, contentsHelper, viewBuilderFactory),
         new VersionMetadataResource(versionMetadataService),
         new VersionsResource(versionService)
     );

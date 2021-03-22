@@ -11,10 +11,12 @@ import io.dropwizard.setup.Environment;
 import io.federecio.dropwizard.swagger.SwaggerBundle;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import nl.knaw.huc.exceptions.MethodNotAllowedExceptionMapper;
-import nl.knaw.huc.helpers.ContentsHelper;
 import nl.knaw.huc.helpers.Limits;
 import nl.knaw.huc.helpers.Paginator;
 import nl.knaw.huc.resources.ResourcesBuilder;
+import nl.knaw.huc.resources.rest.ContentsHelper;
+import nl.knaw.huc.resources.view.TextViewResource;
+import nl.knaw.huc.resources.view.ViewBuilderFactory;
 import nl.knaw.huc.service.contents.ContentsService;
 import nl.knaw.huc.service.dashboard.JdbiDashboardService;
 import nl.knaw.huc.service.datetime.LocalDateTimeParamConverterProvider;
@@ -104,6 +106,8 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
     var contentDecompressionLimit = limits.contentDecompressionLimit * Limits.BYTES_PER_KB;
     var versionService = new JdbiVersionService(jdbi, contentsService, indexers, uuidGenerator);
 
+    var viewBuilderFactory = createViewBuilderFactory();
+
     var resources = new ResourcesBuilder(config)
         .contentsService(contentsService)
         .contentsHelper(new ContentsHelper(contentDecompressionLimit))
@@ -120,6 +124,7 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
         .versionContentsService(new JdbiVersionContentsService(jdbi))
         .versionMetadataService(new JdbiVersionMetadataService(jdbi))
         .versionService(versionService)
+        .viewBuilderFactory(viewBuilderFactory)
         .build();
 
     environment.jersey().register(new MethodNotAllowedExceptionMapper());
@@ -133,6 +138,13 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
     objectMapper.registerModule(module);
     environment.jersey().register(new LocalDateTimeParamConverterProvider(config.getDateFormat()));
     environment.jersey().register(new LoggingApplicationEventListener(uuidGenerator));
+  }
+
+  private ViewBuilderFactory createViewBuilderFactory() {
+    var viewBuilderFactory = new ViewBuilderFactory();
+    viewBuilderFactory.register("text", TextViewResource::new);
+    // TODO: register more ViewResource subclasses
+    return viewBuilderFactory;
   }
 
   private Map<String, HealthCheck> createElasticsearchHealthChecks(TextRepoConfiguration config) {

@@ -8,7 +8,7 @@ import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.ResultVersion;
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.exceptions.MethodNotAllowedException;
-import nl.knaw.huc.helpers.ContentsHelper;
+import nl.knaw.huc.resources.view.ViewBuilderFactory;
 import nl.knaw.huc.service.version.content.VersionContentsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,11 +25,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Function;
 
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
@@ -47,13 +43,14 @@ public class VersionContentsResource {
 
   private final VersionContentsService contentsService;
   private final ContentsHelper contentsHelper;
+  private final ViewBuilderFactory viewBuilderFactory;
 
-  private final ExcerptResourceFactory resourceFactory;
-
-  public VersionContentsResource(VersionContentsService contentsService, ContentsHelper contentsHelper) {
+  public VersionContentsResource(VersionContentsService contentsService,
+                                 ContentsHelper contentsHelper,
+                                 ViewBuilderFactory viewBuilderFactory) {
     this.contentsService = requireNonNull(contentsService);
     this.contentsHelper = requireNonNull(contentsHelper);
-    resourceFactory = new ExcerptResourceFactory();
+    this.viewBuilderFactory = requireNonNull(viewBuilderFactory);
   }
 
   @POST
@@ -82,7 +79,7 @@ public class VersionContentsResource {
       @PathParam("view") @NotNull String view
   ) {
     log.debug("view: [{}]", view);
-    return resourceFactory
+    return viewBuilderFactory
         .createView(view)
         .orElseThrow(() -> new BadRequestException(format("Unknown view: %s", view)))
         .apply(getContents(versionId));
@@ -93,36 +90,6 @@ public class VersionContentsResource {
     var contents = contentsService.getByVersionId(versionId);
     log.debug("Got version contents: {}", contents);
     return contents;
-  }
-
-  static class ExcerptResourceFactory {
-    private static final Map<String, Function<Contents, Object>> registry = new HashMap<>();
-
-    public ExcerptResourceFactory() {
-      registry.put("text", VersionCharRangeResource::new);
-    }
-
-    public Optional<Function<Contents, Object>> createView(String view) {
-      return Optional.ofNullable(registry.get(view));
-    }
-  }
-
-  public static class VersionCharRangeResource {
-    private final Contents contents;
-
-    public VersionCharRangeResource(Contents contents) {
-      this.contents = contents;
-    }
-
-    @GET
-    @Path("{startOffset}/{endOffset}")
-    public Response getCharRange(
-        @PathParam("endOffset") @NotNull int endOffset,
-        @PathParam("startOffset") @NotNull int startOffset
-    ) {
-      log.debug("getCharRange: sha224={}, range=[{}:{}]", contents.getSha224(), startOffset, endOffset);
-      return Response.ok().build();
-    }
   }
 
   @PUT

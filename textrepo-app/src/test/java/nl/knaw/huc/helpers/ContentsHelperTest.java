@@ -1,6 +1,7 @@
 package nl.knaw.huc.helpers;
 
 import nl.knaw.huc.core.Contents;
+import nl.knaw.huc.resources.rest.ContentsHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
