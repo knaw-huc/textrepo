@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.ResultVersion;
+import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.exceptions.MethodNotAllowedException;
 import nl.knaw.huc.helpers.ContentsHelper;
 import nl.knaw.huc.service.version.content.VersionContentsService;
@@ -63,11 +64,39 @@ public class VersionContentsResource {
       @HeaderParam(ACCEPT_ENCODING) String acceptEncoding,
       @PathParam("versionId") @NotNull @Valid UUID versionId
   ) {
+    return contentsHelper.asAttachment(getContents(versionId), acceptEncoding).build();
+  }
+
+  private Contents getContents(UUID versionId) {
     log.debug("Get version contents: versionId={}", versionId);
     var contents = contentsService.getByVersionId(versionId);
     log.debug("Got version contents: {}", contents);
+    return contents;
+  }
 
-    return contentsHelper.asAttachment(contents, acceptEncoding).build();
+  @Path("textcharrange")
+  public VersionCharRangeResource getVersionContentsChars(
+      @PathParam("versionId") @NotNull @Valid UUID versionId
+  ) {
+    return new VersionCharRangeResource(getContents(versionId));
+  }
+
+  public static class VersionCharRangeResource {
+    private final Contents contents;
+
+    public VersionCharRangeResource(Contents contents) {
+      this.contents = contents;
+    }
+
+    @GET
+    @Path("{startOffset}/{endOffset}")
+    public Response getCharRange(
+        @PathParam("endOffset") @NotNull int endOffset,
+        @PathParam("startOffset") @NotNull int startOffset
+    ) {
+      log.debug("getCharRange: sha224={}, range=[{}:{}]", contents.getSha224(), startOffset, endOffset);
+      return Response.ok().build();
+    }
   }
 
   @PUT
