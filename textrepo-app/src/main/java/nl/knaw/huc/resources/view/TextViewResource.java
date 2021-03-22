@@ -73,7 +73,7 @@ public class TextViewResource {
               startOffset, endOffset, lines.length)
       );
     }
-    var joiner = new StringJoiner("\n");  // XXX: this may change whatever unicode newline there was before
+    var joiner = new StringJoiner("\n", "", "\n");
     for (int lineNo = startOffset; lineNo <= endOffset; lineNo++) {
       joiner.add(lines[lineNo]);
     }
