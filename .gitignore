@@ -14,3 +14,4 @@ dependency-reduced-pom.xml
 /restore*.sh
 /start*.sh
 /stop*.sh
+override/
