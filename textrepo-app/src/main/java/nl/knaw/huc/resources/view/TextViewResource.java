@@ -26,11 +26,11 @@ public class TextViewResource {
 
   @GET
   @Path("chars/{startOffset}/{endOffset}")
-  public Response getCharRange(
+  public Response getChars(
       @PathParam("startOffset") @NotNull RangeParam startParam,
       @PathParam("endOffset") @NotNull RangeParam endParam
   ) {
-    log.debug("getCharRange: sha224={}, range=[{}:{}]", contents.getSha224(), startParam, endParam);
+    log.debug("getChars: startParam=[{}], endParam=[{}]", startParam, endParam);
 
     final var text = contents.asUtf8String();
     final var indexOfFirstChar = 0;
@@ -48,11 +48,11 @@ public class TextViewResource {
 
   @GET
   @Path("lines/{startOffset}/{endOffset}")
-  public Response getLineRange(
+  public Response getLines(
       @PathParam("startOffset") @NotNull RangeParam startParam,
       @PathParam("endOffset") @NotNull RangeParam endParam
   ) {
-    log.debug("getLineRange: sha224={}, range=[{}:{}]", contents.getSha224(), startParam, endParam);
+    log.debug("getLines: startParam=[{}], endParam=[{}]", startParam, endParam);
 
     final var lines = contents.asUtf8String().split(LINEBREAK_MATCHER);
     final var indexOfFirstLine = 0;
@@ -66,6 +66,56 @@ public class TextViewResource {
     for (int lineNo = startOffset; lineNo <= endOffset; lineNo++) {
       joiner.add(lines[lineNo]);
     }
+    final var result = joiner.toString();
+
+    return Response.ok(result).build();
+  }
+
+  @GET
+  @Path("range/{startLineOffset}/{startCharOffset}/{endLineOffset}/{endCharOffset}")
+  // E.g., from line 3, char 12 (on that line) up to and including line 8, char 4 (on that line)
+  public Response getRange(
+      @PathParam("startLineOffset") @NotNull RangeParam startLineParam,
+      @PathParam("startCharOffset") @NotNull RangeParam startCharParam,
+      @PathParam("endLineOffset") @NotNull RangeParam endLineParam,
+      @PathParam("endCharOffset") @NotNull RangeParam endCharParam
+  ) {
+    log.debug("getLines: startLineParam=[{}], startCharParam=[{}], endLineParam=[{}], endCharParam=[{}]",
+        startLineParam, startCharParam, endLineParam, endCharParam);
+
+    final var lines = contents.asUtf8String().split(LINEBREAK_MATCHER);
+    final var indexOfFirstLine = 0;
+    final var startLineOffset = startLineParam.get().orElse(indexOfFirstLine);
+    final var indexOfLastLine = lines.length - 1;
+    final var endLineOffset = endLineParam.get().orElse(indexOfLastLine);
+    checkOffsets(startLineOffset, endLineOffset, indexOfLastLine);
+
+    final var joiner = new StringJoiner("\n", "", "\n");
+    for (int lineNo = startLineOffset; lineNo <= endLineOffset; lineNo++) {
+      final var curLine = lines[lineNo];
+      final String lineToAdd;
+      if (lineNo == startLineOffset) {
+        final var indexOfFirstChar = 0;
+        final var startCharOffset = startCharParam.get().orElse(indexOfFirstChar);
+        if (startCharOffset > curLine.length() - 1) {
+          throw new BadRequestException(
+              format("startCharOffset (%d) > max startLine offset (%d)", startCharOffset, curLine.length() - 1));
+        }
+        lineToAdd = curLine.substring(startCharOffset);
+      } else if (lineNo == endLineOffset) {
+        final var indexOfLastChar = curLine.length() - 1;
+        final var endCharOffset = endCharParam.get().orElse(indexOfLastChar);
+        if (endCharOffset > curLine.length() - 1) {
+          throw new BadRequestException(
+              format("endCharOffset (%d) > max endLine offset (%d)", endCharOffset, curLine.length() - 1));
+        }
+        lineToAdd = curLine.substring(0, endCharOffset + 1);
+      } else {
+        lineToAdd = curLine;
+      }
+      joiner.add(lineToAdd);
+    }
+
     final var result = joiner.toString();
 
     return Response.ok(result).build();
