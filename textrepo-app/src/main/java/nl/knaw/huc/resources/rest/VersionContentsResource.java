@@ -73,9 +73,11 @@ public class VersionContentsResource {
       @HeaderParam(ACCEPT_ENCODING) String acceptEncoding,
       @PathParam("versionId") @NotNull @Valid UUID versionId
   ) {
-    final var mimetype = contentsService.getVersionMimetype(versionId);
+    final var contentType = contentsService.getVersionMimetype(versionId)
+                                           .orElse(APPLICATION_OCTET_STREAM);
+   
     return contentsHelper.asAttachment(getContents(versionId), acceptEncoding)
-                         .header(CONTENT_TYPE, mimetype.orElse(APPLICATION_OCTET_STREAM))
+                         .header(CONTENT_TYPE, contentType)
                          .build();
   }
 
