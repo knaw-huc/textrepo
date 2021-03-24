@@ -1,32 +1,42 @@
 package nl.knaw.huc.resources.view;
 
+import io.swagger.annotations.Api;
 import nl.knaw.huc.core.Contents;
+import nl.knaw.huc.helpers.ContentsHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 import java.util.StringJoiner;
 
 import static java.lang.String.format;
+import static javax.ws.rs.core.HttpHeaders.ACCEPT_ENCODING;
+import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
+import static javax.ws.rs.core.MediaType.TEXT_PLAIN_TYPE;
 
+@Api(tags = {"versions", "contents", "view"})
 public class TextViewResource {
   private static final String LINEBREAK_MATCHER = "\\R";
   private static final Logger log = LoggerFactory.getLogger(TextViewResource.class);
 
   private final Contents contents;
+  private final ContentsHelper contentsHelper;
 
-  public TextViewResource(Contents contents) {
+  public TextViewResource(Contents contents, ContentsHelper contentsHelper) {
     this.contents = contents;
+    this.contentsHelper = contentsHelper;
   }
 
   @GET
   @Path("chars/{startOffset}/{endOffset}")
   public Response getChars(
+      @HeaderParam(ACCEPT_ENCODING) String acceptEncoding,
       @PathParam("startOffset") @NotNull RangeParam startParam,
       @PathParam("endOffset") @NotNull RangeParam endParam
   ) {
@@ -43,12 +53,13 @@ public class TextViewResource {
     // "endOffset +1" because substring goes to end (exclusive) and we want end (inclusive)
     final var result = text.substring(startOffset, endOffset + 1);
 
-    return Response.ok(result).build();
+    return asPlainTextAttachment(result, acceptEncoding);
   }
 
   @GET
   @Path("lines/{startOffset}/{endOffset}")
   public Response getLines(
+      @HeaderParam(ACCEPT_ENCODING) String acceptEncoding,
       @PathParam("startOffset") @NotNull RangeParam startParam,
       @PathParam("endOffset") @NotNull RangeParam endParam
   ) {
@@ -62,19 +73,19 @@ public class TextViewResource {
 
     checkOffsets(startOffset, endOffset, indexOfLastLine);
 
-    var joiner = new StringJoiner("\n", "", "\n");
+    final var joiner = new StringJoiner("\n", "", "\n");
     for (int lineNo = startOffset; lineNo <= endOffset; lineNo++) {
       joiner.add(lines[lineNo]);
     }
-    final var result = joiner.toString();
 
-    return Response.ok(result).build();
+    return asPlainTextAttachment(joiner.toString(), acceptEncoding);
   }
 
   @GET
   @Path("range/{startLineOffset}/{startCharOffset}/{endLineOffset}/{endCharOffset}")
   // E.g., from line 3, char 12 (on that line) up to and including line 8, char 4 (on that line)
   public Response getRange(
+      @HeaderParam(ACCEPT_ENCODING) String acceptEncoding,
       @PathParam("startLineOffset") @NotNull RangeParam startLineParam,
       @PathParam("startCharOffset") @NotNull RangeParam startCharParam,
       @PathParam("endLineOffset") @NotNull RangeParam endLineParam,
@@ -116,9 +127,7 @@ public class TextViewResource {
       joiner.add(lineToAdd);
     }
 
-    final var result = joiner.toString();
-
-    return Response.ok(result).build();
+    return asPlainTextAttachment(joiner.toString(), acceptEncoding);
   }
 
   private void checkOffsets(int start, int end, int limit) {
@@ -136,5 +145,11 @@ public class TextViewResource {
       throw new BadRequestException(
           format("endOffset is limited by source text; must be <= %d, but is: %d", limit, end));
     }
+  }
+
+  private Response asPlainTextAttachment(String contents, String acceptEncoding) {
+    return contentsHelper.asAttachment(contents, acceptEncoding)
+                         .header(CONTENT_TYPE, TEXT_PLAIN_TYPE)
+                         .build();
   }
 }

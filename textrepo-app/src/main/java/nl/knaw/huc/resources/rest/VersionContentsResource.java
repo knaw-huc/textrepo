@@ -83,14 +83,7 @@ public class VersionContentsResource {
     return viewBuilderFactory
         .createView(view)
         .orElseThrow(() -> new BadRequestException(format("Unknown view: %s", view)))
-        .apply(getContents(versionId));
-  }
-
-  private Contents getContents(UUID versionId) {
-    log.debug("Get version contents: versionId={}", versionId);
-    var contents = contentsService.getByVersionId(versionId);
-    log.debug("Got version contents: {}", contents);
-    return contents;
+        .apply(getContents(versionId), contentsHelper);
   }
 
   @PUT
@@ -107,6 +100,13 @@ public class VersionContentsResource {
   @ApiResponses(value = {@ApiResponse(code = 405, message = DELETE_ERROR_MSG)})
   public Response deleteVersionContentsIsNotAllowed() {
     throw new MethodNotAllowedException(DELETE_ERROR_MSG);
+  }
+
+  private Contents getContents(UUID versionId) {
+    log.debug("Get version contents: versionId={}", versionId);
+    var contents = contentsService.getByVersionId(versionId);
+    log.debug("Got version contents: {}", contents);
+    return contents;
   }
 
 }
