@@ -18,21 +18,25 @@ public interface TypesDao {
   short create(@BindBean Type type);
 
   @SqlQuery("select id from types where name = ?")
-  Optional<Short> find(String name);
+  Optional<Short> findByName(String name);
 
   @SqlQuery("select id from types where mimetype = ?")
   Optional<Short> findByMimetype(String mimetype);
 
   @SqlQuery("select id, name, mimetype from types where id = ?")
   @RegisterConstructorMapper(value = Type.class)
-  Optional<Type> get(Short id);
+  Optional<Type> getById(Short id);
+
+  @SqlQuery("select id, name, mimetype from types where name = ?")
+  @RegisterConstructorMapper(value = Type.class)
+  Optional<Type> getByName(String name);
 
   @SqlQuery("select id, name, mimetype from types")
   @RegisterConstructorMapper(value = Type.class)
   List<Type> list();
 
   default boolean exists(String name) {
-    return find(name).isPresent();
+    return findByName(name).isPresent();
   }
 
   @SqlUpdate("insert into types (id, name, mimetype) values (:id, :name, :mimetype) " +

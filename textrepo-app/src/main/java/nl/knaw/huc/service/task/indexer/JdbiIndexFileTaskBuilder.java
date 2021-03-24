@@ -7,6 +7,7 @@ import nl.knaw.huc.db.TypesDao;
 import nl.knaw.huc.service.index.Indexer;
 import nl.knaw.huc.service.task.FindDocumentByExternalId;
 import nl.knaw.huc.service.task.FindDocumentFileByType;
+import nl.knaw.huc.service.task.FindType;
 import nl.knaw.huc.service.task.GetLatestOptionalFileVersion;
 import nl.knaw.huc.service.task.GetVersionContent;
 import nl.knaw.huc.service.task.Task;
@@ -84,9 +85,10 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
     public String run() {
       return jdbi.inTransaction(txn -> {
         final var doc = new FindDocumentByExternalId(externalId).executeIn(txn);
-        final var file = new FindDocumentFileByType(doc, typeName).executeIn(txn);
-        var version = new GetLatestOptionalFileVersion(file).executeIn(txn);
-        var contents = getVersionContentsOrEmptyString(txn, version);
+        final var type = new FindType(typeName).executeIn(txn);
+        final var file = new FindDocumentFileByType(doc, type).executeIn(txn);
+        final var version = new GetLatestOptionalFileVersion(file).executeIn(txn);
+        final var contents = getVersionContentsOrEmptyString(txn, version);
         final var results = new ArrayList<String>();
         indexers.forEach((indexer) -> {
           var indexerName = indexer.getClass().getName();
@@ -123,7 +125,7 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
     }
 
     private Short resolveType() {
-      return types().find(typeName).orElseThrow(noSuchType(typeName));
+      return types().findByName(typeName).orElseThrow(noSuchType(typeName));
     }
 
     private TypesDao types() {

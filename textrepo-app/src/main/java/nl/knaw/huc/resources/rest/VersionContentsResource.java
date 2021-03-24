@@ -31,7 +31,9 @@ import java.util.UUID;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT_ENCODING;
+import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
 
 @Api(tags = {"versions", "contents"})
 @Path("/rest/versions/{versionId}/contents")
@@ -71,7 +73,10 @@ public class VersionContentsResource {
       @HeaderParam(ACCEPT_ENCODING) String acceptEncoding,
       @PathParam("versionId") @NotNull @Valid UUID versionId
   ) {
-    return contentsHelper.asAttachment(getContents(versionId), acceptEncoding).build();
+    final var mimetype = contentsService.getVersionMimetype(versionId);
+    return contentsHelper.asAttachment(getContents(versionId), acceptEncoding)
+                         .header(CONTENT_TYPE, mimetype.orElse(APPLICATION_OCTET_STREAM))
+                         .build();
   }
 
   @Path("{view}")

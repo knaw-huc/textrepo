@@ -42,13 +42,13 @@ public class JdbiTypeService implements TypeService {
 
   @Override
   public short getId(@Nonnull String name) {
-    return types().find(name).orElseThrow(() -> new NotFoundException("No such type: " + name));
+    return types().findByName(name).orElseThrow(() -> new NotFoundException("No such type: " + name));
   }
 
   @Override
   public Type getType(Short typeId) {
     return types()
-        .get(typeId)
+        .getById(typeId)
         .orElseThrow(() -> new NotFoundException(format(
             "Could not find type with id %s",
             typeId

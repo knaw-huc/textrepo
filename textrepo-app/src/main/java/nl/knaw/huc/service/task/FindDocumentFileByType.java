@@ -2,8 +2,8 @@ package nl.knaw.huc.service.task;
 
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.core.TextRepoFile;
+import nl.knaw.huc.core.Type;
 import nl.knaw.huc.db.DocumentFilesDao;
-import nl.knaw.huc.db.TypesDao;
 import org.jdbi.v3.core.Handle;
 
 import javax.ws.rs.NotFoundException;
@@ -13,37 +13,26 @@ import static java.util.Objects.requireNonNull;
 
 public class FindDocumentFileByType implements InTransactionProvider<TextRepoFile> {
   private final Document document;
-  private final String typeName;
+  private final Type type;
 
   private Handle transaction;
 
-  public FindDocumentFileByType(Document document, String typeName) {
+  public FindDocumentFileByType(Document document, Type type) {
     this.document = requireNonNull(document);
-    this.typeName = requireNonNull(typeName);
+    this.type = requireNonNull(type);
   }
 
   @Override
   public TextRepoFile executeIn(Handle transaction) {
     this.transaction = requireNonNull(transaction);
 
-    final var typeId = types().find(typeName)
-                              .orElseThrow(illegalType(typeName));
-
-    return documentFiles().findFile(document.getId(), typeId)
+    return documentFiles().findFile(document.getId(), type.getId())
                           .orElseThrow(fileNotFound(document));
-  }
-
-  private Supplier<NotFoundException> illegalType(String name) {
-    return () -> new NotFoundException(String.format("Illegal type: %s", name));
   }
 
   private Supplier<NotFoundException> fileNotFound(Document document) {
     return () -> new NotFoundException(
-        String.format("No %s file found for document with externalId: %s", typeName, document.getExternalId()));
-  }
-
-  private TypesDao types() {
-    return transaction.attach(TypesDao.class);
+        String.format("No %s file found for document with externalId: %s", type.getName(), document.getExternalId()));
   }
 
   private DocumentFilesDao documentFiles() {

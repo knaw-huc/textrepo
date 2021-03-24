@@ -21,6 +21,7 @@ import javax.ws.rs.core.Response;
 
 import static java.util.Objects.requireNonNull;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT_ENCODING;
+import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
 
@@ -58,7 +59,9 @@ public class ContentsResource {
 
     log.debug("Got contents: {}", contents);
 
-    return contentsHelper.asAttachment(contents, acceptEncoding).build();
+    return contentsHelper.asAttachment(contents, acceptEncoding)
+                         .header(CONTENT_TYPE, APPLICATION_OCTET_STREAM)
+                         .build();
   }
 
 }

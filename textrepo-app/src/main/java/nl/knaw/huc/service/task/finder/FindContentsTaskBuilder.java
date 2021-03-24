@@ -1,6 +1,7 @@
 package nl.knaw.huc.service.task.finder;
 
 import nl.knaw.huc.core.Contents;
+import nl.knaw.huc.core.Type;
 import nl.knaw.huc.service.task.Task;
 
 import java.util.UUID;
@@ -16,7 +17,7 @@ public interface FindContentsTaskBuilder {
 
     private UUID fileId;
     private Contents contents;
-    private Short typeId;
+    private Type type;
 
     public UUID getFileId() {
       return fileId;
@@ -34,12 +35,12 @@ public interface FindContentsTaskBuilder {
       this.contents = contents;
     }
 
-    public Short getTypeId() {
-      return typeId;
+    public Type getType() {
+      return type;
     }
 
-    public void setTypeId(Short typeId) {
-      this.typeId = typeId;
+    public void setType(Type type) {
+      this.type = type;
     }
   }
 

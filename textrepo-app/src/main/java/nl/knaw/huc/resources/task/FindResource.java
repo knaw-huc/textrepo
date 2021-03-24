@@ -23,6 +23,7 @@ import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT_ENCODING;
+import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
 import static nl.knaw.huc.resources.HeaderLink.Rel.ORIGINAL;
@@ -135,12 +136,14 @@ public class FindResource {
     final var result = task.run();
     final var contents = result.getContents();
     log.debug("Got latest version contents: {}", contents);
+    final var type = result.getType();
 
     return contentsHelper
         .asAttachment(contents, acceptEncoding)
+        .header(CONTENT_TYPE, type.getMimetype())
         .link(FILE_VERSIONS.build(result.getFileId()), VERSION_HISTORY)
         .link(FILE.build(result.getFileId()), UP)
-        .link(Uri.TYPE.build(result.getTypeId()), Rel.TYPE)
+        .link(Uri.TYPE.build(type.getId()), Rel.TYPE)
         .build();
   }
 

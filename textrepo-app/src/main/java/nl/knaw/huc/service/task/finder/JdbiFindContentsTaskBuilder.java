@@ -2,6 +2,7 @@ package nl.knaw.huc.service.task.finder;
 
 import nl.knaw.huc.service.task.FindDocumentByExternalId;
 import nl.knaw.huc.service.task.FindDocumentFileByType;
+import nl.knaw.huc.service.task.FindType;
 import nl.knaw.huc.service.task.GetLatestFileVersion;
 import nl.knaw.huc.service.task.GetVersionContent;
 import nl.knaw.huc.service.task.Task;
@@ -50,12 +51,13 @@ public class JdbiFindContentsTaskBuilder implements FindContentsTaskBuilder {
     public LatestFileContents run() {
       return jdbi.inTransaction(txn -> {
         final var doc = new FindDocumentByExternalId(externalId).executeIn(txn);
-        final var file = new FindDocumentFileByType(doc, typeName).executeIn(txn);
+        final var type = new FindType(typeName).executeIn(txn);
+        final var file = new FindDocumentFileByType(doc, type).executeIn(txn);
         final var version = new GetLatestFileVersion(file).executeIn(txn);
-        var contents = new GetVersionContent(version).executeIn(txn);
-        var result = new LatestFileContents();
+        final var contents = new GetVersionContent(version).executeIn(txn);
+        final var result = new LatestFileContents();
+        result.setType(type);
         result.setFileId(file.getId());
-        result.setTypeId(file.getTypeId());
         result.setContents(contents);
         return result;
       });
