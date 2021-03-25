@@ -5,7 +5,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import nl.knaw.huc.api.ResultVersion;
 import nl.knaw.huc.exceptions.MethodNotAllowedException;
 import nl.knaw.huc.helpers.ContentsHelper;
 import nl.knaw.huc.service.version.content.VersionContentsService;
@@ -58,7 +57,7 @@ public class VersionContentsResource {
   @Timed
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Retrieve version contents")
-  @ApiResponses(value = {@ApiResponse(code = 200, response = ResultVersion.class, message = "OK")})
+  @ApiResponses(value = {@ApiResponse(code = 200, response = byte[].class, message = "OK")})
   public Response getVersionContents(
       @HeaderParam(ACCEPT_ENCODING) String acceptEncoding,
       @PathParam("versionId") @NotNull @Valid UUID versionId
