@@ -28,7 +28,7 @@ public class DeleteDocumentResource {
 
   @DELETE
   @ApiOperation(value = "Delete a document including its metadata, files, versions and contents. " +
-      "Contents are only only deleted when not referenced by any other versions.")
+      "Contents are only deleted when not referenced by any other versions.")
   @Path("documents/{externalId}")
   public Response deleteDocumentRecursively(
       @NotBlank @PathParam("externalId") String externalId
