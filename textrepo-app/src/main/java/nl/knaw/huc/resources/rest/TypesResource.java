@@ -2,8 +2,11 @@ package nl.knaw.huc.resources.rest;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.Example;
+import io.swagger.annotations.ExampleProperty;
 import nl.knaw.huc.api.FormType;
 import nl.knaw.huc.api.ResultType;
 import nl.knaw.huc.core.Type;
@@ -45,6 +48,15 @@ public class TypesResource {
   @ApiOperation(value = "Create type")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultType.class, message = "OK")})
   public Response createType(
+      @ApiParam(
+          examples = @Example(value = {
+              @ExampleProperty(
+                  mediaType = "application/json",
+                  value = "{\"name\":\"txt\", \"mimetype\":\"text/plain\"}")
+          }),
+          required = true,
+          value = "Name and mimetype of the type to be added"
+      )
       @Valid @NotNull FormType form
   ) {
     var type = new Type(form.getName(), form.getMimetype());
