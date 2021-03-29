@@ -3,10 +3,12 @@ package nl.knaw.huc.api;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotBlank;
 
+@ApiModel(description = "Parameters to add a type")
 public class FormType {
 
   @NotBlank(message = "is mandatory")
