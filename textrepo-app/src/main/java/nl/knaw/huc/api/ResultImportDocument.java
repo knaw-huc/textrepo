@@ -1,6 +1,7 @@
 package nl.knaw.huc.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.MoreObjects;
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.core.Version;
 
@@ -19,7 +20,7 @@ public class ResultImportDocument {
   public UUID getDocumentId() {
     return document.getId();
   }
-  
+
   @JsonProperty
   public UUID getFileId() {
     return version.getFileId();
@@ -33,5 +34,13 @@ public class ResultImportDocument {
   @JsonProperty
   public String getContentsSha() {
     return version.getContentsSha();
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this)
+                      .add("document", document)
+                      .add("version", version)
+                      .toString();
   }
 }

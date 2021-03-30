@@ -4,7 +4,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import nl.knaw.huc.resources.rest.VersionsResource;
 import nl.knaw.huc.service.task.TaskBuilderFactory;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -21,12 +20,15 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import java.io.InputStream;
 
 import static java.util.Objects.requireNonNull;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
+import static nl.knaw.huc.resources.HeaderLink.Uri.CONTENTS;
+import static nl.knaw.huc.resources.HeaderLink.Uri.DOCUMENT;
+import static nl.knaw.huc.resources.HeaderLink.Uri.FILE;
+import static nl.knaw.huc.resources.HeaderLink.Uri.VERSION;
 
 @Api(tags = {"task", "import"})
 @Path("task/import")
@@ -54,7 +56,7 @@ public class ImportResource {
       @NotNull @FormDataParam("contents") FormDataContentDisposition fileDetail
   ) {
     log.debug(
-        "Import document contents for file with type: " +
+        "Importing document contents for file with type: " +
             "externalId={}, " +
             "typeName={}, " +
             "allowNewDocument={}",
@@ -70,14 +72,15 @@ public class ImportResource {
                                   .build();
 
     final var result = importTask.run();
-    log.debug("Imported document contents");
-    final var location = UriBuilder.fromResource(VersionsResource.class)
-                                   .path("{id}")
-                                   .build(result.getVersionId());
-    log.debug("Version URI: [{}]", location);
+    log.debug("Imported document contents: {}", result);
 
+    final var location = VERSION.build(result.getVersionId());
     return Response.created(location)
                    .entity(result)
+                   .link(CONTENTS.build(result.getContentsSha()), "contents")
+                   .link(DOCUMENT.build(result.getDocumentId()), "document")
+                   .link(FILE.build(result.getFileId()), "file")
+                   .link(VERSION.build(result.getVersionId()), "version")
                    .build();
   }
 }
