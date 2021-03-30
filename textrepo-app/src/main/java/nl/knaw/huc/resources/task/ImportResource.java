@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import nl.knaw.huc.resources.rest.VersionsResource;
 import nl.knaw.huc.service.task.TaskBuilderFactory;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -20,6 +21,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 import java.io.InputStream;
 
 import static java.util.Objects.requireNonNull;
@@ -67,8 +69,15 @@ public class ImportResource {
                                   .withContents(uploadedInputStream)
                                   .build();
 
-    importTask.run();
+    final var result = importTask.run();
     log.debug("Imported document contents");
-    return Response.ok().build();
+    final var location = UriBuilder.fromResource(VersionsResource.class)
+                                   .path("{id}")
+                                   .build(result.getVersionId());
+    log.debug("Version URI: [{}]", location);
+
+    return Response.created(location)
+                   .entity(result)
+                   .build();
   }
 }

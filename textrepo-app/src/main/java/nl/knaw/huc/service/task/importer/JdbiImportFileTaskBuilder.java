@@ -1,8 +1,8 @@
 package nl.knaw.huc.service.task.importer;
 
+import nl.knaw.huc.api.ResultImportDocument;
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.core.Document;
-import nl.knaw.huc.core.Version;
 import nl.knaw.huc.resources.ResourceUtils;
 import nl.knaw.huc.service.task.FindDocumentByExternalId;
 import nl.knaw.huc.service.task.HaveDocumentByExternalId;
@@ -73,7 +73,7 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
   }
 
   @Override
-  public Task<Version> build() {
+  public Task<ResultImportDocument> build() {
     final InTransactionProvider<Document> documentFinder;
     if (allowNewDocument) {
       documentFinder = new HaveDocumentByExternalId(documentIdGenerator, externalId);
@@ -83,7 +83,7 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
     return new JdbiImportDocumentTask(documentFinder, typeName, filename, inputStream);
   }
 
-  private class JdbiImportDocumentTask implements Task<Version> {
+  private class JdbiImportDocumentTask implements Task<ResultImportDocument> {
     private final InTransactionProvider<Document> documentFinder;
     private final String typeName;
     private final String filename;
@@ -98,7 +98,7 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
     }
 
     @Override
-    public Version run() {
+    public ResultImportDocument run() {
       // To keep transaction time to a minimum, construct new Content object first, outside the transaction
       final Contents contents = ResourceUtils.readContents(inputStream);
 
@@ -106,8 +106,9 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
       return jdbi.inTransaction(transaction -> {
         final var doc = documentFinder.executeIn(transaction);
         final var file = new HaveFileForDocumentByType(fileIdGenerator, doc, typeName).executeIn(transaction);
-        new SetFileProvenance(file, filename).executeIn(transaction);
-        return new SetCurrentFileContents(versionIdGenerator, file, contents).executeIn(transaction);
+        final var metadata = new SetFileProvenance(file, filename).executeIn(transaction);
+        final var version = new SetCurrentFileContents(versionIdGenerator, file, contents).executeIn(transaction);
+        return new ResultImportDocument(doc, version);
       });
     }
 
