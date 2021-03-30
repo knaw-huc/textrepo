@@ -27,7 +27,7 @@ public interface VersionsDao {
   Optional<Version> findLatestByFileId(@Bind UUID fileId);
 
   @SqlQuery("select id, file_id, created_at, contents_sha " +
-      "from versions where file_id = ? order by created_at asc")
+      "from versions where file_id = ? order by created_at desc")
   @RegisterConstructorMapper(value = Version.class)
   List<Version> findByFileId(UUID fileId);
 
