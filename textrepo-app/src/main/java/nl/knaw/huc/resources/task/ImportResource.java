@@ -74,8 +74,7 @@ public class ImportResource {
     final var result = importTask.run();
     log.debug("Imported document contents: {}", result);
 
-    final var location = VERSION.build(result.getVersionId());
-    return Response.created(location)
+    return Response.created(VERSION.build(result.getVersionId()))
                    .entity(result)
                    .link(CONTENTS.build(result.getContentsSha()), "contents")
                    .link(DOCUMENT.build(result.getDocumentId()), "document")
