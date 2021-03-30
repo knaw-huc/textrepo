@@ -10,10 +10,12 @@ import java.util.UUID;
 public class ResultImportDocument {
   private final Document document;
   private final Version version;
+  private final boolean isNewVersion;
 
-  public ResultImportDocument(Document document, Version version) {
+  public ResultImportDocument(Document document, Version version, boolean isNewVersion) {
     this.document = document;
     this.version = version;
+    this.isNewVersion = isNewVersion;
   }
 
   @JsonProperty
@@ -36,11 +38,17 @@ public class ResultImportDocument {
     return version.getContentsSha();
   }
 
+  @JsonProperty
+  public boolean isNewVersion() {
+    return isNewVersion;
+  }
+
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
                       .add("document", document)
                       .add("version", version)
+                      .add("isNewVersion", isNewVersion)
                       .toString();
   }
 }

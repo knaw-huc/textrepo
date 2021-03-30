@@ -8,6 +8,8 @@ import java.io.InputStream;
 public interface ImportFileTaskBuilder {
   ImportFileTaskBuilder allowNewDocument(boolean allowNewDocument);
 
+  ImportFileTaskBuilder asLatestVersion(boolean asLatestVersion);
+
   ImportFileTaskBuilder forExternalId(String externalId);
 
   ImportFileTaskBuilder withTypeName(String type);
