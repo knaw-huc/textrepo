@@ -20,11 +20,16 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import java.io.InputStream;
 
 import static java.util.Objects.requireNonNull;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
+import static nl.knaw.huc.resources.HeaderLink.Uri.CONTENTS;
+import static nl.knaw.huc.resources.HeaderLink.Uri.DOCUMENT;
+import static nl.knaw.huc.resources.HeaderLink.Uri.FILE;
+import static nl.knaw.huc.resources.HeaderLink.Uri.VERSION;
 
 @Api(tags = {"task", "import"})
 @Path("task/import")
@@ -48,27 +53,44 @@ public class ImportResource {
       @NotBlank @PathParam("externalId") String externalId,
       @NotBlank @PathParam("typeName") String typeName,
       @QueryParam("allowNewDocument") @DefaultValue("false") boolean allowNewDocument,
+      @QueryParam("asLatestVersion") @DefaultValue("false") boolean asLatestVersion,
       @NotNull @FormDataParam("contents") InputStream uploadedInputStream,
       @NotNull @FormDataParam("contents") FormDataContentDisposition fileDetail
   ) {
     log.debug(
-        "Import document contents for file with type: " +
+        "Importing document contents for file with type: " +
             "externalId={}, " +
             "typeName={}, " +
-            "allowNewDocument={}",
-        externalId, typeName, allowNewDocument
+            "allowNewDocument={}, " +
+            "asLatestVersion={}",
+        externalId, typeName, allowNewDocument, asLatestVersion
     );
 
-    final var builder = factory.getDocumentImportBuilder();
-    final var importTask = builder.allowNewDocument(allowNewDocument)
-                                  .forExternalId(externalId)
-                                  .withTypeName(typeName)
-                                  .forFilename(fileDetail.getFileName())
-                                  .withContents(uploadedInputStream)
-                                  .build();
+    final var importTask =
+        factory.getDocumentImportBuilder()
+               .allowNewDocument(allowNewDocument)
+               .asLatestVersion(asLatestVersion)
+               .forExternalId(externalId)
+               .withTypeName(typeName)
+               .forFilename(fileDetail.getFileName())
+               .withContents(uploadedInputStream)
+               .build();
 
-    importTask.run();
-    log.debug("Imported document contents");
-    return Response.ok().build();
+    final var result = importTask.run();
+    log.debug("Imported document contents: {}", result);
+
+    final ResponseBuilder builder;
+    if (result.isNewVersion()) {
+      builder = Response.created(VERSION.build(result.getVersionId()));
+    } else {
+      builder = Response.ok();
+    }
+
+    return builder.entity(result)
+                  .link(CONTENTS.build(result.getContentsSha()), "contents")
+                  .link(DOCUMENT.build(result.getDocumentId()), "document")
+                  .link(FILE.build(result.getFileId()), "file")
+                  .link(VERSION.build(result.getVersionId()), "version")
+                  .build();
   }
 }
