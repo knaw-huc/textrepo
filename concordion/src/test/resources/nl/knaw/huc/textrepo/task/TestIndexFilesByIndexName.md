@@ -10,7 +10,7 @@ To index, we first create three documents, each with one file and version, using
 
 Then:
 
- - Response statuses should be: [200, 200, 200](- "?=#importResult.status");
+ - Response statuses should be: [201, 201, 201](- "?=#importResult.status");
  - Full response of first imported document:
 
 [ ](- "ext:embed=#importResult.body")
