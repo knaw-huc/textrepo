@@ -2,8 +2,11 @@ package nl.knaw.huc.resources.task;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.ResponseHeader;
+import nl.knaw.huc.api.ResultImportDocument;
 import nl.knaw.huc.service.task.TaskBuilderFactory;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -22,8 +25,11 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import java.io.InputStream;
+import java.net.URI;
 
 import static java.util.Objects.requireNonNull;
+import static javax.ws.rs.core.HttpHeaders.LINK;
+import static javax.ws.rs.core.HttpHeaders.LOCATION;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
 import static nl.knaw.huc.resources.HeaderLink.Uri.CONTENTS;
@@ -34,8 +40,12 @@ import static nl.knaw.huc.resources.HeaderLink.Uri.VERSION;
 @Api(tags = {"task", "import"})
 @Path("task/import")
 public class ImportResource {
-
   private static final Logger log = LoggerFactory.getLogger(ImportResource.class);
+
+  private static final String LINK_DESCRIPTION =
+      "REST URIs of document, file, version, and contents used in this request";
+  private static final String LOCATION_DESCRIPTION = "(absolute) URL of newly created version";
+
   private final TaskBuilderFactory factory;
 
   public ImportResource(TaskBuilderFactory factory) {
@@ -46,12 +56,21 @@ public class ImportResource {
   @Path("documents/{externalId}/{typeName}")
   @Consumes(MULTIPART_FORM_DATA)
   @Produces(APPLICATION_JSON)
-  @ApiOperation("Import file as the current version for {typeName} of document referenced by {externalId} " +
-      "without indexing")
-  @ApiResponses(value = {@ApiResponse(code = 201, message = "CREATED")})
+  @ApiOperation(value =
+      "Import file contents to create version for type {typeName} of document {externalDocumentId} (without indexing)")
+  @ApiResponses(value = {
+      @ApiResponse(code = 200, message = "Contents found in earlier version",
+          response = ResultImportDocument.class,
+          responseHeaders = {@ResponseHeader(name = LINK, response = URI.class, description = LINK_DESCRIPTION)}),
+      @ApiResponse(code = 201, message = "New version created for contents",
+          response = ResultImportDocument.class,
+          responseHeaders = {
+              @ResponseHeader(name = LINK, response = URI.class, description = LINK_DESCRIPTION),
+              @ResponseHeader(name = LOCATION, response = URI.class, description = LOCATION_DESCRIPTION)}),
+      @ApiResponse(code = 404, message = "When allowNewDocument=false and no document is found for externalId")})
   public Response importDocumentContentsForFileWithType(
-      @NotBlank @PathParam("externalId") String externalId,
-      @NotBlank @PathParam("typeName") String typeName,
+      @NotBlank @PathParam("externalId") @ApiParam(example = "document_1234") String externalId,
+      @NotBlank @PathParam("typeName") @ApiParam(example = "plaintext") String typeName,
       @QueryParam("allowNewDocument") @DefaultValue("false") boolean allowNewDocument,
       @QueryParam("asLatestVersion") @DefaultValue("false") boolean asLatestVersion,
       @NotNull @FormDataParam("contents") InputStream uploadedInputStream,
