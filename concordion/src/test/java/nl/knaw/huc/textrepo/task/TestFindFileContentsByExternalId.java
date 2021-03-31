@@ -6,7 +6,6 @@ import org.apache.commons.text.StringEscapeUtils;
 
 import static java.util.Map.of;
 import static nl.knaw.huc.textrepo.util.TestUtils.asCodeBlock;
-import static nl.knaw.huc.textrepo.util.TestUtils.asPrettyJson;
 import static nl.knaw.huc.textrepo.util.TestUtils.replaceInUrlAndQueryParams;
 
 public class TestFindFileContentsByExternalId extends AbstractConcordionTest {
@@ -35,7 +34,8 @@ public class TestFindFileContentsByExternalId extends AbstractConcordionTest {
 
   public RetrieveResult retrieve(String endpoint, String externalId, String fileType) {
     final var response = client
-        .target(replaceInUrlAndQueryParams(endpoint, of("{externalId}", externalId, "{name}", fileType)))
+        .target(replaceInUrlAndQueryParams(endpoint,
+            of("{externalId}", externalId, "{typeName}", fileType)))
         .request()
         .get();
 
@@ -46,7 +46,9 @@ public class TestFindFileContentsByExternalId extends AbstractConcordionTest {
     result.headers = "";
     var links = response.getHeaders().get("Link");
     links.forEach((l) -> {
-      System.out.println("link:" + l.toString());result.headers += asHeaderLink(l.toString());});
+      System.out.println("link:" + l.toString());
+      result.headers += asHeaderLink(l.toString());
+    });
 
     result.versionHistory = links
         .stream()
