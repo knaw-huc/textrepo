@@ -59,9 +59,9 @@ public class ImportResource {
   @ApiOperation(value =
       "Import file contents to create version for type {typeName} of document {externalDocumentId} (without indexing)",
       notes = "Use allowNewDocument=true if document {externalId} is not yet in use and you want it to be created. " +
-          "Use asLatestVersion=true if contents you are uploading are already present as an earlier version, " +
-          "but you need those contents to represent that latest version; a new version node will be added. " +
-          "See also the Concordion Integration Tests under \"Task API\"")
+          "Use asLatestVersion=true if contents you are uploading are already present as an *earlier* version, " +
+          "but you need those contents to represent the *latest* version; a new version will be created for it. " +
+          "See also the Concordion Integration Tests under \"Task API\".")
 
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "Contents found in earlier version",
