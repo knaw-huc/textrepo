@@ -30,7 +30,7 @@ We try to import a document
 ### 1. Refusing new documents to be made
 
 When we `POST` the file to
-[`/task/import/documents/dochment_1234/text`](- "#importEndpoint")
+[`/task/import/documents/document_1234/text`](- "#importEndpoint")
 
 (or equivalently by explicitly appending the query param `?allowNewDocument=false`)
 
