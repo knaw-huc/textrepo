@@ -2,12 +2,8 @@ package nl.knaw.huc.textrepo.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.text.StringSubstitutor;
+import org.apache.commons.text.StringEscapeUtils;
 import org.glassfish.jersey.client.JerseyClientBuilder;
-import org.glassfish.jersey.media.multipart.FormDataBodyPart;
-import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
-import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,18 +12,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.regex.Pattern;
 
 import static java.lang.String.format;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static javax.ws.rs.client.Entity.entity;
-import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
 import static nl.knaw.huc.textrepo.Config.HOST;
-import static nl.knaw.huc.textrepo.Config.TEXT_TYPE;
 
 public class TestUtils {
 
@@ -99,4 +89,7 @@ public class TestUtils {
     }
   }
 
+  public static String asHeaderLink(String header) {
+    return StringEscapeUtils.escapeHtml4("Link: " + header + "\n");
+  }
 }
