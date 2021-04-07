@@ -43,7 +43,7 @@ Then:
 
 [ ](- "ext:embed=#result.body")
 
-This helps prevent you from accidentally create new documents when you know the document should already exist.
+This helps prevent you from accidentally creating new documents when you know the document should already exist.
 
 ### 2. Using `allowNewDocument=true`
 
