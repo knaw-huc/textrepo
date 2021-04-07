@@ -60,11 +60,15 @@ Then:
 - Headers should contain [restful relationship link to file](- "?=#result.fileLink");
 - Headers should contain [restful relationship link to document](- "?=#result.documentLink");
 - Headers should contain [restful relationship link to contents](- "?=#result.contentsLink");
-
 - Link headers:
 
 [ ](- "ext:embed=#result.headers")
 
+- Body should contain [valid fileId](- "?=#result.fileId");
+- Body should contain [valid documentId](- "?=#result.documentId");
+- Body should contain [valid versionId](- "?=#result.versionId");
+- Body should contain [valid contentsSha](- "?=#result.contentsSha");
+- Body should indicate [a new version was created](- "?=#result.isNewVersion");
 - Full response:
 
 [ ](- "ext:embed=#result.body")
@@ -90,11 +94,15 @@ And we get the same headers and body.
 - Headers should contain [restful relationship link to file](- "?=#result.fileLink");
 - Headers should contain [restful relationship link to document](- "?=#result.documentLink");
 - Headers should contain [restful relationship link to contents](- "?=#result.contentsLink");
-
 - Link headers:
 
 [ ](- "ext:embed=#result.headers")
 
+- Body should contain [valid fileId](- "?=#result.fileId");
+- Body should contain [valid documentId](- "?=#result.documentId");
+- Body should contain [valid versionId](- "?=#result.versionId");
+- Body should contain [valid contentsSha](- "?=#result.contentsSha");
+- Body should indicate [no new version was created](- "?=#result.isNewVersion");
 - Full response:
 
 [ ](- "ext:embed=#result.body")
@@ -120,11 +128,15 @@ Nothing was created, because the current version is ***already the latest versio
 - Headers should contain [restful relationship link to file](- "?=#result.fileLink");
 - Headers should contain [restful relationship link to document](- "?=#result.documentLink");
 - Headers should contain [restful relationship link to contents](- "?=#result.contentsLink");
-
 - Link headers:
 
 [ ](- "ext:embed=#result.headers")
 
+- Body should contain [valid fileId](- "?=#result.fileId");
+- Body should contain [valid documentId](- "?=#result.documentId");
+- Body should contain [valid versionId](- "?=#result.versionId");
+- Body should contain [valid contentsSha](- "?=#result.contentsSha");
+- Body should indicate [no new version was created](- "?=#result.isNewVersion");
 - Full response:
 
 [ ](- "ext:embed=#result.body")
@@ -140,6 +152,8 @@ When we `POST` some [`other content`](- "#otherContents") to
 Then:
 
 - The response status should be: [201](- "?=#result.status")
+
+for brevity, we omit testing headers and body for this intermediate version.
 
 And if we then `POST` our original contents again to
 
@@ -157,3 +171,15 @@ because a new version was created for our older, existing, contents.
 - Headers should contain [restful relationship link to file](- "?=#result.fileLink");
 - Headers should contain [restful relationship link to document](- "?=#result.documentLink");
 - Headers should contain [restful relationship link to contents](- "?=#result.contentsLink");
+- Link headers:
+
+[ ](- "ext:embed=#result.headers")
+
+- Body should contain [valid fileId](- "?=#result.fileId");
+- Body should contain [valid documentId](- "?=#result.documentId");
+- Body should contain [valid versionId](- "?=#result.versionId");
+- Body should contain [valid contentsSha](- "?=#result.contentsSha");
+- Body should indicate [a new version was created](- "?=#result.isNewVersion");
+- Full response:
+
+[ ](- "ext:embed=#result.body")
