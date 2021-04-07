@@ -65,7 +65,7 @@ public class TestIndexFilesByIndexName extends AbstractConcordionTest {
 
     var result = new ImportResult();
     result.status = results.stream().map(String::valueOf).collect(Collectors.joining(", "));
-    result.body = asCodeBlock(body.equals("") ? " " : body);
+    result.body = asPrettyJson(body.equals("") ? " " : body);
     return result;
   }
 
