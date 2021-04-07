@@ -7,6 +7,8 @@ import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
 import javax.ws.rs.core.Response;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -21,6 +23,10 @@ import static nl.knaw.huc.textrepo.util.TestUtils.replaceInUrlAndQueryParams;
 public class TestImportDocument extends AbstractConcordionTest {
   public static class ImportResult {
     public int status;
+    public String versionLink;
+    public String fileLink;
+    public String documentLink;
+    public String contentsLink;
     public String headers;
     public String body;
   }
@@ -39,14 +45,31 @@ public class TestImportDocument extends AbstractConcordionTest {
     result.body = asPrettyJson(body.equals("") ? " " : body);
 
     result.headers = "";
-    Optional.ofNullable(response.getHeaders().get("Link"))
-            .ifPresent(links -> links.forEach(l -> {
-              System.out.println("link:" + l.toString());
-              result.headers += asHeaderLink(l.toString());
-            }));
+    final var links = Optional.ofNullable(response.getHeaders().get("Link"))
+                              .orElse(Collections.emptyList());
+    links.forEach(l -> result.headers += asHeaderLink(l.toString()));
     result.headers = asCodeBlock(result.headers);
 
+    result.versionLink = findLink(links, "version");
+    result.fileLink = findLink(links, "file");
+    result.documentLink = findLink(links, "document");
+    result.contentsLink = findLink(links, "contents");
+
     return result;
+  }
+
+  private String findLink(List<Object> links, String type) {
+    return links.stream()
+                .map(Object::toString)
+                .filter(l -> isRelationshipLinkTo(l, type))
+                .findFirst()
+                .map(l -> "restful relationship link to " + type)
+                .orElse("header link to " + type + " missing");
+  }
+
+  private boolean isRelationshipLinkTo(String suspect, String type) {
+    return suspect.contains("/rest/" + type)
+        && suspect.endsWith("rel=\"" + type + "\"");
   }
 
   private Response importDocument(String endpoint, String externalId, byte[] content, String typeName) {

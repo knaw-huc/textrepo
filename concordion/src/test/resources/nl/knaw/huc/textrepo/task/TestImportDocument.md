@@ -56,6 +56,11 @@ However, when we `POST` our file to
 Then:
 
 - The response status should be: [201](- "?=#result.status");
+- Headers should contain [restful relationship link to version](- "?=#result.versionLink");
+- Headers should contain [restful relationship link to file](- "?=#result.fileLink");
+- Headers should contain [restful relationship link to document](- "?=#result.documentLink");
+- Headers should contain [restful relationship link to contents](- "?=#result.contentsLink");
+
 - Link headers:
 
 [ ](- "ext:embed=#result.headers")
@@ -81,6 +86,11 @@ Then:
 
 And we get the same headers and body.
 
+- Headers should contain [restful relationship link to version](- "?=#result.versionLink");
+- Headers should contain [restful relationship link to file](- "?=#result.fileLink");
+- Headers should contain [restful relationship link to document](- "?=#result.documentLink");
+- Headers should contain [restful relationship link to contents](- "?=#result.contentsLink");
+
 - Link headers:
 
 [ ](- "ext:embed=#result.headers")
@@ -105,6 +115,11 @@ Then:
 - The response status should be: [200](- "?=#result.status");
 
 Nothing was created, because the current version is ***already the latest version***.
+
+- Headers should contain [restful relationship link to version](- "?=#result.versionLink");
+- Headers should contain [restful relationship link to file](- "?=#result.fileLink");
+- Headers should contain [restful relationship link to document](- "?=#result.documentLink");
+- Headers should contain [restful relationship link to contents](- "?=#result.contentsLink");
 
 - Link headers:
 
@@ -132,8 +147,13 @@ And if we then `POST` our original contents again to
 
 [ ](- "#result=retrieve(#importEndpoint6, #externalId, #typeName, #originalContents)")
 
-Then, finally,:
+Then, finally, we get:
 
 - The reponse status should be: [201](- "?=#result.status")
 
 because a new version was created for our older, existing, contents.
+
+- Headers should contain [restful relationship link to version](- "?=#result.versionLink");
+- Headers should contain [restful relationship link to file](- "?=#result.fileLink");
+- Headers should contain [restful relationship link to document](- "?=#result.documentLink");
+- Headers should contain [restful relationship link to contents](- "?=#result.contentsLink");
