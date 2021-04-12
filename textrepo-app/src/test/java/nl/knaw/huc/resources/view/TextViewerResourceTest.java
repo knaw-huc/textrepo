@@ -5,7 +5,6 @@ import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.testing.junit5.ResourceExtension;
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.helpers.ContentsHelper;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -59,6 +58,7 @@ class TextViewerResourceTest {
     );
   }
 
+  @SuppressWarnings("unused") // used as @MethodSource
   private static Stream<Arguments> provideCasesForLines() {
     return Stream.of(
         Arguments.of("/lines/-1/4", 400, ">= 0, or 'full'"),
@@ -76,6 +76,18 @@ class TextViewerResourceTest {
     );
   }
 
+  @SuppressWarnings("unused") // used as @MethodSource
+  private static Stream<Arguments> provideCasesForRange() {
+    return Stream.of(
+        Arguments.of("/range/0/0/0/15", 200, CHARS),
+        Arguments.of("/range/0/0/0/0", 200, "0"),
+        Arguments.of("/range/0/15/0/15", 200, "f"),
+        Arguments.of("/range/1/0/1/15", 200, CHARS),
+        Arguments.of("/range/0/0/1/15", 200, LINE + CHARS),
+        Arguments.of("/range/full/full/full/full", 200, LINE + CHARS)
+    );
+  }
+
   @ParameterizedTest
   @MethodSource("provideCasesForChars")
   void getChars_returnsExpectedStatus_and_Contents(String uri, int statusCode, String expected) {
@@ -88,8 +100,10 @@ class TextViewerResourceTest {
     checkResponse(uri, statusCode, expected);
   }
 
-  @Test
-  void getRange() {
+  @ParameterizedTest
+  @MethodSource("provideCasesForRange")
+  void getRange_returnsExpectedStatus_and_Contents(String uri, int statusCode, String expected) {
+    checkResponse(uri, statusCode, expected);
   }
 
   private void checkResponse(String uri, int statusCode, String expected) {

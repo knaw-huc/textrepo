@@ -101,30 +101,35 @@ public class TextViewerResource {
     final var endLineOffset = endLineParam.get().orElse(indexOfLastLine);
     checkOffsets(startLineOffset, endLineOffset, indexOfLastLine);
 
-    final var joiner = new StringJoiner("\n", "", "\n");
+    final var joiner = new StringJoiner("\n");
+
     for (int curLineIndex = startLineOffset; curLineIndex <= endLineOffset; curLineIndex++) {
       final var curLine = lines[curLineIndex];
-      final String lineToAdd;
+      final var indexOfFirstChar = 0;
+      final var indexOfLastChar = curLine.length() - 1;
+
+      final int startCharOffset;
       if (curLineIndex == startLineOffset) {
-        final var indexOfFirstChar = 0;
-        final var startCharOffset = startCharParam.get().orElse(indexOfFirstChar);
+        startCharOffset = startCharParam.get().orElse(indexOfFirstChar);
         if (startCharOffset > curLine.length() - 1) {
           badRequest("startCharOffset (%d) > max startLine offset (%d)", startCharOffset, curLine.length() - 1);
         }
-        lineToAdd = curLine.substring(startCharOffset);
-      } else if (curLineIndex == endLineOffset) {
-        final var indexOfLastChar = curLine.length() - 1;
-        final var endCharOffset = endCharParam.get().orElse(indexOfLastChar);
-        if (endCharOffset > curLine.length() - 1) {
-          badRequest("endCharOffset (%d) > max endLine offset (%d)", endCharOffset, curLine.length() - 1);
-        }
-        lineToAdd = curLine.substring(0, endCharOffset + 1);
-      } else {
-        lineToAdd = curLine;
+      } else { // on all lines other than startLine
+        startCharOffset = 0;
       }
-      joiner.add(lineToAdd);
-    }
 
+      final int endCharOffset;
+      if (curLineIndex == endLineOffset) {
+        endCharOffset = endCharParam.get().orElse(indexOfLastChar);
+        if (endCharOffset > indexOfLastChar) {
+          badRequest("endCharOffset (%d) > max endLine offset (%d)", endCharOffset, indexOfLastChar);
+        }
+      } else { // on all lines other than startLine
+        endCharOffset = indexOfLastChar;
+      }
+
+      joiner.add(curLine.substring(startCharOffset, endCharOffset + 1));
+    }
     return asPlainTextAttachment(joiner.toString(), acceptEncoding);
   }
 
