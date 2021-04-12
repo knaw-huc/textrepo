@@ -1,5 +1,6 @@
 package nl.knaw.huc.resources.view;
 
+import com.jayway.jsonpath.JsonPath;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.testing.junit5.ResourceExtension;
 import nl.knaw.huc.core.Contents;
@@ -32,13 +33,13 @@ class TextViewerResourceTest {
   @SuppressWarnings("unused") // used as @MethodSource
   private static Stream<Arguments> provideCasesForChars() {
     return Stream.of(
-        Arguments.of("/chars/-1/4", 400, ""),
-        Arguments.of("/chars/4/16", 400, ""),
-        Arguments.of("/chars/-1/full", 400, ""),
-        Arguments.of("/chars/full/16", 400, ""),
-        Arguments.of("/chars/4/0", 400, ""),
-        Arguments.of("/chars/8/4", 400, ""),
-        Arguments.of("/chars/15/8", 400, ""),
+        Arguments.of("/chars/-1/4", 400, ">= 0"),
+        Arguments.of("/chars/-1/full", 400, ">= 0"),
+        Arguments.of("/chars/4/16", 400, "<= 15"),
+        Arguments.of("/chars/full/16", 400, "<= 15"),
+        Arguments.of("/chars/4/0", 400, "endOffset must be >= startOffset"),
+        Arguments.of("/chars/8/4", 400, "endOffset must be >= startOffset"),
+        Arguments.of("/chars/15/8", 400, "endOffset must be >= startOffset"),
         Arguments.of("/chars/4/8", 200, "45678"),
         Arguments.of("/chars/0/4", 200, "01234"),
         Arguments.of("/chars/4/15", 200, "456789abcdef"),
@@ -53,9 +54,13 @@ class TextViewerResourceTest {
   void getChars_returnsExpectedStatus_and_Contents(String uri, int statusCode, String expected) {
     final var response = get(uri);
     assertThat(response.getStatus()).isEqualTo(statusCode);
+    final var body = response.readEntity(String.class);
     if (statusCode == 200) {
-      final var body = response.readEntity(String.class);
       assertThat(body).isEqualTo(expected);
+    } else if (statusCode == 400) {
+      final var json = JsonPath.parse(body);
+      assertThat(json.read("$.code", Integer.class)).isEqualTo(statusCode);
+      assertThat(json.<String>read("$.message")).contains(expected);
     }
   }
 
