@@ -36,7 +36,7 @@ class TextViewerResourceTest {
       .build();
 
   @SuppressWarnings("unused") // used as @MethodSource
-  private static Stream<Arguments> provideCasesForChars() {
+  private static Stream<Arguments> provideCases() {
     return Stream.of(
         Arguments.of("/chars/-1/4", 400, ">= 0, or 'full'"),
         Arguments.of("/chars/-1/full", 400, ">= 0, or 'full'"),
@@ -54,13 +54,8 @@ class TextViewerResourceTest {
         Arguments.of("/chars/21/32", 200, "456789abcdef"),
         Arguments.of("/chars/0/full", 200, CHARS + "\n" + CHARS),
         Arguments.of(format("/chars/full/%d", (CHARS + "\n" + CHARS).length() - 1), 200, CHARS + "\n" + CHARS),
-        Arguments.of("/chars/full/full", 200, CHARS + "\n" + CHARS)
-    );
-  }
+        Arguments.of("/chars/full/full", 200, CHARS + "\n" + CHARS),
 
-  @SuppressWarnings("unused") // used as @MethodSource
-  private static Stream<Arguments> provideCasesForLines() {
-    return Stream.of(
         Arguments.of("/lines/-1/4", 400, ">= 0, or 'full'"),
         Arguments.of("/lines/-1/full", 400, ">= 0, or 'full'"),
         Arguments.of("/lines/4/0", 400, "endOffset must be >= startOffset"),
@@ -72,13 +67,8 @@ class TextViewerResourceTest {
         Arguments.of("/lines/0/1", 200, LINES),
         Arguments.of("/lines/0/full", 200, LINES),
         Arguments.of("/lines/full/1", 200, LINES),
-        Arguments.of("/lines/full/full", 200, LINES)
-    );
-  }
+        Arguments.of("/lines/full/full", 200, LINES),
 
-  @SuppressWarnings("unused") // used as @MethodSource
-  private static Stream<Arguments> provideCasesForRange() {
-    return Stream.of(
         Arguments.of("/range/0/0/0/15", 200, CHARS),
         Arguments.of("/range/0/0/0/0", 200, "0"),
         Arguments.of("/range/0/15/0/15", 200, "f"),
@@ -89,24 +79,8 @@ class TextViewerResourceTest {
   }
 
   @ParameterizedTest
-  @MethodSource("provideCasesForChars")
-  void getChars_returnsExpectedStatus_and_Contents(String uri, int statusCode, String expected) {
-    checkResponse(uri, statusCode, expected);
-  }
-
-  @ParameterizedTest
-  @MethodSource("provideCasesForLines")
-  void getLines_returnsExpectedStatus_and_Contents(String uri, int statusCode, String expected) {
-    checkResponse(uri, statusCode, expected);
-  }
-
-  @ParameterizedTest
-  @MethodSource("provideCasesForRange")
-  void getRange_returnsExpectedStatus_and_Contents(String uri, int statusCode, String expected) {
-    checkResponse(uri, statusCode, expected);
-  }
-
-  private void checkResponse(String uri, int statusCode, String expected) {
+  @MethodSource("provideCases")
+  void getTextView_returnsExpectedStatus_and_Contents(String uri, int statusCode, String expected) {
     final var response = resource
         .client()
         .target(uri)
