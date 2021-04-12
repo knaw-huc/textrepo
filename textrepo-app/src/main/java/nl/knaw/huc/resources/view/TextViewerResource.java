@@ -21,14 +21,14 @@ import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static javax.ws.rs.core.MediaType.TEXT_PLAIN_TYPE;
 
 @Api(tags = {"versions", "contents", "view"})
-public class TextViewResource {
+public class TextViewerResource {
   private static final String LINEBREAK_MATCHER = "\\R";
-  private static final Logger log = LoggerFactory.getLogger(TextViewResource.class);
+  private static final Logger log = LoggerFactory.getLogger(TextViewerResource.class);
 
   private final Contents contents;
   private final ContentsHelper contentsHelper;
 
-  public TextViewResource(Contents contents, ContentsHelper contentsHelper) {
+  public TextViewerResource(Contents contents, ContentsHelper contentsHelper) {
     this.contents = contents;
     this.contentsHelper = contentsHelper;
   }
@@ -102,10 +102,10 @@ public class TextViewResource {
     checkOffsets(startLineOffset, endLineOffset, indexOfLastLine);
 
     final var joiner = new StringJoiner("\n", "", "\n");
-    for (int lineNo = startLineOffset; lineNo <= endLineOffset; lineNo++) {
-      final var curLine = lines[lineNo];
+    for (int curLineIndex = startLineOffset; curLineIndex <= endLineOffset; curLineIndex++) {
+      final var curLine = lines[curLineIndex];
       final String lineToAdd;
-      if (lineNo == startLineOffset) {
+      if (curLineIndex == startLineOffset) {
         final var indexOfFirstChar = 0;
         final var startCharOffset = startCharParam.get().orElse(indexOfFirstChar);
         if (startCharOffset > curLine.length() - 1) {
@@ -113,7 +113,7 @@ public class TextViewResource {
               format("startCharOffset (%d) > max startLine offset (%d)", startCharOffset, curLine.length() - 1));
         }
         lineToAdd = curLine.substring(startCharOffset);
-      } else if (lineNo == endLineOffset) {
+      } else if (curLineIndex == endLineOffset) {
         final var indexOfLastChar = curLine.length() - 1;
         final var endCharOffset = endCharParam.get().orElse(indexOfLastChar);
         if (endCharOffset > curLine.length() - 1) {

@@ -14,16 +14,16 @@ import java.util.UUID;
 
 @Api(tags = {"versions", "contents", "view"})
 @Path("/view/versions/{versionId}")
-public class VersionContentsExcerptResource {
-  private static final Logger log = LoggerFactory.getLogger(VersionContentsExcerptResource.class);
+public class ViewVersionResource {
+  private static final Logger log = LoggerFactory.getLogger(ViewVersionResource.class);
 
   private final VersionContentsService versionContentsService;
   private final ContentsHelper contentsHelper;
   private final ViewBuilderFactory viewBuilderFactory;
 
-  public VersionContentsExcerptResource(VersionContentsService versionContentsService,
-                                        ContentsHelper contentsHelper,
-                                        ViewBuilderFactory viewBuilderFactory) {
+  public ViewVersionResource(VersionContentsService versionContentsService,
+                             ContentsHelper contentsHelper,
+                             ViewBuilderFactory viewBuilderFactory) {
 
     this.versionContentsService = versionContentsService;
     this.contentsHelper = contentsHelper;

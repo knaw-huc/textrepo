@@ -15,7 +15,7 @@ import nl.knaw.huc.helpers.ContentsHelper;
 import nl.knaw.huc.helpers.Limits;
 import nl.knaw.huc.helpers.Paginator;
 import nl.knaw.huc.resources.ResourcesBuilder;
-import nl.knaw.huc.resources.view.TextViewResource;
+import nl.knaw.huc.resources.view.TextViewerResource;
 import nl.knaw.huc.resources.view.ViewBuilderFactory;
 import nl.knaw.huc.service.contents.ContentsService;
 import nl.knaw.huc.service.dashboard.JdbiDashboardService;
@@ -142,7 +142,7 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
 
   private ViewBuilderFactory createViewBuilderFactory() {
     var viewBuilderFactory = new ViewBuilderFactory();
-    viewBuilderFactory.register("text", TextViewResource::new);
+    viewBuilderFactory.register("text", TextViewerResource::new);
     // TODO: register more ViewResource subclasses
     return viewBuilderFactory;
   }
