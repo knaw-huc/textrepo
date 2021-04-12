@@ -5,7 +5,6 @@ import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.testing.junit5.ResourceExtension;
 import nl.knaw.huc.exceptions.MethodNotAllowedExceptionMapper;
 import nl.knaw.huc.helpers.ContentsHelper;
-import nl.knaw.huc.resources.view.ViewBuilderFactory;
 import nl.knaw.huc.service.version.content.VersionContentsService;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.junit.jupiter.api.Test;
@@ -26,9 +25,7 @@ public class VersionContentsResourceTest {
   public static final ResourceExtension resource = ResourceExtension
       .builder()
       .addProvider(MultiPartFeature.class)
-      .addResource(new VersionContentsResource(mock(VersionContentsService.class),
-          CONTENTS_HELPER,
-          mock(ViewBuilderFactory.class)))
+      .addResource(new VersionContentsResource(mock(VersionContentsService.class), CONTENTS_HELPER))
       .addResource(new MethodNotAllowedExceptionMapper())
       .build();
 

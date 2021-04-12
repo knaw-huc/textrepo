@@ -6,17 +6,14 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.ResultVersion;
-import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.exceptions.MethodNotAllowedException;
 import nl.knaw.huc.helpers.ContentsHelper;
-import nl.knaw.huc.resources.view.ViewBuilderFactory;
 import nl.knaw.huc.service.version.content.VersionContentsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -28,7 +25,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import java.util.UUID;
 
-import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT_ENCODING;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
@@ -46,14 +42,11 @@ public class VersionContentsResource {
 
   private final VersionContentsService contentsService;
   private final ContentsHelper contentsHelper;
-  private final ViewBuilderFactory viewBuilderFactory;
 
   public VersionContentsResource(VersionContentsService contentsService,
-                                 ContentsHelper contentsHelper,
-                                 ViewBuilderFactory viewBuilderFactory) {
+                                 ContentsHelper contentsHelper) {
     this.contentsService = requireNonNull(contentsService);
     this.contentsHelper = requireNonNull(contentsHelper);
-    this.viewBuilderFactory = requireNonNull(viewBuilderFactory);
   }
 
   @POST
@@ -75,22 +68,14 @@ public class VersionContentsResource {
   ) {
     final var contentType = contentsService.getVersionMimetype(versionId)
                                            .orElse(APPLICATION_OCTET_STREAM);
-   
-    return contentsHelper.asAttachment(getContents(versionId), acceptEncoding)
+
+    log.debug("Get version contents: versionId={}", versionId);
+    var contents = contentsService.getByVersionId(versionId);
+    log.debug("Got version contents: {}", contents);
+
+    return contentsHelper.asAttachment(contents, acceptEncoding)
                          .header(CONTENT_TYPE, contentType)
                          .build();
-  }
-
-  @Path("{view}")
-  public Object getVersionContentsView(
-      @PathParam("versionId") @NotNull @Valid UUID versionId,
-      @PathParam("view") @NotNull String view
-  ) {
-    log.debug("view: [{}]", view);
-    return viewBuilderFactory
-        .createView(view)
-        .orElseThrow(() -> new BadRequestException(format("Unknown view: %s", view)))
-        .apply(getContents(versionId), contentsHelper);
   }
 
   @PUT
@@ -107,13 +92,6 @@ public class VersionContentsResource {
   @ApiResponses(value = {@ApiResponse(code = 405, message = DELETE_ERROR_MSG)})
   public Response deleteVersionContentsIsNotAllowed() {
     throw new MethodNotAllowedException(DELETE_ERROR_MSG);
-  }
-
-  private Contents getContents(UUID versionId) {
-    log.debug("Get version contents: versionId={}", versionId);
-    var contents = contentsService.getByVersionId(versionId);
-    log.debug("Got version contents: {}", contents);
-    return contents;
   }
 
 }
