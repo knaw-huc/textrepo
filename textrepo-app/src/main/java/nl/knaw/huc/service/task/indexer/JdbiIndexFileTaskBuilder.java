@@ -36,9 +36,9 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
   private String typeName;
   private String indexName;
 
-  private int filesAffected = 0;
-  private int filesTotal = -1;
-  
+  private long filesAffected = 0;
+  private long filesTotal = -1;
+
   public JdbiIndexFileTaskBuilder(Jdbi jdbi, List<Indexer> indexers) {
     this.jdbi = requireNonNull(jdbi);
     this.indexers = requireNonNull(indexers);
@@ -189,7 +189,7 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
             );
           });
 
-      typesToIndex.forEach(tti -> filesTotal += jdbi.onDemand(FilesDao.class).countByTypes(typesToIndex));
+      filesTotal = jdbi.onDemand(FilesDao.class).countByTypes(typesToIndex);
       typesToIndex.forEach(this::indexFilesByType);
 
       final var msg = format("Total files affected: %d", filesAffected);
