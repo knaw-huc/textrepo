@@ -44,15 +44,15 @@ import static org.elasticsearch.common.xcontent.XContentType.JSON;
  * - GET `mapping`
  * - POST `fields`. Files can be posted in two ways:
  * - `original`, POST request with:
- * - content-type header with file mimetype
- * - link header with rel=origin and url to file resource
- * - body containing the file
+ *    - content-type header with file mimetype
+ *    - link header with rel=origin and url to file resource
+ *    - body containing the file
  * - `multipart`, POST request with:
- * - content-type header with 'multipart/form-data'
- * - body part named 'file' with:
- * - content-type header with file mimetype.
- * - link header with rel=origin and url to file resource
- * - file contents
+ *    - content-type header with 'multipart/form-data'
+ *    - body part named 'file' with:
+ *      - content-type header with file mimetype.
+ *      - link header with rel=origin and url to file resource
+ *      - file contents
  * MappedFileIndexer is configured in config.yml
  */
 public class MappedIndexer implements Indexer {
