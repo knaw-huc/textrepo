@@ -76,6 +76,7 @@ public class ResourcesBuilderTest {
     var foundResources = reflections
         .getTypesAnnotatedWith(Path.class)
         .stream()
+        .filter(aClass -> !aClass.getAnnotation(Path.class).value().isEmpty())
         .map(Class::getName)
         .collect(toList());
 

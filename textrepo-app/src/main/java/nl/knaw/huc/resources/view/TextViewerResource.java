@@ -20,6 +20,7 @@ import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static javax.ws.rs.core.MediaType.TEXT_PLAIN_TYPE;
 
 @Api(tags = {"versions", "contents", "view"})
+@Path("") // This class is a subresource; without @Path("") resolving fails during tests
 public class TextViewerResource {
   private static final String LINEBREAK_MATCHER = "\\R";
   private static final Logger log = LoggerFactory.getLogger(TextViewerResource.class);
