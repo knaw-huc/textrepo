@@ -2,7 +2,9 @@
   "mappings": {
     "dynamic": false,
     "properties": {
-
+      "indexedOn": {
+        "type": "date"
+      },
       "file": {
         "properties": {
           "id": {

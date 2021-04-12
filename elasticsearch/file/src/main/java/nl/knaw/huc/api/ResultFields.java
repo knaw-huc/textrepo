@@ -2,7 +2,10 @@ package nl.knaw.huc.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.time.LocalDateTime;
 import java.util.List;
+
+import static java.time.LocalDateTime.now;
 
 public class ResultFields {
 
@@ -10,8 +13,10 @@ public class ResultFields {
   private ResultDoc doc;
   private List<ResultVersion> versions;
   private ResultContentsLastModified contentsLastModified;
+  private LocalDateTime indexedOn;
 
   public ResultFields() {
+    indexedOn = now();
   }
 
   @JsonProperty
@@ -48,5 +53,10 @@ public class ResultFields {
 
   public void setContentsLastModified(ResultContentsLastModified contentsLastModified) {
     this.contentsLastModified = contentsLastModified;
+  }
+
+  @JsonProperty
+  public LocalDateTime getIndexedOn() {
+    return indexedOn;
   }
 }
