@@ -15,7 +15,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 import java.util.StringJoiner;
 
-import static java.lang.String.format;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT_ENCODING;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static javax.ws.rs.core.MediaType.TEXT_PLAIN_TYPE;
@@ -109,16 +108,14 @@ public class TextViewerResource {
         final var indexOfFirstChar = 0;
         final var startCharOffset = startCharParam.get().orElse(indexOfFirstChar);
         if (startCharOffset > curLine.length() - 1) {
-          throw new BadRequestException(
-              format("startCharOffset (%d) > max startLine offset (%d)", startCharOffset, curLine.length() - 1));
+          badRequest("startCharOffset (%d) > max startLine offset (%d)", startCharOffset, curLine.length() - 1);
         }
         lineToAdd = curLine.substring(startCharOffset);
       } else if (curLineIndex == endLineOffset) {
         final var indexOfLastChar = curLine.length() - 1;
         final var endCharOffset = endCharParam.get().orElse(indexOfLastChar);
         if (endCharOffset > curLine.length() - 1) {
-          throw new BadRequestException(
-              format("endCharOffset (%d) > max endLine offset (%d)", endCharOffset, curLine.length() - 1));
+          badRequest("endCharOffset (%d) > max endLine offset (%d)", endCharOffset, curLine.length() - 1);
         }
         lineToAdd = curLine.substring(0, endCharOffset + 1);
       } else {
@@ -132,19 +129,20 @@ public class TextViewerResource {
 
   private void checkOffsets(int start, int end, int limit) {
     if (end < start) {
-      throw new BadRequestException(
-          format("endOffset must be >= startOffset (%d), but is: %d", start, end));
+      badRequest("endOffset must be >= startOffset (%d), but is: %d", start, end);
     }
 
     if (start > limit) {
-      throw new BadRequestException(
-          format("startOffset is limited by source text; must be <= %d, but is: %d", limit, start));
+      badRequest("startOffset is limited by source text; must be <= %d, but is: %d", limit, start);
     }
 
     if (end > limit) {
-      throw new BadRequestException(
-          format("endOffset is limited by source text; must be <= %d, but is: %d", limit, end));
+      badRequest("endOffset is limited by source text; must be <= %d, but is: %d", limit, end);
     }
+  }
+
+  private void badRequest(String format, Object... args) {
+    throw new BadRequestException(String.format(format, args));
   }
 
   private Response asPlainTextAttachment(String contents, String acceptEncoding) {
