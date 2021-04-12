@@ -27,7 +27,7 @@ class TextViewerResourceTest {
   private static final String LINES = LINE + LINE;
 
   // Note that we construct CONTENTS to be WITHOUT trailing '\n'
-  // Yet we expect the endpoint's to return normalised lines, including trailing '\n
+  // Yet we DO expect the '/lines' view to a return trailing '\n
   // This test is written to expect that normalised behaviour.
   private static final Contents CONTENTS = Contents.fromBytes((LINE + CHARS).getBytes(UTF_8));
 
