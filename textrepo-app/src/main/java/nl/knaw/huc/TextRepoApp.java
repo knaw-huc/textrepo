@@ -140,6 +140,11 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
     environment.jersey().register(new LoggingApplicationEventListener(uuidGenerator));
   }
 
+  /**
+   * Creates a factory containing a mapping: viewname -> constructor method of Jersey Subresource
+   *
+   * @return factory of registered ViewBuilders, aka Jersey sub-resources
+   */
   private ViewBuilderFactory createViewBuilderFactory() {
     var viewBuilderFactory = new ViewBuilderFactory();
     viewBuilderFactory.register("text", TextViewerResource::new);

@@ -19,8 +19,24 @@ import static javax.ws.rs.core.HttpHeaders.ACCEPT_ENCODING;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static javax.ws.rs.core.MediaType.TEXT_PLAIN_TYPE;
 
+/*
+ * This class is a Jersey sub-resource. It can be instantiated in other Jersey resources which
+ * handle the first part of the URI which is responsible for fetching Contents and selecting
+ * which 'view' is requested.
+ * <p>
+ * So in TextViewerResource we can abstract from whatever it was that yielded the Contents,
+ * and what mechanism determined that 'we' should be the object handling the view details.
+ * <p>
+ * Then, TextViewerResource will take care of the rest of the URI, addressing the following:
+ * - …/chars/{startOffset}/{endOffset}
+ * - …/lines/{startLine}/{endLine}
+ * - …range/{startLine}/startCharOffset}/{endLine}/{endCharOffset}
+ *
+ * @see nl.knaw.huc.resources.view.ViewBuilderFactory
+ * @see nl.knaw.huc.resources.view.ViewVersionResource
+ */
 @Api(tags = {"versions", "contents", "view"})
-@Path("") // This class is a subresource; without @Path("") resolving fails during tests
+@Path("") // Without @Path("") this subresource is not resolved during tests
 public class TextViewerResource {
   private static final String LINEBREAK_MATCHER = "\\R";
   private static final Logger log = LoggerFactory.getLogger(TextViewerResource.class);

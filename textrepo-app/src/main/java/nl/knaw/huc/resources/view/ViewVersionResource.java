@@ -12,6 +12,14 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import java.util.UUID;
 
+/*
+ * This class parses the first part of a 'view' URI resolving the requested viewname
+ * to a Jersey Subresource which can then handle the view specific details.
+ * So, ViewVersionResource is responsible for retrieving the Contents for the
+ * requested version and then delegates to a (freshly created) subresource view.
+ *
+ * @see nl.knaw.huc.resources.view.TextViewerResource
+ */
 @Api(tags = {"versions", "contents", "view"})
 @Path("/view/versions/{versionId}")
 public class ViewVersionResource {
