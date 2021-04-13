@@ -3,21 +3,19 @@ package nl.knaw.huc.resources.view;
 import io.swagger.annotations.Api;
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.helpers.ContentsHelper;
+import nl.knaw.huc.resources.view.text.TextCharsResolver;
+import nl.knaw.huc.resources.view.text.TextLinesResolver;
+import nl.knaw.huc.resources.view.text.TextRangeResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
-import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
-import java.util.StringJoiner;
 
-import static java.lang.String.format;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT_ENCODING;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static javax.ws.rs.core.MediaType.TEXT_PLAIN_TYPE;
@@ -60,8 +58,8 @@ public class TextViewerResource {
   ) {
     log.debug("getChars: startParam=[{}], endParam=[{}]", startParam, endParam);
 
-    final var result = new PlainTextViewCharsResolver(startParam, endParam)
-        .resolve(contents.asUtf8String());
+    final var resolver = new TextCharsResolver(startParam, endParam);
+    final var result = resolver.resolve(contents);
 
     return asPlainTextAttachment(result, acceptEncoding);
   }
@@ -75,148 +73,10 @@ public class TextViewerResource {
   ) {
     log.debug("getLines: startParam=[{}], endParam=[{}]", startParam, endParam);
 
-    final var result = new PlainTextViewLinesResolver(startParam, endParam)
-        .resolve(contents.asUtf8String());
+    final var resolver = new TextLinesResolver(startParam, endParam);
+    final var result = resolver.resolve(contents);
 
     return asPlainTextAttachment(result, acceptEncoding);
-  }
-
-  static abstract class PlainTextViewResolver {
-    public static final String LINEBREAK_MATCHER = "\\R";
-
-    public abstract String resolve(String text);
-
-    protected void checkOffsets(int start, int end, int limit) {
-      if (end < start) {
-        throw new BadRequestException(
-            format("endOffset must be >= startOffset (%d), but is: %d", start, end));
-      }
-
-      if (start > limit) {
-        throw new NotFoundException(
-            format("startOffset is limited by source text; must be <= %d, but is: %d", limit, start));
-      }
-
-      if (end > limit) {
-        throw new NotFoundException(
-            format("endOffset is limited by source text; must be <= %d, but is: %d", limit, end));
-      }
-    }
-
-  }
-
-  static class PlainTextViewCharsResolver extends PlainTextViewResolver {
-    private final RangeParam startParam;
-    private final RangeParam endParam;
-
-    PlainTextViewCharsResolver(RangeParam startParam, RangeParam endParam) {
-      this.startParam = startParam;
-      this.endParam = endParam;
-    }
-
-    @Override
-    @Nonnull
-    public String resolve(@Nonnull String text) {
-      final var indexOfFirstChar = 0;
-      final var startOffset = startParam.get().orElse(indexOfFirstChar);
-
-      final var indexOfLastChar = text.length() - 1;
-      final var endOffset = endParam.get().orElse(indexOfLastChar);
-
-      // "endOffset +1" because substring goes to end (exclusive) and we want end (inclusive)
-      checkOffsets(startOffset, endOffset, indexOfLastChar);
-
-      return text.substring(startOffset, endOffset + 1);
-    }
-
-  }
-
-  static class PlainTextViewLinesResolver extends PlainTextViewResolver {
-    private final RangeParam startParam;
-    private final RangeParam endParam;
-
-    private PlainTextViewLinesResolver(RangeParam startParam, RangeParam endParam) {
-      this.startParam = startParam;
-      this.endParam = endParam;
-    }
-
-    @Override
-    @Nonnull
-    public String resolve(@Nonnull String text) {
-      final var indexOfFirstLine = 0;
-      final var startOffset = startParam.get().orElse(indexOfFirstLine);
-
-      final var lines = text.split(LINEBREAK_MATCHER);
-      final var indexOfLastLine = lines.length - 1;
-      final var endOffset = endParam.get().orElse(indexOfLastLine);
-
-      checkOffsets(startOffset, endOffset, indexOfLastLine);
-
-      final var joiner = new StringJoiner("\n", "", "\n");
-      for (int lineNo = startOffset; lineNo <= endOffset; lineNo++) {
-        joiner.add(lines[lineNo]);
-      }
-
-      return joiner.toString();
-    }
-  }
-
-  static class PlainTextViewRangeResolver extends PlainTextViewResolver {
-    private final RangeParam startLineParam;
-    private final RangeParam startCharParam;
-    private final RangeParam endLineParam;
-    private final RangeParam endCharParam;
-
-    PlainTextViewRangeResolver(RangeParam startLineParam, RangeParam startCharParam,
-                               RangeParam endLineParam, RangeParam endCharParam) {
-      this.startLineParam = startLineParam;
-      this.startCharParam = startCharParam;
-      this.endLineParam = endLineParam;
-      this.endCharParam = endCharParam;
-    }
-
-    @Nonnull
-    public String resolve(@Nonnull String text) {
-      final var lines = text.split(LINEBREAK_MATCHER);
-      final var indexOfFirstLine = 0;
-      final var startLineOffset = startLineParam.get().orElse(indexOfFirstLine);
-      final var indexOfLastLine = lines.length - 1;
-      final var endLineOffset = endLineParam.get().orElse(indexOfLastLine);
-      checkOffsets(startLineOffset, endLineOffset, indexOfLastLine);
-
-      final var joiner = new StringJoiner("\n");
-
-      for (int curLineIndex = startLineOffset; curLineIndex <= endLineOffset; curLineIndex++) {
-        final var curLine = lines[curLineIndex];
-        final var indexOfFirstChar = 0;
-        final var indexOfLastChar = curLine.length() - 1;
-
-        final int startCharOffset;
-        if (curLineIndex == startLineOffset) {
-          startCharOffset = startCharParam.get().orElse(indexOfFirstChar);
-          if (startCharOffset > curLine.length() - 1) {
-            throw new BadRequestException(format("startCharOffset (%d) > max startLine offset (%d)",
-                startCharOffset, curLine.length() - 1));
-          }
-        } else { // on all lines other than startLine
-          startCharOffset = 0;
-        }
-
-        final int endCharOffset;
-        if (curLineIndex == endLineOffset) {
-          endCharOffset = endCharParam.get().orElse(indexOfLastChar);
-          if (endCharOffset > indexOfLastChar) {
-            throw new BadRequestException(format("endCharOffset (%d) > max endLine offset (%d)", endCharOffset,
-                indexOfLastChar));
-          }
-        } else { // on all lines other than startLine
-          endCharOffset = indexOfLastChar;
-        }
-
-        joiner.add(curLine.substring(startCharOffset, endCharOffset + 1));
-      }
-      return joiner.toString();
-    }
   }
 
   @GET
@@ -232,14 +92,14 @@ public class TextViewerResource {
     log.debug("getLines: startLineParam=[{}], startCharParam=[{}], endLineParam=[{}], endCharParam=[{}]",
         startLineParam, startCharParam, endLineParam, endCharParam);
 
-    final var resolver = new PlainTextViewRangeResolver(startLineParam, startCharParam, endLineParam, endCharParam);
-    final var result = resolver.resolve(contents.asUtf8String());
+    final var resolver = new TextRangeResolver(startLineParam, startCharParam, endLineParam, endCharParam);
+    final var result = resolver.resolve(contents);
 
     return asPlainTextAttachment(result, acceptEncoding);
   }
 
-  private Response asPlainTextAttachment(String contents, String acceptEncoding) {
-    return contentsHelper.asAttachment(contents, acceptEncoding)
+  private Response asPlainTextAttachment(String text, String acceptEncoding) {
+    return contentsHelper.asAttachment(text, acceptEncoding)
                          .header(CONTENT_TYPE, TEXT_PLAIN_TYPE)
                          .build();
   }
