@@ -21,10 +21,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import static com.google.common.primitives.Shorts.asList;
 import static java.lang.String.format;
+import static java.util.List.of;
 import static java.util.Objects.requireNonNull;
-import static org.hibernate.validator.internal.util.CollectionHelper.newArrayList;
 
 public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
   private static final Logger log = LoggerFactory.getLogger(JdbiIndexFileTaskBuilder.class);
@@ -140,7 +139,7 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
     }
 
     private void indexFilesByType(Short typeId) {
-      filesTotal += jdbi.onDemand(FilesDao.class).countByTypes(asList(typeId));
+      filesTotal += jdbi.onDemand(FilesDao.class).countByTypes(of(typeId));
       jdbi.onDemand(FilesDao.class).foreachByType(typeId, this::indexFile);
     }
 
