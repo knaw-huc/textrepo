@@ -22,6 +22,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import static java.lang.String.format;
+import static java.util.List.of;
 import static java.util.Objects.requireNonNull;
 
 public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
@@ -33,6 +34,9 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
   private String externalId;
   private String typeName;
   private String indexName;
+
+  private long filesAffected = 0;
+  private long filesTotal = -1;
 
   public JdbiIndexFileTaskBuilder(Jdbi jdbi, List<Indexer> indexers) {
     this.jdbi = requireNonNull(jdbi);
@@ -135,6 +139,7 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
     }
 
     private void indexFilesByType(Short typeId) {
+      filesTotal += jdbi.onDemand(FilesDao.class).countByTypes(of(typeId));
       jdbi.onDemand(FilesDao.class).foreachByType(typeId, this::indexFile);
     }
 
@@ -148,6 +153,7 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
           result.ifPresent((str) -> log.warn(indexer.getClass().getName() + " - " + str));
         });
         filesAffected++;
+        log.info("Indexed file {} ({} of estimated {})", file.getId(), filesAffected, filesTotal);
       });
     }
   }
@@ -160,8 +166,6 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
     private final Logger log = LoggerFactory.getLogger(JdbiIndexAllFilesTask.class);
     private final Indexer indexer;
 
-    private int filesAffected = 0;
-
     private JdbiIndexAllFilesByIndexTask(String indexName) {
       this.indexer = indexers
           .stream()
@@ -172,15 +176,20 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
 
     @Override
     public String run() {
+      var typesToIndex = new ArrayList<Short>();
+
       indexer.getConfig().mimetypes
           .forEach(m -> {
             var type = types()
                 .findByMimetype(m);
             type.ifPresentOrElse(
-                this::indexFilesByType,
+                typesToIndex::add,
                 () -> log.warn("No such mimetype: {}", m)
             );
           });
+
+      filesTotal = jdbi.onDemand(FilesDao.class).countByTypes(typesToIndex);
+      typesToIndex.forEach(this::indexFilesByType);
 
       final var msg = format("Total files affected: %d", filesAffected);
       log.info(msg);
@@ -196,6 +205,7 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
     }
 
     private void indexFilesByType(Short typeId) {
+      log.info("Indexing files by type: {}", typeId);
       jdbi.onDemand(FilesDao.class).foreachByType(typeId, this::indexFile);
     }
 
@@ -207,6 +217,7 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
         var result = indexer.index(file, contents);
         result.ifPresent((str) -> log.warn(indexer.getClass().getName() + " - " + str));
         filesAffected++;
+        log.info("Indexed file {} ({} of estimated {})", file.getId(), filesAffected, filesTotal);
       });
     }
 

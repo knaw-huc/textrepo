@@ -115,9 +115,9 @@ public class MappedIndexer implements Indexer {
     var response = getFields(latestVersionContents, mimetype, file.getId());
     var esFacets = response.readEntity(String.class);
 
-    var fieldStatusComplaint = checkFieldStatus(response, esFacets);
-    if (fieldStatusComplaint.isPresent()) {
-      return fieldStatusComplaint;
+    var error = checkIndexerResponseStatus(response, esFacets);
+    if (error.isPresent()) {
+      return error;
     }
 
     return sendRequest(file.getId(), esFacets);
@@ -194,16 +194,7 @@ public class MappedIndexer implements Indexer {
         .id(fileId.toString())
         .source(esFacets, JSON);
     var response = indexRequest(indexRequest);
-    var status = response.status().getStatus();
-    if (status == 201) {
-      log.debug("Successfully added file [{}] to index [{}]", fileId, config.elasticsearch.index);
-      return Optional.empty();
-    } else {
-      final var msg = format("Response of adding file %s to index %s was: %d - %s",
-          fileId, config.elasticsearch.index, status, response.toString());
-      log.error(msg);
-      return Optional.of(msg);
-    }
+    return checkEsResponseStatus(response, fileId);
   }
 
   private IndexResponse indexRequest(IndexRequest indexRequest) {
@@ -224,10 +215,38 @@ public class MappedIndexer implements Indexer {
     return true;
   }
 
-  private Optional<String> checkFieldStatus(Response response, String esFacets) {
+  /**
+   * When not 200 or 201, return error msg
+   */
+  private Optional<String> checkEsResponseStatus(IndexResponse response, UUID fileId) {
+    var status = response.status().getStatus();
+    var index = config.elasticsearch.index;
+
+    if (status == 201) {
+      log.debug("Successfully added file [{}] to index [{}]", fileId, index);
+      return Optional.empty();
+    } else if (status == 200) {
+      log.debug("Successfully updated file [{}] to index [{}]", fileId, index);
+      return Optional.empty();
+    } else {
+      var msg = format(
+          "Response of adding file %s to index %s was: %d - %s",
+          fileId, index, status, response.toString()
+      );
+      log.error(msg);
+      return Optional.of(msg);
+    }
+  }
+
+  /**
+   * When not 200, return error msg
+   */
+  private Optional<String> checkIndexerResponseStatus(Response response, String esBody) {
     if (response.getStatus() != 200) {
-      final var msg = format("Could not get fields for %s, response was: %d - %s",
-          config.elasticsearch.index, response.getStatus(), esFacets);
+      final var msg = format(
+          "Could not get fields for %s, response was: %d - %s",
+          config.elasticsearch.index, response.getStatus(), esBody
+      );
       log.error(msg);
       return Optional.of(msg);
     }
