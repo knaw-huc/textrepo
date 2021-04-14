@@ -35,7 +35,7 @@
     <jersey.version>2.33</jersey.version>
     <json-path.version>2.4.0</json-path.version>
     <mockito-core.version>3.0.0</mockito-core.version>
-    <postgresql.version>42.2.13</postgresql.version>
+    <postgresql.version>42.2.19.jre7</postgresql.version>
     <commons-text.version>1.7</commons-text.version>
   </properties>
 
