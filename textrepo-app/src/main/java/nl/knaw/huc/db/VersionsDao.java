@@ -56,6 +56,12 @@ public interface VersionsDao {
   @RegisterConstructorMapper(value = Version.class)
   Optional<Version> find(UUID id);
 
+  @SqlQuery("select mimetype from types " +
+      "left join files on files.type_id = types.id " +
+      "left join versions on versions.file_id = files.id " +
+      "where versions.id = ?")
+  Optional<String> findMimetypeByVersionId(UUID versionId);
+
   @SqlUpdate("delete from versions where id = ?")
   void delete(UUID id);
 }

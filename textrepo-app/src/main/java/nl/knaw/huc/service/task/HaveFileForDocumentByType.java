@@ -35,7 +35,7 @@ public class HaveFileForDocumentByType implements InTransactionProvider<TextRepo
   }
 
   private Short getTypeId() {
-    return types().find(typeName).orElseThrow(illegalType(typeName));
+    return types().findByName(typeName).orElseThrow(illegalType(typeName));
   }
 
   private Supplier<NotFoundException> illegalType(String name) {

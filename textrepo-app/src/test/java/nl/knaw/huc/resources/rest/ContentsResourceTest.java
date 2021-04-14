@@ -7,7 +7,6 @@ import nl.knaw.huc.helpers.ContentsHelper;
 import nl.knaw.huc.service.contents.ContentsService;
 import nl.knaw.huc.service.store.ContentsStorage;
 import org.apache.commons.io.IOUtils;
-import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

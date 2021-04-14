@@ -26,7 +26,9 @@ import java.util.UUID;
 
 import static java.util.Objects.requireNonNull;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT_ENCODING;
+import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
 
 @Api(tags = {"versions", "contents"})
 @Path("/rest/versions/{versionId}/contents")
@@ -40,7 +42,8 @@ public class VersionContentsResource {
   private final VersionContentsService contentsService;
   private final ContentsHelper contentsHelper;
 
-  public VersionContentsResource(VersionContentsService contentsService, ContentsHelper contentsHelper) {
+  public VersionContentsResource(VersionContentsService contentsService,
+                                 ContentsHelper contentsHelper) {
     this.contentsService = requireNonNull(contentsService);
     this.contentsHelper = requireNonNull(contentsHelper);
   }
@@ -62,11 +65,16 @@ public class VersionContentsResource {
       @HeaderParam(ACCEPT_ENCODING) String acceptEncoding,
       @PathParam("versionId") @NotNull @Valid UUID versionId
   ) {
+    final var contentType = contentsService.getVersionMimetype(versionId)
+                                           .orElse(APPLICATION_OCTET_STREAM);
+
     log.debug("Get version contents: versionId={}", versionId);
     var contents = contentsService.getByVersionId(versionId);
     log.debug("Got version contents: {}", contents);
 
-    return contentsHelper.asAttachment(contents, acceptEncoding).build();
+    return contentsHelper.asAttachment(contents, acceptEncoding)
+                         .header(CONTENT_TYPE, contentType)
+                         .build();
   }
 
   @PUT

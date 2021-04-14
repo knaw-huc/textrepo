@@ -5,6 +5,7 @@ import nl.knaw.huc.TextRepoConfiguration;
 import nl.knaw.huc.helpers.ContentsHelper;
 import nl.knaw.huc.helpers.Paginator;
 import nl.knaw.huc.resources.ResourcesBuilder;
+import nl.knaw.huc.resources.view.ViewBuilderFactory;
 import nl.knaw.huc.service.contents.ContentsService;
 import nl.knaw.huc.service.dashboard.DashboardService;
 import nl.knaw.huc.service.document.DocumentService;
@@ -65,6 +66,7 @@ public class ResourcesBuilderTest {
         .versionContentsService(mock(VersionContentsService.class))
         .versionMetadataService(mock(VersionMetadataService.class))
         .versionService(mock(VersionService.class))
+        .viewBuilderFactory(mock(ViewBuilderFactory.class))
         .build()
         .stream()
         .map(br -> br.getClass().getName())
@@ -74,6 +76,7 @@ public class ResourcesBuilderTest {
     var foundResources = reflections
         .getTypesAnnotatedWith(Path.class)
         .stream()
+        .filter(aClass -> !aClass.getAnnotation(Path.class).value().isEmpty())
         .map(Class::getName)
         .collect(toList());
 

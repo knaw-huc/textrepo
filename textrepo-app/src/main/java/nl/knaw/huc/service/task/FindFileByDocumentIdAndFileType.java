@@ -25,7 +25,7 @@ public class FindFileByDocumentIdAndFileType implements InTransactionProvider<Te
   @Override
   public TextRepoFile executeIn(Handle transaction) {
     this.transaction = requireNonNull(transaction);
-    var type = types().find(this.typeName).orElseThrow(illegalType(this.typeName));
+    var type = types().findByName(this.typeName).orElseThrow(illegalType(this.typeName));
     return documentFiles().findFile(docId, type).orElseThrow(this::noFileForDocAndType);
   }
 

@@ -22,6 +22,8 @@ import nl.knaw.huc.resources.task.FindResource;
 import nl.knaw.huc.resources.task.ImportResource;
 import nl.knaw.huc.resources.task.IndexResource;
 import nl.knaw.huc.resources.task.RegisterIdentifiersResource;
+import nl.knaw.huc.resources.view.ViewBuilderFactory;
+import nl.knaw.huc.resources.view.ViewVersionResource;
 import nl.knaw.huc.service.contents.ContentsService;
 import nl.knaw.huc.service.dashboard.DashboardService;
 import nl.knaw.huc.service.document.DocumentService;
@@ -55,6 +57,7 @@ public class ResourcesBuilder {
   private TypeService typeService;
   private VersionContentsService versionContentsService;
   private VersionMetadataService versionMetadataService;
+  private ViewBuilderFactory viewBuilderFactory;
 
   public ResourcesBuilder(@Nonnull TextRepoConfiguration config) {
     this.config = config;
@@ -130,6 +133,11 @@ public class ResourcesBuilder {
     return this;
   }
 
+  public ResourcesBuilder viewBuilderFactory(@Nonnull ViewBuilderFactory viewBuilderFactory) {
+    this.viewBuilderFactory = viewBuilderFactory;
+    return this;
+  }
+
   /**
    * Build TextRepo Jersey resources
    *
@@ -155,7 +163,8 @@ public class ResourcesBuilder {
         new TypesResource(typeService),
         new VersionContentsResource(versionContentsService, contentsHelper),
         new VersionMetadataResource(versionMetadataService),
-        new VersionsResource(versionService)
+        new VersionsResource(versionService),
+        new ViewVersionResource(versionContentsService, contentsHelper, viewBuilderFactory)
     );
 
   }
