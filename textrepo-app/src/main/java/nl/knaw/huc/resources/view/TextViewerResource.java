@@ -1,6 +1,5 @@
 package nl.knaw.huc.resources.view;
 
-import io.swagger.annotations.Api;
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.helpers.ContentsHelper;
 import nl.knaw.huc.resources.view.text.TextCharsResolver;
@@ -36,7 +35,6 @@ import static javax.ws.rs.core.MediaType.TEXT_PLAIN_TYPE;
  * @see nl.knaw.huc.resources.view.ViewBuilderFactory
  * @see nl.knaw.huc.resources.view.ViewVersionResource
  */
-@Api(tags = {"versions", "contents", "view"})
 @Path("") // Without @Path("") this subresource is not resolved during tests
 public class TextViewerResource {
   private static final Logger log = LoggerFactory.getLogger(TextViewerResource.class);

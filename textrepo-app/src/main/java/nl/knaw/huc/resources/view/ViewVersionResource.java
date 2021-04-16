@@ -1,6 +1,5 @@
 package nl.knaw.huc.resources.view;
 
-import io.swagger.annotations.Api;
 import nl.knaw.huc.helpers.ContentsHelper;
 import nl.knaw.huc.service.version.content.VersionContentsService;
 import org.slf4j.Logger;
@@ -20,7 +19,6 @@ import java.util.UUID;
  *
  * @see nl.knaw.huc.resources.view.TextViewerResource
  */
-@Api(tags = {"versions", "contents", "view"})
 @Path("/view/versions/{versionId}")
 public class ViewVersionResource {
   private static final Logger log = LoggerFactory.getLogger(ViewVersionResource.class);
