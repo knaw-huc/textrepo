@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<PcGts>
+  <Metadata>
+    <Creator>P2PaLA-PRHLT</Creator>
+    <Created>2020-10-13T10:51:49</Created>
+    <LastChange>2020-10-13T10:51:49</LastChange>
+  </Metadata>
+  <Page imageFilename="MMPM02_000346001_00006_access.jpg" imageWidth="1346" imageHeight="1829">
+    <TextRegion id="rgPve_1" custom="structure {type:full_page;}">
+      <Coords points="0,0 0,1827 1344,1827 1344,0" />
+    </TextRegion>
+  </Page>
+</PcGts>

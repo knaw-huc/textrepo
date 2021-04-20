@@ -36,6 +36,7 @@
     <postgresql.version>42.2.19</postgresql.version>
     <junit5.version>5.6.0</junit5.version>
     <commons-lang.version>3.12.0</commons-lang.version>
+    <xom.version>1.3.7</xom.version>
 
   </properties>
 
@@ -109,6 +110,13 @@
           <artifactId>validation-api</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+
+    <!-- XML -->
+    <dependency>
+      <groupId>xom</groupId>
+      <artifactId>xom</artifactId>
+      <version>${xom.version}</version>
     </dependency>
 
     <!-- Testing: -->

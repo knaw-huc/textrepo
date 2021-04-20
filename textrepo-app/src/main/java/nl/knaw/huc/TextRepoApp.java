@@ -17,6 +17,7 @@ import nl.knaw.huc.helpers.Paginator;
 import nl.knaw.huc.resources.ResourcesBuilder;
 import nl.knaw.huc.resources.view.TextViewerResource;
 import nl.knaw.huc.resources.view.ViewBuilderFactory;
+import nl.knaw.huc.resources.view.XmlViewerResource;
 import nl.knaw.huc.service.contents.ContentsService;
 import nl.knaw.huc.service.dashboard.JdbiDashboardService;
 import nl.knaw.huc.service.datetime.LocalDateTimeParamConverterProvider;
@@ -148,6 +149,7 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
   private ViewBuilderFactory createViewBuilderFactory() {
     var viewBuilderFactory = new ViewBuilderFactory();
     viewBuilderFactory.register("text", TextViewerResource::new);
+    viewBuilderFactory.register("xml", XmlViewerResource::new);
     // TODO: register more ViewResource subclasses
     return viewBuilderFactory;
   }
