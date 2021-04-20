@@ -24,6 +24,8 @@ import java.io.StringReader;
 import java.util.stream.StreamSupport;
 
 import static java.lang.String.format;
+import static java.net.URLDecoder.decode;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.stream.Collectors.toList;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT_ENCODING;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
@@ -62,22 +64,29 @@ public class XmlViewerResource {
       @HeaderParam(ACCEPT_ENCODING) String acceptEncoding,
       @Encoded @PathParam("expr") @NotNull String expr
   ) {
-    log.debug("getXPath: expr=[{}]", expr);
+    final var xpath = decode(expr, UTF_8);
+    log.debug("getXPath: expr=[{}], decoded=[{}]", expr, xpath);
 
     final var xmlDoc = parse(contents);
 
     log.debug("parsed: [{}]", xmlDoc);
 
-    final var nodes = xmlDoc.query(expr);
+    final var nodes = xmlDoc.query(xpath);
     log.debug("nodes (size={}): {}", nodes.size(), nodes);
     nodes.forEach(n -> log.debug(n.getValue()));
     final var result = StreamSupport
         .stream(nodes.spliterator(), false)
-        .peek(n -> log.debug(format("node: [%s]", n.getValue())))
         .map(Node::toXML)
+        .peek(this::debugNode)
         .collect(toList());
 
-    return Response.ok(nodes).build();
+    return Response.ok(result).build();
+  }
+
+  private void debugNode(String node) {
+    if (log.isDebugEnabled()) {
+      log.debug(format("node: [%s]", node));
+    }
   }
 
   private static Document parse(Contents contents) {
