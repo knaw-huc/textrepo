@@ -4,13 +4,18 @@ import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.helpers.ContentsHelper;
 import nu.xom.Builder;
 import nu.xom.Document;
+import nu.xom.IllegalNameException;
+import nu.xom.NamespaceConflictException;
 import nu.xom.Node;
+import nu.xom.Nodes;
 import nu.xom.ParsingException;
 import nu.xom.ValidityException;
+import nu.xom.XPathContext;
+import nu.xom.XPathException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Encoded;
 import javax.ws.rs.GET;
@@ -30,7 +35,6 @@ import static java.util.stream.Collectors.toList;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT_ENCODING;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static javax.ws.rs.core.MediaType.APPLICATION_XML;
 import static javax.ws.rs.core.MediaType.TEXT_PLAIN_TYPE;
 
 /*
@@ -57,23 +61,44 @@ public class XmlViewerResource {
   }
 
   @GET
-  @Path("xpath/{expr}")
-  @Produces({APPLICATION_JSON, APPLICATION_XML})
-  @Encoded
+  @Path("xpath/{prefix}/{expr}")
+  @Produces(APPLICATION_JSON)
   public Response getXPath(
       @HeaderParam(ACCEPT_ENCODING) String acceptEncoding,
-      @Encoded @PathParam("expr") @NotNull String expr
+      @PathParam("expr") @NotBlank @Encoded String expr,
+      @PathParam("prefix") String prefix
   ) {
     final var xpath = decode(expr, UTF_8);
     log.debug("getXPath: expr=[{}], decoded=[{}]", expr, xpath);
 
     final var xmlDoc = parse(contents);
-
     log.debug("parsed: [{}]", xmlDoc);
 
-    final var nodes = xmlDoc.query(xpath);
-    log.debug("nodes (size={}): {}", nodes.size(), nodes);
+    final var root = xmlDoc.getRootElement();
+    final var defaultNameSpace = root.getNamespaceURI();
+    log.debug("default namespace on root element [{}] is: [{}]",
+        root.getLocalName(),
+        defaultNameSpace);
+
+    final XPathContext context;
+    try {
+      context = new XPathContext(prefix, defaultNameSpace);
+    } catch (IllegalNameException | NamespaceConflictException e) {
+      log.warn("failed to setup xpath context: {}", e.getMessage());
+      throw new BadRequestException(e.getMessage());
+    }
+
+    final Nodes nodes;
+    try {
+      nodes = xmlDoc.query(xpath, context);
+    } catch (XPathException e) {
+      log.warn("xpath failed: {}", e.getMessage());
+      throw new BadRequestException(e.getMessage());
+    }
+
+    log.debug("xpath yielded {} node(s)", nodes.size());
     nodes.forEach(n -> log.debug(n.getValue()));
+
     final var result = StreamSupport
         .stream(nodes.spliterator(), false)
         .map(Node::toXML)
@@ -93,11 +118,11 @@ public class XmlViewerResource {
     try {
       return new Builder().build(new StringReader(contents.asUtf8String()));
     } catch (ValidityException e) {
-      throw new BadRequestException(format("document not valid XML: %s", e.getMessage()));
+      throw new BadRequestException(format("Document is not valid XML: %s", e.getMessage()));
     } catch (ParsingException e) {
-      throw new BadRequestException(format("document not well-formed: %s", e.getMessage()));
+      throw new BadRequestException(format("Document is not well-formed: %s", e.getMessage()));
     } catch (IOException e) {
-      throw new BadRequestException(format("failed to fully read document: %s", e.getMessage()));
+      throw new BadRequestException(format("Failed to fully read document: %s", e.getMessage()));
     }
   }
 
