@@ -12,6 +12,7 @@ import nu.xom.ParsingException;
 import nu.xom.ValidityException;
 import nu.xom.XPathContext;
 import nu.xom.XPathException;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,7 +67,7 @@ public class XmlViewerResource {
   public Response getXPath(
       @HeaderParam(ACCEPT_ENCODING) String acceptEncoding,
       @PathParam("expr") @NotBlank @Encoded String expr,
-      @PathParam("prefix") String prefix
+      @PathParam("prefix") String defaultNamespacePrefix
   ) {
     final var xpath = decode(expr, UTF_8);
     log.debug("getXPath: expr=[{}], decoded=[{}]", expr, xpath);
@@ -75,17 +76,33 @@ public class XmlViewerResource {
     log.debug("parsed: [{}]", xmlDoc);
 
     final var root = xmlDoc.getRootElement();
-    final var defaultNameSpace = root.getNamespaceURI();
-    log.debug("default namespace on root element [{}] is: [{}]",
+    log.debug("root element: [{}] has namespace prefix: [{}] and uri: [{}]",
         root.getLocalName(),
-        defaultNameSpace);
+        root.getNamespacePrefix(),
+        root.getNamespaceURI());
 
-    final XPathContext context;
-    try {
-      context = new XPathContext(prefix, defaultNameSpace);
-    } catch (IllegalNameException | NamespaceConflictException e) {
-      log.warn("failed to setup xpath context: {}", e.getMessage());
-      throw new BadRequestException(e.getMessage());
+    final var declarationCount = root.getNamespaceDeclarationCount();
+    log.debug("root element namespace declarationCount: {}", declarationCount);
+
+    final XPathContext context = new XPathContext();
+    for (int i = 0; i < declarationCount; i++) {
+      final String prefix;
+      final var curPrefix = root.getNamespacePrefix(i);
+      final var nsUri = root.getNamespaceURI(curPrefix);
+      log.debug(String.format(" %02d: prefix=%s, uri=%s%n", i, curPrefix, nsUri));
+
+      if (StringUtils.isBlank(curPrefix)) {
+        prefix = defaultNamespacePrefix;
+      } else {
+        prefix = curPrefix;
+      }
+      try {
+        log.debug("registering namespace: [{}] -> [{}]", prefix, nsUri);
+        context.addNamespace(prefix, nsUri);
+      } catch (IllegalNameException | NamespaceConflictException e) {
+        log.warn("failed to setup xpath context: {}", e.getMessage());
+        throw new BadRequestException(e.getMessage());
+      }
     }
 
     final Nodes nodes;
