@@ -34,9 +34,7 @@ import static java.net.URLDecoder.decode;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.stream.Collectors.toList;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT_ENCODING;
-import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static javax.ws.rs.core.MediaType.TEXT_PLAIN_TYPE;
 
 /*
  * This class is a Jersey sub-resource. It can be instantiated in other Jersey resources which
@@ -49,6 +47,7 @@ import static javax.ws.rs.core.MediaType.TEXT_PLAIN_TYPE;
  * @see nl.knaw.huc.resources.view.ViewVersionResource
  */
 @Path("") // Without @Path("") this subresource is not resolved during tests
+@Produces(APPLICATION_JSON)
 public class XmlViewerResource {
   private static final Logger log = LoggerFactory.getLogger(XmlViewerResource.class);
 
@@ -62,9 +61,40 @@ public class XmlViewerResource {
   }
 
   @GET
+  @Path("xpath/{expr}")
+  public Response getXPathWithoutNamespace(
+      @HeaderParam(ACCEPT_ENCODING) String acceptEncoding,
+      @PathParam("expr") @NotBlank @Encoded String expr
+  ) {
+    final var xpath = decode(expr, UTF_8);
+    log.debug("getXPath: expr=[{}], decoded=[{}]", expr, xpath);
+
+    final var xmlDoc = parse(contents);
+    log.debug("parsed: [{}]", xmlDoc);
+
+    final Nodes nodes;
+    try {
+      nodes = xmlDoc.query(xpath);
+    } catch (XPathException e) {
+      log.warn("xpath failed: {}", e.getMessage());
+      throw new BadRequestException(e.getMessage());
+    }
+
+    log.debug("xpath yielded {} node(s)", nodes.size());
+    nodes.forEach(n -> log.debug(n.getValue()));
+
+    final var result = StreamSupport
+        .stream(nodes.spliterator(), false)
+        .map(Node::toXML)
+        .peek(this::debugNode)
+        .collect(toList());
+
+    return Response.ok(result).build();
+  }
+
+  @GET
   @Path("xpath/{prefix}/{expr}")
-  @Produces(APPLICATION_JSON)
-  public Response getXPath(
+  public Response getXPathWithNamespace(
       @HeaderParam(ACCEPT_ENCODING) String acceptEncoding,
       @PathParam("expr") @NotBlank @Encoded String expr,
       @PathParam("prefix") String defaultNamespacePrefix
@@ -143,9 +173,4 @@ public class XmlViewerResource {
     }
   }
 
-  private Response asPlainTextAttachment(String text, String acceptEncoding) {
-    return contentsHelper.asAttachment(text, acceptEncoding)
-                         .header(CONTENT_TYPE, TEXT_PLAIN_TYPE)
-                         .build();
-  }
 }
