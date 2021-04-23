@@ -114,6 +114,12 @@
 
     <!-- XML -->
     <dependency>
+      <!-- override xerces to higher version fixes security vulnerabilities -->
+      <groupId>xerces</groupId>
+      <artifactId>xercesImpl</artifactId>
+      <version>2.12.0</version>
+    </dependency>
+    <dependency>
       <groupId>xom</groupId>
       <artifactId>xom</artifactId>
       <version>${xom.version}</version>
