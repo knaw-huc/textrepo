@@ -1,6 +1,9 @@
 # Text Repository
 
 [![documentation](https://readthedocs.org/projects/textrepo/badge/?version=latest)](https://textrepo.readthedocs.org/en/latest)
+[![Docker build](https://img.shields.io/docker/cloud/build/knawhuc/textrepo-concordion)](https://hub.docker.com/repository/docker/knawhuc/textrepo-app)
+[![Docker version](https://img.shields.io/docker/v/knawhuc/textrepo-app?sort=semver)](https://hub.docker.com/repository/docker/knawhuc/textrepo-app/tags?page=1&ordering=last_updated)
+
 
 Repository to store texts, including their metadata and versions.
 
