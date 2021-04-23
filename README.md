@@ -1,5 +1,7 @@
 # Text Repository
 
+[![documentation](https://readthedocs.org/projects/textrepo/badge/?version=latest)](https://textrepo.readthedocs.org/en/latest)
+
 Repository to store texts, including their metadata and versions.
 
 Documentation can be found at [readthedocs](http://textrepo.readthedocs.io/en/latest/).
