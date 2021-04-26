@@ -9,6 +9,7 @@ import nu.xom.ValidityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import javax.ws.rs.BadRequestException;
 import java.io.IOException;
 import java.io.StringReader;
@@ -20,25 +21,21 @@ import static java.lang.String.format;
 public abstract class XmlResolver {
   private static final Logger log = LoggerFactory.getLogger(XmlResolver.class);
 
-  protected abstract Nodes query(Document xmlDoc);
+  protected abstract Nodes query(@Nonnull Document xmlDoc);
 
-  public List<String> resolve(Contents contents) {
-    var xmlDoc = parse(contents);
-    log.debug("parsed: [{}]", xmlDoc);
+  public List<String> resolve(@Nonnull Contents contents) {
+    final var xmlDoc = parse(contents);
 
-    final Nodes nodes;
     try {
-      nodes = query(xmlDoc);
+      return asListOfXmlExcerpts(query(xmlDoc));
     } catch (Exception e) {
-      log.warn("xpath failed: {}", e.getMessage());
+      // Generic catch-all for XML failure cases, as there is not much we can do with the specifics.
+      log.warn("failed to resolve: {}", e.getMessage());
       throw new BadRequestException(e.getMessage());
     }
-
-    log.debug("xpath yielded {} node(s)", nodes.size());
-    return asList(nodes);
   }
 
-  private Document parse(Contents contents) {
+  private Document parse(@Nonnull Contents contents) {
     try {
       return new Builder().build(new StringReader(contents.asUtf8String()));
     } catch (ValidityException e) {
@@ -50,8 +47,8 @@ public abstract class XmlResolver {
     }
   }
 
-  private List<String> asList(Nodes nodes) {
-    final var list = new ArrayList<String>();
+  private List<String> asListOfXmlExcerpts(@Nonnull Nodes nodes) {
+    final var list = new ArrayList<String>(); // if there are no nodes, result should be an empty list
 
     for (var node : nodes) {
       list.add(node.toXML());

@@ -8,31 +8,35 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NamespaceAwareXmlResolver extends XmlResolver {
-  private static final Logger log = LoggerFactory.getLogger(NamespaceAwareXmlResolver.class);
+import javax.annotation.Nonnull;
+
+import static java.util.Objects.requireNonNull;
+
+public class NamespaceAwareXPathResolver extends XmlResolver {
+  private static final Logger log = LoggerFactory.getLogger(NamespaceAwareXPathResolver.class);
 
   private final String defaultNamespacePrefix;
   private final String xpath;
 
-  public NamespaceAwareXmlResolver(String defaultNamespacePrefix, String xpath) {
-    this.defaultNamespacePrefix = defaultNamespacePrefix;
-    this.xpath = xpath;
+  public NamespaceAwareXPathResolver(String defaultNamespacePrefix, String xpath) {
+    this.defaultNamespacePrefix = requireNonNull(defaultNamespacePrefix);
+    this.xpath = requireNonNull(xpath);
   }
 
   @Override
-  protected Nodes query(Document xmlDoc) {
+  protected Nodes query(@Nonnull Document xmlDoc) {
     final var root = xmlDoc.getRootElement();
     log.debug("root element: [{}] has namespace prefix: [{}] and uri: [{}]",
         root.getLocalName(),
         root.getNamespacePrefix(),
         root.getNamespaceURI());
 
-    final XPathContext context = setupXPathContext(root);
+    final XPathContext context = createXPathContext(root);
 
     return xmlDoc.query(xpath, context);
   }
 
-  private XPathContext setupXPathContext(Element root) {
+  private XPathContext createXPathContext(@Nonnull Element root) {
     final var declarationCount = root.getNamespaceDeclarationCount();
     log.debug("root element namespace declarationCount: {}", declarationCount);
 
@@ -52,7 +56,7 @@ public class NamespaceAwareXmlResolver extends XmlResolver {
       log.debug("adding namespace: [{}] -> [{}]", prefix, curUri);
       context.addNamespace(prefix, curUri);
     }
-   
+
     return context;
   }
 }

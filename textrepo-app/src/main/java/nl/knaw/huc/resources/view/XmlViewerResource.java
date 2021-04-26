@@ -2,8 +2,8 @@ package nl.knaw.huc.resources.view;
 
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.helpers.ContentsHelper;
-import nl.knaw.huc.resources.view.xml.NamespaceAwareXmlResolver;
-import nl.knaw.huc.resources.view.xml.SimpleXmlResolver;
+import nl.knaw.huc.resources.view.xml.NamespaceAwareXPathResolver;
+import nl.knaw.huc.resources.view.xml.SimpleXPathResolver;
 import nl.knaw.huc.resources.view.xml.XmlResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +19,7 @@ import javax.ws.rs.core.Response;
 
 import static java.net.URLDecoder.decode;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Objects.requireNonNull;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT_ENCODING;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
@@ -41,7 +42,7 @@ public class XmlViewerResource {
 
   @SuppressWarnings("unused")
   public XmlViewerResource(Contents contents, ContentsHelper contentsHelper) {
-    this.contents = contents;
+    this.contents = requireNonNull(contents);
   }
 
   @GET
@@ -51,8 +52,8 @@ public class XmlViewerResource {
       @PathParam("expr") @NotBlank @Encoded String expr
   ) {
     final var xpath = decode(expr, UTF_8);
-    final var resolver = new SimpleXmlResolver(xpath);
-   
+    final var resolver = new SimpleXPathResolver(xpath);
+
     return resolve(resolver, contents);
   }
 
@@ -64,7 +65,7 @@ public class XmlViewerResource {
       @PathParam("prefix") String defaultNamespacePrefix
   ) {
     final var xpath = decode(expr, UTF_8);
-    final var resolver = new NamespaceAwareXmlResolver(defaultNamespacePrefix, xpath);
+    final var resolver = new NamespaceAwareXPathResolver(defaultNamespacePrefix, xpath);
 
     return resolve(resolver, contents);
   }
