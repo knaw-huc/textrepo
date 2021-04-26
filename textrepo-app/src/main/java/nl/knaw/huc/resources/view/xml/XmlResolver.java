@@ -22,18 +22,6 @@ public abstract class XmlResolver {
 
   protected abstract Nodes query(Document xmlDoc);
 
-  public static Document parse(Contents contents) {
-    try {
-      return new Builder().build(new StringReader(contents.asUtf8String()));
-    } catch (ValidityException e) {
-      throw new BadRequestException(format("Document is not valid XML: %s", e.getMessage()));
-    } catch (ParsingException e) {
-      throw new BadRequestException(format("Document is not well-formed: %s", e.getMessage()));
-    } catch (IOException e) {
-      throw new BadRequestException(format("Failed to fully read document: %s", e.getMessage()));
-    }
-  }
-
   public List<String> resolve(Contents contents) {
     var xmlDoc = parse(contents);
     log.debug("parsed: [{}]", xmlDoc);
@@ -48,6 +36,18 @@ public abstract class XmlResolver {
 
     log.debug("xpath yielded {} node(s)", nodes.size());
     return asList(nodes);
+  }
+
+  private Document parse(Contents contents) {
+    try {
+      return new Builder().build(new StringReader(contents.asUtf8String()));
+    } catch (ValidityException e) {
+      throw new BadRequestException(format("Document is not valid XML: %s", e.getMessage()));
+    } catch (ParsingException e) {
+      throw new BadRequestException(format("Document is not well-formed: %s", e.getMessage()));
+    } catch (IOException e) {
+      throw new BadRequestException(format("Failed to fully read document: %s", e.getMessage()));
+    }
   }
 
   private List<String> asList(Nodes nodes) {
