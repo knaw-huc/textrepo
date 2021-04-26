@@ -9,5 +9,7 @@
     <TextRegion id="rgPve_1" custom="structure {type:full_page;}">
       <Coords points="0,0 0,1827 1344,1827 1344,0"/>
     </TextRegion>
+    <Twice>first</Twice>
   </Page>
+  <Twice>second</Twice>
 </PcGts>
