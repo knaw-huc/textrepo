@@ -36,7 +36,7 @@ class NamespaceAwareXPathResolverTest {
   }
 
   @Test
-  void testResolver_findsOne_whenSearchingExplicitNamespaceFromSource() throws IOException {
+  void testResolver_findsOne_whenSearchingImplicitNamespaceFromSource() throws IOException {
     final var sut = new NamespaceAwareXPathResolver("_", "//xsi:Creator");
     final var res = sut.resolve(namespacedContents());
     assertThat(res.size()).isEqualTo(1);
@@ -44,7 +44,7 @@ class NamespaceAwareXPathResolverTest {
   }
 
   @Test
-  void testResolver_findsAll_whenSearchingExplicitNamespaceFromSource() throws IOException {
+  void testResolver_findsAll_whenSearchingImplicitNamespaceFromSource() throws IOException {
     final var sut = new NamespaceAwareXPathResolver("_", "//xsi:Twice");
     final var res = sut.resolve(namespacedContents());
     assertThat(res.size()).isEqualTo(2);
