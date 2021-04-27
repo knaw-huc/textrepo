@@ -149,7 +149,7 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
   private ViewBuilderFactory createViewBuilderFactory() {
     var viewBuilderFactory = new ViewBuilderFactory();
     viewBuilderFactory.register("text", TextViewerResource::new);
-    viewBuilderFactory.register("xml", XmlViewerResource::new);
+    viewBuilderFactory.register("xml", (contents, contentsHelper) -> new XmlViewerResource(contents));
     // TODO: register more ViewResource subclasses
     return viewBuilderFactory;
   }
