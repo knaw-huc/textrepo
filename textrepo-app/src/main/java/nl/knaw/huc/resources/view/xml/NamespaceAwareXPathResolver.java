@@ -44,7 +44,9 @@ public class NamespaceAwareXPathResolver extends XmlResolver {
     for (int curIndex = 0; curIndex < declarationCount; curIndex++) {
       final var curPrefix = root.getNamespacePrefix(curIndex);
       final var curUri = root.getNamespaceURI(curPrefix);
-      log.debug(String.format(" %02d: prefix=%s, uri=%s%n", curIndex, curPrefix, curUri));
+      if (log.isTraceEnabled()) {
+        log.trace(String.format(" %02d: prefix=%s, uri=%s%n", curIndex, curPrefix, curUri));
+      }
 
       final String prefix;
       if (StringUtils.isBlank(curPrefix)) {
@@ -53,7 +55,7 @@ public class NamespaceAwareXPathResolver extends XmlResolver {
         prefix = curPrefix;
       }
 
-      log.debug("adding namespace: [{}] -> [{}]", prefix, curUri);
+      log.trace("adding namespace: [{}] -> [{}]", prefix, curUri);
       context.addNamespace(prefix, curUri);
     }
 
