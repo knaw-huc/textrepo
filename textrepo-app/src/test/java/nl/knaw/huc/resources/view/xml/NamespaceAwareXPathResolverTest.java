@@ -49,8 +49,8 @@ class NamespaceAwareXPathResolverTest {
     final var res = sut.resolve(namespacedContents());
     assertThat(res.size()).isEqualTo(2);
     assertThat(res).containsExactly(
-        "<xsi:Twice>__xsi_test__firstInSpecificNamespace</xsi:Twice>",
-        "<xsi:Twice>__xsi_test__secondInSpecificNamespace</xsi:Twice>");
+        "<xsi:Twice>firstInSpecificNamespace</xsi:Twice>",
+        "<xsi:Twice>secondInSpecificNamespace</xsi:Twice>");
   }
 
   private Contents namespacedContents() throws IOException {

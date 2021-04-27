@@ -14,8 +14,8 @@
       <Coords points="0,0 0,1827 1344,1827 1344,0"/>
     </TextRegion>
     <Twice>firstInDefaultNamespace</Twice>
-    <xsi:Twice>__xsi_test__firstInSpecificNamespace</xsi:Twice>
+    <xsi:Twice>firstInSpecificNamespace</xsi:Twice>
   </Page>
   <Twice>secondInDefaultNamespace</Twice>
-  <xsi:Twice>__xsi_test__secondInSpecificNamespace</xsi:Twice>
+  <xsi:Twice>secondInSpecificNamespace</xsi:Twice>
 </PcGts>
