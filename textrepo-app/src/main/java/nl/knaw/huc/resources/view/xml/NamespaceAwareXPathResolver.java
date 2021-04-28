@@ -36,6 +36,15 @@ public class NamespaceAwareXPathResolver extends XmlResolver {
     return xmlDoc.query(xpath, context);
   }
 
+  /**
+   * Create xpath context containing all namespaces mentioned in the root element,
+   * using either the namespace prefix found or, when empty, the default namespace
+   * prefix.
+   *
+   * @param root the XML document's root element containing the namespace declarations.
+   * @return a xpath context containing all namespaces from the root element.
+   */
+  @Nonnull
   private XPathContext createXPathContext(@Nonnull Element root) {
     final var declarationCount = root.getNamespaceDeclarationCount();
     log.debug("root element namespace declarationCount: {}", declarationCount);
