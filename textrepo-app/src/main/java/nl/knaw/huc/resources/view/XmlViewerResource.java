@@ -24,7 +24,15 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
  * handle the first part of the URI which is responsible for fetching Contents and selecting
  * which 'view' is requested.
  * <p>
- * TODO: description
+ * This view applies an xpath expression to (XML) Contents and yields the result as a JSON list
+ * <p>
+ * In XML contents that do not use namespaces, the xpath expression alone suffices. In XML
+ * contents that use (a default) namespace, it is necessary to also pass a prefix to be used
+ * for that namespace. This is because the underlying xpath technology requires all namespaces
+ * to be prefixed and the default namespace used in the contents does not have a prefix.
+ * <p>
+ * All non-default namespaces can be addressed in the xpath query by the prefix used
+ * in the Contents. These namespaces are implicitly added to the query context.
  *
  * @see nl.knaw.huc.resources.view.ViewBuilderFactory
  * @see nl.knaw.huc.resources.view.ViewVersionResource
