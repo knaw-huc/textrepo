@@ -19,11 +19,15 @@ jobs:
       - name: Install build environment
         run: |
              echo "workspace: $GITHUB_WORKSPACE, cwd: $CWD"
+             echo "PATH: $PATH"
+             which docker
+             type docker
+             whereis docker
+             /usr/bin/docker -v
+             /usr/local/bin/docker -v
+             /opt/bin/docker -v
              if [ "$RUNNER_OS" == "Linux" ]; then
                echo "Linux build"
-               curl -fsSL https://get.docker.com -o /tmp/get-docker.sh
-               sudo sh /tmp/get-docker.sh
-               rm -f /tmp/get-docker.sh
              fi
                
       - name: Build docker files
