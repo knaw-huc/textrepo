@@ -1,4 +1,4 @@
-name: Build 🛠️ TextRepo
+name: Build 🛠️
 
 on:
   push:
