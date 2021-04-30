@@ -16,28 +16,7 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
       
-      - name: Install build environment
-        run: |
-             echo "workspace: $GITHUB_WORKSPACE, cwd: $CWD, pwd: $(pwd)"
-             echo "PATH: $PATH"
-             pwd
-             which docker
-             type docker
-             whereis docker
-             /usr/bin/docker -v
-             which docker-compose
-             type docker-compose
-             if [ "$RUNNER_OS" == "Linux" ]; then
-               echo "Linux build"
-             fi
-
-      - name: Check subshells / pwd
-        run: |
-             pwd
-             cd $GITHUB_WORKSPACE && pwd
-             pwd
-             
-      - name: Build docker files
+      - name: Build docker images
         run: |
              . ./examples/development/docker-compose.env
-             docker-compose -f ./examples/development/docker-compose.yml build
+             docker-compose -f ./examples/development/docker-compose-dev.yml build
