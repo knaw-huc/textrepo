@@ -18,15 +18,10 @@ jobs:
       
       - name: Install build environment
         run: |
+             echo "workspace: $GITHUB_WORKSPACE, cwd: $CWD"
              if [ "$RUNNER_OS" == "Linux" ]; then
                echo "Linux build"
                sudo apt-get install docker
              fi
-
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+             . $GITHUB_WORKSPACE/examples/development/docker-compose.env
+             docker compose -f $GITHUB_WORKSPACE/examples/development/docker-compose.yml build
