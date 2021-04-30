@@ -18,8 +18,9 @@ jobs:
       
       - name: Install build environment
         run: |
-             echo "workspace: $GITHUB_WORKSPACE, cwd: $CWD"
+             echo "workspace: $GITHUB_WORKSPACE, cwd: $CWD, pwd: $(pwd)"
              echo "PATH: $PATH"
+             pwd
              which docker
              type docker
              whereis docker
@@ -29,10 +30,14 @@ jobs:
              if [ "$RUNNER_OS" == "Linux" ]; then
                echo "Linux build"
              fi
-               
+
+      - name: Check subshells / pwd
+        run: |
+             pwd
+             cd $GITHUB_WORKSPACE && pwd
+             pwd
+             
       - name: Build docker files
         run: |
-             cd $GITHUB_WORKSPACE
              . ./examples/development/docker-compose.env
              docker-compose -f ./examples/development/docker-compose.yml build
-             docker compose -f ./examples/development/docker-compose.yml build
