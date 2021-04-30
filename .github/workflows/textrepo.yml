@@ -18,5 +18,6 @@ jobs:
       
       - name: Build docker images
         run: |
-             . ./examples/development/docker-compose.env
-             docker-compose -f ./examples/development/docker-compose-dev.yml build
+             . examples/development/docker-compose.env
+             cp examples/development/docker-compose-dev.yml .
+             docker-compose -f docker-compose-dev.yml build
