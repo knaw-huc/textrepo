@@ -24,6 +24,8 @@ jobs:
              type docker
              whereis docker
              /usr/bin/docker -v
+             which docker-compose
+             type docker-compose
              if [ "$RUNNER_OS" == "Linux" ]; then
                echo "Linux build"
              fi
@@ -32,5 +34,5 @@ jobs:
         run: |
              cd $GITHUB_WORKSPACE
              . ./examples/development/docker-compose.env
-             /usr/bin/docker compose -f ./examples/development/docker-compose.yml build
+             docker-compose -f ./examples/development/docker-compose.yml build
              docker compose -f ./examples/development/docker-compose.yml build
