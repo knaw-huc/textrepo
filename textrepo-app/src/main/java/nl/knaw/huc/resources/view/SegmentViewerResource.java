@@ -57,7 +57,7 @@ public class SegmentViewerResource {
       if (startIndex.isEmpty() || endIndex.isEmpty()) {
         return Lists.emptyList();
       }
-      final var capacity = endIndex.getAsInt() - startIndex.getAsInt();
+      final var capacity = endIndex.getAsInt() - startIndex.getAsInt() + 1;
       final List<String> result = new ArrayList<>(capacity);
       IntStream.rangeClosed(startIndex.getAsInt(), endIndex.getAsInt())
                .forEach(i -> result.add(textSegments.segments[i]));
