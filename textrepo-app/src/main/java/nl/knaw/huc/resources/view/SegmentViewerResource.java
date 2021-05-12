@@ -46,6 +46,10 @@ public class SegmentViewerResource {
       OptionalInt endIndex = OptionalInt.empty();
       final var anchors = textSegments.anchors;
 
+      // Warning: O(n) ahead. Because the anchors are just listed in a json array, we're forced
+      // to iterate the entire thing; converting it to a hash for this one-time lookup does not
+      // help, obviously.
+      // Let's at least attempt to find both start and end in the same run.
       for (var i = 0; i < anchors.length; i++) {
         final var id = anchors[i].id;
         if (startAnchor.equals(id)) {
