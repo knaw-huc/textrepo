@@ -4,13 +4,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.knaw.huc.core.Contents;
-import org.assertj.core.util.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotBlank;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.GET;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -45,6 +45,7 @@ public class SegmentViewerResource {
       OptionalInt startIndex = OptionalInt.empty();
       OptionalInt endIndex = OptionalInt.empty();
       final var anchors = textSegments.anchors;
+
       for (var i = 0; i < anchors.length; i++) {
         final var id = anchors[i].id;
         if (startAnchor.equals(id)) {
@@ -53,15 +54,28 @@ public class SegmentViewerResource {
         if (endAnchor.equals(id)) {
           endIndex = OptionalInt.of(i);
         }
+
+        if (startIndex.isPresent() && endIndex.isPresent()) {
+          break; // early exit once both have been found
+        }
       }
-      if (startIndex.isEmpty() || endIndex.isEmpty()) {
-        return Lists.emptyList();
+
+      if (startIndex.isEmpty()) {
+        throw new NotFoundException(String.format("start anchor [%s] not found", startAnchor));
       }
-      final var capacity = endIndex.getAsInt() - startIndex.getAsInt() + 1;
-      final List<String> result = new ArrayList<>(capacity);
-      IntStream.rangeClosed(startIndex.getAsInt(), endIndex.getAsInt())
-               .forEach(i -> result.add(textSegments.segments[i]));
-      return result;
+
+      if (endIndex.isEmpty()) {
+        throw new NotFoundException(String.format("end anchor [%s] not found", endAnchor));
+      }
+
+      // As anchors are just Strings, let's be lenient if caller switches up start and end.
+      final var start = Math.min(startIndex.getAsInt(), endIndex.getAsInt());
+      final var end = Math.max(startIndex.getAsInt(), endIndex.getAsInt());
+
+      final List<String> selectedSegments = new ArrayList<>(end - start + 1);
+      IntStream.rangeClosed(start, end).forEach(i -> selectedSegments.add(textSegments.segments[i]));
+
+      return selectedSegments;
     });
   }
 
