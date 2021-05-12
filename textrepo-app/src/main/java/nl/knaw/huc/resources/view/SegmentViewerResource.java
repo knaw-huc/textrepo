@@ -50,7 +50,7 @@ public class SegmentViewerResource {
         if (startAnchor.equals(id)) {
           startIndex = OptionalInt.of(i);
         }
-        if (endAnchor.equalsIgnoreCase(id)) {
+        if (endAnchor.equals(id)) {
           endIndex = OptionalInt.of(i);
         }
       }
