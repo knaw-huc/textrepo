@@ -8,6 +8,11 @@ Do not forget to include:
  - Changes in the environment variables
  - Changes to the database
 
+## [branch: xml_view]
+
+### Changed
+- Environment variable NGINX_LOCATION no longer has ends in a trailing '/'
+
 ## [1.14.0]
 
 ### Changed
