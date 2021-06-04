@@ -1,4 +1,4 @@
-FROM nginx:1.17
+FROM nginx:mainline
 
 RUN apt-get update && apt-get install -y gettext-base
 COPY ./nginx.conf /etc/nginx/nginx-template.conf
