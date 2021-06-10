@@ -19,7 +19,7 @@ Text repository indexer that recognizes named entities using spacy, flask and do
       - ./elasticsearch/spacy-ner/model:/indexer/model
       - ./scripts/wait-for-it.sh:/indexer/wait-for-it.sh
     command: [
-        "/indexer/wait-for-it.sh", "elasticsearch:9200", "--timeout=0", "--",
+        "/indexer/wait-for-it.sh", "tr_elasticsearch:9200", "--timeout=0", "--",
         "./start.sh"
     ]
 ```
@@ -36,7 +36,7 @@ Text repository indexer that recognizes named entities using spacy, flask and do
   elasticsearch:
     index: spacy-ner
     hosts:
-      - elasticsearch:9200
+      - tr_elasticsearch:9200
 ```
 
 - Check service is running: 
