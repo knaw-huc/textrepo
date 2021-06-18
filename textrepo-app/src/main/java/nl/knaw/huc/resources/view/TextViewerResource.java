@@ -13,10 +13,13 @@ import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import static javax.ws.rs.core.HttpHeaders.ACCEPT_ENCODING;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
 import static javax.ws.rs.core.MediaType.TEXT_PLAIN_TYPE;
 
 /*
@@ -49,6 +52,7 @@ public class TextViewerResource {
 
   @GET
   @Path("chars/{startOffset}/{endOffset}")
+  @Produces(TEXT_PLAIN)
   public Response getChars(
       @HeaderParam(ACCEPT_ENCODING) String acceptEncoding,
       @PathParam("startOffset") @NotNull RangeParam startParam,
@@ -64,6 +68,7 @@ public class TextViewerResource {
 
   @GET
   @Path("lines/{startOffset}/{endOffset}")
+  @Produces(TEXT_PLAIN)
   public Response getLines(
       @HeaderParam(ACCEPT_ENCODING) String acceptEncoding,
       @PathParam("startOffset") @NotNull RangeParam startParam,
@@ -80,6 +85,7 @@ public class TextViewerResource {
   @GET
   @Path("range/{startLineOffset}/{startCharOffset}/{endLineOffset}/{endCharOffset}")
   // E.g., from line 3, char 12 (on that line) up to and including line 8, char 4 (on that line)
+  @Produces(TEXT_PLAIN)
   public Response getRange(
       @HeaderParam(ACCEPT_ENCODING) String acceptEncoding,
       @PathParam("startLineOffset") @NotNull RangeParam startLineParam,
