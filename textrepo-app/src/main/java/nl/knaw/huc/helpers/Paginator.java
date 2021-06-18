@@ -33,10 +33,11 @@ public class Paginator {
   }
 
   public static <T, U> ResultPage<U> toResult(Page<T> page, Function<T, U> mapper) {
-    var resultContent = page.getItems()
-                            .stream()
-                            .map(mapper)
-                            .collect(toList());
+    var resultContent = page
+        .getItems()
+        .stream()
+        .map(mapper)
+        .collect(toList());
     var resultParams = new ResultPageParams(
         page.getParams().getLimit(),
         page.getParams().getOffset()
