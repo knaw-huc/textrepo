@@ -22,7 +22,7 @@ public class IndexerFieldsRequestFactory {
       case MULTIPART:
         return new MultipartIndexerFieldsRequest(url, client);
       default:
-        throw new IllegalStateException(format("Request type [%s] of does not exist", type));
+        throw new IllegalStateException(format("Request type [%s] does not exist", type));
     }
   }
 }
