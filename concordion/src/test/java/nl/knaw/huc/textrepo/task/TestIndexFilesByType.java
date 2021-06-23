@@ -39,7 +39,7 @@ public class TestIndexFilesByType extends AbstractConcordionTest {
   /**
    * Use /task/import-endpoint which does not index
    */
-  public ImportResult importDocs(String fileType) {
+  public ImportResult importFiles(String fileType) {
     var results = new ArrayList<Integer>();
 
     var response = importDocument(

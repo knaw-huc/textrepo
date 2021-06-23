@@ -1,6 +1,6 @@
 # Test `/task/index/{name}`
 
-All files can be indexed and reindexed by index name. The other indices will not be touched.
+All files relevant to a specific indexer can be indexed and reindexed. Other indices will not be touched.
 
 To index, we first create three documents, each with one file and version, using the import task, which does not index: 
 
@@ -16,7 +16,7 @@ Then:
 [ ](- "ext:embed=#importResult.body")
 
 ### Indexing by index name
-When indexing the files with a `POST` to [`/task/index/{name}`](- "#indexEndpoint") 
+When indexing the files with a `POST` to [`/task/index/indexer/{name}`](- "#indexEndpoint") 
 
  - where `{name}` is [`autocomplete`](- "#indexName");
 
