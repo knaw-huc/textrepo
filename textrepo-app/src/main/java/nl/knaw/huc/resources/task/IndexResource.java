@@ -26,8 +26,8 @@ public class IndexResource {
   }
 
   @POST
-  @Path("/document/{externalId}/{type}")
-  @ApiOperation("Index file of document by externalId and file type")
+  @Path("/file/{externalId}/{type}")
+  @ApiOperation("Index a file of document by externalId and file type. When a file has no versions, an empty string is used for contents.")
   public Response indexDocument(
       @PathParam("externalId") String externalId,
       @PathParam("type") String type
@@ -44,8 +44,8 @@ public class IndexResource {
   }
 
   @POST
-  @Path("/files/{type}")
-  @ApiOperation("Index all files by type")
+  @Path("/type/{type}")
+  @ApiOperation("Index all files of type. Includes files without versions")
   public Response indexAll(@PathParam("type") String type) {
     log.debug("Index all files of type: type={}", type);
     final var task = factory
@@ -58,8 +58,8 @@ public class IndexResource {
   }
 
   @POST
-  @Path("/{name}")
-  @ApiOperation("Index or reindex single index with all relevant files, including those without versions")
+  @Path("/indexer/{name}")
+  @ApiOperation("Index single index by its indexer name. Includes files without versions")
   public Response indexSingleIndex(@PathParam("name") String name) {
     log.debug("Index all files of index: index={}", name);
     final var task = factory
