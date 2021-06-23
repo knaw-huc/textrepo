@@ -5,7 +5,9 @@ import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.testing.junit5.ResourceExtension;
 import nl.knaw.huc.PaginationConfiguration;
 import nl.knaw.huc.core.PageParams;
+import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.core.Version;
+import nl.knaw.huc.db.FilesDao;
 import nl.knaw.huc.db.VersionsDao;
 import nl.knaw.huc.helpers.Paginator;
 import nl.knaw.huc.service.contents.ContentsService;
@@ -26,6 +28,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.google.common.collect.Lists.newArrayList;
@@ -41,7 +44,8 @@ import static org.mockito.Mockito.when;
 @ExtendWith(DropwizardExtensionsSupport.class)
 public class FileVersionsResourceTest {
 
-  private static final UUID uuid = UUID.fromString("0defaced-cafe-babe-dada-deadbeefc2c6");
+  private static final UUID fileUuid = UUID.fromString("0defaced-cafe-babe-dada-deadbeefc2c6");
+  private static final TextRepoFile file = new TextRepoFile(fileUuid, (short) 1);
 
   private static final Jdbi jdbi = mock(Jdbi.class);
 
@@ -63,9 +67,11 @@ public class FileVersionsResourceTest {
       UUID::randomUUID
   );
 
+  // Don't forget to setup and reset mocks:
   private static final VersionsDao VERSIONS_DAO = mock(VersionsDao.class);
+  private static final FilesDao FILES_DAO = mock(FilesDao.class);
 
-  // with milliseconds:
+  // With milliseconds:
   private static final String dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS";
 
   public static final ResourceExtension resource;
@@ -82,39 +88,60 @@ public class FileVersionsResourceTest {
 
   @BeforeEach
   public void setupMocks() {
-    when(jdbi.onDemand(any())).thenReturn(VERSIONS_DAO);
+    when(jdbi.onDemand(VersionsDao.class)).thenReturn(VERSIONS_DAO);
+    when(jdbi.onDemand(FilesDao.class)).thenReturn(FILES_DAO);
     MockitoAnnotations.initMocks(this);
   }
 
   @AfterEach
   public void resetMocks() {
-    reset(jdbi, VERSIONS_DAO);
+    reset(jdbi, VERSIONS_DAO, FILES_DAO);
   }
 
   @Test
   public void testGetVersions_returnsVersions() {
     List<Version> versions = new ArrayList<>();
     var sha1 = "fcd01d3b5648843931feb9ef4468250ac1a968a41add37f663af3bb0";
-    var version1 = new Version(UUID.randomUUID(), uuid, sha1, LocalDateTime.now());
+    var version1 = new Version(UUID.randomUUID(), fileUuid, sha1, LocalDateTime.now());
     versions.add(version1);
     var sha2 = "d476f2f6e00deaa918dfbec79545412134e02095f870269175b89376";
-    var version2 = new Version(UUID.randomUUID(), uuid, sha2, LocalDateTime.now());
+    var version2 = new Version(UUID.randomUUID(), fileUuid, sha2, LocalDateTime.now());
     versions.add(version2);
     when(VERSIONS_DAO.findByFileId(any(), any(PageParams.class), any())).thenReturn(versions);
+    when(VERSIONS_DAO.countByFileId(any(), any())).thenReturn(2L);
 
     var response = resource
         .client()
-        .target("/rest/files/" + uuid.toString() + "/versions")
+        .target("/rest/files/" + fileUuid.toString() + "/versions")
         .request()
         .get();
 
-    verify(VERSIONS_DAO, times(1)).findByFileId(eq(uuid), any(PageParams.class), any());
+    verify(VERSIONS_DAO, times(1)).findByFileId(eq(fileUuid), any(PageParams.class), any());
     var actual = JsonPath.parse(response.readEntity(String.class));
     assertThat(actual.read("$.items.length()", Integer.class)).isEqualTo(2);
-    assertThat(actual.read("$.items[0].fileId", String.class)).isEqualTo(uuid.toString());
+    assertThat(actual.read("$.total", Integer.class)).isEqualTo(2);
+    assertThat(actual.read("$.items[0].fileId", String.class)).isEqualTo(fileUuid.toString());
     assertThat(actual.read("$.items[0].contentsSha", String.class)).isEqualTo(sha1);
-    assertThat(actual.read("$.items[1].fileId", String.class)).isEqualTo(uuid.toString());
+    assertThat(actual.read("$.items[1].fileId", String.class)).isEqualTo(fileUuid.toString());
     assertThat(actual.read("$.items[1].contentsSha", String.class)).isEqualTo(sha2);
+  }
+
+  @Test
+  public void testGetVersions_returns404() {
+    when(VERSIONS_DAO.find(any())).thenReturn(Optional.empty());
+    when(VERSIONS_DAO.countByFileId(any(), any())).thenReturn(0L);
+    when(FILES_DAO.find(any())).thenReturn(Optional.empty());
+
+    var response = resource
+        .client()
+        .target("/rest/files/" + fileUuid.toString() + "/versions")
+        .request()
+        .get();
+
+    verify(VERSIONS_DAO, times(0)).findByFileId(eq(fileUuid), any(PageParams.class), any());
+    assertThat(response.getStatus()).isEqualTo(404);
+    var actual = JsonPath.parse(response.readEntity(String.class));
+    assertThat(actual.read("$.message", String.class)).contains(fileUuid.toString());
   }
 
   @Test
@@ -122,25 +149,26 @@ public class FileVersionsResourceTest {
     var past = new SimpleDateFormat(dateFormat).format(new Date());
     List<Version> versions = new ArrayList<>();
     var sha1 = "fcd01d3b5648843931feb9ef4468250ac1a968a41add37f663af3bb0";
-    var version1 = new Version(UUID.randomUUID(), uuid, sha1, LocalDateTime.now());
+    var version1 = new Version(UUID.randomUUID(), fileUuid, sha1, LocalDateTime.now());
     versions.add(version1);
     var sha2 = "d476f2f6e00deaa918dfbec79545412134e02095f870269175b89376";
-    var version2 = new Version(UUID.randomUUID(), uuid, sha2, LocalDateTime.now());
+    var version2 = new Version(UUID.randomUUID(), fileUuid, sha2, LocalDateTime.now());
     versions.add(version2);
     when(VERSIONS_DAO.findByFileId(any(), any(PageParams.class), any())).thenReturn(versions);
+    when(VERSIONS_DAO.countByFileId(any(), any())).thenReturn(2L);
 
     var response = resource
         .client()
-        .target("/rest/files/" + uuid.toString() + "/versions?createdAfter=" + past)
+        .target("/rest/files/" + fileUuid.toString() + "/versions?createdAfter=" + past)
         .request()
         .get();
 
-    verify(VERSIONS_DAO, times(1)).findByFileId(eq(uuid), any(PageParams.class), any());
+    verify(VERSIONS_DAO, times(1)).findByFileId(eq(fileUuid), any(PageParams.class), any());
     var actual = JsonPath.parse(response.readEntity(String.class));
     assertThat(actual.read("$.items.length()", Integer.class)).isEqualTo(2);
-    assertThat(actual.read("$.items[0].fileId", String.class)).isEqualTo(uuid.toString());
+    assertThat(actual.read("$.items[0].fileId", String.class)).isEqualTo(fileUuid.toString());
     assertThat(actual.read("$.items[0].contentsSha", String.class)).isEqualTo(sha1);
-    assertThat(actual.read("$.items[1].fileId", String.class)).isEqualTo(uuid.toString());
+    assertThat(actual.read("$.items[1].fileId", String.class)).isEqualTo(fileUuid.toString());
     assertThat(actual.read("$.items[1].contentsSha", String.class)).isEqualTo(sha2);
   }
 
@@ -150,7 +178,7 @@ public class FileVersionsResourceTest {
     var betweenVersions = new SimpleDateFormat(noSAndMs).format(new Date());
     var response = resource
         .client()
-        .target("/rest/files/" + uuid.toString() + "/versions?createdAfter=" + betweenVersions)
+        .target("/rest/files/" + fileUuid.toString() + "/versions?createdAfter=" + betweenVersions)
         .request()
         .get();
 
