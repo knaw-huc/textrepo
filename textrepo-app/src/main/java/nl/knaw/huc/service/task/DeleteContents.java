@@ -21,11 +21,14 @@ public class DeleteContents implements InTransactionRunner {
 
   @Override
   public void executeIn(Handle transaction) {
+    final var savepoint = "delete-" + contentsSha;
+    transaction.savepoint(savepoint);
     try {
       transaction.attach(ContentsDao.class).delete(contentsSha);
     } catch (JdbiException ex) {
       if (violatesConstraint(ex, VERSIONS_CONTENTS_SHA)) {
         log.debug("Not deleting contents because {} is still in use", contentsSha);
+        transaction.rollbackToSavepoint(savepoint);
       } else {
         throw (ex);
       }
