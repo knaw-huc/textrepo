@@ -27,7 +27,8 @@ public class IndexResource {
 
   @POST
   @Path("/file/{externalId}/{type}")
-  @ApiOperation("Index a file of document by externalId and file type. When a file has no versions, an empty string is used for contents.")
+  @ApiOperation("Index a file of document by externalId and file type. " +
+      "When a file has no versions, an empty string is used for contents.")
   public Response indexDocument(
       @PathParam("externalId") String externalId,
       @PathParam("type") String type
