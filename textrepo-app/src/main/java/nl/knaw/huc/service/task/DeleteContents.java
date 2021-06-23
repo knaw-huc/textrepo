@@ -21,7 +21,7 @@ public class DeleteContents implements InTransactionRunner {
 
   @Override
   public void executeIn(Handle transaction) {
-    var savepoint = "delete-" + contentsSha;
+    final var savepoint = "delete-" + contentsSha;
     transaction.savepoint(savepoint);
     try {
       transaction.attach(ContentsDao.class).delete(contentsSha);
