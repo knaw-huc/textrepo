@@ -14,6 +14,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 
+import java.net.URI;
+
 import static javax.ws.rs.client.Entity.json;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -63,7 +65,8 @@ public class TypesResourceTest {
         .request()
         .post(json(form));
 
-    assertThat(response.getStatus()).isEqualTo(200);
+    assertThat(response.getStatus()).isEqualTo(201);
+    assertThat(response.getLocation()).isEqualTo(URI.create("http://localhost:0/rest/types/456"));
 
     verify(typeService, times(1)).create(typeCaptor.capture());
     var toCreate = typeCaptor.getValue();

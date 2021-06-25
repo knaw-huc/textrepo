@@ -27,6 +27,7 @@ import java.util.UUID;
 
 import static java.util.Objects.requireNonNull;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static nl.knaw.huc.resources.HeaderLink.Uri.FILE;
 
 @Api(tags = {"files"})
 @Path("/rest/files")
@@ -44,14 +45,17 @@ public class FilesResource {
   @Consumes(APPLICATION_JSON)
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Create file")
-  @ApiResponses(value = {@ApiResponse(code = 200, response = ResultTextRepoFile.class, message = "OK")})
+  @ApiResponses(value = {@ApiResponse(code = 201, response = ResultTextRepoFile.class, message = "Created")})
   public Response createFile(
       @Valid FormTextRepoFile form
   ) {
     log.debug("Create file: form={}", form);
     var file = fileService.insert(form.getDocId(), new TextRepoFile(null, form.getTypeId()));
     log.debug("Created file: {}", file);
-    return Response.ok(new ResultTextRepoFile(form.getDocId(), file)).build();
+    return Response
+        .created(FILE.build(file.getId()))
+        .entity(new ResultTextRepoFile(form.getDocId(), file))
+        .build();
   }
 
   @GET
