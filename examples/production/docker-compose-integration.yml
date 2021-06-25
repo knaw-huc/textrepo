@@ -5,7 +5,7 @@ version: '3'
 services:
   postgres:
     container_name: tr_postgres
-    image: knawhuc/textrepo-postgres:${DOCKER_TAG}
+    image: postgres:11-alpine
     shm_size: 1g
     networks:
       - textrepo_network
@@ -19,7 +19,7 @@ services:
       POSTGRES_PORT: ${POSTGRES_PORT}
       PGDATA: /var/lib/textrepo/data
     volumes:
-      - postgresdata:/var/lib/textrepo/data
+      - postgresdata-prod:/var/lib/textrepo/data
 
   elasticsearch:
     container_name: tr_elasticsearch
@@ -154,6 +154,8 @@ services:
       TR_PAGINATION_DEFAULT_LIMIT: ${TR_PAGINATION_DEFAULT_LIMIT}
       TR_DATE_FORMAT: ${TR_DATE_FORMAT}
       TR_CONTENT_DECOMPRESSION_LIMIT: ${TR_CONTENT_DECOMPRESSION_LIMIT}
+      TR_FLYWAY_CLEAN_DISABLED: ${TR_FLYWAY_CLEAN_DISABLED}
+      TR_FLYWAY_LOCATIONS: ${TR_FLYWAY_LOCATIONS}
 
   concordion:
     container_name: tr_concordion

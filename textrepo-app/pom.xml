@@ -29,6 +29,7 @@
 
     <dropwizard.version>2.0.21</dropwizard.version>
     <dropwizard-swagger.version>2.0.12-1</dropwizard-swagger.version>
+    <dropwizard-flyway.version>2.0.21-2</dropwizard-flyway.version>
     <jdbi3-sqlobject.version>3.9.1</jdbi3-sqlobject.version>
     <json-path.version>2.5.0</json-path.version>
     <mockito-core.version>3.0.0</mockito-core.version>
@@ -71,6 +72,13 @@
     <dependency>
       <groupId>org.jdbi</groupId>
       <artifactId>jdbi3-postgres</artifactId>
+    </dependency>
+
+    <!-- Flyway database versioning -->
+    <dependency>
+      <groupId>org.flywaydb</groupId>
+      <artifactId>flyway-core</artifactId>
+      <version>7.10.0</version>
     </dependency>
 
     <!-- Index: -->

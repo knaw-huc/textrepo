@@ -3,6 +3,7 @@ package nl.knaw.huc;
 import com.codahale.metrics.health.HealthCheck;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import io.dropwizard.Application;
+import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.forms.MultiPartBundle;
 import io.dropwizard.jdbi3.JdbiFactory;
 import io.dropwizard.jdbi3.bundles.JdbiExceptionsBundle;
@@ -40,6 +41,8 @@ import nl.knaw.huc.service.type.TypeService;
 import nl.knaw.huc.service.version.JdbiVersionService;
 import nl.knaw.huc.service.version.content.JdbiVersionContentsService;
 import nl.knaw.huc.service.version.metadata.JdbiVersionMetadataService;
+import org.flywaydb.core.Flyway;
+import org.flywaydb.core.api.configuration.FluentConfiguration;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.postgres.PostgresPlugin;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
@@ -50,6 +53,7 @@ import javax.annotation.Nonnull;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -93,6 +97,19 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
     final Supplier<UUID> uuidGenerator = UUID::randomUUID;
 
     var jdbi = createJdbi(config, environment);
+
+    var dataSourceFactory = config.getDataSourceFactory();
+    var configure = Flyway
+        .configure()
+        .dataSource(
+            dataSourceFactory.getUrl(),
+            dataSourceFactory.getUser(),
+            dataSourceFactory.getPassword()
+        ).locations(config.getFlyway().locations);
+    System.out.println("locations:" + Arrays.toString(config.getFlyway().locations));
+    var flyway = new Flyway(configure);
+    flyway.migrate();
+
     var contentsStoreService = new JdbiContentsStorage(jdbi);
     var contentsService = new ContentsService(contentsStoreService);
     var typeService = new JdbiTypeService(jdbi);

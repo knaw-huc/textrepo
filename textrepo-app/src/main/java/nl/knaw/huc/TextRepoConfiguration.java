@@ -41,6 +41,8 @@ public class TextRepoConfiguration extends Configuration {
   @NotNull
   private VersionConfiguration version = new VersionConfiguration();
 
+  private FlywayConfig flyway;
+
   @JsonProperty("database")
   public void setDataSourceFactory(DataSourceFactory factory) {
     this.database = factory;
@@ -110,5 +112,15 @@ public class TextRepoConfiguration extends Configuration {
   @JsonProperty("version")
   public void setVersion(VersionConfiguration version) {
     this.version = version;
+  }
+
+  @JsonProperty("flyway")
+  public FlywayConfig getFlyway() {
+    return this.flyway;
+  }
+
+  @JsonProperty("flyway")
+  public void setFlyway(FlywayConfig flyway) {
+    this.flyway = flyway;
   }
 }
