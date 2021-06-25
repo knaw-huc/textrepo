@@ -19,7 +19,7 @@ When creating the following file with a `POST` to [`/rest/files`](- "#createEndp
 
 Then:
 
- - The response status should be: [200](- "?=#createResult.status");
+ - The response status should be: [201](- "?=#createResult.status");
  - The response should contain a [valid UUID](- "?=#createResult.validUuid");
  - Full response:
  

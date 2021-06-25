@@ -14,7 +14,7 @@ When creating the following type with a `POST` to [`/rest/types`](- "#createEndp
 
 Then:
 
- - The response status should be: [200](- "?=#createResult.status");
+ - The response status should be: [201](- "?=#createResult.status");
  - The response should contain a [valid ID](- "?=#createResult.hasId");
  - Full response:
  
