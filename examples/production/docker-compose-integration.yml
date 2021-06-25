@@ -19,7 +19,7 @@ services:
       POSTGRES_PORT: ${POSTGRES_PORT}
       PGDATA: /var/lib/textrepo/data
     volumes:
-      - postgresdata-prod:/var/lib/textrepo/data
+      - postgresdata:/var/lib/textrepo/data
 
   elasticsearch:
     container_name: tr_elasticsearch

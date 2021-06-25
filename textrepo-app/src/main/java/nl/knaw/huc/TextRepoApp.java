@@ -106,7 +106,6 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
             dataSourceFactory.getUser(),
             dataSourceFactory.getPassword()
         ).locations(config.getFlyway().locations);
-    System.out.println("locations:" + Arrays.toString(config.getFlyway().locations));
     var flyway = new Flyway(configure);
     flyway.migrate();
 
