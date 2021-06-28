@@ -4,10 +4,10 @@
 # to prevent a restart from clearing and resetting the database.
 # Check repo:./textrepo-app/db for current migration versions
 
-if [[ -z "$1" ]];
-  then echo 'usage: `./mark-db-baseline.sh <version>`';
-  echo 'e.g: `./mark-db-baseline.sh 001` marks file starting with `V001__` as baseline';
-  exit;
+if [[ -z "$1" ]]; then
+  echo 'usage: `./mark-db-baseline.sh <version>`'
+  echo 'e.g: `./mark-db-baseline.sh 001` marks file starting with `V001__` as baseline'
+  exit
 fi
 
 source docker-compose.env
