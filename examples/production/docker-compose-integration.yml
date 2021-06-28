@@ -201,6 +201,7 @@ services:
 
 networks:
   textrepo_network:
+    name: textrepo_network
 
 volumes:
   esdata:
