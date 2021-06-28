@@ -116,7 +116,7 @@ public class TextRepoConfiguration extends Configuration {
 
   @JsonProperty("flyway")
   public FlywayConfig getFlyway() {
-    return this.flyway;
+    return flyway;
   }
 
   @JsonProperty("flyway")
