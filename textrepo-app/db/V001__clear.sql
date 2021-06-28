@@ -5,11 +5,10 @@
 
 drop table if exists files_metadata;
 drop table if exists documents_metadata;
-drop index if exists doc_files_by_file_id;
-drop table if exists documents_files;
-drop index if exists version_by_file_id;
+drop table if exists versions_metadata;
 drop table if exists versions;
-drop index if exists files_by_type_id;
+drop table if exists documents_files;
 drop table if exists files;
 drop table if exists types;
 drop table if exists contents;
+drop table if exists documents;
