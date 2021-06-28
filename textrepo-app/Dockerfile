@@ -18,5 +18,6 @@ RUN apt-get update && apt-get install -y gettext-base
 WORKDIR /textrepo-app
 COPY ./config.yml /textrepo-app/
 COPY ./scripts/start.sh /textrepo-app/
+COPY ./db /textrepo-app/db
 
 CMD ["./start.sh"]
