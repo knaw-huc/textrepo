@@ -99,14 +99,14 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
     var jdbi = createJdbi(config, environment);
 
     var dataSourceFactory = config.getDataSourceFactory();
-    var configure = Flyway
+    var flywayConfig = Flyway
         .configure()
         .dataSource(
             dataSourceFactory.getUrl(),
             dataSourceFactory.getUser(),
             dataSourceFactory.getPassword()
         ).locations(config.getFlyway().locations);
-    var flyway = new Flyway(configure);
+    var flyway = new Flyway(flywayConfig);
     flyway.migrate();
 
     var contentsStoreService = new JdbiContentsStorage(jdbi);
