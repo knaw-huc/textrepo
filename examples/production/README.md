@@ -13,3 +13,6 @@ To start production setup for the first time:
 - Use `./log.sh` to view logging.
 
 See also: `./docs/example-production.rst`
+
+## Upgrading existing databases
+If the current database should not be erased, make sure to use `./mark-db-baseline.sh` when upgrading to this version.
