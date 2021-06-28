@@ -26,6 +26,7 @@ import javax.ws.rs.core.Response;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static nl.knaw.huc.resources.HeaderLink.Uri.TYPE;
 
 @Api(tags = {"types"})
 @Path("/rest/types")
@@ -43,7 +44,7 @@ public class TypesResource {
   @Consumes(APPLICATION_JSON)
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Create type")
-  @ApiResponses(value = {@ApiResponse(code = 200, response = ResultType.class, message = "OK")})
+  @ApiResponses(value = {@ApiResponse(code = 201, response = ResultType.class, message = "Created")})
   public Response createType(
       @Valid @NotNull FormType form
   ) {
@@ -51,7 +52,10 @@ public class TypesResource {
     log.debug("Create type: type={}", type);
     var created = typeService.create(type);
     log.debug("Created type: {}", created);
-    return Response.ok(new ResultType(created)).build();
+    return Response
+        .created(TYPE.build(created.getId()))
+        .entity(new ResultType(created))
+        .build();
   }
 
   @GET

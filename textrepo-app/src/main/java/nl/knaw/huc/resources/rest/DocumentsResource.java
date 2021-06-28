@@ -33,6 +33,7 @@ import java.util.UUID;
 import static java.util.Objects.requireNonNull;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static nl.knaw.huc.helpers.Paginator.toResult;
+import static nl.knaw.huc.resources.HeaderLink.Uri.DOCUMENT;
 
 @Api(tags = {"documents"})
 @Path("/rest/documents")
@@ -54,14 +55,17 @@ public class DocumentsResource {
   @Consumes(APPLICATION_JSON)
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Create document")
-  @ApiResponses(value = {@ApiResponse(code = 200, response = ResultDocument.class, message = "OK")})
+  @ApiResponses(value = {@ApiResponse(code = 201, response = ResultDocument.class, message = "Created")})
   public Response createDocument(
       @Valid FormDocument form
   ) {
     log.debug("Create document: {}", form);
     var doc = documentService.create(new Document(null, form.getExternalId()));
     log.debug("Created document: {}", doc);
-    return Response.ok(new ResultDocument(doc)).build();
+    return Response
+        .created(DOCUMENT.build(doc.getId()))
+        .entity(new ResultDocument(doc))
+        .build();
   }
 
   @GET

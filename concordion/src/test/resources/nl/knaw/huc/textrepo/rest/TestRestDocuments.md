@@ -15,7 +15,7 @@ When creating the following document with a `POST` to [`/rest/documents`](- "#cr
 
 Then:
 
- - The response status should be: [200](- "?=#createResult.status");
+ - The response status should be: [201](- "?=#createResult.status");
  - The response should contain a [valid UUID](- "?=#createResult.validUuid");
  - Full response:
  

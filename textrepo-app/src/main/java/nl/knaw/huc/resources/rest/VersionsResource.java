@@ -30,6 +30,7 @@ import java.util.UUID;
 import static java.util.Objects.requireNonNull;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
+import static nl.knaw.huc.resources.HeaderLink.Uri.FILE_VERSIONS;
 import static nl.knaw.huc.resources.ResourceUtils.readContents;
 
 @Api(tags = {"versions"})
@@ -50,7 +51,7 @@ public class VersionsResource {
   @Consumes(MULTIPART_FORM_DATA)
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Create version")
-  @ApiResponses(value = {@ApiResponse(code = 200, response = ResultVersion.class, message = "OK")})
+  @ApiResponses(value = {@ApiResponse(code = 201, response = ResultVersion.class, message = "Created")})
   public Response createVersion(
       @FormDataParam("fileId") UUID fileId,
       @FormDataParam("contents") InputStream inputStream
@@ -59,7 +60,10 @@ public class VersionsResource {
     var contents = readContents(inputStream);
     var version = versionService.createNewVersion(fileId, contents);
     log.debug("Created version: {}", version);
-    return Response.ok(new ResultVersion(version)).build();
+    return Response
+        .created(FILE_VERSIONS.build(version.getId()))
+        .entity(new ResultVersion(version))
+        .build();
   }
 
   @GET
