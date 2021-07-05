@@ -1,8 +1,8 @@
-package nl.knaw.huc;
+package nl.knaw.huc.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class FlywayConfig {
+public class FlywayConfiguration {
 
   @JsonProperty
   public boolean cleanDisabled;

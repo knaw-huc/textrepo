@@ -1,6 +1,6 @@
 package nl.knaw.huc.helpers;
 
-import nl.knaw.huc.PaginationConfiguration;
+import nl.knaw.huc.config.PaginationConfiguration;
 import nl.knaw.huc.api.FormPageParams;
 import nl.knaw.huc.api.ResultPage;
 import nl.knaw.huc.api.ResultPageParams;
