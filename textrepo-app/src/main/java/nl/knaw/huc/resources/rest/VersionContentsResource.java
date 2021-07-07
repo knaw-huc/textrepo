@@ -60,7 +60,7 @@ public class VersionContentsResource {
   @Timed
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Retrieve version contents")
-  @ApiResponses(value = {@ApiResponse(code = 200, response = byte[].class, message = "OK")})
+  @ApiResponses(value = {@ApiResponse(code = 200, response = String.class, message = "OK")})
   public Response getVersionContents(
       @HeaderParam(ACCEPT_ENCODING) String acceptEncoding,
       @PathParam("versionId") @NotNull @Valid UUID versionId
