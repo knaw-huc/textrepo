@@ -1,4 +1,4 @@
-version: '3'
+version: '3.5'
 # docker-compose file for running integration tests
 # -> does not use production volumes (see also docker-compose-prod.yml)
 
