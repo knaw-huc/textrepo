@@ -81,7 +81,8 @@ public class JdbiTypeService implements TypeService {
   }
 
   private void throwWhenNameExists(@Nonnull Type type) {
-    if (types().exists(type.getName())) {
+    final var existingId = types().findByName(type.getName());
+    if (existingId.isPresent() && existingId.get() != type.getId()) {
       throw new WebApplicationException("Duplicate type name: " + type.getName(), CONFLICT);
     }
   }
