@@ -43,7 +43,7 @@ public class ContentsResource {
   @Timed
   @Produces({APPLICATION_OCTET_STREAM, APPLICATION_JSON})
   @ApiOperation(value = "Retrieve contents")
-  @ApiResponses(value = {@ApiResponse(code = 200, response = byte[].class, message = "OK")})
+  @ApiResponses(value = {@ApiResponse(code = 200, response = String.class, message = "OK")})
   public Response getContents(
       @HeaderParam(ACCEPT_ENCODING) String acceptEncoding,
       @PathParam("sha") @NotBlank String sha
@@ -59,9 +59,10 @@ public class ContentsResource {
 
     log.debug("Got contents: {}", contents);
 
-    return contentsHelper.asAttachment(contents, acceptEncoding)
-                         .header(CONTENT_TYPE, APPLICATION_OCTET_STREAM)
-                         .build();
+    return contentsHelper
+        .asAttachment(contents, acceptEncoding)
+        .header(CONTENT_TYPE, APPLICATION_OCTET_STREAM)
+        .build();
   }
 
 }
