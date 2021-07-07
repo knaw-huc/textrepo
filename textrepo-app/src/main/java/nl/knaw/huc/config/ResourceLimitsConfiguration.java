@@ -1,8 +1,11 @@
 package nl.knaw.huc.config;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 public class ResourceLimitsConfiguration {
-  @JsonProperty
+  @Valid
+  @NotNull
   public int contentDecompressionLimit;
+
 }

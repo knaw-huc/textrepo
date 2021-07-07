@@ -1,12 +1,16 @@
 package nl.knaw.huc.config;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 public class FlywayConfiguration {
 
-  @JsonProperty
+  @Valid
+  @NotNull
   public boolean cleanDisabled;
 
-  @JsonProperty
+  @Valid
+  @NotNull
   public String[] locations;
+
 }
