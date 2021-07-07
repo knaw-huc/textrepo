@@ -34,6 +34,8 @@ public class DocumentFilesResource {
   private final DocumentFilesService documentFilesService;
   private final Paginator paginator;
 
+  private static class ResultTextRepoFilePage extends ResultPage<ResultTextRepoFile> {}
+
   public DocumentFilesResource(
       DocumentFilesService documentFilesService,
       Paginator paginator
@@ -45,7 +47,7 @@ public class DocumentFilesResource {
   @GET
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Retrieve document files")
-  @ApiResponses(value = {@ApiResponse(code = 200, response = ResultPage.class, message = "OK")})
+  @ApiResponses(value = {@ApiResponse(code = 200, response = ResultTextRepoFilePage.class, message = "OK")})
   public Response getDocumentFiles(
       @PathParam("docId") @Valid UUID docId,
       @BeanParam FormPageParams pageParams

@@ -8,6 +8,7 @@ import nl.knaw.huc.api.FormDocument;
 import nl.knaw.huc.api.FormPageParams;
 import nl.knaw.huc.api.ResultDocument;
 import nl.knaw.huc.api.ResultPage;
+import nl.knaw.huc.api.ResultTextRepoFile;
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.helpers.Paginator;
 import nl.knaw.huc.service.document.DocumentService;
@@ -43,6 +44,8 @@ public class DocumentsResource {
   private final DocumentService documentService;
   private final Paginator paginator;
 
+  private static class ResultDocumentPage extends ResultPage<ResultDocument> {}
+
   public DocumentsResource(
       DocumentService documentService,
       Paginator paginator
@@ -71,7 +74,7 @@ public class DocumentsResource {
   @GET
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Retrieve documents, newest first")
-  @ApiResponses(value = {@ApiResponse(code = 200, response = ResultPage.class, message = "OK")})
+  @ApiResponses(value = {@ApiResponse(code = 200, response = ResultDocumentPage.class, message = "OK")})
   public Response getDocuments(
       @QueryParam("externalId") String externalId,
       @QueryParam("createdAfter") LocalDateTime createdAfter,

@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.FormPageParams;
+import nl.knaw.huc.api.ResultDocument;
 import nl.knaw.huc.api.ResultPage;
 import nl.knaw.huc.api.ResultVersion;
 import nl.knaw.huc.helpers.Paginator;
@@ -37,6 +38,8 @@ public class FileVersionsResource {
   private final VersionService versionService;
   private final Paginator paginator;
 
+  private static class ResultVersionPage extends ResultPage<ResultVersion> {}
+
   public FileVersionsResource(
       VersionService versionService,
       Paginator paginator
@@ -49,7 +52,7 @@ public class FileVersionsResource {
   @Timed
   @Produces(APPLICATION_JSON)
   @ApiOperation("Retrieve file versions, newest first")
-  @ApiResponses({@ApiResponse(code = 200, response = ResultPage.class, message = "OK")})
+  @ApiResponses({@ApiResponse(code = 200, response = ResultVersionPage.class, message = "OK")})
   public Response getFileVersions(
       @PathParam("fileId") @Valid UUID fileId,
       @BeanParam FormPageParams pageParams,
