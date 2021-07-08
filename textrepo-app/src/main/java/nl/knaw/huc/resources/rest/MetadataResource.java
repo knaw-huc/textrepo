@@ -2,6 +2,7 @@ package nl.knaw.huc.resources.rest;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import nl.knaw.huc.service.document.metadata.DocumentMetadataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +34,11 @@ public class MetadataResource {
   @ApiOperation("Find which documents have a given metadata key")
   @Produces(APPLICATION_JSON)
   public List<UUID> getDocumentsGivenMetadataKey(
-      @PathParam("key") @NotNull String key) {
+      @ApiParam(required = true, example = "archive")
+      @PathParam("key")
+      @NotNull
+          String key
+  ) {
     log.debug("Get documents with metadata key: [{}]", key);
     return documentMetadataService.findByMetadataKey(key);
   }

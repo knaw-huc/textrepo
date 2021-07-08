@@ -3,6 +3,7 @@ package nl.knaw.huc.resources.rest;
 import com.codahale.metrics.annotation.Timed;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.FormVersion;
@@ -53,8 +54,12 @@ public class VersionsResource {
   @ApiOperation(value = "Create version")
   @ApiResponses(value = {@ApiResponse(code = 201, response = ResultVersion.class, message = "Created")})
   public Response createVersion(
-      @FormDataParam("fileId") UUID fileId,
-      @FormDataParam("contents") InputStream inputStream
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
+      @FormDataParam("fileId")
+          UUID fileId,
+      @ApiParam(required = true, example = "Hello world!")
+      @FormDataParam("contents")
+          InputStream inputStream
   ) {
     log.debug("Create version: fileId={}", fileId);
     var contents = readContents(inputStream);
@@ -73,7 +78,11 @@ public class VersionsResource {
   @ApiOperation(value = "Retrieve version")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultVersion.class, message = "OK")})
   public Response getVersion(
-      @PathParam("id") @NotNull @Valid UUID id
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
+      @PathParam("id")
+      @NotNull
+      @Valid
+          UUID id
   ) {
     log.debug("Get version: id={}", id);
     var version = versionService.get(id);
@@ -88,8 +97,13 @@ public class VersionsResource {
   @ApiOperation(value = PUT_ERROR_MSG)
   @ApiResponses(value = {@ApiResponse(code = 405, message = PUT_ERROR_MSG)})
   public Response putVersionIsNotAllowed(
-      @PathParam("id") @Valid UUID id,
-      @Valid FormVersion form
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
+      @PathParam("id")
+      @Valid
+          UUID id,
+      @ApiParam(required = true, example = "Hello world!")
+      @Valid
+          FormVersion form
   ) {
     throw new MethodNotAllowedException(PUT_ERROR_MSG);
   }
@@ -99,7 +113,10 @@ public class VersionsResource {
   @ApiOperation(value = "Delete version")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
   public Response deleteVersion(
-      @PathParam("id") @Valid UUID id
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
+      @PathParam("id")
+      @Valid
+          UUID id
   ) {
     log.debug("Delete version: id={}", id);
     versionService.delete(id);

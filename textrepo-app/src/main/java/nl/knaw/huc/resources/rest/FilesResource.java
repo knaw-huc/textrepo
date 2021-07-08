@@ -3,6 +3,7 @@ package nl.knaw.huc.resources.rest;
 import com.codahale.metrics.annotation.Timed;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.FormTextRepoFile;
@@ -65,7 +66,11 @@ public class FilesResource {
   @ApiOperation(value = "Retrieve file")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultTextRepoFile.class, message = "OK")})
   public Response getFile(
-      @PathParam("id") @NotNull @Valid UUID id
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
+      @PathParam("id")
+      @NotNull
+      @Valid
+          UUID id
   ) {
     log.debug("Get file: id={}", id);
     var file = fileService.get(id);
@@ -81,8 +86,12 @@ public class FilesResource {
   @ApiOperation(value = "Create or update file")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultTextRepoFile.class, message = "OK")})
   public Response putFile(
-      @PathParam("id") @Valid UUID id,
-      @Valid FormTextRepoFile form
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
+      @PathParam("id")
+      @Valid
+          UUID id,
+      @Valid
+          FormTextRepoFile form
   ) {
     log.debug("Create or update file: id={}; form={}", id, form);
     var file = fileService.upsert(form.getDocId(), new TextRepoFile(id, form.getTypeId()));
@@ -95,7 +104,10 @@ public class FilesResource {
   @ApiOperation(value = "Delete file")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
   public Response deleteFile(
-      @PathParam("id") @Valid UUID id
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
+      @PathParam("id")
+      @Valid
+          UUID id
   ) {
     log.debug("Delete file: id={}", id);
     fileService.delete(id);

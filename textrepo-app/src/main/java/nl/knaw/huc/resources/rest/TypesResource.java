@@ -1,9 +1,12 @@
 package nl.knaw.huc.resources.rest;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import nl.knaw.huc.api.FormPageParams;
 import nl.knaw.huc.api.FormType;
 import nl.knaw.huc.api.ResultType;
 import nl.knaw.huc.core.Type;
@@ -13,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -96,7 +100,7 @@ public class TypesResource {
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultType.class, message = "OK")})
   public Response putType(
       @NotNull @PathParam("id") Short id,
-      @NotNull @Valid FormType form
+      @BeanParam FormType form
   ) {
     log.debug("Create or update type: id={}; type={}", id, form);
     var type = new Type(form.getName(), form.getMimetype());

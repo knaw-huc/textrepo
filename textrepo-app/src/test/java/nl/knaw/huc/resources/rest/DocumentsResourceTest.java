@@ -100,7 +100,8 @@ public class DocumentsResourceTest {
         .client()
         .register(MultiPartFeature.class)
         .target("/rest/documents/" + docId)
-        .request().get();
+        .request()
+        .get();
     assertThat(response.getStatus()).isEqualTo(200);
     var body = response.readEntity(String.class);
     String externalId = JsonPath.parse(body).read("$.externalId");
@@ -120,7 +121,8 @@ public class DocumentsResourceTest {
         .client()
         .register(MultiPartFeature.class)
         .target("/rest/documents?offset=" + offset + "&limit=" + limit)
-        .request().get();
+        .request()
+        .get();
 
     // Check service call:
     verify(documentService, times(1)).getAll(

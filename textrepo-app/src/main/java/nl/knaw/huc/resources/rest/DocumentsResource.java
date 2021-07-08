@@ -2,6 +2,7 @@ package nl.knaw.huc.resources.rest;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.FormDocument;
@@ -16,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -76,9 +78,14 @@ public class DocumentsResource {
   @ApiOperation(value = "Retrieve documents, newest first")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultDocumentPage.class, message = "OK")})
   public Response getDocuments(
-      @QueryParam("externalId") String externalId,
-      @QueryParam("createdAfter") LocalDateTime createdAfter,
-      @BeanParam FormPageParams pageParams
+      @ApiParam(example = "document_1234")
+      @QueryParam("externalId")
+          String externalId,
+      @ApiParam(example = "2021-04-16T09:03:03")
+      @QueryParam("createdAfter")
+          LocalDateTime createdAfter,
+      @BeanParam FormPageParams
+          pageParams
   ) {
     log.debug("Get documents: externalId={}; createdAfter={}; pageParams={}", externalId, createdAfter, pageParams);
     var docs = documentService.getAll(externalId, createdAfter, paginator.fromForm(pageParams));
@@ -94,7 +101,10 @@ public class DocumentsResource {
   @ApiOperation(value = "Retrieve document")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultDocument.class, message = "OK")})
   public Response getDocument(
-      @PathParam("id") @Valid UUID id
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
+      @PathParam("id")
+      @Valid
+          UUID id
   ) {
     log.debug("Get document: id={}", id);
     final var doc = documentService
@@ -113,8 +123,12 @@ public class DocumentsResource {
   @ApiOperation(value = "Create or update document")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultDocument.class, message = "OK")})
   public Response putDocument(
-      @PathParam("id") @Valid UUID id,
-      @Valid FormDocument form
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
+      @PathParam("id")
+      @Valid
+          UUID id,
+      @Valid
+          FormDocument form
   ) {
     log.debug("Update document: id={}; form={}", id, form);
     var doc = documentService.update(new Document(id, form.getExternalId()));
@@ -127,7 +141,10 @@ public class DocumentsResource {
   @ApiOperation(value = "Delete document")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
   public Response deleteDocument(
-      @PathParam("id") @Valid UUID id
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
+      @PathParam("id")
+      @Valid
+          UUID id
   ) {
     log.debug("Delete document: id={}", id);
     documentService.delete(id);
