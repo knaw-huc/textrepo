@@ -66,6 +66,7 @@ public class VersionContentsResource {
       @ApiParam(allowableValues = "gzip")
       @HeaderParam(ACCEPT_ENCODING)
           String acceptEncoding,
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @PathParam("versionId")
       @NotNull
       @Valid
