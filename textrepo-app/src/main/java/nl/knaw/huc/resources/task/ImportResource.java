@@ -91,11 +91,11 @@ public class ImportResource {
       @QueryParam("asLatestVersion")
       @DefaultValue("false")
           boolean asLatestVersion,
-      @FormDataParam("contents")
       @NotNull
+      @FormDataParam("contents")
           InputStream uploadedInputStream,
-      @FormDataParam("contents")
       @NotNull
+      @FormDataParam("contents")
           FormDataContentDisposition fileDetail
   ) {
     log.debug(
