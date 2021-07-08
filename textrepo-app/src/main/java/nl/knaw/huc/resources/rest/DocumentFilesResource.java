@@ -2,6 +2,7 @@ package nl.knaw.huc.resources.rest;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.FormPageParams;
@@ -49,8 +50,12 @@ public class DocumentFilesResource {
   @ApiOperation(value = "Retrieve document files")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultTextRepoFilePage.class, message = "OK")})
   public Response getDocumentFiles(
-      @PathParam("docId") @Valid UUID docId,
-      @BeanParam FormPageParams pageParams
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
+      @PathParam("docId")
+      @Valid
+          UUID docId,
+      @BeanParam
+          FormPageParams pageParams
   ) {
     log.debug("Get document files: docId={}; pageParams={}", docId, pageParams);
 

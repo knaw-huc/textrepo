@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiParam;
 
 import javax.validation.constraints.NotBlank;
 
@@ -15,7 +16,9 @@ public class FormDocument {
 
   @JsonCreator
   public FormDocument(
-      @JsonProperty("externalId") String externalId
+      @ApiParam(required = true, example = "document_1234")
+      @JsonProperty("externalId")
+          String externalId
   ) {
     this.externalId = externalId;
   }
