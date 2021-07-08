@@ -42,7 +42,7 @@ public class ContentsResource {
   @Path("/{sha}")
   @Timed
   @Produces({APPLICATION_OCTET_STREAM, APPLICATION_JSON})
-  @ApiOperation(value = "Retrieve contents")
+  @ApiOperation(value = "Retrieve contents as file")
   @ApiResponses(value = {@ApiResponse(code = 200, response = String.class, message = "OK")})
   public Response getContents(
       @HeaderParam(ACCEPT_ENCODING) String acceptEncoding,

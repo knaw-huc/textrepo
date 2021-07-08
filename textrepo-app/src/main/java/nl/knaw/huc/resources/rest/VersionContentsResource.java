@@ -59,7 +59,7 @@ public class VersionContentsResource {
   @GET
   @Timed
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Retrieve version contents")
+  @ApiOperation(value = "Retrieve version contents as a file")
   @ApiResponses(value = {@ApiResponse(code = 200, response = String.class, message = "OK")})
   public Response getVersionContents(
       @HeaderParam(ACCEPT_ENCODING) String acceptEncoding,
