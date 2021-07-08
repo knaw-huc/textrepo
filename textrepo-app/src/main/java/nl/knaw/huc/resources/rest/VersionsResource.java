@@ -54,10 +54,8 @@ public class VersionsResource {
   @ApiOperation(value = "Create version")
   @ApiResponses(value = {@ApiResponse(code = 201, response = ResultVersion.class, message = "Created")})
   public Response createVersion(
-      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @FormDataParam("fileId")
           UUID fileId,
-      @ApiParam(required = true, example = "Hello world!")
       @FormDataParam("contents")
           InputStream inputStream
   ) {
@@ -78,8 +76,8 @@ public class VersionsResource {
   @ApiOperation(value = "Retrieve version")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultVersion.class, message = "OK")})
   public Response getVersion(
-      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @PathParam("id")
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @NotNull
       @Valid
           UUID id
@@ -97,8 +95,8 @@ public class VersionsResource {
   @ApiOperation(value = PUT_ERROR_MSG)
   @ApiResponses(value = {@ApiResponse(code = 405, message = PUT_ERROR_MSG)})
   public Response putVersionIsNotAllowed(
-      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @PathParam("id")
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @Valid
           UUID id,
       @ApiParam(required = true, example = "Hello world!")
@@ -113,8 +111,8 @@ public class VersionsResource {
   @ApiOperation(value = "Delete version")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
   public Response deleteVersion(
-      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @PathParam("id")
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @Valid
           UUID id
   ) {

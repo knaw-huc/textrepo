@@ -58,8 +58,8 @@ public class VersionMetadataResource {
   @ApiOperation(value = "Retrieve version metadata")
   @ApiResponses(value = {@ApiResponse(code = 200, responseContainer = "Map", response = String.class, message = "OK")})
   public Response getVersionMetadata(
-      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @PathParam("versionId")
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @NotNull
       @Valid
           UUID versionId
@@ -78,12 +78,12 @@ public class VersionMetadataResource {
   @ApiOperation(value = "Create or update version metadata entry")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
   public Response putVersionMetadataEntry(
-      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @PathParam("versionId")
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @Valid
           UUID versionId,
-      @ApiParam(required = true, example = "creator")
       @PathParam("key")
+      @ApiParam(required = true, example = "creator")
       @NotNull
           String key,
       @ApiParam(required = true, example = "John Doe")
@@ -105,13 +105,13 @@ public class VersionMetadataResource {
   @ApiOperation(value = "Delete version metadata entry")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
   public Response deleteVersionMetadataEntry(
-      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @PathParam("versionId")
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @NotNull
       @Valid
           UUID versionId,
-      @ApiParam(required = true, example = "creator")
       @PathParam("key")
+      @ApiParam(required = true, example = "creator")
       @NotBlank
           String key
   ) {

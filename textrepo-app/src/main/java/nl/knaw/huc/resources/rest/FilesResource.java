@@ -66,8 +66,8 @@ public class FilesResource {
   @ApiOperation(value = "Retrieve file")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultTextRepoFile.class, message = "OK")})
   public Response getFile(
-      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @PathParam("id")
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @NotNull
       @Valid
           UUID id
@@ -86,8 +86,8 @@ public class FilesResource {
   @ApiOperation(value = "Create or update file")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultTextRepoFile.class, message = "OK")})
   public Response putFile(
-      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @PathParam("id")
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @Valid
           UUID id,
       @Valid
@@ -104,8 +104,8 @@ public class FilesResource {
   @ApiOperation(value = "Delete file")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
   public Response deleteFile(
-      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @PathParam("id")
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @Valid
           UUID id
   ) {

@@ -58,8 +58,8 @@ public class FileMetadataResource {
   @ApiOperation(value = "Retrieve file metadata")
   @ApiResponses(value = {@ApiResponse(code = 200, responseContainer = "Map", response = String.class, message = "OK")})
   public Response getFileMetadata(
-      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @PathParam("fileId")
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @NotNull
       @Valid
           UUID fileId
@@ -78,12 +78,12 @@ public class FileMetadataResource {
   @ApiOperation(value = "Create or update file metadata entry")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
   public Response putFileMetadataEntry(
-      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @PathParam("fileId")
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @Valid
           UUID fileId,
-      @ApiParam(required = true, example = "tool")
       @PathParam("key")
+      @ApiParam(required = true, example = "tool")
       @NotNull
           String key,
       @ApiParam(example = "foobar-v42.0.0")
@@ -105,13 +105,13 @@ public class FileMetadataResource {
   @ApiOperation(value = "Delete file metadata entry")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
   public Response deleteFileMetadataEntry(
-      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @PathParam("fileId")
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @NotNull
       @Valid
           UUID fileId,
-      @ApiParam(example = "tool")
       @PathParam("key")
+      @ApiParam(example = "tool")
       @NotBlank
           String key
   ) {

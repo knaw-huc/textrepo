@@ -2,6 +2,7 @@ package nl.knaw.huc.resources.task;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.helpers.ContentsHelper;
@@ -63,7 +64,10 @@ public class FindResource {
       @ApiResponse(code = 200, message = "OK"),
       @ApiResponse(code = 404, message = "Given document could not be found")})
   public Response getDocumentMetadataForExternalId(
-      @NotNull @PathParam("externalId") String externalId
+      @PathParam("externalId")
+      @ApiParam(required = true, example = "document_1234")
+      @NotNull
+          String externalId
   ) {
     log.debug("Find metadata of document: externalId={}", externalId);
     final var task = factory

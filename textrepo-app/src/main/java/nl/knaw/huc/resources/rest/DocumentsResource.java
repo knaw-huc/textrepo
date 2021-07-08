@@ -9,7 +9,6 @@ import nl.knaw.huc.api.FormDocument;
 import nl.knaw.huc.api.FormPageParams;
 import nl.knaw.huc.api.ResultDocument;
 import nl.knaw.huc.api.ResultPage;
-import nl.knaw.huc.api.ResultTextRepoFile;
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.helpers.Paginator;
 import nl.knaw.huc.service.document.DocumentService;
@@ -17,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -78,11 +76,11 @@ public class DocumentsResource {
   @ApiOperation(value = "Retrieve documents, newest first")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultDocumentPage.class, message = "OK")})
   public Response getDocuments(
-      @ApiParam(example = "document_1234")
       @QueryParam("externalId")
+      @ApiParam(example = "document_1234")
           String externalId,
-      @ApiParam(example = "2021-04-16T09:03:03")
       @QueryParam("createdAfter")
+      @ApiParam(example = "2021-04-16T09:03:03")
           LocalDateTime createdAfter,
       @BeanParam FormPageParams
           pageParams
@@ -101,8 +99,8 @@ public class DocumentsResource {
   @ApiOperation(value = "Retrieve document")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultDocument.class, message = "OK")})
   public Response getDocument(
-      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @PathParam("id")
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @Valid
           UUID id
   ) {
@@ -123,8 +121,8 @@ public class DocumentsResource {
   @ApiOperation(value = "Create or update document")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultDocument.class, message = "OK")})
   public Response putDocument(
-      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @PathParam("id")
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @Valid
           UUID id,
       @Valid
@@ -141,8 +139,8 @@ public class DocumentsResource {
   @ApiOperation(value = "Delete document")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
   public Response deleteDocument(
-      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @PathParam("id")
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @Valid
           UUID id
   ) {

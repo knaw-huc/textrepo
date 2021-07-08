@@ -1,12 +1,10 @@
 package nl.knaw.huc.resources.rest;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import nl.knaw.huc.api.FormPageParams;
 import nl.knaw.huc.api.FormType;
 import nl.knaw.huc.api.ResultType;
 import nl.knaw.huc.core.Type;
@@ -84,7 +82,10 @@ public class TypesResource {
   @ApiOperation(value = "Retrieve type")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultType.class, message = "OK")})
   public Response getType(
-      @NotNull @PathParam("id") Short id
+      @PathParam("id")
+      @ApiParam(required = true, example = "1")
+      @NotNull
+          Short id
   ) {
     log.debug("Retrieve type: id={}", id);
     var type = typeService.getType(id);

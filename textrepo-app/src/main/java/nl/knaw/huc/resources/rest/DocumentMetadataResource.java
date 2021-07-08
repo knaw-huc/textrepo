@@ -59,8 +59,8 @@ public class DocumentMetadataResource {
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Retrieve document metadata")
   public Map<String, String> getDocumentMetadata(
-      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @PathParam("docId")
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @NotNull
       @Valid
           UUID docId
@@ -79,8 +79,8 @@ public class DocumentMetadataResource {
   @ApiOperation(value = "Create or update document metadata entry")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
   public Response putDocumentMetadataEntry(
-      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @PathParam("docId")
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @NotNull
       @Valid
           UUID docId,
@@ -107,13 +107,13 @@ public class DocumentMetadataResource {
   @ApiOperation(value = "Delete document metadata entry")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
   public Response deleteDocumentMetadataEntry(
-      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @PathParam("docId")
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @NotNull
       @Valid
           UUID docId,
-      @ApiParam(required = true, example = "archive")
       @PathParam("key")
+      @ApiParam(required = true, example = "archive")
       @NotBlank
           String key
   ) {

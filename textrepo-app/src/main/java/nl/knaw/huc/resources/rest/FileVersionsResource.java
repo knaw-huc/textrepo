@@ -7,7 +7,6 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.FormPageParams;
-import nl.knaw.huc.api.ResultDocument;
 import nl.knaw.huc.api.ResultPage;
 import nl.knaw.huc.api.ResultVersion;
 import nl.knaw.huc.helpers.Paginator;
@@ -26,7 +25,6 @@ import javax.ws.rs.core.Response;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static java.time.LocalDateTime.now;
 import static java.util.Objects.requireNonNull;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static nl.knaw.huc.helpers.Paginator.toResult;
@@ -56,14 +54,14 @@ public class FileVersionsResource {
   @ApiOperation("Retrieve file versions, newest first")
   @ApiResponses({@ApiResponse(code = 200, response = ResultVersionPage.class, message = "OK")})
   public Response getFileVersions(
-      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @PathParam("fileId")
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @Valid
           UUID fileId,
       @BeanParam
           FormPageParams pageParams,
-      @ApiParam(example = "2021-04-16T09:03:03")
       @QueryParam("createdAfter")
+      @ApiParam(example = "2021-04-16T09:03:03")
           LocalDateTime createdAfter
   ) {
     log.debug("Get versions of file: fileId={}; pageParams={}; createdAfter={}", fileId, pageParams, createdAfter);

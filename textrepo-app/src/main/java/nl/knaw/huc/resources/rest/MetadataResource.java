@@ -34,8 +34,8 @@ public class MetadataResource {
   @ApiOperation("Find which documents have a given metadata key")
   @Produces(APPLICATION_JSON)
   public List<UUID> getDocumentsGivenMetadataKey(
-      @ApiParam(required = true, example = "archive")
       @PathParam("key")
+      @ApiParam(required = true, example = "archive")
       @NotNull
           String key
   ) {

@@ -77,26 +77,25 @@ public class ImportResource {
               @ResponseHeader(name = LOCATION, response = URI.class, description = LOCATION_DESCRIPTION)}),
       @ApiResponse(code = 404, message = "When allowNewDocument=false and no document is found for externalId")})
   public Response importDocumentContentsForFileWithType(
+      @PathParam("externalId")
       @ApiParam(example = "document_1234", required = true)
       @NotBlank
-      @PathParam("externalId")
           String externalId,
+      @PathParam("typeName")
       @ApiParam(example = "plaintext", required = true)
       @NotBlank
-      @PathParam("typeName")
           String typeName,
-      @QueryParam("allowNewDocument") @DefaultValue("false")
+      @QueryParam("allowNewDocument")
+      @DefaultValue("false")
           boolean allowNewDocument,
       @QueryParam("asLatestVersion")
       @DefaultValue("false")
           boolean asLatestVersion,
-      @ApiParam(required = true)
-      @NotNull
       @FormDataParam("contents")
+      @NotNull
           InputStream uploadedInputStream,
-      @ApiParam(required = true)
-      @NotNull
       @FormDataParam("contents")
+      @NotNull
           FormDataContentDisposition fileDetail
   ) {
     log.debug(

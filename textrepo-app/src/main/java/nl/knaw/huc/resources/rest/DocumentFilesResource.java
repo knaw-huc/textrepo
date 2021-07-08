@@ -50,8 +50,8 @@ public class DocumentFilesResource {
   @ApiOperation(value = "Retrieve document files")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultTextRepoFilePage.class, message = "OK")})
   public Response getDocumentFiles(
-      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @PathParam("docId")
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @Valid
           UUID docId,
       @BeanParam

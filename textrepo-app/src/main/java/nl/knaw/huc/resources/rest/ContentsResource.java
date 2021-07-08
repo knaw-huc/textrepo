@@ -49,8 +49,8 @@ public class ContentsResource {
       @ApiParam(allowableValues = "gzip")
       @HeaderParam(ACCEPT_ENCODING)
           String acceptEncoding,
-      @ApiParam(required = true, example = "89dc210ce9602f3446af220c0a5787a29277095b272e30fd09bd8224")
       @PathParam("sha")
+      @ApiParam(required = true, example = "89dc210ce9602f3446af220c0a5787a29277095b272e30fd09bd8224")
       @NotBlank
           String sha
   ) {
