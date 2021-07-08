@@ -57,11 +57,14 @@ public class ImportResource {
   @Consumes(MULTIPART_FORM_DATA)
   @Produces(APPLICATION_JSON)
   @ApiOperation(value =
-      "Import file contents to create version for type {typeName} of document {externalDocumentId} (without indexing)",
-      notes = "Use allowNewDocument=true if document {externalId} is not yet in use and you want it to be created. " +
-          "Use asLatestVersion=true if contents you are uploading are already present as an *earlier* version, " +
-          "but you need those contents to represent the *latest* version; a new version will be created for it. " +
-          "See also the Concordion Integration Tests under \"Task API\".")
+      "Create a new file version for document with {externalDocumentId} and file with {typeName}.",
+      notes = "Use <code>allowNewDocument=true</code> " +
+          "if you want to create a document when its externalId is not found.<br />" +
+          "By default a new version is only created when no file versions exist with the same contents.<br />" +
+          "Use <code>asLatestVersion=true</code> to force the creation of a new version, " +
+          "when its contents are different from the current latest version, " +
+          "even when the new contents match those of older versions.<br />" +
+          "See also the Concordion Integration Tests &gt; \"Task API\".")
 
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "Contents found in earlier version",
@@ -74,12 +77,27 @@ public class ImportResource {
               @ResponseHeader(name = LOCATION, response = URI.class, description = LOCATION_DESCRIPTION)}),
       @ApiResponse(code = 404, message = "When allowNewDocument=false and no document is found for externalId")})
   public Response importDocumentContentsForFileWithType(
-      @NotBlank @PathParam("externalId") @ApiParam(example = "document_1234") String externalId,
-      @NotBlank @PathParam("typeName") @ApiParam(example = "plaintext") String typeName,
-      @QueryParam("allowNewDocument") @DefaultValue("false") boolean allowNewDocument,
-      @QueryParam("asLatestVersion") @DefaultValue("false") boolean asLatestVersion,
-      @NotNull @FormDataParam("contents") InputStream uploadedInputStream,
-      @NotNull @FormDataParam("contents") FormDataContentDisposition fileDetail
+      @ApiParam(example = "document_1234", required = true)
+      @NotBlank
+      @PathParam("externalId")
+          String externalId,
+      @ApiParam(example = "plaintext", required = true)
+      @NotBlank
+      @PathParam("typeName")
+          String typeName,
+      @QueryParam("allowNewDocument") @DefaultValue("false")
+          boolean allowNewDocument,
+      @QueryParam("asLatestVersion")
+      @DefaultValue("false")
+          boolean asLatestVersion,
+      @ApiParam(required = true)
+      @NotNull
+      @FormDataParam("contents")
+          InputStream uploadedInputStream,
+      @ApiParam(required = true)
+      @NotNull
+      @FormDataParam("contents")
+          FormDataContentDisposition fileDetail
   ) {
     log.debug(
         "Importing document contents for file with type: " +
