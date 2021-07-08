@@ -101,7 +101,7 @@ public class TypesResource {
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultType.class, message = "OK")})
   public Response putType(
       @NotNull @PathParam("id") Short id,
-      @BeanParam FormType form
+      @Valid @NotNull FormType form
   ) {
     log.debug("Create or update type: id={}; type={}", id, form);
     var type = new Type(form.getName(), form.getMimetype());
