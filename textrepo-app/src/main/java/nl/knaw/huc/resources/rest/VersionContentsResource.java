@@ -3,6 +3,7 @@ package nl.knaw.huc.resources.rest;
 import com.codahale.metrics.annotation.Timed;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.exceptions.MethodNotAllowedException;
@@ -62,8 +63,13 @@ public class VersionContentsResource {
   @ApiOperation(value = "Retrieve version contents as a file")
   @ApiResponses(value = {@ApiResponse(code = 200, response = String.class, message = "OK")})
   public Response getVersionContents(
-      @HeaderParam(ACCEPT_ENCODING) String acceptEncoding,
-      @PathParam("versionId") @NotNull @Valid UUID versionId
+      @ApiParam(allowableValues = "gzip")
+      @HeaderParam(ACCEPT_ENCODING)
+          String acceptEncoding,
+      @PathParam("versionId")
+      @NotNull
+      @Valid
+          UUID versionId
   ) {
     final var contentType = contentsService.getVersionMimetype(versionId)
                                            .orElse(APPLICATION_OCTET_STREAM);
