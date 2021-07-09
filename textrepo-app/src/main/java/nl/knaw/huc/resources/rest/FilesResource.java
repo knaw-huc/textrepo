@@ -51,11 +51,11 @@ public class FilesResource {
       @Valid FormTextRepoFile form
   ) {
     log.debug("Create file: form={}", form);
-    var file = fileService.insert(form.getDocId(), new TextRepoFile(null, form.getTypeId()));
+    var file = fileService.insert(form.docId, new TextRepoFile(null, form.typeId));
     log.debug("Created file: {}", file);
     return Response
         .created(FILE.build(file.getId()))
-        .entity(new ResultTextRepoFile(form.getDocId(), file))
+        .entity(new ResultTextRepoFile(form.docId, file))
         .build();
   }
 
@@ -94,9 +94,9 @@ public class FilesResource {
           FormTextRepoFile form
   ) {
     log.debug("Create or update file: id={}; form={}", id, form);
-    var file = fileService.upsert(form.getDocId(), new TextRepoFile(id, form.getTypeId()));
+    var file = fileService.upsert(form.docId, new TextRepoFile(id, form.typeId));
     log.debug("Created or updated file: {}", file);
-    return Response.ok(new ResultTextRepoFile(form.getDocId(), file)).build();
+    return Response.ok(new ResultTextRepoFile(form.docId, file)).build();
   }
 
   @DELETE

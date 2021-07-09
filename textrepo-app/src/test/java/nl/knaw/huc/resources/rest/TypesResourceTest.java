@@ -54,7 +54,9 @@ public class TypesResourceTest {
   public void testAddType_createsType() {
     var expectedName = "test-type";
     var expectedMimetype = "application/xml";
-    var form = new FormType(expectedName, expectedMimetype);
+    var form = new FormType();
+    form.name = expectedName;
+    form.mimetype = expectedMimetype;
 
     var type = new Type(expectedName, expectedMimetype);
     type.setId((short) 456);
@@ -78,7 +80,7 @@ public class TypesResourceTest {
 
   @Test
   public void testAddType_verifiesInput() {
-    var form = new FormType("", "");
+    var form = new FormType();
 
     var response = resource
         .client()

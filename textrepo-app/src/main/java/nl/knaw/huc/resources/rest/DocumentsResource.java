@@ -57,7 +57,9 @@ public class DocumentsResource {
   @POST
   @Consumes(APPLICATION_JSON)
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Create document")
+  @ApiOperation(
+      value = "Create document",
+      consumes = "application/json")
   @ApiResponses(value = {@ApiResponse(code = 201, response = ResultDocument.class, message = "Created")})
   public Response createDocument(
       @Valid FormDocument form

@@ -6,18 +6,23 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.ExampleProperty;
 import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.api.ResultFileMetadataEntry;
 import nl.knaw.huc.exceptions.MethodNotAllowedException;
 import nl.knaw.huc.service.file.metadata.FileMetadataService;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -86,7 +91,6 @@ public class FileMetadataResource {
       @ApiParam(required = true, example = "tool")
       @NotNull
           String key,
-      @ApiParam(example = "foobar-v42.0.0")
       @NotNull
           String value
   ) {
