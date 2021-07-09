@@ -1,4 +1,4 @@
-package nl.knaw.huc.resources.rest;
+package nl.knaw.huc.resources;
 
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import nl.knaw.huc.config.TextRepoConfiguration;
