@@ -48,7 +48,9 @@ public class TypesResource {
   @ApiOperation(value = "Create type")
   @ApiResponses(value = {@ApiResponse(code = 201, response = ResultType.class, message = "Created")})
   public Response createType(
-      @Valid @NotNull FormType form
+      @Valid
+      @NotNull
+          FormType form
   ) {
     var type = new Type(form.getName(), form.getMimetype());
     log.debug("Create type: type={}", type);
@@ -100,8 +102,12 @@ public class TypesResource {
   @ApiOperation(value = "Create or update type")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultType.class, message = "OK")})
   public Response putType(
-      @NotNull @PathParam("id") Short id,
-      @Valid @NotNull FormType form
+      @PathParam("id")
+      @NotNull
+          Short id,
+      @Valid
+      @NotNull
+          FormType form
   ) {
     log.debug("Create or update type: id={}; type={}", id, form);
     var type = new Type(form.getName(), form.getMimetype());
@@ -116,7 +122,9 @@ public class TypesResource {
   @ApiOperation(value = "Delete type")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
   public Response deleteType(
-      @NotNull @PathParam("id") Short id
+      @PathParam("id")
+      @NotNull
+          Short id
   ) {
     log.debug("Delete type: id={}", id);
     typeService.delete(id);
