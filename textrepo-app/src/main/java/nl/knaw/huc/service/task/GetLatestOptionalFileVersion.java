@@ -7,7 +7,6 @@ import org.jdbi.v3.core.Handle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.BadRequestException;
 import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;

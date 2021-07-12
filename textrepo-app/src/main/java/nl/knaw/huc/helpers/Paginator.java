@@ -1,9 +1,9 @@
 package nl.knaw.huc.helpers;
 
-import nl.knaw.huc.config.PaginationConfiguration;
 import nl.knaw.huc.api.FormPageParams;
 import nl.knaw.huc.api.ResultPage;
 import nl.knaw.huc.api.ResultPageParams;
+import nl.knaw.huc.config.PaginationConfiguration;
 import nl.knaw.huc.core.Page;
 import nl.knaw.huc.core.PageParams;
 

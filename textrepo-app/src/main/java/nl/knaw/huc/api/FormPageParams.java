@@ -1,7 +1,6 @@
 package nl.knaw.huc.api;
 
 import com.google.common.base.MoreObjects;
-import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;
 import nl.knaw.huc.core.Paginated;
 
