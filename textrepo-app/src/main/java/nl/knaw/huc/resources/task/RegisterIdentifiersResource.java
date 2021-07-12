@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.ResultDocument;
 import nl.knaw.huc.service.task.TaskBuilderFactory;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,11 +74,7 @@ public class RegisterIdentifiersResource {
           message = REGISTRATION_RESULT_MSG,
           response = ResultDocument.class, responseContainer = "List")})
   @Path("raw") // has to be different from @Path at #postFormIdentifiers to avoid collision in swagger.json
-  public List<ResultDocument> postRawIdentifiers(
-      @ApiParam(example = "document_1234<br />document_1235", required = true)
-      @NotNull
-      InputStream content
-  ) {
+  public List<ResultDocument> postRawIdentifiers(InputStream content) {
     return registerIdentifiers(content);
   }
 
@@ -92,17 +89,12 @@ public class RegisterIdentifiersResource {
           code = 200,
           message = "Returns list of (created / existing) documents",
           response = ResultDocument.class, responseContainer = "List")})
-  public List<ResultDocument> putIdentifiers(
-      @ApiParam(example = "document_1234<br />document_1235", required = true)
-      @NotNull
-      InputStream content
-  ) {
+  public List<ResultDocument> putIdentifiers(InputStream content) {
     return registerIdentifiers(content);
   }
 
   private List<ResultDocument> registerIdentifiers(InputStream inputStream) {
     final var externalIds = new BufferedReader(new InputStreamReader(inputStream)).lines();
-
     final var registerIdentifiersTask = factory
         .getRegisterIdentifiersBuilder()
         .forExternalIdentifiers(externalIds)
