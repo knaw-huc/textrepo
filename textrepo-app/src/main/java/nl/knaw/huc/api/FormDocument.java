@@ -8,8 +8,8 @@ import javax.validation.constraints.NotBlank;
 
 public class FormDocument {
 
-  @NotBlank(message = "is mandatory")
   @ApiModelProperty(example = "document_1234", required = true)
+  @NotBlank(message = "is mandatory")
   public String externalId;
 
   public String getExternalId() {

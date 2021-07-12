@@ -6,7 +6,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import nl.knaw.huc.api.FormVersion;
 import nl.knaw.huc.api.ResultVersion;
 import nl.knaw.huc.exceptions.MethodNotAllowedException;
 import nl.knaw.huc.service.version.VersionService;
@@ -95,13 +94,10 @@ public class VersionsResource {
   @ApiOperation(value = PUT_ERROR_MSG)
   @ApiResponses(value = {@ApiResponse(code = 405, message = PUT_ERROR_MSG)})
   public Response putVersionIsNotAllowed(
-      @PathParam("id")
-      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
-      @Valid
-          UUID id,
-      @ApiParam(required = true, example = "Hello world!")
-      @Valid
-          FormVersion form
+      @FormDataParam("fileId")
+          UUID fileId,
+      @FormDataParam("contents")
+          InputStream inputStream
   ) {
     throw new MethodNotAllowedException(PUT_ERROR_MSG);
   }
