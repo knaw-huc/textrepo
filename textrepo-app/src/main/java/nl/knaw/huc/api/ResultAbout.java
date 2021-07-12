@@ -1,6 +1,6 @@
 package nl.knaw.huc.api;
 
-import nl.knaw.huc.TextRepoConfiguration;
+import nl.knaw.huc.config.TextRepoConfiguration;
 
 import java.util.List;
 

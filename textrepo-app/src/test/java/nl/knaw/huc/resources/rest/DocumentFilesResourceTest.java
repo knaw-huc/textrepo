@@ -3,7 +3,7 @@ package nl.knaw.huc.resources.rest;
 import com.jayway.jsonpath.JsonPath;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.testing.junit5.ResourceExtension;
-import nl.knaw.huc.PaginationConfiguration;
+import nl.knaw.huc.config.PaginationConfiguration;
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.db.DocumentFilesDao;

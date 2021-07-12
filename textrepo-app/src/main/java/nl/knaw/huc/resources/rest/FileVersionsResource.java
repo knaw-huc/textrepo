@@ -3,6 +3,7 @@ package nl.knaw.huc.resources.rest;
 import com.codahale.metrics.annotation.Timed;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.FormPageParams;
@@ -37,6 +38,8 @@ public class FileVersionsResource {
   private final VersionService versionService;
   private final Paginator paginator;
 
+  private static class ResultVersionPage extends ResultPage<ResultVersion> {}
+
   public FileVersionsResource(
       VersionService versionService,
       Paginator paginator
@@ -49,11 +52,17 @@ public class FileVersionsResource {
   @Timed
   @Produces(APPLICATION_JSON)
   @ApiOperation("Retrieve file versions, newest first")
-  @ApiResponses({@ApiResponse(code = 200, response = ResultPage.class, message = "OK")})
+  @ApiResponses({@ApiResponse(code = 200, response = ResultVersionPage.class, message = "OK")})
   public Response getFileVersions(
-      @PathParam("fileId") @Valid UUID fileId,
-      @BeanParam FormPageParams pageParams,
-      @QueryParam("createdAfter") LocalDateTime createdAfter
+      @PathParam("fileId")
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
+      @Valid
+          UUID fileId,
+      @BeanParam
+          FormPageParams pageParams,
+      @QueryParam("createdAfter")
+      @ApiParam(example = "2021-04-16T09:03:03")
+          LocalDateTime createdAfter
   ) {
     log.debug("Get versions of file: fileId={}; pageParams={}; createdAfter={}", fileId, pageParams, createdAfter);
     var results = versionService

@@ -1,6 +1,6 @@
 package nl.knaw.huc.api;
 
-import nl.knaw.huc.VersionConfiguration;
+import nl.knaw.huc.config.VersionConfiguration;
 
 public class ResultAboutVersion {
 

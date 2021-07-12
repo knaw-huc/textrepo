@@ -2,6 +2,7 @@ package nl.knaw.huc.resources.task;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import nl.knaw.huc.service.task.TaskBuilderFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +35,10 @@ public class DeleteDocumentResource {
   @Path("documents/{externalId}")
   @Produces(APPLICATION_JSON)
   public Response deleteDocumentRecursively(
-      @NotBlank @PathParam("externalId") String externalId
+      @PathParam("externalId")
+      @ApiParam(required = true, example = "document_1234")
+      @NotBlank
+          String externalId
   ) {
     log.debug("Delete document: externalId={}", externalId);
 

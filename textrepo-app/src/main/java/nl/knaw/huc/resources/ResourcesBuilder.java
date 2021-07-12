@@ -1,6 +1,6 @@
 package nl.knaw.huc.resources;
 
-import nl.knaw.huc.TextRepoConfiguration;
+import nl.knaw.huc.config.TextRepoConfiguration;
 import nl.knaw.huc.helpers.ContentsHelper;
 import nl.knaw.huc.helpers.Paginator;
 import nl.knaw.huc.resources.about.AboutResource;

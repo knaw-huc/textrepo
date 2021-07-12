@@ -3,6 +3,7 @@ package nl.knaw.huc.resources.rest;
 import com.codahale.metrics.annotation.Timed;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.MetadataEntry;
@@ -57,7 +58,11 @@ public class FileMetadataResource {
   @ApiOperation(value = "Retrieve file metadata")
   @ApiResponses(value = {@ApiResponse(code = 200, responseContainer = "Map", response = String.class, message = "OK")})
   public Response getFileMetadata(
-      @PathParam("fileId") @NotNull @Valid UUID fileId
+      @PathParam("fileId")
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
+      @NotNull
+      @Valid
+          UUID fileId
   ) {
     log.debug("Get file metadata: fileId={}", fileId);
     var metadata = fileMetadataService.getMetadata(fileId);
@@ -73,9 +78,16 @@ public class FileMetadataResource {
   @ApiOperation(value = "Create or update file metadata entry")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
   public Response putFileMetadataEntry(
-      @PathParam("fileId") @Valid UUID fileId,
-      @PathParam("key") @NotNull String key,
-      @NotNull String value
+      @PathParam("fileId")
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
+      @Valid
+          UUID fileId,
+      @PathParam("key")
+      @ApiParam(required = true, example = "tool")
+      @NotNull
+          String key,
+      @NotNull
+          String value
   ) {
     log.debug("Update or create file metadata: fileId={}, key={}, value={}", fileId, key, value);
     var entry = new MetadataEntry(key, value);
@@ -92,8 +104,15 @@ public class FileMetadataResource {
   @ApiOperation(value = "Delete file metadata entry")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
   public Response deleteFileMetadataEntry(
-      @PathParam("fileId") @NotNull @Valid UUID fileId,
-      @PathParam("key") @NotBlank String key
+      @PathParam("fileId")
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
+      @NotNull
+      @Valid
+          UUID fileId,
+      @PathParam("key")
+      @ApiParam(example = "tool")
+      @NotBlank
+          String key
   ) {
     log.debug("Delete file metadata: fileId={}, key={}", fileId, key);
     fileMetadataService.delete(fileId, key);

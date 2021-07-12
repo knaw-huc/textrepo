@@ -10,6 +10,11 @@ public class ResultPage<T> {
   private final long total;
   private final ResultPageParams page;
 
+  public ResultPage() {
+    throw new IllegalStateException("Do not use no arg constructor. " +
+        "It is only needed for generating swagger docs");
+  }
+
   public ResultPage(List<T> items, long total, ResultPageParams page) {
     this.items = items;
     this.total = total;

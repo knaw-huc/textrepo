@@ -61,7 +61,10 @@ public class DashboardResource {
   @Produces(APPLICATION_JSON)
   @ApiOperation("Find orphans: documents with neither metadata nor any associated files")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultPage.class, message = "OK")})
-  public ResultPage<ResultDocument> findOrphans(@BeanParam FormPageParams pageParams) {
+  public ResultPage<ResultDocument> findOrphans(
+      @BeanParam
+          FormPageParams pageParams
+  ) {
     log.debug("Find orphans, pageParams={}", pageParams);
     var orphans = dashboardService.findOrphans(paginator.fromForm(pageParams));
     log.debug("Got orphans: {}", orphans);
@@ -87,7 +90,10 @@ public class DashboardResource {
       code = 200,
       message = "OK. Body contains Map: String value -> int count. Link rel='collection' to relevant documents"))
   @Produces(APPLICATION_JSON)
-  public Response countDocumentsByMetadataValue(@PathParam("key") String key) {
+  public Response countDocumentsByMetadataValue(
+      @PathParam("key")
+          String key
+  ) {
     log.debug("Count documents by metadata value for key=[{}]", key);
     final var valueCounts = dashboardService.countDocumentsByMetadataValue(key);
     log.debug("Got valueCounts: {}", valueCounts);

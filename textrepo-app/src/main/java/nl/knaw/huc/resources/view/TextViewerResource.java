@@ -1,5 +1,6 @@
 package nl.knaw.huc.resources.view;
 
+import io.swagger.annotations.ApiParam;
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.helpers.ContentsHelper;
 import nl.knaw.huc.resources.view.text.TextCharsResolver;
@@ -54,9 +55,17 @@ public class TextViewerResource {
   @Path("chars/{startOffset}/{endOffset}")
   @Produces(TEXT_PLAIN)
   public Response getChars(
-      @HeaderParam(ACCEPT_ENCODING) String acceptEncoding,
-      @PathParam("startOffset") @NotNull RangeParam startParam,
-      @PathParam("endOffset") @NotNull RangeParam endParam
+      @HeaderParam(ACCEPT_ENCODING)
+      @ApiParam(allowableValues = "gzip")
+          String acceptEncoding,
+      @PathParam("startOffset")
+      @ApiParam(required = true, example = "0")
+      @NotNull
+          RangeParam startParam,
+      @PathParam("endOffset")
+      @ApiParam(required = true, example = "0")
+      @NotNull
+          RangeParam endParam
   ) {
     log.debug("getChars: startParam=[{}], endParam=[{}]", startParam, endParam);
 
@@ -70,9 +79,17 @@ public class TextViewerResource {
   @Path("lines/{startOffset}/{endOffset}")
   @Produces(TEXT_PLAIN)
   public Response getLines(
-      @HeaderParam(ACCEPT_ENCODING) String acceptEncoding,
-      @PathParam("startOffset") @NotNull RangeParam startParam,
-      @PathParam("endOffset") @NotNull RangeParam endParam
+      @HeaderParam(ACCEPT_ENCODING)
+      @ApiParam(allowableValues = "gzip")
+          String acceptEncoding,
+      @PathParam("startOffset")
+      @ApiParam(required = true, example = "0")
+      @NotNull
+          RangeParam startParam,
+      @PathParam("endOffset")
+      @ApiParam(required = true, example = "10")
+      @NotNull
+          RangeParam endParam
   ) {
     log.debug("getLines: startParam=[{}], endParam=[{}]", startParam, endParam);
 
@@ -87,11 +104,25 @@ public class TextViewerResource {
   // E.g., from line 3, char 12 (on that line) up to and including line 8, char 4 (on that line)
   @Produces(TEXT_PLAIN)
   public Response getRange(
-      @HeaderParam(ACCEPT_ENCODING) String acceptEncoding,
-      @PathParam("startLineOffset") @NotNull RangeParam startLineParam,
-      @PathParam("startCharOffset") @NotNull RangeParam startCharParam,
-      @PathParam("endLineOffset") @NotNull RangeParam endLineParam,
-      @PathParam("endCharOffset") @NotNull RangeParam endCharParam
+      @HeaderParam(ACCEPT_ENCODING)
+      @ApiParam(allowableValues = "gzip")
+          String acceptEncoding,
+      @PathParam("startLineOffset")
+      @ApiParam(required = true, example = "0")
+      @NotNull
+          RangeParam startLineParam,
+      @PathParam("startCharOffset")
+      @ApiParam(required = true, example = "0")
+      @NotNull
+          RangeParam startCharParam,
+      @PathParam("endLineOffset")
+      @ApiParam(required = true, example = "10")
+      @NotNull
+          RangeParam endLineParam,
+      @PathParam("endCharOffset")
+      @ApiParam(required = true, example = "10")
+      @NotNull
+          RangeParam endCharParam
   ) {
     log.debug("getLines: startLineParam=[{}], startCharParam=[{}], endLineParam=[{}], endCharParam=[{}]",
         startLineParam, startCharParam, endLineParam, endCharParam);
