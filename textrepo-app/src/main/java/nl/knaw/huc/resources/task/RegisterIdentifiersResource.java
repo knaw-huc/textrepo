@@ -55,41 +55,29 @@ public class RegisterIdentifiersResource {
           message = REGISTRATION_RESULT_MSG,
           response = ResultDocument.class, responseContainer = "List")})
   public List<ResultDocument> postFormIdentifiers(
-      @ApiParam(example = "document_1234<br />document_1235", required = true)
       @NotNull
+      @FormDataParam("ids")
           InputStream uploadedInputStream
   ) {
     return registerIdentifiers(uploadedInputStream);
   }
 
-  @POST
-  @Consumes(APPLICATION_FORM_URLENCODED)
-  @Produces(APPLICATION_JSON)
-  @ApiOperation(
-      value = "Register documents by POSTing a file with externalIds, e.g., curl --data-binary @file",
-      notes = FILE_LAYOUT_NOTES)
-  @ApiResponses(value = {
-      @ApiResponse(
-          code = 200,
-          message = REGISTRATION_RESULT_MSG,
-          response = ResultDocument.class, responseContainer = "List")})
-  @Path("raw") // has to be different from @Path at #postFormIdentifiers to avoid collision in swagger.json
-  public List<ResultDocument> postRawIdentifiers(InputStream content) {
-    return registerIdentifiers(content);
-  }
-
   @PUT
-  //@Consumes() left out for raw upload, see FAQ at https://swagger.io/docs/specification/2-0/file-upload/
+  @Consumes(MULTIPART_FORM_DATA)
   @Produces(APPLICATION_JSON)
   @ApiOperation(
-      value = "Register documents by PUTing a files with externalIds, e.g., curl --upload-file",
+      value = "Register documents by PUTing a file with externalIds, e.g., curl --form 'ids=@file'",
       notes = FILE_LAYOUT_NOTES)
   @ApiResponses(value = {
       @ApiResponse(
           code = 200,
           message = "Returns list of (created / existing) documents",
           response = ResultDocument.class, responseContainer = "List")})
-  public List<ResultDocument> putIdentifiers(InputStream content) {
+  public List<ResultDocument> putIdentifiers(
+      @NotNull
+      @FormDataParam("ids")
+          InputStream content
+  ) {
     return registerIdentifiers(content);
   }
 
