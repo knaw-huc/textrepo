@@ -27,7 +27,7 @@ import static java.util.Objects.requireNonNull;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static nl.knaw.huc.helpers.Paginator.toResult;
 
-@Api(tags = {"documents"})
+@Api(tags = {"documents", "files"})
 @Path("/rest/documents/{docId}/files")
 public class DocumentFilesResource {
 

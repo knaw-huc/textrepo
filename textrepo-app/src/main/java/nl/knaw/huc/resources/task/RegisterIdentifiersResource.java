@@ -26,7 +26,7 @@ import static java.util.stream.Collectors.toList;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
 
-@Api(tags = {"task", "register"})
+@Api(tags = {"task", "register", "documents"})
 @Path("task/register")
 @Produces(APPLICATION_JSON)
 public class RegisterIdentifiersResource {
@@ -45,7 +45,7 @@ public class RegisterIdentifiersResource {
   @Consumes(MULTIPART_FORM_DATA)
   @Produces(APPLICATION_JSON)
   @ApiOperation(
-      value = "Register documents by POSTing a file with externalIds in HTTP form, e.g., curl --form 'ids=@file'",
+      value = "Create documents by POSTing a file with externalIds in HTTP form, e.g., curl --form 'ids=@file'",
       notes = FILE_LAYOUT_NOTES)
   @ApiResponses(value = {
       @ApiResponse(
@@ -64,7 +64,7 @@ public class RegisterIdentifiersResource {
   @Consumes(MULTIPART_FORM_DATA)
   @Produces(APPLICATION_JSON)
   @ApiOperation(
-      value = "Register documents by PUTing a file with externalIds, e.g., curl --form 'ids=@file'",
+      value = "Create documents by PUTing a file with externalIds, e.g., curl --form 'ids=@file'",
       notes = FILE_LAYOUT_NOTES)
   @ApiResponses(value = {
       @ApiResponse(
