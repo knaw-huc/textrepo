@@ -102,8 +102,12 @@ public abstract class AbstractConcordionTest {
     return fooTypeId;
   }
 
-  public String code(String fileId) {
-    return "<code>" + fileId + "</code>";
+  public String code(String string) {
+    return "<code>" + string + "</code>";
+  }
+
+  public String code(int number) {
+    return code("" + number);
   }
 
 }

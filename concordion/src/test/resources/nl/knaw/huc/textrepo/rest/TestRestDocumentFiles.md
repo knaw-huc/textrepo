@@ -28,7 +28,7 @@ Then:
 [ ](- "ext:embed=#retrieveResult.body")
 
 
-### Paginate file versions
+### Paginate document files
 Results are divided in pages using offset and limit.
 
 When retrieving the versions of a file with a `GET` to [`/rest/documents/{id}/files?offset={offset}&limit={limit}`](- "#getEndpoint") 
@@ -43,6 +43,24 @@ Then:
  - The response status should be: [200](- "?=#paginateResult.status");
  - The response should only contain the [text](- "?=#paginateResult.hasOld") file;
  - Total should be [2](- "?=#paginateResult.total");
+ - Full response:
+
+[ ](- "ext:embed=#paginateResult.body")
+
+### Filter by file type
+Results can be filtered by type.
+
+When retrieving the versions of a file with a `GET` to [`/rest/documents/{id}/files?typeId={typeId}`](- "#getEndpoint") 
+
+ - where `{typeId}` is [ ](- "ext:embed=code(getTextTypeId())");
+
+[ ](- "#paginateResult=filter(#getEndpoint, getDocId(), getTextTypeId(), getTextFileId())")
+
+Then:
+
+ - The response status should be: [200](- "?=#paginateResult.status");
+ - The response should only contain the [text](- "?=#paginateResult.hasOld") file;
+ - Total should be [1](- "?=#paginateResult.total");
  - Full response:
 
 [ ](- "ext:embed=#paginateResult.body")
