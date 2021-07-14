@@ -40,7 +40,7 @@ public interface DocumentFilesDao {
 
   @SqlQuery("select id, type_id " +
       "from documents_files as df left join files as f on f.id = df.file_id " +
-      "where df.document_id = :docId and f.type_id = :typeId " +
+      "where df.document_id = :docId and (:typeId is null or f.type_id = :typeId) " +
       "limit :limit offset :offset")
   @RegisterConstructorMapper(TextRepoFile.class)
   List<TextRepoFile> findFilesByDocumentAndTypeId(
@@ -51,6 +51,9 @@ public interface DocumentFilesDao {
 
   @SqlQuery("select count(*)" +
       "from documents_files as df left join files as f on f.id = df.file_id " +
-      "where df.document_id = ? and f.type_id = ?")
-  long countByDocumentAndTypeId(UUID docId, Short typeId);
+      "where df.document_id = :docId and (:typeId is null or f.type_id = :typeId)")
+  long countByDocumentAndTypeId(
+      @Bind("docId") UUID docId,
+      @Bind("typeId") Short typeId
+  );
 }

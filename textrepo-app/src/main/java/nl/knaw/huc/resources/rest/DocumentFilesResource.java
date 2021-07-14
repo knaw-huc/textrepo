@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.Tag;
 import nl.knaw.huc.api.FormPageParams;
 import nl.knaw.huc.api.ResultPage;
 import nl.knaw.huc.api.ResultTextRepoFile;
