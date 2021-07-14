@@ -64,8 +64,8 @@ public class ImportResource {
           "Use <code>asLatestVersion=true</code> to force the creation of a new version, " +
           "when its contents are different from the current latest version, " +
           "even when the new contents match those of older versions.<br />" +
-          "See also the Concordion Integration Tests &gt; \"Task API\".")
-
+          "See also the Concordion Integration Tests &gt; \"Task API\".",
+      tags={"task", "import", "documents", "files", "versions", "contents"})
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "Contents found in earlier version",
           response = ResultImportDocument.class,

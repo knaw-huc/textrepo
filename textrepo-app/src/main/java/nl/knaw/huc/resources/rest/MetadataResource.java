@@ -31,7 +31,9 @@ public class MetadataResource {
 
   @GET
   @Path("{key}/documents")
-  @ApiOperation("Find which documents have a given metadata key")
+  @ApiOperation(
+      value = "Find which documents have a given metadata key",
+      tags = {"metadata", "documents"})
   @Produces(APPLICATION_JSON)
   public List<UUID> getDocumentsGivenMetadataKey(
       @PathParam("key")
