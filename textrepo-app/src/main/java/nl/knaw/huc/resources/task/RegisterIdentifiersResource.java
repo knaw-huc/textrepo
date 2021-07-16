@@ -23,11 +23,10 @@ import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
-import static javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
 
-@Api(tags = {"task", "register"})
+@Api(tags = {"task", "register", "documents"})
 @Path("task/register")
 @Produces(APPLICATION_JSON)
 public class RegisterIdentifiersResource {
@@ -46,7 +45,7 @@ public class RegisterIdentifiersResource {
   @Consumes(MULTIPART_FORM_DATA)
   @Produces(APPLICATION_JSON)
   @ApiOperation(
-      value = "Register documents by POSTing a file with externalIds in HTTP form, e.g., curl --form 'ids=@file'",
+      value = "Create documents by POSTing a file with externalIds in HTTP form, e.g., curl --form 'ids=@file'",
       notes = FILE_LAYOUT_NOTES)
   @ApiResponses(value = {
       @ApiResponse(
@@ -54,45 +53,34 @@ public class RegisterIdentifiersResource {
           message = REGISTRATION_RESULT_MSG,
           response = ResultDocument.class, responseContainer = "List")})
   public List<ResultDocument> postFormIdentifiers(
-      @NotNull @FormDataParam("ids") InputStream uploadedInputStream
+      @NotNull
+      @FormDataParam("ids")
+          InputStream uploadedInputStream
   ) {
     return registerIdentifiers(uploadedInputStream);
   }
 
-  @POST
-  @Consumes(APPLICATION_FORM_URLENCODED)
-  @Produces(APPLICATION_JSON)
-  @ApiOperation(
-      value = "Register documents by POSTing a file with externalIds, e.g., curl --data-binary @file",
-      notes = FILE_LAYOUT_NOTES)
-  @ApiResponses(value = {
-      @ApiResponse(
-          code = 200,
-          message = REGISTRATION_RESULT_MSG,
-          response = ResultDocument.class, responseContainer = "List")})
-  @Path("raw") // has to be different from @Path at #postFormIdentifiers to avoid collision in swagger.json
-  public List<ResultDocument> postRawIdentifiers(InputStream content) {
-    return registerIdentifiers(content);
-  }
-
   @PUT
-  //@Consumes() left out for raw upload, see FAQ at https://swagger.io/docs/specification/2-0/file-upload/
+  @Consumes(MULTIPART_FORM_DATA)
   @Produces(APPLICATION_JSON)
   @ApiOperation(
-      value = "Register documents by PUTing a files with externalIds, e.g., curl --upload-file",
+      value = "Create documents by PUTing a file with externalIds, e.g., curl --form 'ids=@file'",
       notes = FILE_LAYOUT_NOTES)
   @ApiResponses(value = {
       @ApiResponse(
           code = 200,
           message = "Returns list of (created / existing) documents",
           response = ResultDocument.class, responseContainer = "List")})
-  public List<ResultDocument> putIdentifiers(InputStream content) {
+  public List<ResultDocument> putIdentifiers(
+      @NotNull
+      @FormDataParam("ids")
+          InputStream content
+  ) {
     return registerIdentifiers(content);
   }
 
   private List<ResultDocument> registerIdentifiers(InputStream inputStream) {
     final var externalIds = new BufferedReader(new InputStreamReader(inputStream)).lines();
-
     final var registerIdentifiersTask = factory
         .getRegisterIdentifiersBuilder()
         .forExternalIdentifiers(externalIds)

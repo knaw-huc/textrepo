@@ -3,6 +3,7 @@ package nl.knaw.huc.resources.rest;
 import com.codahale.metrics.annotation.Timed;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.MetadataEntry;
@@ -57,7 +58,11 @@ public class VersionMetadataResource {
   @ApiOperation(value = "Retrieve version metadata")
   @ApiResponses(value = {@ApiResponse(code = 200, responseContainer = "Map", response = String.class, message = "OK")})
   public Response getVersionMetadata(
-      @PathParam("versionId") @NotNull @Valid UUID versionId
+      @PathParam("versionId")
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
+      @NotNull
+      @Valid
+          UUID versionId
   ) {
     log.debug("Get version metadata: versionId={}", versionId);
     var metadata = versionMetadataService.getMetadata(versionId);
@@ -73,9 +78,17 @@ public class VersionMetadataResource {
   @ApiOperation(value = "Create or update version metadata entry")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
   public Response putVersionMetadataEntry(
-      @PathParam("versionId") @Valid UUID versionId,
-      @PathParam("key") @NotNull String key,
-      @NotNull String value
+      @PathParam("versionId")
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
+      @Valid
+          UUID versionId,
+      @PathParam("key")
+      @ApiParam(required = true, example = "creator")
+      @NotNull
+          String key,
+      @ApiParam(required = true, example = "John Doe")
+      @NotNull
+          String value
   ) {
     log.debug("Update or create version metadata: versionId={}, key={}, value={}", versionId, key, value);
     var entry = new MetadataEntry(key, value);
@@ -92,8 +105,15 @@ public class VersionMetadataResource {
   @ApiOperation(value = "Delete version metadata entry")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
   public Response deleteVersionMetadataEntry(
-      @PathParam("versionId") @NotNull @Valid UUID versionId,
-      @PathParam("key") @NotBlank String key
+      @PathParam("versionId")
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
+      @NotNull
+      @Valid
+          UUID versionId,
+      @PathParam("key")
+      @ApiParam(required = true, example = "creator")
+      @NotBlank
+          String key
   ) {
     log.debug("Delete version metadata: versionId={}, key={}", versionId, key);
     versionMetadataService.delete(versionId, key);

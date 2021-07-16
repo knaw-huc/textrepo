@@ -3,6 +3,7 @@ package nl.knaw.huc.resources.rest;
 import com.codahale.metrics.annotation.Timed;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.MetadataEntry;
@@ -58,7 +59,11 @@ public class DocumentMetadataResource {
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Retrieve document metadata")
   public Map<String, String> getDocumentMetadata(
-      @PathParam("docId") @NotNull @Valid UUID docId
+      @PathParam("docId")
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
+      @NotNull
+      @Valid
+          UUID docId
   ) {
     log.debug("Get document metadata: docId={}", docId);
     var metadata = documentMetadataService.getByDocId(docId);
@@ -74,9 +79,18 @@ public class DocumentMetadataResource {
   @ApiOperation(value = "Create or update document metadata entry")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
   public Response putDocumentMetadataEntry(
-      @PathParam("docId") @NotNull @Valid UUID docId,
-      @PathParam("key") @NotBlank String key,
-      @NotNull String value
+      @PathParam("docId")
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
+      @NotNull
+      @Valid
+          UUID docId,
+      @PathParam("key")
+      @NotBlank
+      @ApiParam(required = true, example = "archive")
+          String key,
+      @ApiParam(required = true, example = "a.1.2.3")
+      @NotNull
+          String value
   ) {
     log.debug("Update metadata: docId={}, key={}, value={}", docId, key, value);
     var entry = new MetadataEntry(key, value);
@@ -93,8 +107,15 @@ public class DocumentMetadataResource {
   @ApiOperation(value = "Delete document metadata entry")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
   public Response deleteDocumentMetadataEntry(
-      @PathParam("docId") @NotNull @Valid UUID docId,
-      @PathParam("key") @NotBlank String key
+      @PathParam("docId")
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
+      @NotNull
+      @Valid
+          UUID docId,
+      @PathParam("key")
+      @ApiParam(required = true, example = "archive")
+      @NotBlank
+          String key
   ) {
     log.debug("Delete metadata: docId={}, key={}", docId, key);
     documentMetadataService.delete(docId, key);

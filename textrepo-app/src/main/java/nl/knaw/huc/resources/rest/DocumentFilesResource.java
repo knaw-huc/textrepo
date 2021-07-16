@@ -2,6 +2,7 @@ package nl.knaw.huc.resources.rest;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.FormPageParams;
@@ -26,13 +27,15 @@ import static java.util.Objects.requireNonNull;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static nl.knaw.huc.helpers.Paginator.toResult;
 
-@Api(tags = {"documents"})
+@Api(tags = {"documents", "files"})
 @Path("/rest/documents/{docId}/files")
 public class DocumentFilesResource {
 
   private static final Logger log = LoggerFactory.getLogger(DocumentFilesResource.class);
   private final DocumentFilesService documentFilesService;
   private final Paginator paginator;
+
+  private static class ResultTextRepoFilePage extends ResultPage<ResultTextRepoFile> {}
 
   public DocumentFilesResource(
       DocumentFilesService documentFilesService,
@@ -45,10 +48,14 @@ public class DocumentFilesResource {
   @GET
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Retrieve document files")
-  @ApiResponses(value = {@ApiResponse(code = 200, response = ResultPage.class, message = "OK")})
+  @ApiResponses(value = {@ApiResponse(code = 200, response = ResultTextRepoFilePage.class, message = "OK")})
   public Response getDocumentFiles(
-      @PathParam("docId") @Valid UUID docId,
-      @BeanParam FormPageParams pageParams
+      @PathParam("docId")
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
+      @Valid
+          UUID docId,
+      @BeanParam
+          FormPageParams pageParams
   ) {
     log.debug("Get document files: docId={}; pageParams={}", docId, pageParams);
 

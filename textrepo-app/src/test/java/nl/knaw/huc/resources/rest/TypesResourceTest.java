@@ -54,7 +54,10 @@ public class TypesResourceTest {
   public void testAddType_createsType() {
     var expectedName = "test-type";
     var expectedMimetype = "application/xml";
-    var form = new FormType(expectedName, expectedMimetype);
+    var form = new FormType();
+    form.name = expectedName;
+    form.mimetype = expectedMimetype;
+
     var type = new Type(expectedName, expectedMimetype);
     type.setId((short) 456);
     when(typeService.create(any())).thenReturn(type);
@@ -65,6 +68,7 @@ public class TypesResourceTest {
         .request()
         .post(json(form));
 
+    System.out.println("response:"+response.readEntity(String.class));
     assertThat(response.getStatus()).isEqualTo(201);
     assertThat(response.getLocation()).isEqualTo(URI.create("http://localhost:0/rest/types/456"));
 
@@ -76,13 +80,13 @@ public class TypesResourceTest {
 
   @Test
   public void testAddType_verifiesInput() {
-    var type = new FormType("", "");
+    var form = new FormType();
 
     var response = resource
         .client()
         .target("/rest/types")
         .request()
-        .post(json(type));
+        .post(json(form));
 
     assertThat(response.getStatus()).isEqualTo(422);
     var responseBody = response.readEntity(String.class);

@@ -2,8 +2,6 @@ package nl.knaw.huc.service.index;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.List;
-
 public class MappedIndexerConfiguration extends IndexerConfiguration {
 
   /**

@@ -1,5 +1,6 @@
 package nl.knaw.huc.resources.view;
 
+import io.swagger.annotations.ApiParam;
 import nl.knaw.huc.helpers.ContentsHelper;
 import nl.knaw.huc.service.version.content.VersionContentsService;
 import org.slf4j.Logger;
@@ -38,8 +39,15 @@ public class ViewVersionResource {
 
   @Path("{view}")
   public Object getVersionContentsView(
-      @PathParam("versionId") @NotNull @Valid UUID versionId,
-      @PathParam("view") @NotNull String view
+      @PathParam("versionId")
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
+      @NotNull
+      @Valid
+          UUID versionId,
+      @PathParam("view")
+      @ApiParam(required = true, example = "text")
+      @NotNull
+          String view
   ) {
     log.debug("Get version contents: versionId={}", versionId);
     final var contents = versionContentsService.getByVersionId(versionId);

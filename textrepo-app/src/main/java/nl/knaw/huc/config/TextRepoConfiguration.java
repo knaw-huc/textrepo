@@ -1,4 +1,4 @@
-package nl.knaw.huc;
+package nl.knaw.huc.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;
@@ -41,7 +41,7 @@ public class TextRepoConfiguration extends Configuration {
   @NotNull
   private VersionConfiguration version = new VersionConfiguration();
 
-  private FlywayConfig flyway;
+  private FlywayConfiguration flyway;
 
   @JsonProperty("database")
   public void setDataSourceFactory(DataSourceFactory factory) {
@@ -115,12 +115,12 @@ public class TextRepoConfiguration extends Configuration {
   }
 
   @JsonProperty("flyway")
-  public FlywayConfig getFlyway() {
+  public FlywayConfiguration getFlyway() {
     return flyway;
   }
 
   @JsonProperty("flyway")
-  public void setFlyway(FlywayConfig flyway) {
+  public void setFlyway(FlywayConfiguration flyway) {
     this.flyway = flyway;
   }
 }
