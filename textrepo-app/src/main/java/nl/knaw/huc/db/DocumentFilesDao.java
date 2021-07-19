@@ -8,6 +8,7 @@ import org.jdbi.v3.sqlobject.customizer.BindBean;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -54,6 +55,6 @@ public interface DocumentFilesDao {
       "where df.document_id = :docId and (:typeId is null or f.type_id = :typeId)")
   long countByDocumentAndTypeId(
       @Bind("docId") UUID docId,
-      @Bind("typeId") Short typeId
+      @Nullable @Bind("typeId") Short typeId
   );
 }
