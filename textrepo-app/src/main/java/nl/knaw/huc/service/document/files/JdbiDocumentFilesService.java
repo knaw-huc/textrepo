@@ -21,14 +21,14 @@ public class JdbiDocumentFilesService implements DocumentFilesService {
   }
 
   @Override
-  public Page<TextRepoFile> getFilesByDocumentId(UUID docId, PageParams pageParams) {
-    var total = documentsFiles().countByDocumentId(docId);
+  public Page<TextRepoFile> getFilesByDocumentAndTypeId(UUID docId, Short typeId, PageParams pageParams) {
+    var total = documentsFiles().countByDocumentAndTypeId(docId, typeId);
     if (total == 0) {
       if (jdbi.onDemand(DocumentsDao.class).get(docId).isEmpty()) {
-        throw new NotFoundException(format("No document with ID %s", docId));
+        throw new NotFoundException(format("No document with id %s and type id %s", docId, typeId));
       }
     }
-    var files = documentsFiles().findFilesByDocumentId(docId, pageParams);
+    var files = documentsFiles().findFilesByDocumentAndTypeId(docId, typeId, pageParams);
     return new Page<>(files, total, pageParams);
   }
 

@@ -7,5 +7,5 @@ import nl.knaw.huc.core.TextRepoFile;
 import java.util.UUID;
 
 public interface DocumentFilesService {
-  Page<TextRepoFile> getFilesByDocumentId(UUID docId, PageParams pageParams);
+  Page<TextRepoFile> getFilesByDocumentAndTypeId(UUID docId, Short typeId, PageParams pageParams);
 }
