@@ -38,7 +38,8 @@ public class DocumentFilesResource {
   private final DocumentFilesService documentFilesService;
   private final Paginator paginator;
 
-  private static class ResultTextRepoFilePage extends ResultPage<ResultTextRepoFile> {}
+  private static class ResultTextRepoFilePage extends ResultPage<ResultTextRepoFile> {
+  }
 
   public DocumentFilesResource(
       DocumentFilesService documentFilesService,
