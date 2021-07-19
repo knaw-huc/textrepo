@@ -52,6 +52,7 @@ Results can be filtered by type.
 
 When retrieving the versions of a file with a `GET` to [`/rest/documents/{id}/files?typeId={typeId}`](- "#getEndpoint") 
 
+ - where `{id}` is [ ](- "ext:embed=code(getDocId())");
  - where `{typeId}` is [ ](- "ext:embed=code(getTextTypeId())");
 
 [ ](- "#paginateResult=filter(#getEndpoint, getDocId(), getTextTypeId(), getTextFileId())")
