@@ -1,4 +1,4 @@
-version: '3'
+version: '3.5'
 # docker-compose file for production setup
 # -> uses production volumes for production data
 
