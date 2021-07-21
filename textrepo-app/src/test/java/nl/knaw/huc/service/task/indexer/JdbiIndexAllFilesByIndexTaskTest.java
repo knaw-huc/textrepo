@@ -80,7 +80,7 @@ public class JdbiIndexAllFilesByIndexTaskTest {
 
   @Test
   public void testRun_skipsIndexing_whenNoTypes() throws IndexerException, IOException {
-    var indexerTask = createIndexerBuilder();
+    var indexerTask = createIndexerTask();
 
     when(JDBI.onDemand(TypesDao.class)).thenReturn(TYPES_DAO);
     when(TYPES_DAO.findByMimetype(testMimetype)).thenReturn(Optional.empty());
@@ -92,7 +92,7 @@ public class JdbiIndexAllFilesByIndexTaskTest {
 
   @Test
   public void testRun_countsAndIndexes_whenTypeFound() throws IndexerException {
-    var indexerTask = createIndexerBuilder();
+    var indexerTask = createIndexerTask();
 
     when(JDBI.onDemand(TypesDao.class)).thenReturn(TYPES_DAO);
     when(JDBI.onDemand(FilesDao.class)).thenReturn(FILES_DAO);
@@ -111,14 +111,14 @@ public class JdbiIndexAllFilesByIndexTaskTest {
     assertThat(result).contains("0");
   }
 
-  private JdbiIndexFileTaskBuilder.JdbiIndexAllFilesByIndexTask createIndexerBuilder() throws IndexerException {
+  private JdbiIndexFileTaskBuilder.JdbiIndexAllFilesByIndexTask createIndexerTask() throws IndexerException {
     var config = createIndexerConfig();
     mockIndexerMappingEndpoint();
     mockIndexCreation();
     var indexer = new MappedIndexer(config, TYPE_SERVICE, TR_ES_CLIENT);
     List<Indexer> indexers = List.of(indexer);
 
-    // Because we set index name, we know to what type to cast to:
+    // Because we set index name, we know what type to cast to:
     return (JdbiIndexFileTaskBuilder.JdbiIndexAllFilesByIndexTask) new JdbiIndexFileTaskBuilder(JDBI, indexers)
         .forIndex(config.name)
         .build();
