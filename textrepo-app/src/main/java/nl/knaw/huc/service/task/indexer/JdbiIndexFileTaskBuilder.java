@@ -189,11 +189,15 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
                 () -> log.warn("No such mimetype: {}", m)
             );
           });
+      var msg = "";
+      if (typesToIndex.isEmpty()) {
+        msg = "No types to index: no files affected";
+      } else {
+        filesTotal = jdbi.onDemand(FilesDao.class).countByTypes(typesToIndex);
+        typesToIndex.forEach(this::indexFilesByType);
+        msg = format("Total files affected: %d", filesAffected);
+      }
 
-      filesTotal = jdbi.onDemand(FilesDao.class).countByTypes(typesToIndex);
-      typesToIndex.forEach(this::indexFilesByType);
-
-      final var msg = format("Total files affected: %d", filesAffected);
       log.info(msg);
       return msg;
     }
