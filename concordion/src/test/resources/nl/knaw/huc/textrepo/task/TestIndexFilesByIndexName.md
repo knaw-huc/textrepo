@@ -4,7 +4,7 @@ All files relevant to a specific indexer can be indexed and reindexed. Other ind
 
 To index, we first create three documents, each with one file and version, using the import task, which does not index: 
 
- - using type: [`text`](- "#type");
+ - using type: [text](- "#type");
 
 [ ](- "#importResult=importDocs(#type)")
 
@@ -16,9 +16,9 @@ Then:
 [ ](- "ext:embed=#importResult.body")
 
 ### Indexing by index name
-When indexing the files with a `POST` to [`/task/index/indexer/{name}`](- "#indexEndpoint") 
+When indexing the files with a `POST` to [/task/index/indexer/{name}](- "#indexEndpoint") 
 
- - where `{name}` is [`autocomplete`](- "#indexName");
+ - where `{name}` is [autocomplete](- "#indexName");
 
 [ ](- "#retrieveResult=indexFilesBy(#indexEndpoint, #indexName)")
 

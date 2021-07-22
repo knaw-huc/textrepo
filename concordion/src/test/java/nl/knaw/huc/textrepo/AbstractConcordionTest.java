@@ -5,6 +5,7 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ParseContext;
 import org.concordion.api.AfterSpecification;
 import org.concordion.api.BeforeSpecification;
+import org.concordion.api.ConcordionResources;
 import org.concordion.api.FullOGNL;
 import org.concordion.api.extension.Extensions;
 import org.concordion.api.option.ConcordionOptions;
@@ -36,6 +37,8 @@ import static nl.knaw.huc.textrepo.util.RestUtils.createType;
 @FullOGNL
 @RunWith(ConcordionRunner.class)
 @Extensions(EmbedExtension.class)
+@ConcordionResources(value = {"/styles.css"})
+// Embed code in output using concordion-embed-extension:
 @ConcordionOptions(declareNamespaces = {"ext", "urn:concordion-extensions:2010"})
 public abstract class AbstractConcordionTest {
 
