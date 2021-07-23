@@ -1,6 +1,7 @@
 package nl.knaw.huc.service.task.indexer;
 
 import nl.knaw.huc.core.TextRepoFile;
+import nl.knaw.huc.core.Type;
 import nl.knaw.huc.core.Version;
 import nl.knaw.huc.db.FilesDao;
 import nl.knaw.huc.db.TypesDao;
@@ -21,10 +22,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static java.util.List.of;
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toList;
 
 public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
   private static final Logger log = LoggerFactory.getLogger(JdbiIndexFileTaskBuilder.class);
@@ -178,17 +181,7 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
 
     @Override
     public String run() {
-      var typesToIndex = new ArrayList<Short>();
-
-      indexer.getConfig().mimetypes
-          .forEach(m -> {
-            var type = types()
-                .findByMimetype(m);
-            type.ifPresentOrElse(
-                typesToIndex::add,
-                () -> log.warn("No such mimetype: {}", m)
-            );
-          });
+      var typesToIndex = getTypesToIndex();
 
       filesTotal = jdbi.onDemand(FilesDao.class).countByTypes(typesToIndex);
       typesToIndex.forEach(this::indexFilesByType);
@@ -200,6 +193,21 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
 
     private TypesDao types() {
       return jdbi.onDemand(TypesDao.class);
+    }
+
+    private List<Short> getTypesToIndex() {
+      var allTypes = types().list();
+      List<Type> toIndex;
+      if (indexer.getMimetypes().isEmpty()) {
+        toIndex = allTypes;
+      } else {
+        var supported = indexer.getMimetypes().get();
+        toIndex = allTypes
+            .stream()
+            .filter(at -> supported.contains(at.getMimetype()))
+            .toList();
+      }
+      return toIndex.stream().map(Type::getId).toList();
     }
 
     private Supplier<NotFoundException> noSuchIndexer(String name) {

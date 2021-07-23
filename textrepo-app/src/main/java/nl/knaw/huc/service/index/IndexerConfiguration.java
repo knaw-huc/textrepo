@@ -12,10 +12,4 @@ public class IndexerConfiguration {
   @JsonProperty
   public String name;
 
-  /**
-   * List of mimetypes that should be indexed
-   */
-  @JsonProperty
-  public List<String> mimetypes;
-
 }

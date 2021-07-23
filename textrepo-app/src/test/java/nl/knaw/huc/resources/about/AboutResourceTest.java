@@ -33,13 +33,11 @@ public class AboutResourceTest {
     var indexers = new ArrayList<MappedIndexerConfiguration>();
     var indexerConfiguration = new MappedIndexerConfiguration();
     indexerConfiguration.name = "drommels";
-    indexerConfiguration.mimetypes = new ArrayList<>();
-    indexerConfiguration.mimetypes.add("hatsa/kidee");
-    indexerConfiguration.mimetypes.add("toedele/dokie");
     var fields = new FieldsConfiguration();
     fields.type = ORIGINAL;
-    fields.url= "http://indexer-fields.wow";
+    fields.url = "http://indexer-fields.wow";
     indexerConfiguration.mapping = "http://indexer-mapping.wow";
+    indexerConfiguration.types = "http://indexer-types.wow";
     indexerConfiguration.fields = fields;
     indexerConfiguration.elasticsearch = new ElasticsearchConfiguration();
     indexerConfiguration.elasticsearch.hosts = new ArrayList<>();
@@ -54,7 +52,7 @@ public class AboutResourceTest {
   }
 
   @Test
-  public void findOrphans_createsAndReturnsPage() {
+  public void aboutPage_returnsPageWithIndexerInfo() {
     final var response = resource
         .client()
         .target("/")
@@ -67,11 +65,10 @@ public class AboutResourceTest {
     assertThat(json.read("$.version.tag", String.class)).isEqualTo("1.2.3-subliem");
     assertThat(json.read("$.version.commit", String.class)).isEqualTo("1234567890");
     assertThat(json.read("$.indexers[0].name", String.class)).isEqualTo("drommels");
-    assertThat(json.read("$.indexers[0].mimetypes[0]", String.class)).isEqualTo("hatsa/kidee");
-    assertThat(json.read("$.indexers[0].mimetypes[1]", String.class)).isEqualTo("toedele/dokie");
     assertThat(json.read("$.indexers[0].fields.url", String.class)).isEqualTo("http://indexer-fields.wow");
     assertThat(json.read("$.indexers[0].fields.type", String.class)).isEqualTo("original");
     assertThat(json.read("$.indexers[0].mapping", String.class)).isEqualTo("http://indexer-mapping.wow");
+    assertThat(json.read("$.indexers[0].types", String.class)).isEqualTo("http://indexer-types.wow");
     assertThat(json.read("$.indexers[0].hosts[0]", String.class)).isEqualTo("http://localhost:9200");
 
   }

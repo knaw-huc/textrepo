@@ -12,9 +12,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockitoAnnotations;
 import org.mockserver.integration.ClientAndServer;
 
+import java.io.IOException;
 import java.util.UUID;
 
 import static java.util.Arrays.asList;
+import static nl.knaw.huc.resources.TestUtils.getResourceAsString;
 import static nl.knaw.huc.service.index.FieldsType.MULTIPART;
 import static nl.knaw.huc.service.index.FieldsType.ORIGINAL;
 import static org.mockito.ArgumentMatchers.anyShort;
@@ -26,6 +28,9 @@ import static org.mockserver.model.RegexBody.regex;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
 public class MappedIndexerTest {
+
+  // Matches mimetype configured in test.types.json:
+  private static final String mimetype = "test/mimetype";
 
   private static ClientAndServer mockServer;
   private static final int mockPort = 1080;
@@ -47,15 +52,15 @@ public class MappedIndexerTest {
   }
 
   @Test
-  public void index_usesOriginal_whenFieldsTypeIsOriginal() throws IndexerException {
+  public void index_usesOriginal_whenFieldsTypeIsOriginal() throws IndexerException, IOException {
     var fieldsType = ORIGINAL.getName();
     var config = createConfig(fieldsType);
     var testFileId = UUID.randomUUID();
     var testFile = new TextRepoFile(testFileId, (short) 1);
     var latestVersionContents = "latest version contents";
     var typeService = mock(TypeService.class);
-    when(typeService.getType(anyShort())).thenReturn(new Type("txt", "text/plain"));
-    var mappedIndexer = initializeIndexer(config, typeService);
+    when(typeService.getType(anyShort())).thenReturn(new Type("txt", mimetype));
+    var mappedIndexer = mockIndexer(config, typeService);
 
     mappedIndexer.index(testFile, latestVersionContents);
 
@@ -63,22 +68,21 @@ public class MappedIndexerTest {
         .withMethod("POST")
         .withPath("/fields")
         .withBody(latestVersionContents)
-        .withHeader("Content-Type", "text/plain")
+        .withHeader("Content-Type", mimetype)
         .withHeader("Link", "</rest/files/" + testFileId + ">; rel=\"original\"");
     mockServer.verify(postFieldsRequest);
   }
 
   @Test
-  public void index_usesMultipartFormData_whenFieldsTypeIsMultipart() throws IndexerException {
+  public void index_usesMultipartFormData_whenFieldsTypeIsMultipart() throws IndexerException, IOException {
     var fieldsType = MULTIPART.getName();
     var config = createConfig(fieldsType);
     var testFileId = UUID.randomUUID();
     var testFile = new TextRepoFile(testFileId, (short) 1);
     var latestVersionContents = "latest version contents";
-    var mimetype = "text/plain";
     var typeService = mock(TypeService.class);
     when(typeService.getType(anyShort())).thenReturn(new Type("txt", mimetype));
-    var mappedIndexer = initializeIndexer(config, typeService);
+    var mappedIndexer = mockIndexer(config, typeService);
 
     mappedIndexer.index(testFile, latestVersionContents);
 
@@ -88,16 +92,16 @@ public class MappedIndexerTest {
         .withHeader("Content-Type", "multipart/form-data.*")
         .withBody(regex("(.|\n|\r)*" +
             "Link: </rest/files/" + testFileId + ">; rel=\"original\"(.|\n|\r)*" +
-            "Content-Type: text/plain(.|\n|\r)*" +
+            "Content-Type: " + mimetype + "(.|\n|\r)*" +
             "name=\"file\"(.|\n|\r)*" +
             "latest version contents(.|\n|\r)*"));
     mockServer.verify(postFieldsRequest);
   }
 
-  private MappedIndexer initializeIndexer(
+  private MappedIndexer mockIndexer(
       MappedIndexerConfiguration config,
       TypeService typeService
-  ) throws IndexerException {
+  ) throws IndexerException, IOException {
     mockServer.when(
         request()
             .withMethod("GET")
@@ -106,6 +110,15 @@ public class MappedIndexerTest {
         response()
             .withStatusCode(200)
             .withBody("{\"mappings\": {\"properties\": {}}}")
+    );
+    mockServer.when(
+        request()
+            .withMethod("GET")
+            .withPath("/types")
+    ).respond(
+        response()
+            .withStatusCode(200)
+            .withBody(getResourceAsString("indexer/test.types.json"))
     );
     mockServer.when(
         request()
@@ -123,14 +136,15 @@ public class MappedIndexerTest {
   private MappedIndexerConfiguration createConfig(String fieldsType) {
     var host = "http://localhost:" + mockPort;
     var config = new MappedIndexerConfiguration();
+    config.name = "test-indexer";
     config.elasticsearch = new ElasticsearchConfiguration();
     config.elasticsearch.hosts = asList(host.replace("http://", ""));
     config.elasticsearch.index = "test-index-name";
     config.mapping = host + "/mapping";
+    config.types = host + "/types";
     config.fields = new FieldsConfiguration();
     config.fields.type = FieldsType.fromString(fieldsType);
     config.fields.url = host + "/fields";
-    config.mimetypes = asList("text/plain");
     return config;
   }
 

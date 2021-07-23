@@ -35,17 +35,19 @@ import static org.mockserver.model.HttpResponse.response;
 import static org.mockserver.model.JsonSchemaBody.jsonSchema;
 import static org.mockserver.verify.VerificationTimes.once;
 
+// TODO: merge with index/MappedIndexerTest.java
 public class MappedIndexerTest {
 
   private static ClientAndServer mockServer;
   private static final int mockPort = 1080;
   private static final String mockMappingEndpoint = "/mock-mapping";
   private static final String mockFieldsEndpoint = "/mock-fields";
+  private static final String mockTypesEndpoint = "/mock-types";
 
   private static ClientAndServer mockIndexServer;
   private static final int mockIndexPort = 1081;
-  private Type testType = new Type("test-type", "test/mimetype");
-  private TypeService typeServiceMock = mock(TypeService.class);
+  private final Type testType = new Type("test-type", "test/mimetype");
+  private final TypeService typeServiceMock = mock(TypeService.class);
 
   @BeforeAll
   public static void setUpClass() {
@@ -74,16 +76,17 @@ public class MappedIndexerTest {
 
   @Test
   public void testInstantiationElasticCustomFacetIndexer_requestsMapping() throws IOException, IndexerException {
-    var config = createCustomFacetIndexerConfiguration(ORIGINAL.getName(), testType.getMimetype());
+    var config = createCustomFacetIndexerConfiguration(ORIGINAL.getName());
+    mockTypesEndpoint();
     var getMappingRequest = request()
         .withMethod("GET")
         .withPath(mockMappingEndpoint);
-    mockMappingResponse(getResourceAsString("mapping/test.json"), getMappingRequest);
+    mockGetEndpoint(getResourceAsString("indexer/test.mapping.json"), getMappingRequest);
     var putIndexRequest = request()
         .withMethod("PUT")
         .withPath("/" + config.elasticsearch.index)
         // because es client changes order of fields, verify using json schema:
-        .withBody(jsonSchema(getResourceAsString("mapping/test.schema.json")));
+        .withBody(jsonSchema(getResourceAsString("indexer/test.schema.json")));
     mockCreatingIndexResponse(config.elasticsearch.index, putIndexRequest);
 
     new MappedIndexer(config, typeServiceMock);
@@ -94,8 +97,9 @@ public class MappedIndexerTest {
 
   @Test
   public void testIndexFile_requestsFields() throws IOException, IndexerException {
-    var config = createCustomFacetIndexerConfiguration(ORIGINAL.getName(), testType.getMimetype());
-    mockMappingResponse();
+    var config = createCustomFacetIndexerConfiguration(ORIGINAL.getName());
+    mockTypesEndpoint();
+    mockMappingEndpoint();
     mockCreatingIndexResponse(config);
     var indexer = new MappedIndexer(config, typeServiceMock);
     var file = new TextRepoFile(UUID.randomUUID(), (short) 43);
@@ -120,11 +124,12 @@ public class MappedIndexerTest {
   public void testInstantiatingElasticCustomFacetIndexer_requestsFieldUsingMultipart_whenTypeIsMultipart()
       throws IOException, IndexerException {
     var expectedContentTypeHeader = "multipart/form-data;boundary=.*";
-    var config = createCustomFacetIndexerConfiguration(MULTIPART.getName(), testType.getMimetype());
+    var config = createCustomFacetIndexerConfiguration(MULTIPART.getName());
     var fileId = UUID.randomUUID();
     mockPuttingFileResponse(config, fileId);
     mockCreatingIndexResponse(config);
-    mockMappingResponse();
+    mockTypesEndpoint();
+    mockMappingEndpoint();
     var indexer = new MappedIndexer(config, typeServiceMock);
     var postDocToFieldsRequest = request()
         .withMethod("POST")
@@ -164,19 +169,26 @@ public class MappedIndexerTest {
     );
   }
 
-  private void mockMappingResponse() throws IOException {
-    var getMappingRequest = request()
+  private void mockMappingEndpoint() throws IOException {
+    var request = request()
         .withMethod("GET")
         .withPath(mockMappingEndpoint);
-    mockMappingResponse(getResourceAsString("mapping/test.json"), getMappingRequest);
+    mockGetEndpoint(getResourceAsString("indexer/test.mapping.json"), request);
   }
 
-  private void mockMappingResponse(String testMapping, HttpRequest getMappingRequest) {
-    mockServer.when(getMappingRequest,
+  private void mockTypesEndpoint() throws IOException {
+    var request = request()
+        .withMethod("GET")
+        .withPath(mockTypesEndpoint);
+    mockGetEndpoint(getResourceAsString("indexer/test.types.json"), request);
+  }
+
+  private void mockGetEndpoint(String responseBody, HttpRequest getRequest) {
+    mockServer.when(getRequest,
         Times.exactly(1)
     ).respond(response()
         .withStatusCode(200)
-        .withBody(testMapping)
+        .withBody(responseBody)
     );
   }
 
@@ -185,7 +197,7 @@ public class MappedIndexerTest {
         .withMethod("PUT")
         .withPath("/" + config.elasticsearch.index)
         // because es client changes order of fields, verify using json schema:
-        .withBody(jsonSchema(getResourceAsString("mapping/test.schema.json")));
+        .withBody(jsonSchema(getResourceAsString("indexer/test.schema.json")));
     mockCreatingIndexResponse(config.elasticsearch.index, putIndexRequest);
   }
 
@@ -200,18 +212,19 @@ public class MappedIndexerTest {
 
   }
 
-  private MappedIndexerConfiguration createCustomFacetIndexerConfiguration(String type, String mimetype) {
-    var mockMappingUrl = "http://localhost:" + mockPort + mockMappingEndpoint;
-    var mockFieldsUrl = "http://localhost:" + mockPort + mockFieldsEndpoint;
+  private MappedIndexerConfiguration createCustomFacetIndexerConfiguration(String type) {
     var mockEsUrl = "localhost:" + mockIndexPort;
     var config = new MappedIndexerConfiguration();
+    config.name = "test-indexer";
     config.elasticsearch = new ElasticsearchConfiguration();
     config.elasticsearch.contentsField = "does-not-matter";
     config.elasticsearch.hosts = newArrayList(mockEsUrl);
     config.elasticsearch.index = "test-index";
-    config.fields = FieldsConfiguration.build(type, mockFieldsUrl);
-    config.mapping = mockMappingUrl;
-    config.mimetypes = newArrayList(mimetype);
+    config.mapping = "http://localhost:" + mockPort + mockMappingEndpoint;
+    config.types = "http://localhost:" + mockPort + mockTypesEndpoint;
+    config.fields = FieldsConfiguration.build(type, "http://localhost:" + mockPort + mockFieldsEndpoint);
     return config;
   }
+
+
 }

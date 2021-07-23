@@ -7,16 +7,16 @@ import java.util.List;
 public class ResultIndexer {
   private final String name;
   private final List<String> hosts;
-  private final List<String> mimetypes;
   private final ResultIndexerFieldsConfiguration fields;
   private final String mapping;
+  private final String types;
 
   public ResultIndexer(MappedIndexerConfiguration indexer) {
     this.name = indexer.name;
     this.hosts = indexer.elasticsearch.hosts;
-    this.mimetypes = indexer.mimetypes;
     this.fields = new ResultIndexerFieldsConfiguration(indexer.fields);
     this.mapping = indexer.mapping;
+    this.types = indexer.types;
   }
 
   public String getName() {
@@ -27,15 +27,15 @@ public class ResultIndexer {
     return hosts;
   }
 
-  public List<String> getMimetypes() {
-    return mimetypes;
-  }
-
   public ResultIndexerFieldsConfiguration getFields() {
     return fields;
   }
 
   public String getMapping() {
     return mapping;
+  }
+
+  public String getTypes() {
+    return types;
   }
 }
