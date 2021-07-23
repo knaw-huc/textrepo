@@ -79,7 +79,7 @@ public class MappedIndexerTest {
   }
 
   @Test
-  public void testInstantiationElasticCustomFacetIndexer_requestsMapping() throws IOException, IndexerException {
+  public void instantiatingIndexer_requestsMapping() throws IOException, IndexerException {
     var config = createConfig(ORIGINAL.getName());
     mockTypesEndpoint();
     var getMappingRequest = request()
@@ -100,7 +100,7 @@ public class MappedIndexerTest {
   }
 
   @Test
-  public void testIndexFile_requestsFields() throws IOException, IndexerException {
+  public void index_requestsFields() throws IOException, IndexerException {
     var config = createConfig(ORIGINAL.getName());
     mockTypesEndpoint();
     mockMappingEndpoint();
@@ -125,7 +125,43 @@ public class MappedIndexerTest {
   }
 
   @Test
-  public void testInstantiatingElasticCustomFacetIndexer_requestsFieldUsingMultipart_whenTypeIsMultipart()
+  public void index_requestsFields_whenIndexerDefinedNoTypes() throws IOException, IndexerException {
+    var config = createConfig(ORIGINAL.getName());
+
+    // Types endpoint without types:
+    var request = request()
+        .withMethod("GET")
+        .withPath(mockTypesEndpoint);
+    mockServer.when(request,
+        Times.exactly(1)
+    ).respond(response()
+        .withStatusCode(204)
+        .withBody("does-not-matter")
+    );
+
+    mockMappingEndpoint();
+    mockCreatingIndexResponse(config);
+    var indexer = new MappedIndexer(config, typeServiceMock);
+    var file = new TextRepoFile(UUID.randomUUID(), (short) 43);
+    var postDoc2FieldsRequest = request()
+        .withMethod("POST")
+        .withPath(mockFieldsEndpoint)
+        .withBody(getResourceAsString("fields/file.xml"));
+    mockDoc2FieldsResponse(postDoc2FieldsRequest);
+
+    var putFileRequest = request()
+        .withMethod("PUT")
+        .withPath(format("/%s/_doc/%s", config.elasticsearch.index, file.getId()));
+    mockIndexFieldsResponse(putFileRequest);
+
+    indexer.index(file, getResourceAsString("fields/file.xml"));
+
+    mockServer.verify(postDoc2FieldsRequest, once());
+    mockIndexServer.verify(putFileRequest, once());
+  }
+
+  @Test
+  public void instantiatingElasticCustomFacetIndexer_requestsFieldUsingMultipart_whenTypeIsMultipart()
       throws IOException, IndexerException {
     var expectedContentTypeHeader = "multipart/form-data;boundary=.*";
     var config = createConfig(MULTIPART.getName());
