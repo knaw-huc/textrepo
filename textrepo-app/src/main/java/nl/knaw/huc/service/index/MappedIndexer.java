@@ -157,7 +157,7 @@ public class MappedIndexer implements Indexer {
       });
       return Optional.of(parsed
           .stream()
-          .map(FormIndexerType::mimetype)
+          .map(t -> t.mimetype)
           .collect(toList()));
     } catch (JsonProcessingException e) {
       throw new RuntimeException(format("Could not parse types response of indexer %s: %s", config.name, json));

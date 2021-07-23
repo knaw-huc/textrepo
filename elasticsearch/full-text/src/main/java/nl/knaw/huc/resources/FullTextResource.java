@@ -51,7 +51,7 @@ public class FullTextResource {
   public Response types() {
     return Response
         .status(200)
-        .entity(new MimetypeSubtypesResult(subtypeService.getMimetypeSubtypes()))
+        .entity(SubtypeService.toTypesResultList(subtypeService.getMimetypeSubtypes()))
         .build();
   }
 
