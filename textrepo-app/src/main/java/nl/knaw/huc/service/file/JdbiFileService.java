@@ -19,20 +19,14 @@ import static java.lang.String.format;
 public class JdbiFileService implements FileService {
 
   private final Jdbi jdbi;
-  private final VersionService versionService;
   private final Supplier<UUID> fileIdGenerator;
 
   public JdbiFileService(
       Jdbi jdbi,
-      VersionService versionService,
-      Supplier<UUID> fileIdGenerator) {
+      Supplier<UUID> fileIdGenerator
+  ) {
     this.jdbi = jdbi;
-    this.versionService = versionService;
     this.fileIdGenerator = fileIdGenerator;
-  }
-
-  public Version addFile(@Nonnull Contents contents, TextRepoFile file) {
-    return versionService.createNewVersion(file.getId(), contents);
   }
 
   @Override

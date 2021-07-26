@@ -129,7 +129,7 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
         .dashboardService(new JdbiDashboardService(jdbi))
         .documentService(new JdbiDocumentService(jdbi, uuidGenerator))
         .documentMetadataService(new JdbiDocumentMetadataService(jdbi))
-        .fileService(new JdbiFileService(jdbi, versionService, uuidGenerator))
+        .fileService(new JdbiFileService(jdbi, uuidGenerator))
         .fileMetadataService(new JdbiFileMetadataService(jdbi))
         .paginator(new Paginator(config.getPagination()))
         .taskBuilderFactory(new JdbiTaskFactory(jdbi, indexers)

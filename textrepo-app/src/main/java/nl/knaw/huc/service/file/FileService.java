@@ -7,8 +7,6 @@ import nl.knaw.huc.core.Version;
 import java.util.UUID;
 
 public interface FileService {
-  Version addFile(Contents contents, TextRepoFile file);
-
   TextRepoFile insert(UUID docId, TextRepoFile textRepoFile);
 
   TextRepoFile get(UUID fileId);
