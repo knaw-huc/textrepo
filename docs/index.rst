@@ -16,7 +16,6 @@ Features
 - Search files using stock and custom `elasticsearch <https://www.elastic.co/elasticsearch/>`_ indexes
 - Explore API with `concordion <https://concordion.org/>`_ and `swagger <https://swagger.io/>`_
 
-
 ----
 
 .. figure:: textrepo-overview.png

@@ -10,6 +10,8 @@ import nl.knaw.huc.service.index.config.MappedIndexerConfiguration;
 import nl.knaw.huc.service.index.request.IndexerFieldsRequestFactory;
 import nl.knaw.huc.service.type.TypeService;
 import org.elasticsearch.ElasticsearchStatusException;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.RequestOptions;
@@ -20,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
@@ -93,6 +96,28 @@ public class MappedIndexer implements Indexer {
     }
 
     return sendRequest(file.getId(), esFacets);
+  }
+
+  @Override
+  public Optional<String> delete(@Nonnull UUID fileId) {
+    DeleteResponse response;
+    var deleteRequest = new DeleteRequest();
+    var index = config.elasticsearch.index;
+    try {
+      response = client.getClient().delete(deleteRequest, RequestOptions.DEFAULT);
+    } catch (Exception ex) {
+      throw new WebApplicationException(format("Could not delete file %s in index %s", fileId, index), ex);
+    }
+    var status = response.status().getStatus();
+    if(status == 200) {
+      var msg = format("Successfully deleted file %s in index %s", fileId, index);
+      log.info(msg);
+      return Optional.of(msg);
+    } else if(status == 404) {
+      throw new NotFoundException(format("File %s not found in index %s", fileId, index));
+    } else {
+      throw new WebApplicationException(format("Could not delete file %s in index %s", fileId, index));
+    }
   }
 
   @Override

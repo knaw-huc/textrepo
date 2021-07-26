@@ -6,11 +6,23 @@ import nl.knaw.huc.service.index.config.IndexerConfiguration;
 import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface Indexer {
+
+  /**
+   * @return String result message
+   */
   Optional<String> index(
       @Nonnull TextRepoFile file,
       @Nonnull String latestVersionContents
+  );
+
+  /**
+   * @return String result message
+   */
+  Optional<String> delete(
+      @Nonnull UUID fileId
   );
 
   IndexerConfiguration getConfig();
