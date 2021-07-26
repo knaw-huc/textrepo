@@ -29,8 +29,10 @@ import nl.knaw.huc.service.file.JdbiFileService;
 import nl.knaw.huc.service.file.metadata.JdbiFileMetadataService;
 import nl.knaw.huc.service.health.ElasticsearchHealthCheck;
 import nl.knaw.huc.service.health.IndexerHealthCheck;
+import nl.knaw.huc.service.index.IndexService;
 import nl.knaw.huc.service.index.Indexer;
 import nl.knaw.huc.service.index.IndexerException;
+import nl.knaw.huc.service.index.JdbiIndexService;
 import nl.knaw.huc.service.index.MappedIndexer;
 import nl.knaw.huc.service.index.TextRepoElasticClient;
 import nl.knaw.huc.service.logging.LoggingApplicationEventListener;
@@ -112,6 +114,8 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
     var typeService = new JdbiTypeService(jdbi);
 
     var indexers = createElasticCustomFacetIndexers(config, typeService);
+    var indexService = new JdbiIndexService(indexers, jdbi);
+
     var healthChecks = new HashMap<String, HealthCheck>();
     healthChecks.putAll(createElasticsearchHealthChecks(config));
     healthChecks.putAll(createIndexerHealthChecks(config));
@@ -129,7 +133,7 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
         .dashboardService(new JdbiDashboardService(jdbi))
         .documentService(new JdbiDocumentService(jdbi, uuidGenerator))
         .documentMetadataService(new JdbiDocumentMetadataService(jdbi))
-        .fileService(new JdbiFileService(jdbi, uuidGenerator))
+        .fileService(new JdbiFileService(jdbi, uuidGenerator, indexService))
         .fileMetadataService(new JdbiFileMetadataService(jdbi))
         .paginator(new Paginator(config.getPagination()))
         .taskBuilderFactory(new JdbiTaskFactory(jdbi, indexers)
