@@ -1,4 +1,4 @@
-package nl.knaw.huc.service.index;
+package nl.knaw.huc.service.index.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

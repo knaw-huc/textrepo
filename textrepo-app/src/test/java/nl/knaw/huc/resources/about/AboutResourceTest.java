@@ -5,9 +5,9 @@ import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.testing.junit5.ResourceExtension;
 import nl.knaw.huc.config.TextRepoConfiguration;
 import nl.knaw.huc.config.VersionConfiguration;
-import nl.knaw.huc.service.index.ElasticsearchConfiguration;
+import nl.knaw.huc.service.index.config.ElasticsearchConfiguration;
 import nl.knaw.huc.service.index.FieldsConfiguration;
-import nl.knaw.huc.service.index.MappedIndexerConfiguration;
+import nl.knaw.huc.service.index.config.MappedIndexerConfiguration;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 

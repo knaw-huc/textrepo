@@ -1,6 +1,6 @@
 package nl.knaw.huc.api;
 
-import nl.knaw.huc.service.index.MappedIndexerConfiguration;
+import nl.knaw.huc.service.index.config.MappedIndexerConfiguration;
 
 import java.util.List;
 

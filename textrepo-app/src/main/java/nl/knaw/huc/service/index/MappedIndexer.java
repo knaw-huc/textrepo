@@ -5,6 +5,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.knaw.huc.api.FormIndexerType;
 import nl.knaw.huc.core.TextRepoFile;
+import nl.knaw.huc.service.index.config.IndexerConfiguration;
+import nl.knaw.huc.service.index.config.MappedIndexerConfiguration;
 import nl.knaw.huc.service.index.request.IndexerFieldsRequestFactory;
 import nl.knaw.huc.service.type.TypeService;
 import org.elasticsearch.ElasticsearchStatusException;

@@ -1,6 +1,7 @@
 package nl.knaw.huc.service.index;
 
 import nl.knaw.huc.core.TextRepoFile;
+import nl.knaw.huc.service.index.config.IndexerConfiguration;
 
 import javax.annotation.Nonnull;
 import java.util.List;

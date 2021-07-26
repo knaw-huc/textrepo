@@ -2,7 +2,7 @@ package nl.knaw.huc.service.health;
 
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import nl.knaw.huc.resources.TestUtils;
-import nl.knaw.huc.service.index.ElasticsearchConfiguration;
+import nl.knaw.huc.service.index.config.ElasticsearchConfiguration;
 import nl.knaw.huc.service.index.TextRepoElasticClient;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;

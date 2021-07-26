@@ -1,8 +1,8 @@
 package nl.knaw.huc.service.index;
 
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
+import nl.knaw.huc.service.index.config.ElasticsearchConfiguration;
 import org.elasticsearch.action.get.GetRequest;
-import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -13,8 +13,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.MockitoAnnotations;
 import org.mockserver.integration.ClientAndServer;
-import org.mockserver.model.HttpRequest;
-import org.mockserver.model.HttpResponse;
 
 import java.io.IOException;
 import java.util.List;
