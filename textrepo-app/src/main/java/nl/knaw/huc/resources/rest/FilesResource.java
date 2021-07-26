@@ -45,7 +45,7 @@ public class FilesResource {
   @POST
   @Consumes(APPLICATION_JSON)
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Create file")
+  @ApiOperation(value = "Create file, adds file to indexes")
   @ApiResponses(value = {@ApiResponse(code = 201, response = ResultTextRepoFile.class, message = "Created")})
   public Response createFile(
       @Valid FormTextRepoFile form
@@ -83,7 +83,7 @@ public class FilesResource {
   @Path("/{id}")
   @Consumes(APPLICATION_JSON)
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Create or update file")
+  @ApiOperation(value = "Create or update file, add or update file in indexes")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultTextRepoFile.class, message = "OK")})
   public Response putFile(
       @PathParam("id")

@@ -23,10 +23,23 @@ An 'indexer' is a service with three endpoints:
 
 More on: `ES mappings <https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html>`_.
 
+Indexing moments
+----------------
+When are changes made to the ES indexes?
+- ``POST /rest/files``    -> Creating a new file resource will create ES docs with empty body
+- ``PUT  /rest/files``    -> Updating a file resource will update ES docs with latest version contents or an empty body when no latest version contents available
+- ``POST /rest/versions`` -> Updating a file resource will update ES docs with latest version contents or an empty body when no latest version contents available
+- ``POST /task/index``    -> Multiple endpoints, each indexing a subset of files
+
+TODO:
+- delete ES files when deleting |tr| files
+- delete ES files when deleting |tr| versions
+- delete relevant ES files when posting to index tasks
+
 Indexing workflow
 -----------------
 
-When a new file version is added, the |tr| has to determine which ES document in which index needs to be created or updated. The current workflow consists of the following steps:
+When a new file or file version is added, the |tr| has to determine which ES document in which index needs to be created or updated. The current workflow consists of the following steps:
 
 - Retrieve file type of new file version
 - For each indexer: does it handle this file mimetype?
