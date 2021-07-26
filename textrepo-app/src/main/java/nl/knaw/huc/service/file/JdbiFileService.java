@@ -1,14 +1,10 @@
 package nl.knaw.huc.service.file;
 
-import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.core.TextRepoFile;
-import nl.knaw.huc.core.Version;
 import nl.knaw.huc.db.DocumentFilesDao;
 import nl.knaw.huc.db.FilesDao;
-import nl.knaw.huc.service.version.VersionService;
 import org.jdbi.v3.core.Jdbi;
 
-import javax.annotation.Nonnull;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import java.util.UUID;
@@ -35,9 +31,10 @@ public class JdbiFileService implements FileService {
     jdbi.useTransaction(transaction -> {
       var documentFilesDao = transaction.attach(DocumentFilesDao.class);
       var filesDao = transaction.attach(FilesDao.class);
-      checkFileByDocAndType(docId, textRepoFile, documentFilesDao);
+      fileExists(docId, textRepoFile, documentFilesDao);
       filesDao.insert(textRepoFile.getId(), textRepoFile.getTypeId());
       documentFilesDao.insert(docId, textRepoFile.getId());
+      // TODO: create es doc
     });
     return textRepoFile;
   }
@@ -61,17 +58,18 @@ public class JdbiFileService implements FileService {
     jdbi.useTransaction(transaction -> {
       var documentFilesDao = transaction.attach(DocumentFilesDao.class);
       var filesDao = transaction.attach(FilesDao.class);
-      checkFileByDocAndType(docId, textRepoFile, documentFilesDao);
+      fileExists(docId, textRepoFile, documentFilesDao);
       filesDao.upsert(textRepoFile);
       documentFilesDao.upsert(docId, textRepoFile.getId());
+      // TODO: 'upsert' es doc
     });
     return textRepoFile;
   }
 
   /**
-   * @throws BadRequestException when another file exists with same type and docId:
+   * @throws BadRequestException when document already has file with type
    */
-  private void checkFileByDocAndType(UUID docId, TextRepoFile file, DocumentFilesDao documentFilesDao) {
+  private void fileExists(UUID docId, TextRepoFile file, DocumentFilesDao documentFilesDao) {
     var found = documentFilesDao.findFile(docId, file.getTypeId());
 
     if (found.isPresent() && !found.get().getId().equals(file.getId())) {
