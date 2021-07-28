@@ -65,13 +65,13 @@ public class MappedIndexer implements Indexer {
 
   public MappedIndexer(
       MappedIndexerConfiguration config,
-      TypeService typeService
+      TypeService typeService,
+      TextRepoElasticClient textRepoElasticClient
   ) throws IndexerException {
     this.config = config;
     this.typeService = typeService;
-    this.client = new TextRepoElasticClient(config.elasticsearch);
     this.mimetypes = getIndexerTypes();
-
+    this.client = textRepoElasticClient;
     this.fieldsRequestFactory = new IndexerFieldsRequestFactory(config.fields.url, this.requestClient);
 
     createIndex(config);
@@ -109,11 +109,11 @@ public class MappedIndexer implements Indexer {
       throw new WebApplicationException(format("Could not delete file %s in index %s", fileId, index), ex);
     }
     var status = response.status().getStatus();
-    if(status == 200) {
+    if (status == 200) {
       var msg = format("Successfully deleted file %s in index %s", fileId, index);
       log.info(msg);
       return Optional.of(msg);
-    } else if(status == 404) {
+    } else if (status == 404) {
       throw new NotFoundException(format("File %s not found in index %s", fileId, index));
     } else {
       throw new WebApplicationException(format("Could not delete file %s in index %s", fileId, index));
