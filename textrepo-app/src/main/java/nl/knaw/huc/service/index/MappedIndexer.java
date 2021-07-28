@@ -52,11 +52,12 @@ public class MappedIndexer implements Indexer {
 
   public MappedIndexer(
       MappedIndexerConfiguration config,
-      TypeService typeService
+      TypeService typeService,
+      TextRepoElasticClient textRepoElasticClient
   ) throws IndexerException {
     this.config = config;
     this.typeService = typeService;
-    this.client = new TextRepoElasticClient(config.elasticsearch);
+    this.client = textRepoElasticClient;
     this.fieldsRequestFactory = new IndexerFieldsRequestFactory(config.fields.url, this.requestClient);
 
     createIndex(config);
