@@ -18,6 +18,7 @@ An 'indexer' is a service with three endpoints:
 - ``GET mapping`` returns json mapping used by the |tr| to create an ES index.
 - ``POST fields`` converts the contents of new file version into a json document that matches the json mapping
 - ``GET types`` returns mimetypes that the indexer accepts, including the 'subtypes' of a mimetype, which will handled in the same way as their parent mimetype.
+
   - For example ``application/xml`` could have as a subtype ``application/vnd.prima.page+xml``, meaning that the indexer handles page xml just like ordinary xml.
   - An indexer that returns no types (status ``204 No Content``) is assumed to handle all file types
 
@@ -27,12 +28,14 @@ Indexing moments
 ----------------
 
 When are changes made to the ES indexes?
+
 - ``POST /rest/files``    -> Creating a new file resource will create ES docs with empty body
 - ``PUT  /rest/files``    -> Updating a file resource will update ES docs with latest version contents or an empty body when no latest version contents available
 - ``POST /rest/versions`` -> Updating a file resource will update ES docs with latest version contents or an empty body when no latest version contents available
 - ``POST /task/index``    -> Multiple endpoints, each indexing a subset of files
 
 TODO, on indexing of |tr| files that are/were deleted:
+
 - ``DELETE /rest/files/{id}`` -> delete ES-doc
 - ``DELETE /rest/versions/{id}`` -> when latest version deleted, update ES-doc with pre-latest version
 - ``DELETE /task/delete/documents/{externalId}`` -> optionally, delete ES-docs of files of document
