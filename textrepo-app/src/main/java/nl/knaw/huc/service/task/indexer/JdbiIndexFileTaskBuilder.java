@@ -22,12 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static java.util.List.of;
 import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.toList;
 
 public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
   private static final Logger log = LoggerFactory.getLogger(JdbiIndexFileTaskBuilder.class);

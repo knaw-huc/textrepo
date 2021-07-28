@@ -33,6 +33,7 @@ import nl.knaw.huc.service.index.Indexer;
 import nl.knaw.huc.service.index.IndexerException;
 import nl.knaw.huc.service.index.MappedIndexer;
 import nl.knaw.huc.service.index.TextRepoElasticClient;
+import nl.knaw.huc.service.index.request.IndexerFieldsRequestFactory;
 import nl.knaw.huc.service.logging.LoggingApplicationEventListener;
 import nl.knaw.huc.service.store.JdbiContentsStorage;
 import nl.knaw.huc.service.task.JdbiTaskFactory;
@@ -207,7 +208,12 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
     for (var customIndexerConfig : config.getCustomFacetIndexers()) {
       try {
         log.info("Create index: {}", customIndexerConfig.elasticsearch.index);
-        var customFacetIndexer = new MappedIndexer(customIndexerConfig, typeService);
+        var textRepoElasticClient = new TextRepoElasticClient(customIndexerConfig.elasticsearch);
+        var customFacetIndexer = new MappedIndexer(
+            customIndexerConfig,
+            typeService,
+            textRepoElasticClient
+        );
         customIndexers.add(customFacetIndexer);
       } catch (IndexerException ex) {
         log.error("Could not create indexer: {}", customIndexerConfig.elasticsearch.index, ex);

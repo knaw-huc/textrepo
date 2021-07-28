@@ -3,11 +3,6 @@ package nl.knaw.huc.service.index;
 import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.core.Type;
 import nl.knaw.huc.service.type.TypeService;
-import nl.knaw.huc.service.index.MappedIndexerConfiguration;
-import nl.knaw.huc.service.index.IndexerException;
-import nl.knaw.huc.service.index.MappedIndexer;
-import nl.knaw.huc.service.index.ElasticsearchConfiguration;
-import nl.knaw.huc.service.index.FieldsConfiguration;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -79,13 +74,10 @@ public class MappedIndexerTest {
   }
 
   @Test
-  public void instantiatingIndexer_requestsMapping() throws IOException, IndexerException {
+  public void instantiatingIndexer_requestsMappingAndTypes() throws IOException, IndexerException {
     var config = createConfig(ORIGINAL.getName());
-    mockTypesEndpoint();
-    var getMappingRequest = request()
-        .withMethod("GET")
-        .withPath(mockMappingEndpoint);
-    mockGetEndpoint(getResourceAsString("indexer/test.mapping.json"), getMappingRequest);
+    var getTypesRequest = mockTypesEndpoint();
+    var getMappingRequest = mockMappingEndpoint();
     var putIndexRequest = request()
         .withMethod("PUT")
         .withPath("/" + config.elasticsearch.index)
@@ -93,8 +85,9 @@ public class MappedIndexerTest {
         .withBody(jsonSchema(getResourceAsString("indexer/test.schema.json")));
     mockCreatingIndexResponse(config.elasticsearch.index, putIndexRequest);
 
-    new MappedIndexer(config, typeServiceMock);
+    new MappedIndexer(config, typeServiceMock, new TextRepoElasticClient(config.elasticsearch));
 
+    mockServer.verify(getTypesRequest, once());
     mockServer.verify(getMappingRequest, once());
     mockIndexServer.verify(putIndexRequest, once());
   }
@@ -105,7 +98,7 @@ public class MappedIndexerTest {
     mockTypesEndpoint();
     mockMappingEndpoint();
     mockCreatingIndexResponse(config);
-    var indexer = new MappedIndexer(config, typeServiceMock);
+    var indexer = new MappedIndexer(config, typeServiceMock, new TextRepoElasticClient(config.elasticsearch));
     var file = new TextRepoFile(UUID.randomUUID(), (short) 43);
     var postDoc2FieldsRequest = request()
         .withMethod("POST")
@@ -141,7 +134,7 @@ public class MappedIndexerTest {
 
     mockMappingEndpoint();
     mockCreatingIndexResponse(config);
-    var indexer = new MappedIndexer(config, typeServiceMock);
+    var indexer = new MappedIndexer(config, typeServiceMock, new TextRepoElasticClient(config.elasticsearch));
     var file = new TextRepoFile(UUID.randomUUID(), (short) 43);
     var postDoc2FieldsRequest = request()
         .withMethod("POST")
@@ -170,7 +163,7 @@ public class MappedIndexerTest {
     mockCreatingIndexResponse(config);
     mockTypesEndpoint();
     mockMappingEndpoint();
-    var indexer = new MappedIndexer(config, typeServiceMock);
+    var indexer = new MappedIndexer(config, typeServiceMock, new TextRepoElasticClient(config.elasticsearch));
     var postDocToFieldsRequest = request()
         .withMethod("POST")
         .withPath(mockFieldsEndpoint)
@@ -192,7 +185,7 @@ public class MappedIndexerTest {
     when(typeService.getType(anyShort())).thenReturn(new Type("txt", testType.getMimetype()));
     mockTypesEndpoint();
     mockMappingEndpoint();
-    var indexer = new MappedIndexer(config, typeServiceMock);
+    var indexer = new MappedIndexer(config, typeServiceMock, new TextRepoElasticClient(config.elasticsearch));
 
     mockServer.when(
         request()
@@ -228,7 +221,7 @@ public class MappedIndexerTest {
     when(typeService.getType(anyShort())).thenReturn(new Type("txt", testType.getMimetype()));
     mockTypesEndpoint();
     mockMappingEndpoint();
-    var indexer = new MappedIndexer(config, typeServiceMock);
+    var indexer = new MappedIndexer(config, typeServiceMock, new TextRepoElasticClient(config.elasticsearch));
 
     indexer.index(testFile, latestVersionContents);
 
@@ -271,18 +264,20 @@ public class MappedIndexerTest {
     );
   }
 
-  private void mockMappingEndpoint() throws IOException {
+  private HttpRequest mockMappingEndpoint() throws IOException {
     var request = request()
         .withMethod("GET")
         .withPath(mockMappingEndpoint);
     mockGetEndpoint(getResourceAsString("indexer/test.mapping.json"), request);
+    return request;
   }
 
-  private void mockTypesEndpoint() throws IOException {
+  private HttpRequest mockTypesEndpoint() throws IOException {
     var request = request()
         .withMethod("GET")
         .withPath(mockTypesEndpoint);
     mockGetEndpoint(getResourceAsString("indexer/test.types.json"), request);
+    return request;
   }
 
   private void mockGetEndpoint(String responseBody, HttpRequest getRequest) {
