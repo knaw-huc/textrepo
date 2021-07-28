@@ -37,6 +37,7 @@ import static java.lang.String.join;
 import static java.util.stream.Collectors.toList;
 import static javax.ws.rs.core.Response.Status.NO_CONTENT;
 import static nl.knaw.huc.service.index.FieldsType.MULTIPART;
+import static org.elasticsearch.client.RequestOptions.DEFAULT;
 import static org.elasticsearch.common.xcontent.XContentType.JSON;
 
 /**
@@ -104,7 +105,7 @@ public class MappedIndexer implements Indexer {
     var deleteRequest = new DeleteRequest();
     var index = config.elasticsearch.index;
     try {
-      response = client.getClient().delete(deleteRequest, RequestOptions.DEFAULT);
+      response = client.getClient().delete(deleteRequest, DEFAULT);
     } catch (Exception ex) {
       throw new WebApplicationException(format("Could not delete file %s in index %s", fileId, index), ex);
     }
@@ -149,7 +150,7 @@ public class MappedIndexer implements Indexer {
       client
           .getClient()
           .indices()
-          .create(request, RequestOptions.DEFAULT);
+          .create(request, DEFAULT);
     } catch (ElasticsearchStatusException ex) {
       log.info("Could not create index [{}], already exists", config.elasticsearch.index);
     } catch (IOException ex) {
@@ -207,7 +208,7 @@ public class MappedIndexer implements Indexer {
 
   private IndexResponse indexRequest(IndexRequest indexRequest) {
     try {
-      return client.getClient().index(indexRequest, RequestOptions.DEFAULT);
+      return client.getClient().index(indexRequest, DEFAULT);
     } catch (Exception ex) {
       throw new WebApplicationException("Could not index in Elasticsearch", ex);
     }
