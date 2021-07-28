@@ -1,6 +1,7 @@
 package nl.knaw.huc.service.task.indexer;
 
 import nl.knaw.huc.core.TextRepoFile;
+import nl.knaw.huc.core.Type;
 import nl.knaw.huc.core.Version;
 import nl.knaw.huc.db.FilesDao;
 import nl.knaw.huc.db.TypesDao;
@@ -178,32 +179,33 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
 
     @Override
     public String run() {
-      var typesToIndex = new ArrayList<Short>();
+      var typesToIndex = getTypesToIndex();
 
-      indexer.getConfig().mimetypes
-          .forEach(m -> {
-            var type = types()
-                .findByMimetype(m);
-            type.ifPresentOrElse(
-                typesToIndex::add,
-                () -> log.warn("No such mimetype: {}", m)
-            );
-          });
-      final String msg;
-      if (typesToIndex.isEmpty()) {
-        msg = "No types to index: no files affected";
-      } else {
-        filesTotal = jdbi.onDemand(FilesDao.class).countByTypes(typesToIndex);
-        typesToIndex.forEach(this::indexFilesByType);
-        msg = format("Total files affected: %d", filesAffected);
-      }
+      filesTotal = jdbi.onDemand(FilesDao.class).countByTypes(typesToIndex);
+      typesToIndex.forEach(this::indexFilesByType);
 
+      final var msg = format("Total files affected: %d", filesAffected);
       log.info(msg);
       return msg;
     }
 
     private TypesDao types() {
       return jdbi.onDemand(TypesDao.class);
+    }
+
+    private List<Short> getTypesToIndex() {
+      var allTypes = types().list();
+      List<Type> toIndex;
+      if (indexer.getMimetypes().isEmpty()) {
+        toIndex = allTypes;
+      } else {
+        var supported = indexer.getMimetypes().get();
+        toIndex = allTypes
+            .stream()
+            .filter(at -> supported.contains(at.getMimetype()))
+            .toList();
+      }
+      return toIndex.stream().map(Type::getId).toList();
     }
 
     private Supplier<NotFoundException> noSuchIndexer(String name) {

@@ -47,6 +47,19 @@ public class FileResource {
         .build();
   }
 
+  /**
+   * File indexer handles all mimetypes, since it only deals with metadata
+   */
+  @GET
+  @Path("/types")
+  @Timed
+  @Produces(APPLICATION_JSON)
+  public Response types() {
+    return Response
+        .status(Response.Status.NO_CONTENT)
+        .build();
+  }
+
   @POST
   @Path("/fields")
   @Timed

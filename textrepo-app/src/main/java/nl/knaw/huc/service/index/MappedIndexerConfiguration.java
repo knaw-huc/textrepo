@@ -11,6 +11,13 @@ public class MappedIndexerConfiguration extends IndexerConfiguration {
   public String mapping;
 
   /**
+   * GET Endpoint to request es index types containing the mimetypes (and their 'subtypes')
+   * that the indexer accepts and knows how to convert at its fields-endpoint
+   */
+  @JsonProperty
+  public String types;
+
+  /**
    * POST Endpoint to convert doc to json doc that matches es mapping
    */
   @JsonProperty

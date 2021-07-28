@@ -13,10 +13,13 @@ Indexer
 -------
 
 To convert new file versions into a format that ES understands, the |tr| uses 'indexer' services.
-An 'indexer' is a service with two endpoints:
+An 'indexer' is a service with three endpoints:
 
 - ``GET mapping`` returns json mapping used by the |tr| to create an ES index.
-- ``POST fields`` endpoint converts the contents of new file version into a json document that matches the json mapping
+- ``POST fields`` converts the contents of new file version into a json document that matches the json mapping
+- ``GET types`` returns mimetypes that the indexer accepts, including the 'subtypes' of a mimetype, which will handled in the same way as their parent mimetype.
+  - For example ``application/xml`` could have as a subtype ``application/vnd.prima.page+xml``, meaning that the indexer handles page xml just like ordinary xml.
+  - An indexer that returns no types (status ``204 No Content``) is assumed to handle all file types
 
 More on: `ES mappings <https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html>`_.
 

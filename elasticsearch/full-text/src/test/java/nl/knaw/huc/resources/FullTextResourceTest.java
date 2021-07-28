@@ -66,8 +66,8 @@ public class FullTextResourceTest {
         .get();
     var fields = response.readEntity(String.class);
     assertThat(response.getStatus()).isEqualTo(200);
-    assertThat(JsonPath.parse(fields).read("$.types.[0].mimetype", String.class)).isEqualTo("application/xml");
-    assertThat(JsonPath.parse(fields).read("$.types.length()", Integer.class)).isEqualTo(4);
+    assertThat(JsonPath.parse(fields).read("$.[0].mimetype", String.class)).isEqualTo("application/xml");
+    assertThat(JsonPath.parse(fields).read("$.length()", Integer.class)).isEqualTo(4);
   }
 
   @Test
