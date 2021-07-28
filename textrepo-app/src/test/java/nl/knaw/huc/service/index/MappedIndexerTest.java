@@ -117,7 +117,7 @@ public class MappedIndexerTest {
             .withBody("{\"acknowledged\":true,\"shards_acknowledged\":true,\"index\":\"test-index-name\"}")
             .withHeader("content-type", "application/json")
     );
-    return new MappedIndexer(config, typeService);
+    return new MappedIndexer(config, typeService, new TextRepoElasticClient(config.elasticsearch));
   }
 
   private MappedIndexerConfiguration createConfig(String fieldsType) {
