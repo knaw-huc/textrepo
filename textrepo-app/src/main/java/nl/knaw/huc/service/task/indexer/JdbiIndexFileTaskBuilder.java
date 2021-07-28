@@ -189,7 +189,7 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
                 () -> log.warn("No such mimetype: {}", m)
             );
           });
-      var msg = "";
+      final String msg;
       if (typesToIndex.isEmpty()) {
         msg = "No types to index: no files affected";
       } else {
