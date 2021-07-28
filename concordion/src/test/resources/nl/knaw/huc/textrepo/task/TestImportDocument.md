@@ -23,14 +23,14 @@ repository, if you were to import the contents of `2` with `asLatestVersion=true
 
 We try to import a document
 
-- with external ID: [`document_1234`](- "#externalId");
-- using type: [`text`](- "#typeName");
-- uploading a file containing [`example content`](- "#originalContents");
+- with external ID: [document_1234](- "#externalId");
+- using type: [text](- "#typeName");
+- uploading a file containing [example content](- "#originalContents");
 
 ### 1. Using `allowNewDocument=false` (default)
 
 When we `POST` the file to
-[`/task/import/documents/document_1234/text`](- "#importEndpoint")
+[/task/import/documents/document_1234/text](- "#importEndpoint")
 
 (or equivalently by explicitly appending the query param `?allowNewDocument=false`)
 
@@ -49,7 +49,7 @@ This helps prevent you from accidentally creating new documents when you know th
 
 However, when we `POST` our file to
 
-[`/task/import/documents/document_1234/text?allowNewDocument=true`](- "#importEndpoint2")
+[/task/import/documents/document_1234/text?allowNewDocument=true](- "#importEndpoint2")
 
 [ ](- "#result=retrieve(#importEndpoint2, #externalId, #typeName, #originalContents)")
 
@@ -80,7 +80,7 @@ Then:
 Now that `document_1234` has a version created in the test above, when we `POST` the same file
 ***again*** to
 
-[`/task/import/documents/document_1234/text`](- "#importEndpoint3")
+[/task/import/documents/document_1234/text](- "#importEndpoint3")
 
 [ ](- "#result=retrieve(#importEndpoint3, #externalId, #typeName, #originalContents)")
 
@@ -114,7 +114,7 @@ already present for a document.
 
 When we `POST` our file again to
 
-[`/task/import/documents/document_1234/text?asLatestVersion=true`](- "#importEndpoint4")
+[/task/import/documents/document_1234/text?asLatestVersion=true](- "#importEndpoint4")
 
 [ ](- "#result=retrieve(#importEndpoint4, #externalId, #typeName, #originalContents)")
 
@@ -143,9 +143,9 @@ Nothing was created, because the current version is ***already the latest versio
 
 ### 3. Using `asLatestVersion=true` when uploaded contents is an older version
 
-When we `POST` some [`other content`](- "#otherContents") to
+When we `POST` some [other content](- "#otherContents") to
 
-[`/task/import/documents/document_1234/text`](- "#importEndpoint5")
+[/task/import/documents/document_1234/text](- "#importEndpoint5")
 
 [ ](- "#result=retrieve(#importEndpoint5, #externalId, #typeName, #otherContents)")
 
@@ -157,7 +157,7 @@ for brevity, we omit testing headers and body for this intermediate version.
 
 And if we then `POST` our original contents again to
 
-[`/task/import/documents/document_1234/text?asLatestVersion=true`](- "#importEndpoint6")
+[/task/import/documents/document_1234/text?asLatestVersion=true](- "#importEndpoint6")
 
 [ ](- "#result=retrieve(#importEndpoint6, #externalId, #typeName, #originalContents)")
 

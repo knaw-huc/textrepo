@@ -15,7 +15,7 @@ To retrieve the contents of a version by its sha we first create:
   - with a sha: [ ](- "c:echo=#sha").
 
 ### Retrieve contents by its sha
-When retrieving the contents of a file with a `GET` to [`/rest/contents/{sha}`](- "#getEndpoint") 
+When retrieving the contents of a file with a `GET` to [/rest/contents/{sha}](- "#getEndpoint") 
 
  - where `{sha}` is [ ](- "c:echo=#sha"):
 

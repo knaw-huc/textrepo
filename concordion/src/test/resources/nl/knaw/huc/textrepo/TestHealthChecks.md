@@ -4,7 +4,7 @@ The Text Repository provides a set of healtch checks of vital components like El
 
 ## Check health
 
-When we run and request the health checks with a `GET` to [`/healthcheck`](- "#endpoint") using admin port [`8081`](- "#adminport");
+When we run and request the health checks with a `GET` to [/healthcheck](- "#endpoint") using admin port [8081](- "#adminport");
 
 [ ](- "#response=checkHealth(#endpoint, #adminport)")
 

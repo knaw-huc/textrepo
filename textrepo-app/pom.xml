@@ -14,7 +14,7 @@
   <name>Text Repository</name>
 
   <properties>
-    <java.version>11</java.version>
+    <java.version>16</java.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
 
@@ -23,6 +23,7 @@
     <mainClass>nl.knaw.huc.TextRepoApp</mainClass>
     <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
     <maven-checkstyle-plugin.version>3.0.0</maven-checkstyle-plugin.version>
+    <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
 
     <checkstyle.config.location>https://raw.githubusercontent.com/knaw-huc/checkstyle/master/checkstyle_config.xml
     </checkstyle.config.location>
@@ -244,7 +245,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.22.2</version>
+        <version>${maven-surefire-plugin.version}</version>
       </plugin>
 
       <!-- checkstyle -->

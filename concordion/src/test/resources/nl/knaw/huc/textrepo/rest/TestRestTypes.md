@@ -3,12 +3,9 @@
 Every file has a type and a document contains only one file per type. 
 
 ### Create type
-When creating the following type with a `POST` to [`/rest/types`](- "#createEndpoint"):
+When creating the following type with a `POST` to [/rest/types](- "#createEndpoint"):
 
-[```{
-  "name": "test-name",
-  "mimetype": "test-mimetype"
-}```](- "#newEntity")
+[{ "name": "test-name", "mimetype": "test-mimetype" }](- "#newEntity")
 
 [ ](- "#createResult=create(#createEndpoint, #newEntity)")
 
@@ -21,7 +18,7 @@ Then:
 [ ](- "ext:embed=#createResult.body")
 
 ### Retrieve type
-When retrieving the following type with a `GET` to [`/rest/types/{id}`](- "#getEndpoint") 
+When retrieving the following type with a `GET` to [/rest/types/{id}](- "#getEndpoint") 
 
  - where `{id}` is [ ](- "c:echo=#createResult.id"):
 
@@ -38,12 +35,9 @@ Then:
 [ ](- "ext:embed=#retrieveResult.body")
 
 ### Update type
-When updating type [ ](- "c:echo=#createResult.id") with a `PUT` to [`/rest/types/{id}`](- "#updateEndpoint"):
+When updating type [ ](- "c:echo=#createResult.id") with a `PUT` to [/rest/types/{id}](- "#updateEndpoint"):
 
-[```{
-  "name": "updated-test-name",
-  "mimetype": "updated-test-mimetype"
-}```](- "#updatedEntity")
+[{ "name": "updated-test-name", "mimetype": "updated-test-mimetype" }](- "#updatedEntity")
 
 [ ](- "#updateResult=update(#updateEndpoint, #createResult.id, #updatedEntity)")
 
@@ -55,7 +49,7 @@ Then:
 [ ](- "ext:embed=#updateResult.body")
 
 ### Retrieve type after updating
-When retrieving type [ ](- "c:echo=#createResult.id") with a `GET` to [`/rest/types/{id}`](- "#getEndpoint"):
+When retrieving type [ ](- "c:echo=#createResult.id") with a `GET` to [/rest/types/{id}](- "#getEndpoint"):
 
 [ ](- "#getAfterUpdateResult=getAfterUpdate(#getEndpoint, #createResult.id)")
 
@@ -70,7 +64,7 @@ Then:
 [ ](- "ext:embed=#getAfterUpdateResult.body")
 
 ### Delete type
-When deleting type [ ](- "c:echo=#createResult.id") with a `DELETE` to [`/rest/types/{id}`](- "#deleteEndpoint"):
+When deleting type [ ](- "c:echo=#createResult.id") with a `DELETE` to [/rest/types/{id}](- "#deleteEndpoint"):
 
 [ ](- "#deleteResult=delete(#deleteEndpoint, #createResult.id)")
 
@@ -79,7 +73,7 @@ Then:
  - The response status should be: [200](- "?=#deleteResult.status").
 
 ### Retrieve type after deleting
-When retrieving type [ ](- "c:echo=#createResult.id") with a `GET` to [`/rest/types/{id}`](- "#getEndpoint"):
+When retrieving type [ ](- "c:echo=#createResult.id") with a `GET` to [/rest/types/{id}](- "#getEndpoint"):
 
 [ ](- "#retrieveAfterDeleteResult=getAfterDelete(#getEndpoint, #createResult.id)")
 

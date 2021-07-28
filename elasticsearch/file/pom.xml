@@ -14,7 +14,7 @@
   <name>Elasticsearch File Indexer</name>
 
   <properties>
-    <java.version>11</java.version>
+    <java.version>16</java.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
 

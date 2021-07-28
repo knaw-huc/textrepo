@@ -13,10 +13,10 @@ To add version metadata we first create:
   - and a version: [ ](- "c:echo=#versionId").
 
 ### Create version metadata
-When adding the following version metadata with a `PUT` to [`/rest/versions/{id}/metadata/{key}`](- "#createEndpoint")
+When adding the following version metadata with a `PUT` to [/rest/versions/{id}/metadata/{key}](- "#createEndpoint")
 
- - where key is [`test-key`](- "#metadataKey");
- - where value is [`test-value`](- "#metadataValue").
+ - where key is [test-key](- "#metadataKey");
+ - where value is [test-value](- "#metadataValue").
 
 [ ](- "#createResult=create(#createEndpoint, #versionId, #metadataKey, #metadataValue)")
 
@@ -28,7 +28,7 @@ Then:
 [ ](- "ext:embed=#createResult.body")
 
 ### Retrieve version metadata
-When retrieving the metadata of a version with a `GET` to [`/rest/versions/{id}/metadata`](- "#getEndpoint") 
+When retrieving the metadata of a version with a `GET` to [/rest/versions/{id}/metadata](- "#getEndpoint") 
 
  - where `{id}` is [ ](- "c:echo=#versionId"):
 
@@ -43,10 +43,10 @@ Then:
 [ ](- "ext:embed=#retrieveResult.body")
 
 ### Update version metadata entry
-When updating metadata entry with a `PUT` to [`/rest/versions/{id}/metadata/{key}`](- "#updateEndpoint"):
+When updating metadata entry with a `PUT` to [/rest/versions/{id}/metadata/{key}](- "#updateEndpoint"):
 
- - where key is [`test-key`](- "#metadataKey")
- - where value is [`updated-test-value`](- "#updatedMetadataValue")
+ - where key is [test-key](- "#metadataKey")
+ - where value is [updated-test-value](- "#updatedMetadataValue")
 
 [ ](- "#updateResult=update(#updateEndpoint, #versionId, #metadataKey, #updatedMetadataValue)")
 Then:
@@ -58,7 +58,7 @@ Then:
 [ ](- "ext:embed=#updateResult.body")
 
 ### Retrieve version metadata after updating entry
-When retrieving the metadata of a version with a `GET` to [`/rest/versions/{id}/metadata`](- "#getEndpoint") 
+When retrieving the metadata of a version with a `GET` to [/rest/versions/{id}/metadata](- "#getEndpoint") 
 
  - where `{id}` is [ ](- "c:echo=#versionId"):
 
@@ -73,7 +73,7 @@ Then:
 [ ](- "ext:embed=#updatedReadResult.body")
 
 ### Delete version metadata entry
-When removing a metadata entry with a `DELETE` to [`/rest/versions/{id}/metadata/{key}`](- "#deleteEndpoint"):
+When removing a metadata entry with a `DELETE` to [/rest/versions/{id}/metadata/{key}](- "#deleteEndpoint"):
 
  - where `{id}` is [ ](- "c:echo=#versionId")
  - where `{key}` is [ ](- "c:echo=#metadataKey")
@@ -85,7 +85,7 @@ Then:
  - The response status should be: [200](- "?=#deleteResult.status").
 
 ### Retrieve version metadata after deleting entry
-When retrieving version metadata with a `GET` to [`/rest/versions/{id}/metadata`](- "#getEndpoint"):
+When retrieving version metadata with a `GET` to [/rest/versions/{id}/metadata](- "#getEndpoint"):
 
 [ ](- "#retrieveAfterDeleteResult=retrieveAfterDelete(#getEndpoint, #versionId)")
 

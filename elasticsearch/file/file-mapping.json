@@ -42,7 +42,6 @@
           }
         }
       },
-
       "doc": {
         "properties": {
           "id": {
@@ -70,7 +69,6 @@
           }
         }
       },
-
       "contentsLastModified": {
         "properties": {
           "dateTime": {
@@ -84,7 +82,6 @@
           }
         }
       },
-
       "versions": {
         "type": "nested",
         "properties": {

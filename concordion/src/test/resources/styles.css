@@ -1,0 +1,8 @@
+span[concordion\:set],
+span[concordion\:execute],
+span[concordion\:echo],
+span[concordion\:assert-equals] {
+    white-space: pre;
+    font-family: Courier New, Courier, monospace;
+    font-size: 10pt;
+}
