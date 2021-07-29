@@ -4,14 +4,19 @@ import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.db.ContentsDao;
 import nl.knaw.huc.db.VersionsDao;
 import org.jdbi.v3.core.Jdbi;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+
+import static java.lang.String.format;
 
 public class JdbiIndexService implements IndexService {
 
   private final List<Indexer> indexers;
   private final Jdbi jdbi;
+  private static final Logger log = LoggerFactory.getLogger(MappedIndexer.class);
 
   public JdbiIndexService(
       List<Indexer> indexers,
@@ -26,6 +31,7 @@ public class JdbiIndexService implements IndexService {
     var latestVersion = jdbi
         .onDemand(VersionsDao.class)
         .findLatestByFileId(file.getId());
+    log.info(format("Indexing file %s", file.getId()));
     String latestContents;
     if (latestVersion.isEmpty()) {
       latestContents = "";
