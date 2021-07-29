@@ -31,7 +31,7 @@ When are changes made to the ES indexes?
 
 - ``POST /rest/files``    -> Creating a new file resource will create ES docs with empty body
 - ``PUT  /rest/files``    -> Updating a file resource will update ES docs with latest version contents or an empty body when no latest version contents available
-- ``POST /rest/versions`` -> Updating a file resource will update ES docs with latest version contents or an empty body when no latest version contents available
+- ``POST /rest/versions`` -> Updating a version resource will update ES docs with latest version contents
 - ``POST /task/index``    -> Multiple endpoints, each indexing a subset of files
 
 TODO:

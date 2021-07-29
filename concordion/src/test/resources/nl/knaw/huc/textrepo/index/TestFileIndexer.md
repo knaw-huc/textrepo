@@ -115,3 +115,4 @@ Find all documents by document metadata `{key}` and `{value}`, including an aggr
 
 Full response:
 [ ](- "ext:embed=#result.body")
+

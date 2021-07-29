@@ -40,3 +40,4 @@ The Text Repository offers various diagnostics about the state of documents:
 
 - [File indexer](index/TestFileIndexer.md "c:run")
 - [Autocomplete indexer](index/TestAutocompleteIndexer.md "c:run")
+- [Index mutation moments](index/TestIndexMutations.md "c:run")

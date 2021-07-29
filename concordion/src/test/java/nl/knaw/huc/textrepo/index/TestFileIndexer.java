@@ -129,7 +129,6 @@ public class TestFileIndexer extends AbstractConcordionTest {
   }
 
   public static class DocMetadataResult {
-
     public int status;
     public String body;
     public String found;
