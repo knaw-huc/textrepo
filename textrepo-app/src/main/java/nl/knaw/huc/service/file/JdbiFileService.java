@@ -65,8 +65,8 @@ public class JdbiFileService implements FileService {
       throwBadRequestWhenDocHasFileWithType(docId, file, documentFilesDao);
       filesDao.upsert(file);
       documentFilesDao.upsert(docId, file.getId());
-      indexService.index(file);
     });
+    indexService.index(file);
     return file;
   }
 

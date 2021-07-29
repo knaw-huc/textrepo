@@ -8,7 +8,6 @@ import com.jayway.jsonpath.TypeRef;
 import com.jayway.jsonpath.spi.json.JacksonJsonNodeJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import nl.knaw.huc.textrepo.AbstractConcordionTest;
-import nl.knaw.huc.textrepo.rest.TestRestFiles;
 import nl.knaw.huc.textrepo.util.RestUtils;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
@@ -162,7 +161,6 @@ public class TestIndexMutations extends AbstractConcordionTest {
     result.status = response.getStatus();
     result.body = asPrettyJson(body);
     var json = jsonPath.parse(body);
-    System.out.println("update_result:" + result.body);
     var resultTypeId = json.read("$.typeId", Integer.class);
     result.updatedType = resultTypeId == fooTypeId ? "updated type" : "" + resultTypeId + " != " + typeId;
     return result;
@@ -189,7 +187,7 @@ public class TestIndexMutations extends AbstractConcordionTest {
         .read("$.hits.hits[*]._source.versions[*]", new TypeRef<List<Object>>() {
         })
         .size();
-    String foundType = jsonPath
+    var foundType = jsonPath
         .parse(body)
         .read("$.hits.hits[0]._source.file.type.name", String.class);
     result.type = foundType.equals(type)
