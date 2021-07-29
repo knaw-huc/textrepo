@@ -38,8 +38,8 @@ public class JdbiFileService implements FileService {
       throwBadRequestWhenDocHasFileWithType(docId, file, documentFilesDao);
       filesDao.insert(file.getId(), file.getTypeId());
       documentFilesDao.insert(docId, file.getId());
-      indexService.index(file);
     });
+    indexService.index(file);
     return file;
   }
 
