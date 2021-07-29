@@ -42,7 +42,7 @@ TODO, deletes:
 - ``DELETE /rest/files/{id}`` -> delete ES-doc
 - ``DELETE /rest/versions/{id}`` -> when latest version deleted, update ES-doc with pre-latest version
 - ``DELETE /task/delete/documents/{externalId}`` -> new, delete ES-docs of files of document (optional but default)
-- ``DELETE /task/index/deleted-files`` -> delete all ES-docs with IDs not present in |tr| database
+- ``DELETE /task/index/deleted-files`` -> delete all ES-docs of deletes files, meaning: delete all ES doc IDs not present in |tr| database
 
 Indexing workflow
 -----------------
