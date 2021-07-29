@@ -29,13 +29,11 @@ import nl.knaw.huc.service.file.JdbiFileService;
 import nl.knaw.huc.service.file.metadata.JdbiFileMetadataService;
 import nl.knaw.huc.service.health.ElasticsearchHealthCheck;
 import nl.knaw.huc.service.health.IndexerHealthCheck;
-import nl.knaw.huc.service.index.IndexService;
 import nl.knaw.huc.service.index.Indexer;
 import nl.knaw.huc.service.index.IndexerException;
 import nl.knaw.huc.service.index.JdbiIndexService;
 import nl.knaw.huc.service.index.MappedIndexer;
 import nl.knaw.huc.service.index.TextRepoElasticClient;
-import nl.knaw.huc.service.index.request.IndexerFieldsRequestFactory;
 import nl.knaw.huc.service.logging.LoggingApplicationEventListener;
 import nl.knaw.huc.service.store.JdbiContentsStorage;
 import nl.knaw.huc.service.task.JdbiTaskFactory;
@@ -123,7 +121,7 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
 
     var limits = config.getResourceLimits();
     var contentDecompressionLimit = limits.contentDecompressionLimit * Limits.BYTES_PER_KB;
-    var versionService = new JdbiVersionService(jdbi, contentsService, indexers, uuidGenerator);
+    var versionService = new JdbiVersionService(jdbi, contentsService, uuidGenerator, indexService);
 
     var viewBuilderFactory = createViewBuilderFactory();
 

@@ -12,7 +12,7 @@ import nl.knaw.huc.db.VersionsDao;
 import nl.knaw.huc.helpers.Paginator;
 import nl.knaw.huc.service.contents.ContentsService;
 import nl.knaw.huc.service.datetime.LocalDateTimeParamConverterProvider;
-import nl.knaw.huc.service.index.MappedIndexer;
+import nl.knaw.huc.service.index.IndexService;
 import nl.knaw.huc.service.version.JdbiVersionService;
 import nl.knaw.huc.service.version.VersionService;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -47,7 +46,7 @@ public class FileVersionsResourceTest {
   private static final UUID fileUuid = UUID.fromString("0defaced-cafe-babe-dada-deadbeefc2c6");
   private static final TextRepoFile file = new TextRepoFile(fileUuid, (short) 1);
 
-  private static final Jdbi jdbi = mock(Jdbi.class);
+  private static final Jdbi JDBI = mock(Jdbi.class);
 
   private static final int TEST_LIMIT = 10;
   private static final int TEST_OFFSET = 0;
@@ -60,16 +59,17 @@ public class FileVersionsResourceTest {
     return new Paginator(config);
   }
 
-  private static final VersionService versionService = new JdbiVersionService(
-      jdbi,
-      mock(ContentsService.class),
-      newArrayList(mock(MappedIndexer.class)),
-      UUID::randomUUID
-  );
-
   // Don't forget to setup and reset mocks:
   private static final VersionsDao VERSIONS_DAO = mock(VersionsDao.class);
   private static final FilesDao FILES_DAO = mock(FilesDao.class);
+  private static final IndexService INDEX_SERVICE = mock(IndexService.class);
+
+  private static final VersionService versionService = new JdbiVersionService(
+      JDBI,
+      mock(ContentsService.class),
+      UUID::randomUUID,
+      INDEX_SERVICE
+  );
 
   // With milliseconds:
   private static final String dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS";
@@ -88,14 +88,14 @@ public class FileVersionsResourceTest {
 
   @BeforeEach
   public void setupMocks() {
-    when(jdbi.onDemand(VersionsDao.class)).thenReturn(VERSIONS_DAO);
-    when(jdbi.onDemand(FilesDao.class)).thenReturn(FILES_DAO);
+    when(JDBI.onDemand(VersionsDao.class)).thenReturn(VERSIONS_DAO);
+    when(JDBI.onDemand(FilesDao.class)).thenReturn(FILES_DAO);
     MockitoAnnotations.initMocks(this);
   }
 
   @AfterEach
   public void resetMocks() {
-    reset(jdbi, VERSIONS_DAO, FILES_DAO);
+    reset(JDBI, INDEX_SERVICE, VERSIONS_DAO, FILES_DAO);
   }
 
   @Test

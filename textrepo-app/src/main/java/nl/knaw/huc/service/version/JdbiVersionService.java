@@ -9,21 +9,21 @@ import nl.knaw.huc.db.ContentsDao;
 import nl.knaw.huc.db.FilesDao;
 import nl.knaw.huc.db.VersionsDao;
 import nl.knaw.huc.service.contents.ContentsService;
-import nl.knaw.huc.service.index.Indexer;
+import nl.knaw.huc.service.index.IndexService;
+import nl.knaw.huc.service.task.DeleteVersion;
 import org.jdbi.v3.core.Jdbi;
-import org.jdbi.v3.core.JdbiException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.ws.rs.NotFoundException;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 import static java.lang.String.format;
-import static nl.knaw.huc.helpers.PsqlExceptionHelper.Constraint.VERSIONS_CONTENTS_SHA;
 import static nl.knaw.huc.helpers.PsqlExceptionHelper.violatesConstraint;
 
 public class JdbiVersionService implements VersionService {
@@ -32,19 +32,19 @@ public class JdbiVersionService implements VersionService {
 
   private final Jdbi jdbi;
   private final ContentsService contentsService;
-  private final List<Indexer> indexers;
   private final Supplier<UUID> uuidGenerator;
+  private final IndexService indexService;
 
   public JdbiVersionService(
       Jdbi jdbi,
       ContentsService contentsService,
-      List<Indexer> indexers,
-      Supplier<UUID> uuidGenerator
+      Supplier<UUID> uuidGenerator,
+      IndexService indexService
   ) {
     this.jdbi = jdbi;
     this.contentsService = contentsService;
-    this.indexers = indexers;
     this.uuidGenerator = uuidGenerator;
+    this.indexService = indexService;
   }
 
   @Override
@@ -67,7 +67,7 @@ public class JdbiVersionService implements VersionService {
     var id = uuidGenerator.get();
     var newVersion = new Version(id, file.getId(), contents.getSha224());
     newVersion = versions().insert(newVersion);
-    indexers.forEach(indexer -> indexer.index(file, latestVersionContents));
+    indexService.index(file, latestVersionContents);
     return newVersion;
   }
 
@@ -92,25 +92,30 @@ public class JdbiVersionService implements VersionService {
 
   @Override
   public void delete(UUID id) {
-    var version = versions().find(id);
-    versions().delete(id);
-    version.ifPresent(v -> tryDeletingContents(id, v.getContentsSha()));
+    var deletedIsLatestVersion = new AtomicBoolean();
+    var version = new AtomicReference<Version>();
+    jdbi.useTransaction(handle -> {
+      var versionsDao = handle.attach(VersionsDao.class);
+      var found = versionsDao.find(id);
+
+      if (found.isEmpty()) {
+        throw new NotFoundException(format("Could not find version with id %s", id));
+      }
+
+      version.set(found.get());
+      deletedIsLatestVersion.set(isLatestVersion(version.get(), versionsDao));
+      new DeleteVersion(found.get()).executeIn(handle);
+    });
+
+    if (deletedIsLatestVersion.get()) {
+      indexService.index(version.get().getFileId());
+    }
   }
 
-  /**
-   * Deletes contents when its sha is not linked to any version
-   */
-  private void tryDeletingContents(@Nonnull UUID id, String sha) {
-    try {
-      contents().delete(sha);
-      log.info("Deleted contents of version {} by sha {}", id, sha);
-    } catch (JdbiException ex) {
-      if (violatesConstraint(ex, VERSIONS_CONTENTS_SHA)) {
-        log.info("Not deleting contents of version {} because sha {} is still in use", id, sha);
-      } else {
-        throw ex;
-      }
-    }
+  private boolean isLatestVersion(Version version, VersionsDao versionsDao) {
+    var latestVersion = versionsDao.findLatestByFileId(version.getFileId());
+    return latestVersion.isPresent() &&
+        latestVersion.get().getId().equals(version.getId());
   }
 
   private FilesDao files() {

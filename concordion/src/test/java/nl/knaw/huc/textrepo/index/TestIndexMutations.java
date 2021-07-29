@@ -8,6 +8,7 @@ import com.jayway.jsonpath.TypeRef;
 import com.jayway.jsonpath.spi.json.JacksonJsonNodeJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import nl.knaw.huc.textrepo.AbstractConcordionTest;
+import nl.knaw.huc.textrepo.rest.TestRestVersions;
 import nl.knaw.huc.textrepo.util.RestUtils;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
@@ -94,11 +95,12 @@ public class TestIndexMutations extends AbstractConcordionTest {
   }
 
   public UploadResult upload(
-      String fileId1, String content1
+      String fileId1, String content1, String content2
   ) {
     var result = new UploadResult();
     result.versionUuid1 = RestUtils.createVersion(fileId1, content1);
-    result.versionUuid2 = RestUtils.createVersion(fileId1, content1);
+    sleepMs(100);
+    result.versionUuid2 = RestUtils.createVersion(fileId1, content2);
     result.validVersions = isValidUuid(result.versionUuid2)
         ? "valid versions"
         : "one or more invalid version UUIDs";
@@ -166,6 +168,20 @@ public class TestIndexMutations extends AbstractConcordionTest {
     return result;
   }
 
+  public static class DeleteResult {
+    public int status;
+  }
+  public DeleteResult deleteVersion(String endpoint, String id) {
+    final var response = client
+        .target(replaceUrlParams(endpoint, id))
+        .request()
+        .delete();
+
+    var result = new DeleteResult();
+    result.status = response.getStatus();
+    return result;
+  }
+
   public FileIndexResult searchFileIndexWithType(String type) {
     // Wait for indexing:
     sleepMs(1000);
@@ -209,7 +225,7 @@ public class TestIndexMutations extends AbstractConcordionTest {
   }
 
   public String getEsQuery() {
-    return asPrettyJson(this.searchByFileType);
+    return asPrettyJson(this.searchAll);
   }
 
 }
