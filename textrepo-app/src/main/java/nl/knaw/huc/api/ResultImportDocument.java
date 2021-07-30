@@ -4,17 +4,26 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 import io.swagger.annotations.ApiModelProperty;
 import nl.knaw.huc.core.Document;
+import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.core.Version;
 
 import java.util.UUID;
 
 public class ResultImportDocument {
   private final Document document;
+  private final TextRepoFile file;
   private final Version version;
   private final boolean isNewVersion;
+  private boolean indexed;
 
-  public ResultImportDocument(Document document, Version version, boolean isNewVersion) {
+  public ResultImportDocument(
+      Document document,
+      TextRepoFile file,
+      Version version,
+      boolean isNewVersion
+  ) {
     this.document = document;
+    this.file = file;
     this.version = version;
     this.isNewVersion = isNewVersion;
   }
@@ -28,6 +37,12 @@ public class ResultImportDocument {
   @ApiModelProperty(position = 1)
   public UUID getFileId() {
     return version.getFileId();
+  }
+
+  @JsonProperty
+  @ApiModelProperty(position = 1)
+  public Short getTypeId() {
+    return file.getTypeId();
   }
 
   @JsonProperty
@@ -49,6 +64,16 @@ public class ResultImportDocument {
     return isNewVersion;
   }
 
+  public void setIndexed(boolean indexed) {
+    this.indexed = indexed;
+  }
+
+  @JsonProperty
+  @ApiModelProperty(position = 5)
+  public boolean getIndexed() {
+    return indexed;
+  }
+
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
@@ -57,4 +82,5 @@ public class ResultImportDocument {
                       .add("isNewVersion", isNewVersion)
                       .toString();
   }
+
 }

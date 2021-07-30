@@ -1,5 +1,6 @@
 package nl.knaw.huc.service.task;
 
+import nl.knaw.huc.service.index.IndexService;
 import nl.knaw.huc.service.index.Indexer;
 import nl.knaw.huc.service.task.deleter.DeleteDocumentTaskBuilder;
 import nl.knaw.huc.service.task.deleter.JdbiDeleteDocumentTaskBuilder;
@@ -25,10 +26,16 @@ public class JdbiTaskFactory implements TaskBuilderFactory {
   private final Jdbi jdbi;
   private Supplier<UUID> idGenerator;
   private final List<Indexer> indexers;
+  private IndexService indexService;
 
-  public JdbiTaskFactory(Jdbi jdbi, List<Indexer> indexers) {
+  public JdbiTaskFactory(
+      Jdbi jdbi,
+      List<Indexer> indexers,
+      IndexService indexService
+  ) {
     this.jdbi = requireNonNull(jdbi);
     this.indexers = requireNonNull(indexers);
+    this.indexService = indexService;
   }
 
   public JdbiTaskFactory withIdGenerator(Supplier<UUID> idGenerator) {
@@ -38,7 +45,7 @@ public class JdbiTaskFactory implements TaskBuilderFactory {
 
   @Override
   public ImportFileTaskBuilder getDocumentImportBuilder() {
-    return new JdbiImportFileTaskBuilder(jdbi, idGenerator);
+    return new JdbiImportFileTaskBuilder(jdbi, idGenerator, indexService);
   }
 
   @Override

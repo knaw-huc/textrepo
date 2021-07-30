@@ -3,7 +3,9 @@ package nl.knaw.huc.service.task.importer;
 import nl.knaw.huc.api.ResultImportDocument;
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.core.Document;
+import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.resources.ResourceUtils;
+import nl.knaw.huc.service.index.IndexService;
 import nl.knaw.huc.service.task.FindDocumentByExternalId;
 import nl.knaw.huc.service.task.HaveDocumentByExternalId;
 import nl.knaw.huc.service.task.HaveFileForDocumentByType;
@@ -27,17 +29,20 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
 
   private final Jdbi jdbi;
   private final Supplier<UUID> idGenerator;
+  private final IndexService indexService;
 
   private String externalId;
   private String typeName;
   private String filename;
   private boolean allowNewDocument;
   private boolean asLatestVersion;
+  private boolean indexing;
   private InputStream inputStream;
 
-  public JdbiImportFileTaskBuilder(Jdbi jdbi, Supplier<UUID> idGenerator) {
+  public JdbiImportFileTaskBuilder(Jdbi jdbi, Supplier<UUID> idGenerator, IndexService indexService) {
     this.jdbi = requireNonNull(jdbi);
     this.idGenerator = requireNonNull(idGenerator);
+    this.indexService = requireNonNull(indexService);
   }
 
   @Override
@@ -77,6 +82,12 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
   }
 
   @Override
+  public ImportFileTaskBuilder withIndexing(boolean indexing) {
+    this.indexing = indexing;
+    return this;
+  }
+
+  @Override
   public Task<ResultImportDocument> build() {
     final InTransactionProvider<Document> documentFinder;
     if (allowNewDocument) {
@@ -87,10 +98,12 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
     return new JdbiImportDocumentTask(jdbi,
         documentFinder,
         idGenerator,
+        indexService,
         typeName,
         filename,
         inputStream,
-        asLatestVersion
+        asLatestVersion,
+        indexing
     );
   }
 
@@ -98,27 +111,33 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
     private final Jdbi jdbi;
     private final InTransactionProvider<Document> documentFinder;
     private final Supplier<UUID> idGenerator;
+    private final IndexService indexService;
     private final String typeName;
     private final String filename;
     private final InputStream inputStream;
     private final boolean asLatestVersion;
+    private final boolean indexing;
 
     private JdbiImportDocumentTask(
         Jdbi jdbi,
         InTransactionProvider<Document> documentFinder,
         Supplier<UUID> idGenerator,
+        IndexService indexService,
         String typeName,
         String filename,
         InputStream inputStream,
-        boolean asLatestVersion
+        boolean asLatestVersion,
+        boolean indexing
     ) {
       this.jdbi = jdbi;
       this.documentFinder = documentFinder;
       this.idGenerator = idGenerator;
+      this.indexService = indexService;
       this.typeName = typeName;
       this.filename = filename;
       this.inputStream = inputStream;
       this.asLatestVersion = asLatestVersion;
+      this.indexing = indexing;
     }
 
     @Override
@@ -127,16 +146,24 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
       final Contents contents = ResourceUtils.readContents(inputStream);
 
       // Now that 'contents' is ready, enter transaction to update document, file, version and contents
-      return jdbi.inTransaction(transaction -> {
+      var result = jdbi.inTransaction(transaction -> {
         final var doc = documentFinder.executeIn(transaction);
-        final var file = new HaveFileForDocumentByType(idGenerator, doc, typeName).executeIn(transaction);
+        var file = new HaveFileForDocumentByType(idGenerator, doc, typeName).executeIn(transaction);
         new SetFileProvenance(file, filename).executeIn(transaction);
         final var justBeforeCreation = now();
         final var version = new SetFileContents(idGenerator, file, contents, asLatestVersion)
             .executeIn(transaction);
         final var wasCreatedInThisRun = version.getCreatedAt().isAfter(justBeforeCreation);
-        return new ResultImportDocument(doc, version, wasCreatedInThisRun);
+        return new ResultImportDocument(doc, file, version, wasCreatedInThisRun);
       });
+
+      if (indexing) {
+        var file = new TextRepoFile(result.getFileId(), result.getTypeId());
+        this.indexService.index(file, contents.asUtf8String());
+        result.setIndexed(true);
+      }
+
+      return result;
     }
 
   }
