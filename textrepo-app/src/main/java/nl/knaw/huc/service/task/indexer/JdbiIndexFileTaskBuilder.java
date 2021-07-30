@@ -96,7 +96,7 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
         final var contents = getVersionContentsOrEmptyString(txn, version);
         final var results = new ArrayList<String>();
         indexers.forEach((indexer) -> {
-          var indexerName = indexer.getClass().getName();
+          var indexerName = indexer.getConfig().name;
           var indexResult = indexer.index(file, contents).orElse("Ok");
           var result = indexerName + " - " + indexResult;
           results.add(result);
@@ -153,7 +153,7 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
         var contents = getVersionContentsOrEmptyString(txn, version);
         indexers.forEach((indexer) -> {
           var result = indexer.index(file, contents);
-          result.ifPresent((str) -> log.warn(indexer.getClass().getName() + " - " + str));
+          result.ifPresent((str) -> log.warn(indexer.getConfig().name + " - " + str));
         });
         filesAffected++;
         log.info("Indexed file {} ({} of estimated {})", file.getId(), filesAffected, filesTotal);
@@ -223,7 +223,7 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
         var version = new GetLatestOptionalFileVersion(file).executeIn(txn);
         var contents = getVersionContentsOrEmptyString(txn, version);
         var result = indexer.index(file, contents);
-        result.ifPresent((str) -> log.warn(indexer.getClass().getName() + " - " + str));
+        result.ifPresent((str) -> log.warn(indexer.getConfig().name + " - " + str));
         filesAffected++;
         log.info("Indexed file {} ({} of estimated {})", file.getId(), filesAffected, filesTotal);
       });
