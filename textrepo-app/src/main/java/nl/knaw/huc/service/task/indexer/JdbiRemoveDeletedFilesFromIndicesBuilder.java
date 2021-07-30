@@ -1,5 +1,6 @@
 package nl.knaw.huc.service.task.indexer;
 
+import nl.knaw.huc.db.FilesDao;
 import nl.knaw.huc.service.index.IndexService;
 import nl.knaw.huc.service.task.Task;
 import org.jdbi.v3.core.Jdbi;
@@ -38,10 +39,13 @@ public class JdbiRemoveDeletedFilesFromIndicesBuilder implements RemoveDeletedFi
 
     @Override
     public String run() {
-      jdbi.useTransaction(txn -> {
-        indexService.delete(UUID.randomUUID());
+      var esDocIds = indexService.getAllIds();
+      return jdbi.inTransaction(txn -> {
+        var fileIds = txn.attach(FilesDao.class).getAll();
+        esDocIds.removeAll(fileIds);
+        esDocIds.forEach(esDocId -> indexService.delete(UUID.randomUUID()));
+        return esDocIds.toString();
       });
-      return "";
     }
   }
 

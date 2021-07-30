@@ -4,8 +4,12 @@ import nl.knaw.huc.core.TextRepoFile;
 
 import javax.annotation.Nonnull;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.UUID;
 
+/**
+ * Handle index mutations
+ */
 public interface IndexService {
 
   /**
@@ -29,4 +33,9 @@ public interface IndexService {
    * Delete file from indices
    */
   void delete(UUID fileId);
+
+  /**
+   * Get all IDs from all indices
+   */
+  List<UUID> getAllIds();
 }

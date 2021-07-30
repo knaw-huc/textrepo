@@ -2,18 +2,13 @@ package nl.knaw.huc.resources.task;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import nl.knaw.huc.service.task.TaskBuilderFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.validation.constraints.NotBlank;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 import static java.lang.String.format;
@@ -45,7 +40,7 @@ public class RemoveDeletedFilesFromIndicesResource {
         .build()
         .run();
 
-    log.debug(format("Removed all deleted files from indices: %s", deletedFiles));
+    log.debug(format("Removed all deleted files from all indices: %s", deletedFiles));
     return Response.ok().build();
   }
 }

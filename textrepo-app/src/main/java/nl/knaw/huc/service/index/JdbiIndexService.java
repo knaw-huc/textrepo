@@ -6,7 +6,14 @@ import nl.knaw.huc.db.FilesDao;
 import nl.knaw.huc.db.VersionsDao;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
-import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.action.search.ClearScrollRequest;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.SearchScrollRequest;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.common.unit.TimeValue;
+import org.elasticsearch.search.Scroll;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.jdbi.v3.core.Jdbi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,12 +21,20 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
 import static java.lang.String.format;
+import static java.util.stream.Collectors.toList;
 import static org.elasticsearch.client.RequestOptions.DEFAULT;
+import static org.elasticsearch.index.query.QueryBuilders.matchAllQuery;
 
+/**
+ * Handle index mutations
+ */
 public class JdbiIndexService implements IndexService {
 
   private final List<Indexer> indexers;
@@ -67,6 +82,55 @@ public class JdbiIndexService implements IndexService {
     indexClients.forEach(indexClient -> deleteInIndex(fileId, indexClient));
   }
 
+  @Override
+  public List<UUID> getAllIds() {
+    var result = new ArrayList<UUID>();
+    indexClients.forEach(indexClient -> result.addAll(getAllIdsFromIndex(indexClient)));
+    return result;
+  }
+
+  /**
+   * Use scroll api to retrieve all doc IDs from index
+   */
+  private List<UUID> getAllIdsFromIndex(TextRepoElasticClient indexClient) {
+    var indexName = indexClient.getConfig().index;
+    try {
+      final var scroll = new Scroll(TimeValue.timeValueMinutes(1L));
+      var searchRequest = new SearchRequest(indexName);
+      searchRequest.scroll(scroll);
+      var searchSourceBuilder = new SearchSourceBuilder();
+      searchSourceBuilder.query(matchAllQuery());
+      searchRequest.source(searchSourceBuilder);
+
+      var client = indexClient.getClient();
+      var searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+      var scrollId = searchResponse.getScrollId();
+      var searchHits = getIds(searchResponse);
+
+      while (searchHits != null && searchHits.size() > 0) {
+        var scrollRequest = new SearchScrollRequest(scrollId);
+        scrollRequest.scroll(scroll);
+        searchResponse = client.scroll(scrollRequest, RequestOptions.DEFAULT);
+        scrollId = searchResponse.getScrollId();
+        searchHits.addAll(getIds(searchResponse));
+      }
+
+      var clearScrollRequest = new ClearScrollRequest();
+      clearScrollRequest.addScrollId(scrollId);
+      client.clearScroll(clearScrollRequest, RequestOptions.DEFAULT);
+      return searchHits;
+    } catch (IOException ex) {
+      throw new WebApplicationException(format("Could not retrieve IDs from index %s", indexName), ex);
+    }
+  }
+
+  private List<UUID> getIds(SearchResponse searchResponse) {
+    return Arrays
+        .stream(searchResponse.getHits().getHits())
+        .map(hit -> UUID.fromString(hit.getId()))
+        .collect(toList());
+  }
+
   private String getLatestVersionContents(TextRepoFile file) {
     var latestVersion = jdbi
         .onDemand(VersionsDao.class)
@@ -84,30 +148,28 @@ public class JdbiIndexService implements IndexService {
     return latestContents;
   }
 
-  private void deleteInIndex(@Nonnull UUID fileId, TextRepoElasticClient client) {
-    var index = client.getConfig().index;
-    log.info(format("Deleting file %s from index %s", fileId, client.getClient()));
+  private void deleteInIndex(@Nonnull UUID fileId, TextRepoElasticClient indexClient) {
+    var indexName = indexClient.getConfig().index;
+    log.info(format("Deleting file %s from index %s", fileId, indexName));
     DeleteResponse response;
     var deleteRequest = new DeleteRequest();
-    deleteRequest.index(index);
+    deleteRequest.index(indexName);
     deleteRequest.id(fileId.toString());
     try {
-      response = client.getClient().delete(deleteRequest, DEFAULT);
+      response = indexClient.getClient().delete(deleteRequest, DEFAULT);
     } catch (Exception ex) {
-      throw new WebApplicationException(format("Could not delete file %s in index %s", fileId, index), ex);
+      throw new WebApplicationException(format("Could not delete file %s in index %s", fileId, indexName), ex);
     }
     var status = response.status().getStatus();
     final String msg;
     if (status == 200) {
-      msg = format("Successfully deleted file %s from index %s", fileId, index);
+      msg = format("Successfully deleted file %s from index %s", fileId, indexName);
     } else if (status == 404) {
-      msg = format("File %s not found in index %s", fileId, index);
+      msg = format("File %s not found in index %s", fileId, indexName);
     } else {
-      throw new WebApplicationException(format("Could not delete file %s from index %s", fileId, index));
+      throw new WebApplicationException(format("Could not delete file %s from index %s", fileId, indexName));
     }
     log.info(msg);
   }
-
-
 
 }

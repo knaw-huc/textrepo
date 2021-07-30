@@ -34,4 +34,7 @@ public interface FilesDao {
 
   @SqlUpdate("delete from files where id = ?")
   void delete(UUID fileId);
+
+  @SqlQuery("select id from files")
+  List<UUID> getAll();
 }
