@@ -3,6 +3,10 @@
 When creating, updating and deleting files in the database, the appropriate changes in the indices will also be made.
 New file versions will overwrite older versions in the es index. 
 
+## Index when creating files
+
+Files are indexed when added.
+
 To retrieve suggestions, we first create a document with a text file: 
   
 [ ](- "#docId1=createDocument()")
@@ -10,8 +14,7 @@ To retrieve suggestions, we first create a document with a text file:
 
   - File ID: [ ](- "c:echo=#fileId1")
 
-## Index when creating files
-Files are indexed when added:
+Find all ES docs using query:
 
 [ ](- "ext:embed=getEsQuery()")
 
@@ -28,6 +31,8 @@ Full response:
 
 ## Index when creating file versions
 
+Files are re-indexed when versions are added.
+
 When new file versions with contents 
 "[op zondag naar een tuincentrum toe rijden](- "#text1")" and "[daar in dat tuincentrum een plant bevoelen](- "#text2")", 
 are [POST](- "#versions=upload(#fileId1, #text1, #text2)")ed,
@@ -36,7 +41,7 @@ then we should have a [valid versions](- "?=#versions.validVersions"):
   - [ ](- "c:echo=#versions.versionUuid1")
   - [ ](- "c:echo=#versions.versionUuid2")
 
-Files are re-indexed when versions are added. Find all files using query:
+Find all ES docs using query:
 
 [ ](- "ext:embed=getEsQuery()")
 
@@ -53,6 +58,8 @@ Full response:
 
 ## Index when updating file type
 
+Files are re-indexed when file type is changed.
+
 When updating file [ ](- "c:echo=#fileId1") with a `PUT` to [/rest/files/{id}](- "#updateEndpoint"):
 
 [{
@@ -67,7 +74,7 @@ Then:
 - The response status should be: [200](- "?=#updateResult.status");
 - The response should contain the [updated type](- "?=#updateResult.updatedType");
 
-Files are re-indexed when file type is changed. Find all files using query:
+Find all ES docs using query:
 
 [ ](- "ext:embed=getEsQuery()")
 
@@ -84,6 +91,8 @@ Full response:
 
 ## Index when deleting latest version
 
+Files are re-indexed when latest version is deleted.
+
 When deleting latest version [ ](- "c:echo=#versions.versionUuid2") with a `DELETE` to [/rest/versions/{id}](- "#deleteVersionEndpoint"):
 
 [ ](- "#deleteResult=deleteVersion(#deleteVersionEndpoint, #versions.versionUuid2)")
@@ -92,7 +101,7 @@ Then:
 
 - The response status should be: [200](- "?=#deleteResult.status").
 
-Files are re-indexed when latest version is deleted.  Find all files using query:
+Find all ES docs using query:
 
 [ ](- "ext:embed=getEsQuery()")
 
@@ -107,4 +116,29 @@ Files are re-indexed when latest version is deleted.  Find all files using query
 Full response:
 [ ](- "ext:embed=#result.body")
 
+## Index when deleting file
+
+Deleted files are removed from indices.
+
+When deleting file [ ](- "c:echo=#fileId1") with a `DELETE` to [/rest/files/{id}](- "#deleteFileEndpoint"):
+
+[ ](- "#deleteResult=deleteFile(#deleteFileEndpoint, #fileId1)")
+
+Then:
+
+- The response status should be: [200](- "?=#deleteResult.status").
+
+Find all ES docs using query:
+
+[ ](- "ext:embed=getEsQuery()")
+
+- where `{type}` is [foo](- "#fileType")
+
+[ ](- "#result=searchEmptyFileIndex()")
+
+- The response status should be: [200](- "?=#result.status");
+- The response should contain [no files](- "?=#result.found");
+
+Full response:
+[ ](- "ext:embed=#result.body")
 

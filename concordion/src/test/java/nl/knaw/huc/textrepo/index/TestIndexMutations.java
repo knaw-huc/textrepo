@@ -8,7 +8,6 @@ import com.jayway.jsonpath.TypeRef;
 import com.jayway.jsonpath.spi.json.JacksonJsonNodeJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import nl.knaw.huc.textrepo.AbstractConcordionTest;
-import nl.knaw.huc.textrepo.rest.TestRestVersions;
 import nl.knaw.huc.textrepo.util.RestUtils;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
@@ -54,6 +53,10 @@ public class TestIndexMutations extends AbstractConcordionTest {
   public TestIndexMutations() throws IOException {
   }
 
+  public String getEsQuery() {
+    return asPrettyJson(this.searchAll);
+  }
+
   public String createDocument() {
     return RestUtils.createDocument("test-" + randomAlphabetic(5));
   }
@@ -87,11 +90,11 @@ public class TestIndexMutations extends AbstractConcordionTest {
         .size();
     return result;
   }
-
   public static class UploadResult {
     public String versionUuid1;
     public String versionUuid2;
     public String validVersions;
+
   }
 
   public UploadResult upload(
@@ -106,13 +109,13 @@ public class TestIndexMutations extends AbstractConcordionTest {
         : "one or more invalid version UUIDs";
     return result;
   }
-
   public static class FileIndexResult {
     public int status;
     public String body;
     public String found;
     public int versionCount;
     public String type;
+
   }
 
   public FileIndexResult searchFileIndexWithVersions() {
@@ -141,11 +144,11 @@ public class TestIndexMutations extends AbstractConcordionTest {
 
     return result;
   }
-
   public static class UpdateResult {
     public int status;
     public String body;
     public String updatedType;
+
   }
 
   public UpdateResult update(String endpoint, String id, String updatedEntity, String docId, int typeId) {
@@ -167,10 +170,10 @@ public class TestIndexMutations extends AbstractConcordionTest {
     result.updatedType = resultTypeId == fooTypeId ? "updated type" : "" + resultTypeId + " != " + typeId;
     return result;
   }
-
   public static class DeleteResult {
     public int status;
   }
+
   public DeleteResult deleteVersion(String endpoint, String id) {
     final var response = client
         .target(replaceUrlParams(endpoint, id))
@@ -187,7 +190,7 @@ public class TestIndexMutations extends AbstractConcordionTest {
     sleepMs(1000);
 
     var result = new FileIndexResult();
-    var query = this.searchAll
+    var query = this.searchByFileType
         .replace("{type}", type);
     var response = searchFileIndex(query);
     result.status = response.getStatus();
@@ -223,9 +226,37 @@ public class TestIndexMutations extends AbstractConcordionTest {
         .request()
         .post(entity(query, APPLICATION_JSON_TYPE));
   }
+  public static class DeleteFileResult {
+    public int status;
 
-  public String getEsQuery() {
-    return asPrettyJson(this.searchAll);
+  }
+
+  public DeleteFileResult deleteFile(String endpoint, String id) {
+    final var response = client
+        .target(replaceUrlParams(endpoint, id))
+        .request()
+        .delete();
+
+    var result = new DeleteFileResult();
+    result.status = response.getStatus();
+    return result;
+  }
+
+  public FileIndexResult searchEmptyFileIndex() {
+    // Wait for indexing:
+    sleepMs(1000);
+
+    var result = new FileIndexResult();
+    var response = searchFileIndex(this.searchAll);
+    result.status = response.getStatus();
+    var body = response.readEntity(String.class);
+    result.body = asPrettyJson(body);
+    var found = jsonPath.parse(body).read("$.hits.hits[*]._source.file.id", new TypeRef<List<String>>() {});
+    result.found = found.size() == 0
+        ? "no files"
+        : format("expected 0 files but got %s", found.size());
+
+    return result;
   }
 
 }
