@@ -31,16 +31,16 @@ When are changes made to the ES indexes?
 
 - ``POST /rest/files``    -> Creating a new file resource will create ES docs with empty body
 - ``PUT  /rest/files``    -> Updating a file resource will update ES docs with latest version contents or an empty body when no latest version contents available
+- ``DELETE /rest/files`` -> Deleting a file will delete the corresponding ES docs
 - ``POST /rest/versions`` -> Updating a version resource will update ES docs with latest version contents
-- ``POST /task/index``    -> Multiple endpoints, each indexing a subset of files
+- ``DELETE /rest/versions`` -> Deleting the latest version of a file will update ES docs with the pre-latest version contents
+
+- ``POST /task/index``    -> Multiple endpoints each indexing a subset of files
 
 TODO:
 - ``POST /task/import/documents/{externalId}/{typeName}`` -> index imported versions (optional but default)
 
 TODO, deletes:
-
-- ``DELETE /rest/files/{id}`` -> delete ES-doc
-- ``DELETE /rest/versions/{id}`` -> when latest version deleted, update ES-doc with pre-latest version
 - ``DELETE /task/delete/documents/{externalId}`` -> new, delete ES-docs of files of document (optional but default)
 - ``DELETE /task/index/deleted-files`` -> delete all ES-docs of deletes files, meaning: delete all ES doc IDs not present in |tr| database
 
