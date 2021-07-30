@@ -30,7 +30,7 @@ spec:
       - args:
         - /scripts/wait-for-it.sh
         - postgres:5432
-        - elasticsearch:9200
+        - tr_elasticsearch:9200
         - --timeout=0
         - --
         - java

@@ -1,22 +1,22 @@
-# Test `/task/index/files/{type}`
+# Test `/task/index/type/{type}`
 
 All files can be indexed and reindexed by type. 
 
 To index, we first create three documents, each with one file and version, using the import task, which does not index: 
 
- - using type: [`text`](- "#type");
+ - using type: [text](- "#type");
 
-[ ](- "#importResult=importDocs(#type)")
+[ ](- "#importResult=importFiles(#type)")
 
 Then:
 
  - Response statuses should be: [201, 201, 201](- "?=#importResult.status");
- - Full response of first imported document:
+ - Full response of the first imported document:
 
 [ ](- "ext:embed=#importResult.body")
 
-### Indexing documents
-When indexing the files with a `POST` to [`/task/index/files/{type}`](- "#indexEndpoint") 
+### Indexing files
+When indexing the files with a `POST` to [/task/index/type/{type}](- "#indexEndpoint") 
 
  - where `{type}` is [ ](- "c:echo=#type");
 

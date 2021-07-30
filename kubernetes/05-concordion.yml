@@ -42,7 +42,7 @@ spec:
         - name: APP_HOST
           value: textrepo-app:8080
         - name: ES_HOST
-          value: elasticsearch:9200
+          value: tr_elasticsearch:9200
         - name: POSTGRES_HOST
           value: postgres
         - name: POSTGRES_DB

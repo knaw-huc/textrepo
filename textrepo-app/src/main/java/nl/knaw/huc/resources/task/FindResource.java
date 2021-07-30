@@ -2,6 +2,7 @@ package nl.knaw.huc.resources.task;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.helpers.ContentsHelper;
@@ -40,8 +41,8 @@ import static nl.knaw.huc.resources.HeaderLink.Uri.FILE_VERSIONS;
  *
  * <p>Naming of task: stackoverflow.com/a/2141846
  */
-@Path("/task/find/{externalId}")
 @Api(tags = {"task", "find"})
+@Path("/task/find/{externalId}")
 public class FindResource {
 
   private static final Logger log = LoggerFactory.getLogger(FindResource.class);
@@ -57,13 +58,19 @@ public class FindResource {
   @GET
   @Path("/document/metadata")
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Find metadata of document by external ID, " +
-      "with header links to original and parent resource", response = Map.class)
+  @ApiOperation(
+      value = "Find metadata of document by external ID, " +
+      "with header links to original and parent resource",
+      response = Map.class,
+      tags = {"task", "find", "documents", "metadata"})
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "OK"),
       @ApiResponse(code = 404, message = "Given document could not be found")})
   public Response getDocumentMetadataForExternalId(
-      @NotNull @PathParam("externalId") String externalId
+      @PathParam("externalId")
+      @ApiParam(required = true, example = "document_1234")
+      @NotNull
+          String externalId
   ) {
     log.debug("Find metadata of document: externalId={}", externalId);
     final var task = factory
@@ -85,7 +92,8 @@ public class FindResource {
   @Path("/file/metadata")
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Find metadata of file by external ID and file type, " +
-      "with header links to original, parent and type resource", response = Map.class)
+      "with header links to original, parent and type resource", response = Map.class,
+      tags = {"task", "find", "files", "metadata"})
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "OK"),
       @ApiResponse(code = 404, message = "Given file could not be found")})
@@ -117,7 +125,8 @@ public class FindResource {
   @Path("/file/contents")
   @Produces({APPLICATION_JSON, APPLICATION_OCTET_STREAM})
   @ApiOperation(value = "Find contents of latest file version by external ID and file type, " +
-      "with header links to version history, parent and type resource", response = Map.class)
+      "with header links to version history, parent and type resource", response = Map.class,
+      tags = {"task", "find", "files", "contents"})
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "OK"),
       @ApiResponse(code = 404, message = "Given type, document or supposed contents could not be found")})

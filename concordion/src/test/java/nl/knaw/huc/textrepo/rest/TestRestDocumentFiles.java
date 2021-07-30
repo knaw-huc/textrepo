@@ -73,9 +73,9 @@ public class TestRestDocumentFiles extends AbstractConcordionTest {
     public int total;
   }
 
-  public PaginateResult paginate(Object endpoint, String fileId, String offset, String limit, String textFileId) {
+  public PaginateResult paginate(Object endpoint, String docId, String offset, String limit, String textFileId) {
     var url = replaceInUrlAndQueryParams(endpoint, of(
-        "{id}", fileId,
+        "{id}", docId,
         "{offset}", offset,
         "{limit}", limit
     ));
@@ -87,7 +87,7 @@ public class TestRestDocumentFiles extends AbstractConcordionTest {
 
     var result = new PaginateResult();
     result.status = response.getStatus();
-    var  body = response.readEntity(String.class);
+    var body = response.readEntity(String.class);
     System.out.println("document files body: " + body);
     result.body = asPrettyJson(body);
     var json = jsonPath.parse(body);
@@ -98,6 +98,29 @@ public class TestRestDocumentFiles extends AbstractConcordionTest {
     return result;
   }
 
+  public PaginateResult filter(Object endpoint, String docId, int typeId, String textFileId) {
+    var url = replaceInUrlAndQueryParams(endpoint, of(
+        "{id}", docId,
+        "{typeId}", "" + typeId
+    ));
+
+    var response = client
+        .target(url)
+        .request()
+        .get();
+
+    var result = new PaginateResult();
+    result.status = response.getStatus();
+    var body = response.readEntity(String.class);
+    System.out.println("document files body: " + body);
+    result.body = asPrettyJson(body);
+    var json = jsonPath.parse(body);
+    var versionId = json.read("$.items[0].id", String.class);
+    result.hasOld = versionId.equals(textFileId) ? "text" : format("[%s] isn't [%s]", versionId, textFileId);
+    result.externalDocumentId = json.read("$.items[0].externalId");
+    result.total = json.read("$.total", Integer.class);
+    return result;
+  }
 
 
 }

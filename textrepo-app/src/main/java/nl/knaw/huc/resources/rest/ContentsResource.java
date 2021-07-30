@@ -3,6 +3,7 @@ package nl.knaw.huc.resources.rest;
 import com.codahale.metrics.annotation.Timed;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.helpers.ContentsHelper;
@@ -42,11 +43,16 @@ public class ContentsResource {
   @Path("/{sha}")
   @Timed
   @Produces({APPLICATION_OCTET_STREAM, APPLICATION_JSON})
-  @ApiOperation(value = "Retrieve contents")
-  @ApiResponses(value = {@ApiResponse(code = 200, response = byte[].class, message = "OK")})
+  @ApiOperation(value = "Retrieve contents as file")
+  @ApiResponses(value = {@ApiResponse(code = 200, response = String.class, message = "OK")})
   public Response getContents(
-      @HeaderParam(ACCEPT_ENCODING) String acceptEncoding,
-      @PathParam("sha") @NotBlank String sha
+      @ApiParam(allowableValues = "gzip")
+      @HeaderParam(ACCEPT_ENCODING)
+          String acceptEncoding,
+      @PathParam("sha")
+      @ApiParam(required = true, example = "89dc210ce9602f3446af220c0a5787a29277095b272e30fd09bd8224")
+      @NotBlank
+          String sha
   ) {
     log.debug("Get contents: sha={}", sha);
 
@@ -59,9 +65,10 @@ public class ContentsResource {
 
     log.debug("Got contents: {}", contents);
 
-    return contentsHelper.asAttachment(contents, acceptEncoding)
-                         .header(CONTENT_TYPE, APPLICATION_OCTET_STREAM)
-                         .build();
+    return contentsHelper
+        .asAttachment(contents, acceptEncoding)
+        .header(CONTENT_TYPE, APPLICATION_OCTET_STREAM)
+        .build();
   }
 
 }

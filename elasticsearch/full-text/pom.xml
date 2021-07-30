@@ -14,7 +14,7 @@
   <name>Elasticsearch Full Text Indexer</name>
 
   <properties>
-    <java.version>11</java.version>
+    <java.version>16</java.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
 
@@ -87,7 +87,7 @@
     <dependency>
       <groupId>org.apache.tika</groupId>
       <artifactId>tika-parsers</artifactId>
-      <version>1.25</version>
+      <version>1.26</version>
       <exclusions>
         <exclusion>
           <groupId>org.apache.cxf</groupId>

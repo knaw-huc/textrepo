@@ -1,11 +1,11 @@
-version: '3'
+version: '3.5'
 # docker-compose file for production setup
 # -> uses production volumes for production data
 
 services:
   postgres:
     container_name: tr_postgres
-    image: knawhuc/textrepo-postgres:${DOCKER_TAG}
+    image: postgres:11-alpine
     shm_size: 1g
     networks:
       - textrepo_network
@@ -61,6 +61,7 @@ services:
       NGINX_LISTEN: ${NGINX_LISTEN}
       NGINX_LOCATION: ${NGINX_LOCATION}
       CONCORDION_ROOT_REDIRECT: ${CONCORDION_ROOT_REDIRECT}
+      NGINX_ES_HOST: ${NGINX_ES_HOST}
 
   autocomplete-indexer:
     container_name: tr_autocomplete
@@ -75,7 +76,7 @@ services:
     volumes:
     - ./scripts/wait-for-it.sh:/indexer/wait-for-it.sh
     command: [
-        "./wait-for-it.sh", "elasticsearch:9200", "--timeout=0", "--",
+        "./wait-for-it.sh", "tr_elasticsearch:9200", "--timeout=0", "--",
         "./start.sh"
     ]
 
@@ -92,7 +93,7 @@ services:
     volumes:
       - ./scripts/wait-for-it.sh:/indexer/wait-for-it.sh
     command: [
-        "./wait-for-it.sh", "elasticsearch:9200", "--timeout=0", "--",
+        "./wait-for-it.sh", "tr_elasticsearch:9200", "--timeout=0", "--",
         "./start.sh"
     ]
 
@@ -109,7 +110,7 @@ services:
     volumes:
       - ./scripts/wait-for-it.sh:/indexer/wait-for-it.sh
     command: [
-        "./wait-for-it.sh", "elasticsearch:9200", "--timeout=0", "--",
+        "./wait-for-it.sh", "tr_elasticsearch:9200", "--timeout=0", "--",
         "./start.sh"
     ]
 
@@ -151,6 +152,8 @@ services:
       TR_PAGINATION_DEFAULT_LIMIT: ${TR_PAGINATION_DEFAULT_LIMIT}
       TR_DATE_FORMAT: ${TR_DATE_FORMAT}
       TR_CONTENT_DECOMPRESSION_LIMIT: ${TR_CONTENT_DECOMPRESSION_LIMIT}
+      TR_FLYWAY_CLEAN_DISABLED: ${TR_FLYWAY_CLEAN_DISABLED}
+      TR_FLYWAY_LOCATIONS: ${TR_FLYWAY_LOCATIONS}
 
   about:
     container_name: tr_about
@@ -169,6 +172,7 @@ services:
 
 networks:
   textrepo_network:
+    name: textrepo_network
 
 volumes:
   esdata-prod:

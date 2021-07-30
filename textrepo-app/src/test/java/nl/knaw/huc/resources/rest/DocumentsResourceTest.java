@@ -3,11 +3,9 @@ package nl.knaw.huc.resources.rest;
 import ch.qos.logback.classic.Level;
 import com.jayway.jsonpath.JsonPath;
 import io.dropwizard.logging.BootstrapLogging;
-import io.dropwizard.testing.ResourceHelpers;
-import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.testing.junit5.ResourceExtension;
-import nl.knaw.huc.PaginationConfiguration;
+import nl.knaw.huc.config.PaginationConfiguration;
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.core.Page;
 import nl.knaw.huc.core.PageParams;
@@ -102,7 +100,8 @@ public class DocumentsResourceTest {
         .client()
         .register(MultiPartFeature.class)
         .target("/rest/documents/" + docId)
-        .request().get();
+        .request()
+        .get();
     assertThat(response.getStatus()).isEqualTo(200);
     var body = response.readEntity(String.class);
     String externalId = JsonPath.parse(body).read("$.externalId");
@@ -122,7 +121,8 @@ public class DocumentsResourceTest {
         .client()
         .register(MultiPartFeature.class)
         .target("/rest/documents?offset=" + offset + "&limit=" + limit)
-        .request().get();
+        .request()
+        .get();
 
     // Check service call:
     verify(documentService, times(1)).getAll(

@@ -11,7 +11,7 @@ To retrieve all files of a document we first create:
  - and a file of type `foo`: [ ](- "c:echo=getFooFileId()").
 
 ### Retrieve files of a document
-When retrieving the following file with a `GET` to [`/rest/documents/{id}/files`](- "#getEndpoint") 
+When retrieving the following file with a `GET` to [/rest/documents/{id}/files](- "#getEndpoint") 
 
  - where `{id}` is [ ](- "c:echo=getDocId()"):
 
@@ -28,13 +28,13 @@ Then:
 [ ](- "ext:embed=#retrieveResult.body")
 
 
-### Paginate file versions
+### Paginate document files
 Results are divided in pages using offset and limit.
 
-When retrieving the versions of a file with a `GET` to [`/rest/documents/{id}/files?offset={offset}&limit={limit}`](- "#getEndpoint") 
+When retrieving the versions of a file with a `GET` to [/rest/documents/{id}/files?offset={offset}&limit={limit}](- "#getEndpoint") 
 
  - where `{id}` is [ ](- "ext:embed=code(getDocId())");
- - where `{offset}` is [`0`](- "#offset") and `{limit}` is [`1`](- "#limit").
+ - where `{offset}` is [0](- "#offset") and `{limit}` is [1](- "#limit").
 
 [ ](- "#paginateResult=paginate(#getEndpoint, getDocId(), #offset, #limit, getTextFileId())")
 
@@ -43,6 +43,25 @@ Then:
  - The response status should be: [200](- "?=#paginateResult.status");
  - The response should only contain the [text](- "?=#paginateResult.hasOld") file;
  - Total should be [2](- "?=#paginateResult.total");
+ - Full response:
+
+[ ](- "ext:embed=#paginateResult.body")
+
+### Filter by file type
+Results can be filtered by type.
+
+When retrieving the versions of a file with a `GET` to [/rest/documents/{id}/files?typeId={typeId}](- "#getEndpoint") 
+
+ - where `{id}` is [ ](- "ext:embed=code(getDocId())");
+ - where `{typeId}` is [ ](- "ext:embed=code(getTextTypeId())");
+
+[ ](- "#paginateResult=filter(#getEndpoint, getDocId(), getTextTypeId(), getTextFileId())")
+
+Then:
+
+ - The response status should be: [200](- "?=#paginateResult.status");
+ - The response should only contain the [text](- "?=#paginateResult.hasOld") file;
+ - Total should be [1](- "?=#paginateResult.total");
  - Full response:
 
 [ ](- "ext:embed=#paginateResult.body")

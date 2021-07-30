@@ -19,7 +19,7 @@ When can search files by type using the following query:
 
 [ ](- "ext:embed=getEsQuerySearchByFileType()")
 
- - where `{type}` is [`text`](- "#fileType")
+ - where `{type}` is [text](- "#fileType")
 
 [ ](- "#result=searchEsQuerySearchByFileType(#fileType)")
 
@@ -34,8 +34,8 @@ We can search by document metadata key and values pairs using the following quer
 
 [ ](- "ext:embed=getEsQuerySearchByDocMetadata()")
 
- - where `{key}` is [`foo`](- "#docMetaKey")
- - where `{value}` is [`bar`](- "#docMetaValue")
+ - where `{key}` is [foo](- "#docMetaKey")
+ - where `{value}` is [bar](- "#docMetaValue")
 
 [ ](- "#result=searchEsQuerySearchByDocMetadata(#docMetaKey, #docMetaValue)")
 
@@ -53,7 +53,7 @@ Search for a file metadata key, ignoring the value it has.
 
 [ ](- "ext:embed=getEsQuerySearchByFileMetadataKey()")
 
- - where `{key}` is [`file-foo`](- "#fileMetaKey")
+ - where `{key}` is [file-foo](- "#fileMetaKey")
 
 [ ](- "#result=searchEsQuerySearchByFileMetadataKey(#fileMetaKey)")
 
@@ -88,7 +88,7 @@ Find all files by `{type}` that have versions with changed contents at or after 
 [ ](- "ext:embed=getEsQuerySearchByFileTypeAndContentsLastModified()")
 
  - where `{dateTime}` is [ ](- "c:echo=getDateTime()")
- - where `{type}` is [`text`](- "#type")
+ - where `{type}` is [text](- "#type")
 
 [ ](- "#result=searchEsQuerySearchByFileTypeAndContentsLastModified(#type)")
 
@@ -105,8 +105,8 @@ Find all documents by document metadata `{key}` and `{value}`, including an aggr
 
 [ ](- "ext:embed=getEsQuerySearchDocsByMetadata()")
 
- - where `{key}` is [`foo`](- "#docMetaKey")
- - where `{value}` is [`bar`](- "#docMetaValue")
+ - where `{key}` is [foo](- "#docMetaKey")
+ - where `{value}` is [bar](- "#docMetaValue")
 
 [ ](- "#result=searchEsQueryDocsByMetadata(#docMetaKey, #docMetaValue)")
 

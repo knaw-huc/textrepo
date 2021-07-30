@@ -17,7 +17,7 @@ To view all versions of a file we first create:
 ### Retrieve file versions
 Versions are sorted by creation date, newest versions first.
 
-When retrieving the versions of a file with a `GET` to [`/rest/files/{id}/versions`](- "#getEndpoint") 
+When retrieving the versions of a file with a `GET` to [/rest/files/{id}/versions](- "#getEndpoint") 
 
  - where `{id}` is [ ](- "ext:embed=code(#fileId)"):
 
@@ -34,10 +34,10 @@ Then:
 ### Paginate file versions
 Results are divided in pages using offset and limit.
 
-When retrieving the versions of a file with a `GET` to [`/rest/files/{id}/versions?offset={offset}&limit={limit}`](- "#getEndpoint") 
+When retrieving the versions of a file with a `GET` to [/rest/files/{id}/versions?offset={offset}&limit={limit}](- "#getEndpoint") 
 
  - where `{id}` is [ ](- "ext:embed=code(#fileId)");
- - where `{offset}` is [`0`](- "#offset") and `{limit}` is [`1`](- "#limit").
+ - where `{offset}` is [0](- "#offset") and `{limit}` is [1](- "#limit").
 
 [ ](- "#paginateResult=paginate(#getEndpoint, #fileId, #offset, #limit, #newVersionId)")
 
@@ -57,7 +57,7 @@ To test this filter we create a new version after a certain delay.
 [ ](- "#delayedVersionId=createVersionWithDelay(#fileId)")
 
 
-When retrieving the versions of a file with a `GET` to [`/rest/files/{id}/versions?createdAfter={date}`](- "#getEndpoint")
+When retrieving the versions of a file with a `GET` to [/rest/files/{id}/versions?createdAfter={date}](- "#getEndpoint")
 [ ](- "#date=getCreatedAt(#delayedVersionId)")
 
  - where `{id}` is [ ](- "ext:embed=code(#fileId)");

@@ -1,6 +1,5 @@
 package nl.knaw.huc.service.task;
 
-import com.fasterxml.jackson.databind.PropertyMetadata;
 import nl.knaw.huc.service.task.deleter.DeleteDocumentTaskBuilder;
 import nl.knaw.huc.service.task.finder.FindContentsTaskBuilder;
 import nl.knaw.huc.service.task.getter.GetDocumentMetadataTaskBuilder;

@@ -22,7 +22,7 @@ When new file versions with contents
 "[hello Tesseract](- "#text1")", 
 "[hello teStament](- "#text2")" and 
 "[hello testosterone](- "#text3")" 
-are [```POST```ed](- "#versions=upload(#fileId1, #text1, #fileId2, #text2, #fileId3, #text3)"),
+are [POST](- "#versions=upload(#fileId1, #text1, #fileId2, #text2, #fileId3, #text3)")ed,
 then we should have three [valid versions](- "?=#versions.validVersions"):
 
   - [ ](- "c:echo=#versions.validUuid1")
@@ -35,7 +35,7 @@ When we search in the autocomplete index using the following query:
 
 [ ](- "ext:embed=getEsQuery()")
 
-  - where the `%prefix%` is: [`tes`](- "#prefix");
+  - where the `%prefix%` is: [tes](- "#prefix");
 
 [ ](- "#suggestions=searchAutocomplete(#prefix)")
 
