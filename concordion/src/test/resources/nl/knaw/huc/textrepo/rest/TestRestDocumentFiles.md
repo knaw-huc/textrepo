@@ -41,7 +41,7 @@ When retrieving the versions of a file with a `GET` to [/rest/documents/{id}/fil
 Then:
 
  - The response status should be: [200](- "?=#paginateResult.status");
- - The response should only contain [1](- "?=#paginateResult.size") file;
+ - The response should only contain [1](- "?=#paginateResult.count") file;
  - Total should be [2](- "?=#paginateResult.total");
  - Full response:
 

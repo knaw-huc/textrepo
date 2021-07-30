@@ -87,6 +87,7 @@ public class JdbiFileService implements FileService {
   @Override
   public void delete(UUID fileId) {
     files().delete(fileId);
+    indexService.delete(fileId);
   }
 
   private FilesDao files() {

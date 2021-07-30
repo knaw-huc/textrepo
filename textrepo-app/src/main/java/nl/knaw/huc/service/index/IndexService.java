@@ -25,4 +25,8 @@ public interface IndexService {
    */
   void index(@Nonnull TextRepoFile file, @NotNull String contents);
 
+  /**
+   * Delete file from indices
+   */
+  void delete(UUID fileId);
 }

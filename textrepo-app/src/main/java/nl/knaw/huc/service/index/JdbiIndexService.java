@@ -54,6 +54,11 @@ public class JdbiIndexService implements IndexService {
     indexers.forEach(i -> i.index(file, contents));
   }
 
+  @Override
+  public void delete(UUID fileId) {
+    indexers.forEach(i -> i.delete(fileId));
+  }
+
   private String getLatestVersionContents(TextRepoFile file) {
     var latestVersion = jdbi
         .onDemand(VersionsDao.class)

@@ -101,24 +101,27 @@ public class MappedIndexer implements Indexer {
 
   @Override
   public Optional<String> delete(@Nonnull UUID fileId) {
+    var index = config.elasticsearch.index;
     DeleteResponse response;
     var deleteRequest = new DeleteRequest();
-    var index = config.elasticsearch.index;
+    deleteRequest.index(index);
+    deleteRequest.id(fileId.toString());
     try {
       response = client.getClient().delete(deleteRequest, DEFAULT);
     } catch (Exception ex) {
       throw new WebApplicationException(format("Could not delete file %s in index %s", fileId, index), ex);
     }
     var status = response.status().getStatus();
+    final String msg;
     if (status == 200) {
-      var msg = format("Successfully deleted file %s in index %s", fileId, index);
-      log.info(msg);
-      return Optional.of(msg);
+      msg = format("Successfully deleted file %s in index %s", fileId, index);
     } else if (status == 404) {
-      throw new NotFoundException(format("File %s not found in index %s", fileId, index));
+      msg = format("File %s not found in index %s", fileId, index);
     } else {
       throw new WebApplicationException(format("Could not delete file %s in index %s", fileId, index));
     }
+    log.info(msg);
+    return Optional.of(msg);
   }
 
   @Override
