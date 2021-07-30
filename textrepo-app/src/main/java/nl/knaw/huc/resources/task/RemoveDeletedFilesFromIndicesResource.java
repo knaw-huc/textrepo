@@ -15,8 +15,8 @@ import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
-@Api(tags = {"task", "index", "delete"})
-@Path("/task/delete/deleted-files")
+@Api(tags = {"task", "index"})
+@Path("/task/index/delete/deleted-files")
 public class RemoveDeletedFilesFromIndicesResource {
 
   private static final Logger log = LoggerFactory.getLogger(RemoveDeletedFilesFromIndicesResource.class);
