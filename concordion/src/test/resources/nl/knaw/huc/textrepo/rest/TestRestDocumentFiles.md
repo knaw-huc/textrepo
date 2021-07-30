@@ -36,12 +36,12 @@ When retrieving the versions of a file with a `GET` to [/rest/documents/{id}/fil
  - where `{id}` is [ ](- "ext:embed=code(getDocId())");
  - where `{offset}` is [0](- "#offset") and `{limit}` is [1](- "#limit").
 
-[ ](- "#paginateResult=paginate(#getEndpoint, getDocId(), #offset, #limit, getTextFileId())")
+[ ](- "#paginateResult=paginate(#getEndpoint, getDocId(), #offset, #limit)")
 
 Then:
 
  - The response status should be: [200](- "?=#paginateResult.status");
- - The response should only contain the [text](- "?=#paginateResult.hasOld") file;
+ - The response should only contain [1](- "?=#paginateResult.size") file;
  - Total should be [2](- "?=#paginateResult.total");
  - Full response:
 
