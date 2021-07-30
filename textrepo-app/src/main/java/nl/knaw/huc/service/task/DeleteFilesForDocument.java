@@ -1,13 +1,11 @@
 package nl.knaw.huc.service.task;
 
 import nl.knaw.huc.core.Document;
-import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.db.DocumentFilesDao;
 import org.jdbi.v3.core.Handle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
 import java.util.Objects;
 
 public class DeleteFilesForDocument implements InTransactionRunner {
