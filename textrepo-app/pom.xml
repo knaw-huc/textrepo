@@ -335,7 +335,7 @@
         <version>${maven-compiler-plugin.version}</version>
         <configuration>
           <source>${maven.compiler.source}</source>
-          <target>${maven.compiler.source}</target>
+          <target>${maven.compiler.target}</target>
         </configuration>
       </plugin>
       <plugin>
