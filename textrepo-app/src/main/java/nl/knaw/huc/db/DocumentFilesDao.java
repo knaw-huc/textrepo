@@ -8,6 +8,7 @@ import org.jdbi.v3.sqlobject.customizer.BindBean;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -40,12 +41,20 @@ public interface DocumentFilesDao {
 
   @SqlQuery("select id, type_id " +
       "from documents_files as df left join files as f on f.id = df.file_id " +
-      "where df.document_id = :docId limit :limit offset :offset")
+      "where df.document_id = :docId and (:typeId is null or f.type_id = :typeId) " +
+      "limit :limit offset :offset")
   @RegisterConstructorMapper(TextRepoFile.class)
-  List<TextRepoFile> findFilesByDocumentId(@Bind("docId") UUID docId, @BindBean PageParams pageParams);
+  List<TextRepoFile> findFilesByDocumentAndTypeId(
+      @Bind("docId") UUID docId,
+      @Bind("typeId") Short typeId,
+      @BindBean PageParams pageParams
+  );
 
   @SqlQuery("select count(*)" +
       "from documents_files as df left join files as f on f.id = df.file_id " +
-      "where df.document_id = ?")
-  long countByDocumentId(UUID docId);
+      "where df.document_id = :docId and (:typeId is null or f.type_id = :typeId)")
+  long countByDocumentAndTypeId(
+      @Bind("docId") UUID docId,
+      @Nullable @Bind("typeId") Short typeId
+  );
 }

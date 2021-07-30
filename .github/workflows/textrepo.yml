@@ -1,0 +1,23 @@
+name: Build 🛠️
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      
+      - name: Build docker images
+        run: |
+             . examples/development/docker-compose.env
+             cp examples/development/docker-compose-dev.yml .
+             docker-compose -f docker-compose-dev.yml build

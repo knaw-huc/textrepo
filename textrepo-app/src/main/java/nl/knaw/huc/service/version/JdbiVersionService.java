@@ -73,8 +73,13 @@ public class JdbiVersionService implements VersionService {
 
   @Override
   public Page<Version> getAll(UUID fileId, PageParams pageParams, LocalDateTime createdAfter) {
-    var items = versions().findByFileId(fileId, pageParams, createdAfter);
     var total = versions().countByFileId(fileId, createdAfter);
+    if (total == 0) {
+      if (jdbi.onDemand(FilesDao.class).find(fileId).isEmpty()) {
+        throw new NotFoundException(format("No file with ID %s", fileId));
+      }
+    }
+    var items = versions().findByFileId(fileId, pageParams, createdAfter);
     return new Page<>(items, total, pageParams);
   }
 

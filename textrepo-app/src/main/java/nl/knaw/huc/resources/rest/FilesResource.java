@@ -3,6 +3,7 @@ package nl.knaw.huc.resources.rest;
 import com.codahale.metrics.annotation.Timed;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nl.knaw.huc.api.FormTextRepoFile;
@@ -27,6 +28,7 @@ import java.util.UUID;
 
 import static java.util.Objects.requireNonNull;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static nl.knaw.huc.resources.HeaderLink.Uri.FILE;
 
 @Api(tags = {"files"})
 @Path("/rest/files")
@@ -44,14 +46,17 @@ public class FilesResource {
   @Consumes(APPLICATION_JSON)
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Create file")
-  @ApiResponses(value = {@ApiResponse(code = 200, response = ResultTextRepoFile.class, message = "OK")})
+  @ApiResponses(value = {@ApiResponse(code = 201, response = ResultTextRepoFile.class, message = "Created")})
   public Response createFile(
       @Valid FormTextRepoFile form
   ) {
     log.debug("Create file: form={}", form);
-    var file = fileService.insert(form.getDocId(), new TextRepoFile(null, form.getTypeId()));
+    var file = fileService.insert(form.docId, new TextRepoFile(null, form.typeId));
     log.debug("Created file: {}", file);
-    return Response.ok(new ResultTextRepoFile(form.getDocId(), file)).build();
+    return Response
+        .created(FILE.build(file.getId()))
+        .entity(new ResultTextRepoFile(form.docId, file))
+        .build();
   }
 
   @GET
@@ -61,7 +66,11 @@ public class FilesResource {
   @ApiOperation(value = "Retrieve file")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultTextRepoFile.class, message = "OK")})
   public Response getFile(
-      @PathParam("id") @NotNull @Valid UUID id
+      @PathParam("id")
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
+      @NotNull
+      @Valid
+          UUID id
   ) {
     log.debug("Get file: id={}", id);
     var file = fileService.get(id);
@@ -77,13 +86,17 @@ public class FilesResource {
   @ApiOperation(value = "Create or update file")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultTextRepoFile.class, message = "OK")})
   public Response putFile(
-      @PathParam("id") @Valid UUID id,
-      @Valid FormTextRepoFile form
+      @PathParam("id")
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
+      @Valid
+          UUID id,
+      @Valid
+          FormTextRepoFile form
   ) {
     log.debug("Create or update file: id={}; form={}", id, form);
-    var file = fileService.upsert(form.getDocId(), new TextRepoFile(id, form.getTypeId()));
+    var file = fileService.upsert(form.docId, new TextRepoFile(id, form.typeId));
     log.debug("Created or updated file: {}", file);
-    return Response.ok(new ResultTextRepoFile(form.getDocId(), file)).build();
+    return Response.ok(new ResultTextRepoFile(form.docId, file)).build();
   }
 
   @DELETE
@@ -91,7 +104,10 @@ public class FilesResource {
   @ApiOperation(value = "Delete file")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
   public Response deleteFile(
-      @PathParam("id") @Valid UUID id
+      @PathParam("id")
+      @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
+      @Valid
+          UUID id
   ) {
     log.debug("Delete file: id={}", id);
     fileService.delete(id);

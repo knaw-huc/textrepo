@@ -13,7 +13,7 @@ To retrieve the contents of a version we first create:
   - and a version: [ ](- "c:echo=#versionId").
 
 ## Retrieve contents
-When retrieving the contents of a file with a `GET` to [`/rest/versions/{id}/contents`](- "#getEndpoint") 
+When retrieving the contents of a file with a `GET` to [/rest/versions/{id}/contents](- "#getEndpoint") 
 
  - where `{id}` is [ ](- "c:echo=#versionId"):
 
@@ -28,7 +28,7 @@ Then:
 [ ](- "ext:embed=#retrieveResult.body")
 
 ## Delete version and its contents
-When deleting version [ ](- "c:echo=#versionId") with a `DELETE` to [`/rest/versions/{id}`](- "#deleteEndpoint"):
+When deleting version [ ](- "c:echo=#versionId") with a `DELETE` to [/rest/versions/{id}](- "#deleteEndpoint"):
 
 [ ](- "#deleteResult=delete(#deleteEndpoint, #versionId)")
 
@@ -37,7 +37,7 @@ Then:
  - The response status should be: [200](- "?=#deleteResult.status").
 
 ## Retrieve contents after version is deleted
-When retrieving the contents of a file with a `GET` to [`/rest/versions/{id}/contents`](- "#getEndpoint") 
+When retrieving the contents of a file with a `GET` to [/rest/versions/{id}/contents](- "#getEndpoint") 
 
  - where `{id}` is [ ](- "c:echo=#versionId"):
 

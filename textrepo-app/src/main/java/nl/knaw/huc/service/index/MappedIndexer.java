@@ -1,7 +1,7 @@
 package nl.knaw.huc.service.index;
 
 import nl.knaw.huc.core.TextRepoFile;
-import nl.knaw.huc.resources.HeaderLink;
+import nl.knaw.huc.service.index.request.IndexerFieldsRequestFactory;
 import nl.knaw.huc.service.type.TypeService;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.action.index.IndexRequest;
@@ -9,9 +9,6 @@ import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.glassfish.jersey.client.JerseyClientBuilder;
-import org.glassfish.jersey.media.multipart.FormDataBodyPart;
-import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +17,6 @@ import javax.annotation.Nonnull;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.Optional;
@@ -28,32 +24,22 @@ import java.util.UUID;
 
 import static java.lang.String.format;
 import static java.lang.String.join;
-import static javax.ws.rs.client.Entity.entity;
-import static nl.knaw.huc.resources.HeaderLink.Rel.ORIGINAL;
-import static nl.knaw.huc.resources.HeaderLink.Uri.FILE;
 import static nl.knaw.huc.service.index.FieldsType.MULTIPART;
 import static org.elasticsearch.common.xcontent.XContentType.JSON;
 
 /**
- * MappedFileIndexer creates its index in elasticsearch:
- * - as defined by its es-mapping which can be retrieved at its `mapping` endpoint
- * MappedFileIndexer adds new files to its index:
- * - convert file contents to an es-doc at its `fields` endpoint
- * - sends index-request with es-doc to its index
- * MappedFileIndexer depends on a REST-service with the following two endpoints:
+ * MappedFileIndexer creates its index in elasticsearch as defined by its es-mapping
+ * which can be retrieved at its `mapping` endpoint
+ *
+ * <p>MappedFileIndexer adds new files to its index in two steps:
+ * 1. convert file contents to an es-doc at its `fields` endpoint
+ * 2. sends index-request with es-doc to its index
+ *
+ * <p>MappedFileIndexer depends on a REST-service with the following two endpoints:
  * - GET `mapping`
- * - POST `fields`. Files can be posted in two ways:
- * - `original`, POST request with:
- *    - content-type header with file mimetype
- *    - link header with rel=origin and url to file resource
- *    - body containing the file
- * - `multipart`, POST request with:
- *    - content-type header with 'multipart/form-data'
- *    - body part named 'file' with:
- *      - content-type header with file mimetype.
- *      - link header with rel=origin and url to file resource
- *      - file contents
- * MappedFileIndexer is configured in config.yml
+ * - POST `fields`
+ *
+ * <p>MappedFileIndexer is configured in config.yml
  */
 public class MappedIndexer implements Indexer {
 
@@ -62,14 +48,17 @@ public class MappedIndexer implements Indexer {
   private final Client requestClient = JerseyClientBuilder.newClient();
   private final TypeService typeService;
   private final TextRepoElasticClient client;
+  private final IndexerFieldsRequestFactory fieldsRequestFactory;
 
   public MappedIndexer(
       MappedIndexerConfiguration config,
-      TypeService typeService
+      TypeService typeService,
+      TextRepoElasticClient textRepoElasticClient
   ) throws IndexerException {
     this.config = config;
     this.typeService = typeService;
-    this.client = new TextRepoElasticClient(config.elasticsearch);
+    this.client = textRepoElasticClient;
+    this.fieldsRequestFactory = new IndexerFieldsRequestFactory(config.fields.url, this.requestClient);
 
     createIndex(config);
     if (MULTIPART.equals(config.fields.type)) {
@@ -142,51 +131,9 @@ public class MappedIndexer implements Indexer {
   }
 
   private Response getFields(@Nonnull String latestVersionContents, String mimetype, UUID fileId) {
-    switch (config.fields.type) {
-      case ORIGINAL:
-        return getFieldsOriginal(latestVersionContents, mimetype, fileId);
-      case MULTIPART:
-        return getFieldsMultipart(latestVersionContents, mimetype, fileId);
-      default:
-        throw new IllegalStateException(format(
-            "Fields type [%s] of [%s] does not exist",
-            config.elasticsearch.index,
-            config.fields.type
-        ));
-    }
-  }
-
-  private Response getFieldsOriginal(@Nonnull String latestVersionContents, String mimetype, UUID fileId) {
-    return requestClient
-        .target(config.fields.url)
-        .request()
-        .header("Link", HeaderLink.create(ORIGINAL, FILE, fileId))
-        .post(entity(latestVersionContents, mimetype));
-  }
-
-  private Response getFieldsMultipart(@Nonnull String latestVersionContents, String mimetype, UUID fileId) {
-    return postMultipart(latestVersionContents.getBytes(), mimetype, fileId);
-  }
-
-  private Response postMultipart(byte[] bytes, String mimetype, UUID fileId) {
-    var contentDisposition = FormDataContentDisposition
-        .name("file")
-        .size(bytes.length)
-        .build();
-
-    var bodyPart = new FormDataBodyPart(contentDisposition, bytes, MediaType.valueOf(mimetype));
-    var originLink = HeaderLink.create(ORIGINAL, FILE, fileId).toString();
-    bodyPart.getHeaders().add("Link", originLink);
-
-    var multiPart = new FormDataMultiPart().bodyPart(bodyPart);
-
-    var request = requestClient
-        .target(config.fields.url)
-        .request();
-
-    var entity = entity(multiPart, multiPart.getMediaType());
-
-    return request.post(entity);
+    return fieldsRequestFactory
+        .build(config.fields.type)
+        .requestFields(latestVersionContents, mimetype, fileId);
   }
 
   private Optional<String> sendRequest(@Nonnull UUID fileId, String esFacets) {

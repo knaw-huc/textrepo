@@ -10,6 +10,7 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.federecio.dropwizard.swagger.SwaggerBundle;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
+import nl.knaw.huc.config.TextRepoConfiguration;
 import nl.knaw.huc.exceptions.MethodNotAllowedExceptionMapper;
 import nl.knaw.huc.helpers.ContentsHelper;
 import nl.knaw.huc.helpers.Limits;
@@ -34,6 +35,7 @@ import nl.knaw.huc.service.index.Indexer;
 import nl.knaw.huc.service.index.IndexerException;
 import nl.knaw.huc.service.index.MappedIndexer;
 import nl.knaw.huc.service.index.TextRepoElasticClient;
+import nl.knaw.huc.service.index.request.IndexerFieldsRequestFactory;
 import nl.knaw.huc.service.logging.LoggingApplicationEventListener;
 import nl.knaw.huc.service.store.JdbiContentsStorage;
 import nl.knaw.huc.service.task.JdbiTaskFactory;
@@ -42,6 +44,7 @@ import nl.knaw.huc.service.type.TypeService;
 import nl.knaw.huc.service.version.JdbiVersionService;
 import nl.knaw.huc.service.version.content.JdbiVersionContentsService;
 import nl.knaw.huc.service.version.metadata.JdbiVersionMetadataService;
+import org.flywaydb.core.Flyway;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.postgres.PostgresPlugin;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
@@ -95,6 +98,18 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
     final Supplier<UUID> uuidGenerator = UUID::randomUUID;
 
     var jdbi = createJdbi(config, environment);
+
+    var dataSourceFactory = config.getDataSourceFactory();
+    var flywayConfig = Flyway
+        .configure()
+        .dataSource(
+            dataSourceFactory.getUrl(),
+            dataSourceFactory.getUser(),
+            dataSourceFactory.getPassword()
+        ).locations(config.getFlyway().locations);
+    var flyway = new Flyway(flywayConfig);
+    flyway.migrate();
+
     var contentsStoreService = new JdbiContentsStorage(jdbi);
     var contentsService = new ContentsService(contentsStoreService);
     var typeService = new JdbiTypeService(jdbi);
@@ -204,7 +219,12 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
     for (var customIndexerConfig : config.getCustomFacetIndexers()) {
       try {
         log.info("Create index: {}", customIndexerConfig.elasticsearch.index);
-        var customFacetIndexer = new MappedIndexer(customIndexerConfig, typeService);
+        var textRepoElasticClient = new TextRepoElasticClient(customIndexerConfig.elasticsearch);
+        var customFacetIndexer = new MappedIndexer(
+            customIndexerConfig,
+            typeService,
+            textRepoElasticClient
+        );
         customIndexers.add(customFacetIndexer);
       } catch (IndexerException ex) {
         log.error("Could not create indexer: {}", customIndexerConfig.elasticsearch.index, ex);

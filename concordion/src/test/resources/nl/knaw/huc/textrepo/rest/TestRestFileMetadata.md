@@ -11,10 +11,10 @@ To add file metadata we first create:
   - and a file: [ ](- "c:echo=#fileId").
 
 ### Create file metadata
-When adding the following file metadata with a `PUT` to [`/rest/files/{id}/metadata/{key}`](- "#createEndpoint")
+When adding the following file metadata with a `PUT` to [/rest/files/{id}/metadata/{key}](- "#createEndpoint")
 
- - where key is [`test-key`](- "#metadataKey");
- - where value is [`test-value`](- "#metadataValue").
+ - where key is [test-key](- "#metadataKey");
+ - where value is [test-value](- "#metadataValue").
 
 [ ](- "#createResult=create(#createEndpoint, #fileId, #metadataKey, #metadataValue)")
 
@@ -26,7 +26,7 @@ Then:
 [ ](- "ext:embed=#createResult.body")
 
 ### Retrieve file metadata
-When retrieving the metadata of a file with a `GET` to [`/rest/files/{id}/metadata`](- "#getEndpoint") 
+When retrieving the metadata of a file with a `GET` to [/rest/files/{id}/metadata](- "#getEndpoint") 
 
  - where `{id}` is [ ](- "c:echo=#fileId"):
 
@@ -41,10 +41,10 @@ Then:
 [ ](- "ext:embed=#retrieveResult.body")
 
 ### Update file metadata entry
-When updating metadata entry with a `PUT` to [`/rest/files/{id}/metadata/{key}`](- "#updateEndpoint"):
+When updating metadata entry with a `PUT` to [/rest/files/{id}/metadata/{key}](- "#updateEndpoint"):
 
- - where key is [`test-key`](- "#metadataKey")
- - where value is [`updated-test-value`](- "#updatedMetadataValue")
+ - where key is [test-key](- "#metadataKey")
+ - where value is [updated-test-value](- "#updatedMetadataValue")
 
 [ ](- "#updateResult=update(#updateEndpoint, #fileId, #metadataKey, #updatedMetadataValue)")
 Then:
@@ -56,7 +56,7 @@ Then:
 [ ](- "ext:embed=#updateResult.body")
 
 ### Retrieve file metadata after updating entry
-When retrieving the metadata of a file with a `GET` to [`/rest/files/{id}/metadata`](- "#getEndpoint") 
+When retrieving the metadata of a file with a `GET` to [/rest/files/{id}/metadata](- "#getEndpoint") 
 
  - where `{id}` is [ ](- "c:echo=#fileId"):
 
@@ -71,7 +71,7 @@ Then:
 [ ](- "ext:embed=#updatedReadResult.body")
 
 ### Delete file metadata entry
-When removing a metadata entry with a `DELETE` to [`/rest/files/{id}/metadata/{key}`](- "#deleteEndpoint"):
+When removing a metadata entry with a `DELETE` to [/rest/files/{id}/metadata/{key}](- "#deleteEndpoint"):
 
  - where `{id}` is [ ](- "c:echo=#fileId")
  - where `{key}` is [ ](- "c:echo=#metadataKey")
@@ -83,7 +83,7 @@ Then:
  - The response status should be: [200](- "?=#deleteResult.status").
 
 ### Retrieve file metadata after deleting entry
-When retrieving file metadata with a `GET` to [`/rest/files/{id}/metadata`](- "#getEndpoint"):
+When retrieving file metadata with a `GET` to [/rest/files/{id}/metadata](- "#getEndpoint"):
 
 [ ](- "#retrieveAfterDeleteResult=retrieveAfterDelete(#getEndpoint, #fileId)")
 

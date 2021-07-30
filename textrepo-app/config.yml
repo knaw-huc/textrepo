@@ -30,3 +30,6 @@ dateFormat: ${TR_DATE_FORMAT}
 version:
   tag: ${DOCKER_TAG}
   commit: ${SOURCE_COMMIT}
+flyway:
+  cleanDisabled: ${TR_FLYWAY_CLEAN_DISABLED}
+  locations: ${TR_FLYWAY_LOCATIONS}

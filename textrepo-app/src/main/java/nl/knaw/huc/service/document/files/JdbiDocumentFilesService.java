@@ -4,9 +4,13 @@ import nl.knaw.huc.core.Page;
 import nl.knaw.huc.core.PageParams;
 import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.db.DocumentFilesDao;
+import nl.knaw.huc.db.DocumentsDao;
 import org.jdbi.v3.core.Jdbi;
 
+import javax.ws.rs.NotFoundException;
 import java.util.UUID;
+
+import static java.lang.String.format;
 
 public class JdbiDocumentFilesService implements DocumentFilesService {
 
@@ -17,10 +21,15 @@ public class JdbiDocumentFilesService implements DocumentFilesService {
   }
 
   @Override
-  public Page<TextRepoFile> getFilesByDocumentId(UUID docId, PageParams pageParams) {
-    var content = documentsFiles().findFilesByDocumentId(docId, pageParams);
-    var total = documentsFiles().countByDocumentId(docId);
-    return new Page<>(content, total, pageParams);
+  public Page<TextRepoFile> getFilesByDocumentAndTypeId(UUID docId, Short typeId, PageParams pageParams) {
+    var total = documentsFiles().countByDocumentAndTypeId(docId, typeId);
+    if (total == 0) {
+      if (jdbi.onDemand(DocumentsDao.class).get(docId).isEmpty()) {
+        throw new NotFoundException(format("No document with id %s and type id %s", docId, typeId));
+      }
+    }
+    var files = documentsFiles().findFilesByDocumentAndTypeId(docId, typeId, pageParams);
+    return new Page<>(files, total, pageParams);
   }
 
   private DocumentFilesDao documentsFiles() {

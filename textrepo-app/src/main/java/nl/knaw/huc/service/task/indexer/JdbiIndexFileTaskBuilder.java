@@ -74,7 +74,7 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
   }
 
   /**
-   * Index files by externalId and file type name
+   * Index file by externalId and file type name
    */
   private class JdbiIndexFileTask implements Task<String> {
     private final String externalId;
@@ -107,7 +107,7 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
   }
 
   /**
-   * Index files by file type name
+   * Index all files with type
    */
   private class JdbiIndexAllFilesTask implements Task<String> {
     private final Logger log = LoggerFactory.getLogger(JdbiIndexAllFilesTask.class);
@@ -161,14 +161,14 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
   }
 
   /**
-   * Index or reindex single index with all relevant files, including those without versions
+   * Index all files relevant to indexer
    */
   public class JdbiIndexAllFilesByIndexTask implements Task<String> {
 
     private final Logger log = LoggerFactory.getLogger(JdbiIndexAllFilesTask.class);
     private final Indexer indexer;
 
-    private JdbiIndexAllFilesByIndexTask(String indexName) {
+    public JdbiIndexAllFilesByIndexTask(String indexName) {
       this.indexer = indexers
           .stream()
           .filter(i -> i.getConfig().name.equals(indexName))
@@ -189,11 +189,15 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
                 () -> log.warn("No such mimetype: {}", m)
             );
           });
+      final String msg;
+      if (typesToIndex.isEmpty()) {
+        msg = "No types to index: no files affected";
+      } else {
+        filesTotal = jdbi.onDemand(FilesDao.class).countByTypes(typesToIndex);
+        typesToIndex.forEach(this::indexFilesByType);
+        msg = format("Total files affected: %d", filesAffected);
+      }
 
-      filesTotal = jdbi.onDemand(FilesDao.class).countByTypes(typesToIndex);
-      typesToIndex.forEach(this::indexFilesByType);
-
-      final var msg = format("Total files affected: %d", filesAffected);
       log.info(msg);
       return msg;
     }

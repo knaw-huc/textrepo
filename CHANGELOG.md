@@ -8,6 +8,25 @@ Do not forget to include:
  - Changes in the environment variables
  - Changes to the database
 
+## [1.17.0]
+
+### Changed
+Introduced database migrations using flyway. 
+If the current database should not be erased, make sure to use `./mark-db-baseline.sh` when upgrading to this version.
+
+Current custom postgres image is replaced with a generic postgres alpine image.
+
+### Added
+- Environment variables: TR_FLYWAY_CLEAN_DISABLED, TR_FLYWAY_LOCATIONS
+
+## [1.16.2]
+
+### Changed
+Link to elasticsearch service using container name `tr_elasticsearch:9200`
+
+### Added
+- Environment variables: NGINX_ES_HOST
+
 ## [1.14.0]
 
 ### Changed
