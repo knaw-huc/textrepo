@@ -14,6 +14,8 @@ import nl.knaw.huc.service.task.importer.ImportFileTaskBuilder;
 import nl.knaw.huc.service.task.importer.JdbiImportFileTaskBuilder;
 import nl.knaw.huc.service.task.indexer.IndexFileTaskBuilder;
 import nl.knaw.huc.service.task.indexer.JdbiIndexFileTaskBuilder;
+import nl.knaw.huc.service.task.indexer.JdbiRemoveDeletedFilesFromIndicesBuilder;
+import nl.knaw.huc.service.task.indexer.RemoveDeletedFilesFromIndicesTaskBuilder;
 import org.jdbi.v3.core.Jdbi;
 
 import java.util.List;
@@ -76,5 +78,10 @@ public class JdbiTaskFactory implements TaskBuilderFactory {
   @Override
   public RegisterIdentifiersTaskBuilder getRegisterIdentifiersBuilder() {
     return new JdbiRegisterIdentifiersTaskBuilder(jdbi, idGenerator);
+  }
+
+  @Override
+  public RemoveDeletedFilesFromIndicesTaskBuilder getRemoveDeletedFilesFromIndicesBuilder() {
+    return new JdbiRemoveDeletedFilesFromIndicesBuilder(jdbi, indexService);
   }
 }

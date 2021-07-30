@@ -6,15 +6,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.knaw.huc.api.FormIndexerType;
 import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.service.index.config.IndexerConfiguration;
-import nl.knaw.huc.service.index.config.MappedIndexerConfiguration;
+import nl.knaw.huc.service.index.config.IndexerWithMappingConfiguration;
 import nl.knaw.huc.service.index.request.IndexerFieldsRequestFactory;
 import nl.knaw.huc.service.type.TypeService;
 import org.elasticsearch.ElasticsearchStatusException;
-import org.elasticsearch.action.delete.DeleteRequest;
-import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -22,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import javax.ws.rs.NotFoundException;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
@@ -48,24 +44,25 @@ import static org.elasticsearch.common.xcontent.XContentType.JSON;
  * 1. convert file contents to an es-doc at its `fields` endpoint
  * 2. sends index-request with es-doc to its index
  *
- * <p>MappedFileIndexer depends on a REST-service with the following two endpoints:
+ * <p>MappedFileIndexer depends on a REST-service with the following endpoints:
  * - GET `mapping`
+ * - GET `types`
  * - POST `fields`
  *
  * <p>MappedFileIndexer is configured in config.yml
  */
-public class MappedIndexer implements Indexer {
+public class IndexerWithMapping implements Indexer {
 
-  private static final Logger log = LoggerFactory.getLogger(MappedIndexer.class);
-  private final MappedIndexerConfiguration config;
+  private static final Logger log = LoggerFactory.getLogger(IndexerWithMapping.class);
+  private final IndexerWithMappingConfiguration config;
   private final Client requestClient = JerseyClientBuilder.newClient();
   private final TypeService typeService;
   private final TextRepoElasticClient client;
   private final IndexerFieldsRequestFactory fieldsRequestFactory;
   private final Optional<List<String>> mimetypes;
 
-  public MappedIndexer(
-      MappedIndexerConfiguration config,
+  public IndexerWithMapping(
+      IndexerWithMappingConfiguration config,
       TypeService typeService,
       TextRepoElasticClient textRepoElasticClient
   ) throws IndexerException {
@@ -102,34 +99,6 @@ public class MappedIndexer implements Indexer {
   }
 
   @Override
-  public Optional<String> delete(@Nonnull UUID fileId) {
-    var index = config.elasticsearch.index;
-
-    log.info(format("Deleting file %s from index %s", fileId, config.elasticsearch.index));
-
-    DeleteResponse response;
-    var deleteRequest = new DeleteRequest();
-    deleteRequest.index(index);
-    deleteRequest.id(fileId.toString());
-    try {
-      response = client.getClient().delete(deleteRequest, DEFAULT);
-    } catch (Exception ex) {
-      throw new WebApplicationException(format("Could not delete file %s in index %s", fileId, index), ex);
-    }
-    var status = response.status().getStatus();
-    final String msg;
-    if (status == 200) {
-      msg = format("Successfully deleted file %s from index %s", fileId, index);
-    } else if (status == 404) {
-      msg = format("File %s not found in index %s", fileId, index);
-    } else {
-      throw new WebApplicationException(format("Could not delete file %s from index %s", fileId, index));
-    }
-    log.info(msg);
-    return Optional.of(msg);
-  }
-
-  @Override
   public IndexerConfiguration getConfig() {
     return this.config;
   }
@@ -138,7 +107,7 @@ public class MappedIndexer implements Indexer {
     return this.mimetypes;
   }
 
-  private void createIndex(MappedIndexerConfiguration config) throws IndexerException {
+  private void createIndex(IndexerWithMappingConfiguration config) throws IndexerException {
     log.info("Creating es index [{}]", config.elasticsearch.index);
     var response = getMapping(config);
     var mappingResult = response.readEntity(String.class);
@@ -166,7 +135,7 @@ public class MappedIndexer implements Indexer {
     }
   }
 
-  private Response getMapping(MappedIndexerConfiguration config) throws IndexerException {
+  private Response getMapping(IndexerWithMappingConfiguration config) throws IndexerException {
     Response response;
     try {
       response = requestClient

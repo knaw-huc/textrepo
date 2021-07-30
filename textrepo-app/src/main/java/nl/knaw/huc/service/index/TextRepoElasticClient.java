@@ -10,8 +10,10 @@ import static org.elasticsearch.client.RestClient.builder;
 public class TextRepoElasticClient {
 
   private final RestHighLevelClient client;
+  private final ElasticsearchConfiguration config;
 
   public TextRepoElasticClient(ElasticsearchConfiguration config) {
+    this.config = config;
     var restClientBuilder = builder(config.hosts
         .stream()
         .map(HttpHost::create)
@@ -22,5 +24,9 @@ public class TextRepoElasticClient {
 
   public RestHighLevelClient getClient() {
     return client;
+  }
+
+  public ElasticsearchConfiguration getConfig() {
+    return config;
   }
 }

@@ -4,28 +4,36 @@ import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.db.ContentsDao;
 import nl.knaw.huc.db.FilesDao;
 import nl.knaw.huc.db.VersionsDao;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.delete.DeleteResponse;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.jdbi.v3.core.Jdbi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.WebApplicationException;
 import java.util.List;
 import java.util.UUID;
 
 import static java.lang.String.format;
+import static org.elasticsearch.client.RequestOptions.DEFAULT;
 
 public class JdbiIndexService implements IndexService {
 
   private final List<Indexer> indexers;
+  private final List<TextRepoElasticClient> indexClients;
   private final Jdbi jdbi;
-  private static final Logger log = LoggerFactory.getLogger(MappedIndexer.class);
+  private static final Logger log = LoggerFactory.getLogger(IndexerWithMapping.class);
 
   public JdbiIndexService(
       List<Indexer> indexers,
+      List<TextRepoElasticClient> indexClients,
       Jdbi jdbi
   ) {
     this.indexers = indexers;
+    this.indexClients = indexClients;
     this.jdbi = jdbi;
   }
 
@@ -56,7 +64,7 @@ public class JdbiIndexService implements IndexService {
 
   @Override
   public void delete(UUID fileId) {
-    indexers.forEach(i -> i.delete(fileId));
+    indexClients.forEach(indexClient -> deleteInIndex(fileId, indexClient));
   }
 
   private String getLatestVersionContents(TextRepoFile file) {
@@ -75,4 +83,31 @@ public class JdbiIndexService implements IndexService {
     }
     return latestContents;
   }
+
+  private void deleteInIndex(@Nonnull UUID fileId, TextRepoElasticClient client) {
+    var index = client.getConfig().index;
+    log.info(format("Deleting file %s from index %s", fileId, client.getClient()));
+    DeleteResponse response;
+    var deleteRequest = new DeleteRequest();
+    deleteRequest.index(index);
+    deleteRequest.id(fileId.toString());
+    try {
+      response = client.getClient().delete(deleteRequest, DEFAULT);
+    } catch (Exception ex) {
+      throw new WebApplicationException(format("Could not delete file %s in index %s", fileId, index), ex);
+    }
+    var status = response.status().getStatus();
+    final String msg;
+    if (status == 200) {
+      msg = format("Successfully deleted file %s from index %s", fileId, index);
+    } else if (status == 404) {
+      msg = format("File %s not found in index %s", fileId, index);
+    } else {
+      throw new WebApplicationException(format("Could not delete file %s from index %s", fileId, index));
+    }
+    log.info(msg);
+  }
+
+
+
 }

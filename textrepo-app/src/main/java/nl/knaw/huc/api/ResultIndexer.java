@@ -1,6 +1,6 @@
 package nl.knaw.huc.api;
 
-import nl.knaw.huc.service.index.config.MappedIndexerConfiguration;
+import nl.knaw.huc.service.index.config.IndexerWithMappingConfiguration;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ public class ResultIndexer {
   private final String mapping;
   private final String types;
 
-  public ResultIndexer(MappedIndexerConfiguration indexer) {
+  public ResultIndexer(IndexerWithMappingConfiguration indexer) {
     this.name = indexer.name;
     this.hosts = indexer.elasticsearch.hosts;
     this.fields = new ResultIndexerFieldsConfiguration(indexer.fields);

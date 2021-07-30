@@ -7,7 +7,7 @@ import nl.knaw.huc.config.TextRepoConfiguration;
 import nl.knaw.huc.config.VersionConfiguration;
 import nl.knaw.huc.service.index.config.ElasticsearchConfiguration;
 import nl.knaw.huc.service.index.FieldsConfiguration;
-import nl.knaw.huc.service.index.config.MappedIndexerConfiguration;
+import nl.knaw.huc.service.index.config.IndexerWithMappingConfiguration;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -30,8 +30,8 @@ public class AboutResourceTest {
     version.commit = "1234567890";
     config.setVersion(version);
 
-    var indexers = new ArrayList<MappedIndexerConfiguration>();
-    var indexerConfiguration = new MappedIndexerConfiguration();
+    var indexers = new ArrayList<IndexerWithMappingConfiguration>();
+    var indexerConfiguration = new IndexerWithMappingConfiguration();
     indexerConfiguration.name = "drommels";
     var fields = new FieldsConfiguration();
     fields.type = ORIGINAL;

@@ -3,7 +3,7 @@ package nl.knaw.huc.service.index;
 import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.core.Type;
 import nl.knaw.huc.service.type.TypeService;
-import nl.knaw.huc.service.index.config.MappedIndexerConfiguration;
+import nl.knaw.huc.service.index.config.IndexerWithMappingConfiguration;
 import nl.knaw.huc.service.index.config.ElasticsearchConfiguration;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -34,7 +34,7 @@ import static org.mockserver.model.JsonSchemaBody.jsonSchema;
 import static org.mockserver.model.RegexBody.regex;
 import static org.mockserver.verify.VerificationTimes.once;
 
-public class MappedIndexerTest {
+public class IndexerWithMappingTest {
 
   private static ClientAndServer mockServer;
   private static final int mockPort = 1080;
@@ -87,7 +87,7 @@ public class MappedIndexerTest {
         .withBody(jsonSchema(getResourceAsString("indexer/test.schema.json")));
     mockCreatingIndexResponse(config.elasticsearch.index, putIndexRequest);
 
-    new MappedIndexer(config, typeServiceMock, new TextRepoElasticClient(config.elasticsearch));
+    new IndexerWithMapping(config, typeServiceMock, new TextRepoElasticClient(config.elasticsearch));
 
     mockServer.verify(getTypesRequest, once());
     mockServer.verify(getMappingRequest, once());
@@ -100,7 +100,7 @@ public class MappedIndexerTest {
     mockTypesEndpoint();
     mockMappingEndpoint();
     mockCreatingIndexResponse(config);
-    var indexer = new MappedIndexer(config, typeServiceMock, new TextRepoElasticClient(config.elasticsearch));
+    var indexer = new IndexerWithMapping(config, typeServiceMock, new TextRepoElasticClient(config.elasticsearch));
     var file = new TextRepoFile(UUID.randomUUID(), (short) 43);
     var postDoc2FieldsRequest = request()
         .withMethod("POST")
@@ -136,7 +136,7 @@ public class MappedIndexerTest {
 
     mockMappingEndpoint();
     mockCreatingIndexResponse(config);
-    var indexer = new MappedIndexer(config, typeServiceMock, new TextRepoElasticClient(config.elasticsearch));
+    var indexer = new IndexerWithMapping(config, typeServiceMock, new TextRepoElasticClient(config.elasticsearch));
     var file = new TextRepoFile(UUID.randomUUID(), (short) 43);
     var postDoc2FieldsRequest = request()
         .withMethod("POST")
@@ -165,7 +165,7 @@ public class MappedIndexerTest {
     mockCreatingIndexResponse(config);
     mockTypesEndpoint();
     mockMappingEndpoint();
-    var indexer = new MappedIndexer(config, typeServiceMock, new TextRepoElasticClient(config.elasticsearch));
+    var indexer = new IndexerWithMapping(config, typeServiceMock, new TextRepoElasticClient(config.elasticsearch));
     var postDocToFieldsRequest = request()
         .withMethod("POST")
         .withPath(mockFieldsEndpoint)
@@ -187,7 +187,7 @@ public class MappedIndexerTest {
     when(typeService.getType(anyShort())).thenReturn(new Type("txt", testType.getMimetype()));
     mockTypesEndpoint();
     mockMappingEndpoint();
-    var indexer = new MappedIndexer(config, typeServiceMock, new TextRepoElasticClient(config.elasticsearch));
+    var indexer = new IndexerWithMapping(config, typeServiceMock, new TextRepoElasticClient(config.elasticsearch));
 
     mockServer.when(
         request()
@@ -223,7 +223,7 @@ public class MappedIndexerTest {
     when(typeService.getType(anyShort())).thenReturn(new Type("txt", testType.getMimetype()));
     mockTypesEndpoint();
     mockMappingEndpoint();
-    var indexer = new MappedIndexer(config, typeServiceMock, new TextRepoElasticClient(config.elasticsearch));
+    var indexer = new IndexerWithMapping(config, typeServiceMock, new TextRepoElasticClient(config.elasticsearch));
 
     indexer.index(testFile, latestVersionContents);
 
@@ -239,7 +239,7 @@ public class MappedIndexerTest {
     mockServer.verify(postFieldsRequest);
   }
 
-  private void mockPuttingFileResponse(MappedIndexerConfiguration config, UUID fileId) throws IOException {
+  private void mockPuttingFileResponse(IndexerWithMappingConfiguration config, UUID fileId) throws IOException {
     var putFileRequest = request()
         .withMethod("PUT")
         .withPath(format("/%s/_doc/%s", config.elasticsearch.index, fileId))
@@ -291,7 +291,7 @@ public class MappedIndexerTest {
     );
   }
 
-  private void mockCreatingIndexResponse(MappedIndexerConfiguration config) throws IOException {
+  private void mockCreatingIndexResponse(IndexerWithMappingConfiguration config) throws IOException {
     var putIndexRequest = request()
         .withMethod("PUT")
         .withPath("/" + config.elasticsearch.index)
@@ -311,9 +311,9 @@ public class MappedIndexerTest {
 
   }
 
-  private MappedIndexerConfiguration createConfig(String type) {
+  private IndexerWithMappingConfiguration createConfig(String type) {
     var mockEsUrl = "localhost:" + mockIndexPort;
-    var config = new MappedIndexerConfiguration();
+    var config = new IndexerWithMappingConfiguration();
     config.name = "test-indexer";
     config.elasticsearch = new ElasticsearchConfiguration();
     config.elasticsearch.index = "test-index";
