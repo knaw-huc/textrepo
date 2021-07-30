@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<PcGts xmlns="http://schema.primaresearch.org/PAGE/gts/pagecontent/2013-07-15"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://schema.primaresearch.org/PAGE/gts/pagecontent/2013-07-15
+         http://schema.primaresearch.org/PAGE/gts/pagecontent/2013-07-15/pagecontent.xsd">
+  <Metadata>
+    <Creator>P2PaLA-PRHLT</Creator>
+    <xsi:Creator>__xsi_test__P2PaLA-PRHLT</xsi:Creator>
+    <Created>2020-10-13T10:51:49</Created>
+    <LastChange>2020-10-13T10:51:49</LastChange>
+  </Metadata>
+  <Page imageFilename="MMPM02_000346001_00006_access.jpg" imageWidth="1346" imageHeight="1829">
+    <TextRegion id="rgPve_1" custom="structure {type:full_page;}">
+      <Coords points="0,0 0,1827 1344,1827 1344,0"/>
+    </TextRegion>
+    <Twice>firstInDefaultNamespace</Twice>
+    <xsi:Twice>firstInSpecificNamespace</xsi:Twice>
+  </Page>
+  <Twice>secondInDefaultNamespace</Twice>
+  <xsi:Twice>secondInSpecificNamespace</xsi:Twice>
+</PcGts>

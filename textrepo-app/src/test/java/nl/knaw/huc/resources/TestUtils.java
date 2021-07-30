@@ -20,7 +20,7 @@ public class TestUtils {
 
   private static InputStream getInputStream(String resourcePath) {
     var stream = TestUtils.class.getClassLoader().getResourceAsStream(resourcePath);
-    if(stream == null) {
+    if (stream == null) {
       throw new RuntimeException(format("Could not find resource [%s]", resourcePath));
     }
     return stream;
