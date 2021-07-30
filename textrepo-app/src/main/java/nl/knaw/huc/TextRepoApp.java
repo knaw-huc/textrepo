@@ -18,6 +18,7 @@ import nl.knaw.huc.helpers.Paginator;
 import nl.knaw.huc.resources.ResourcesBuilder;
 import nl.knaw.huc.resources.view.TextViewerResource;
 import nl.knaw.huc.resources.view.ViewBuilderFactory;
+import nl.knaw.huc.resources.view.XmlViewerResource;
 import nl.knaw.huc.service.contents.ContentsService;
 import nl.knaw.huc.service.dashboard.JdbiDashboardService;
 import nl.knaw.huc.service.datetime.LocalDateTimeParamConverterProvider;
@@ -164,7 +165,15 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
    */
   private ViewBuilderFactory createViewBuilderFactory() {
     var viewBuilderFactory = new ViewBuilderFactory();
+
     viewBuilderFactory.register("text", TextViewerResource::new);
+
+    // XmlViewer returns a JSON list of XML snippets. No contents helper is used to compress, e.g. a whole file.
+    // If more views get added here that also don't need contents helper, or perhaps need different parameters,
+    // we should refactor this to get rid of the "throw contentsHelper away" kludge used here.
+    // Let's add first build up some more experience by implementing more viewers, then tackle this.
+    viewBuilderFactory.register("xml", (contents, contentsHelper) -> new XmlViewerResource(contents));
+
     // TODO: register more ViewResource subclasses
     return viewBuilderFactory;
   }
