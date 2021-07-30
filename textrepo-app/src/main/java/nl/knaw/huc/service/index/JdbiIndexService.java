@@ -63,7 +63,6 @@ public class JdbiIndexService implements IndexService {
     var latestVersion = jdbi
         .onDemand(VersionsDao.class)
         .findLatestByFileId(file.getId());
-    log.info(format("Indexing file %s", file.getId()));
     String latestContents;
     if (latestVersion.isEmpty()) {
       latestContents = "";

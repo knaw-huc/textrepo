@@ -60,7 +60,7 @@ public class JdbiTaskFactory implements TaskBuilderFactory {
 
   @Override
   public DeleteDocumentTaskBuilder getDocumentDeleteBuilder() {
-    return new JdbiDeleteDocumentTaskBuilder(jdbi);
+    return new JdbiDeleteDocumentTaskBuilder(jdbi, indexService);
   }
 
   @Override

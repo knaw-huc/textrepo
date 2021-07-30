@@ -88,6 +88,8 @@ public class MappedIndexer implements Indexer {
       return Optional.empty();
     }
 
+    log.info(format("Adding file %s to index %s", file.getId(), config.elasticsearch.index));
+
     var response = getFields(latestVersionContents, mimetype, file.getId());
     var esFacets = response.readEntity(String.class);
 
@@ -102,6 +104,9 @@ public class MappedIndexer implements Indexer {
   @Override
   public Optional<String> delete(@Nonnull UUID fileId) {
     var index = config.elasticsearch.index;
+
+    log.info(format("Deleting file %s from index %s", fileId, config.elasticsearch.index));
+
     DeleteResponse response;
     var deleteRequest = new DeleteRequest();
     deleteRequest.index(index);
@@ -114,11 +119,11 @@ public class MappedIndexer implements Indexer {
     var status = response.status().getStatus();
     final String msg;
     if (status == 200) {
-      msg = format("Successfully deleted file %s in index %s", fileId, index);
+      msg = format("Successfully deleted file %s from index %s", fileId, index);
     } else if (status == 404) {
       msg = format("File %s not found in index %s", fileId, index);
     } else {
-      throw new WebApplicationException(format("Could not delete file %s in index %s", fileId, index));
+      throw new WebApplicationException(format("Could not delete file %s from index %s", fileId, index));
     }
     log.info(msg);
     return Optional.of(msg);

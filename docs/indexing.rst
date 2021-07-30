@@ -34,15 +34,16 @@ When are changes made to the ES indexes?
 - ``DELETE /rest/files``    -> Deleting a file will delete the corresponding ES docs
 - ``POST /rest/versions``   -> Updating a version resource will update ES docs with latest version contents
 - ``DELETE /rest/versions`` -> Deleting the latest version of a file will update ES docs with the pre-latest version contents
+
+Indexing tasks:
+
 - ``POST /task/index``      -> Multiple endpoints for reindexing a subset of files
+- ``POST /task/import/documents/{externalId}/{typeName}`` -> index the imported file (optional, default)
 
 Note: when calling other endpoints (e.g. adding metadata or changing external IDs), reindexing is done by calling on of the indexing tasks.
 
-TODO:
-- ``POST /task/import/documents/{externalId}/{typeName}`` -> index imported versions (optional but default)
-
 TODO, deletes:
-- ``DELETE /task/delete/documents/{externalId}`` -> delete ES-docs of files of document (optional but default)
+- ``DELETE /task/delete/documents/{externalId}`` -> delete ES-docs of files of document (optional default)
 - ``DELETE /task/index/deleted-files`` -> new, delete all ES-docs of deletes files, meaning: delete all ES doc IDs not present in |tr| database
 
 Indexing workflow

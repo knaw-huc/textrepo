@@ -9,9 +9,11 @@ import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotBlank;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 import static java.util.Objects.requireNonNull;
@@ -38,11 +40,18 @@ public class DeleteDocumentResource {
       @PathParam("externalId")
       @ApiParam(required = true, example = "document_1234")
       @NotBlank
-          String externalId
+          String externalId,
+      @QueryParam("index")
+      @DefaultValue("true")
+          boolean index
   ) {
     log.debug("Delete document: externalId={}", externalId);
 
-    final var task = factory.getDocumentDeleteBuilder().forExternalId(externalId).build();
+    final var task = factory
+        .getDocumentDeleteBuilder()
+        .forExternalId(externalId)
+        .withIndexing(index)
+        .build();
     final var doc = task.run();
 
     log.debug("Deleted document");
