@@ -5,6 +5,7 @@ import nl.knaw.huc.core.TextRepoFile;
 import javax.annotation.Nonnull;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -14,13 +15,13 @@ public interface IndexService {
 
   /**
    * Index file with latest version contents
-   * Use blank string when no versions available
+   * Use blank string as version contents when no file versions available
    */
   void index(@Nonnull UUID fileId);
 
   /**
    * Index file with latest version contents
-   * Use blank string when no versions available
+   * Use blank string as version contents when no file versions available
    */
   void index(@Nonnull TextRepoFile file);
 
@@ -38,4 +39,11 @@ public interface IndexService {
    * Get all IDs from all indices
    */
   List<UUID> getAllIds();
+
+  /**
+   * Get indexer by name
+   * @param name
+   * @return
+   */
+  Optional<Indexer> getIndexer(String name);
 }

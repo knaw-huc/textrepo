@@ -5,6 +5,7 @@ import nl.knaw.huc.core.Type;
 import nl.knaw.huc.core.Version;
 import nl.knaw.huc.db.FilesDao;
 import nl.knaw.huc.db.TypesDao;
+import nl.knaw.huc.service.index.IndexService;
 import nl.knaw.huc.service.index.Indexer;
 import nl.knaw.huc.service.task.FindDocumentByExternalId;
 import nl.knaw.huc.service.task.FindDocumentFileByType;
@@ -31,7 +32,7 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
   private static final Logger log = LoggerFactory.getLogger(JdbiIndexFileTaskBuilder.class);
 
   private final Jdbi jdbi;
-  private final List<Indexer> indexers;
+  private final IndexService indexService;
 
   private String externalId;
   private String typeName;
@@ -40,9 +41,9 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
   private long filesAffected = 0;
   private long filesTotal = -1;
 
-  public JdbiIndexFileTaskBuilder(Jdbi jdbi, List<Indexer> indexers) {
+  public JdbiIndexFileTaskBuilder(Jdbi jdbi, IndexService indexService) {
     this.jdbi = requireNonNull(jdbi);
-    this.indexers = requireNonNull(indexers);
+    this.indexService = requireNonNull(indexService);
   }
 
   @Override
@@ -92,17 +93,8 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
         final var doc = new FindDocumentByExternalId(externalId).executeIn(txn);
         final var type = new FindType(typeName).executeIn(txn);
         final var file = new FindDocumentFileByType(doc, type).executeIn(txn);
-        final var version = new GetLatestOptionalFileVersion(file).executeIn(txn);
-        final var contents = getVersionContentsOrEmptyString(txn, version);
-        final var results = new ArrayList<String>();
-        indexers.forEach((indexer) -> {
-          var indexerName = indexer.getConfig().name;
-          var indexResult = indexer.index(file, contents).orElse("Ok");
-          var result = indexerName + " - " + indexResult;
-          results.add(result);
-          log.info(result);
-        });
-        return results.toString();
+        indexService.index(file);
+        return format("Indexed file %s", file.getId());
       });
     }
   }
@@ -149,12 +141,7 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
     private void indexFile(TextRepoFile file) {
       log.debug("Indexing file: {}", file.getId());
       jdbi.useTransaction(txn -> {
-        var version = new GetLatestOptionalFileVersion(file).executeIn(txn);
-        var contents = getVersionContentsOrEmptyString(txn, version);
-        indexers.forEach((indexer) -> {
-          var result = indexer.index(file, contents);
-          result.ifPresent((str) -> log.warn(indexer.getConfig().name + " - " + str));
-        });
+        indexService.index(file);
         filesAffected++;
         log.info("Indexed file {} ({} of estimated {})", file.getId(), filesAffected, filesTotal);
       });
@@ -169,11 +156,9 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
     private final Logger log = LoggerFactory.getLogger(JdbiIndexAllFilesTask.class);
     private final Indexer indexer;
 
-    public JdbiIndexAllFilesByIndexTask(String indexName) {
-      this.indexer = indexers
-          .stream()
-          .filter(i -> i.getConfig().name.equals(indexName))
-          .findFirst()
+    public JdbiIndexAllFilesByIndexTask(String name) {
+      this.indexer = indexService
+          .getIndexer(name)
           .orElseThrow(noSuchIndexer(indexName));
     }
 
@@ -214,34 +199,8 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
 
     private void indexFilesByType(Short typeId) {
       log.info("Indexing files by type: {}", typeId);
-      jdbi.onDemand(FilesDao.class).foreachByType(typeId, this::indexFile);
+      jdbi.onDemand(FilesDao.class).foreachByType(typeId, indexService::index);
     }
 
-    private void indexFile(TextRepoFile file) {
-      log.debug("Indexing file: {}", file.getId());
-      jdbi.useTransaction(txn -> {
-        var version = new GetLatestOptionalFileVersion(file).executeIn(txn);
-        var contents = getVersionContentsOrEmptyString(txn, version);
-        var result = indexer.index(file, contents);
-        result.ifPresent((str) -> log.warn(indexer.getConfig().name + " - " + str));
-        filesAffected++;
-        log.info("Indexed file {} ({} of estimated {})", file.getId(), filesAffected, filesTotal);
-      });
-    }
-
-  }
-
-  /**
-   * Retrieve version contents, or return an empty string when no version present
-   */
-  private String getVersionContentsOrEmptyString(Handle txn, Optional<Version> version) {
-    String contents;
-    if (version.isEmpty()) {
-      log.info("No version found, using empty string");
-      contents = "";
-    } else {
-      contents = new GetVersionContent(version.get()).executeIn(txn).asUtf8String();
-    }
-    return contents;
   }
 }

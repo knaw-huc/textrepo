@@ -24,4 +24,5 @@ public interface Indexer {
    * When not present, indexer is assumed to support al mimetypes
    */
   Optional<List<String>> getMimetypes();
+
 }

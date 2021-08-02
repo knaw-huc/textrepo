@@ -50,6 +50,7 @@ import static org.elasticsearch.common.xcontent.XContentType.JSON;
  * - POST `fields`
  *
  * <p>MappedFileIndexer is configured in config.yml
+ * <p>Types and mapping are requesting during initialization fase
  */
 public class IndexerWithMapping implements Indexer {
 

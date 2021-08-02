@@ -1,45 +1,37 @@
 package nl.knaw.huc.service.index;
 
 import nl.knaw.huc.core.TextRepoFile;
+import nl.knaw.huc.core.Type;
 import nl.knaw.huc.db.ContentsDao;
 import nl.knaw.huc.db.FilesDao;
+import nl.knaw.huc.db.TypesDao;
 import nl.knaw.huc.db.VersionsDao;
-import org.elasticsearch.action.delete.DeleteRequest;
-import org.elasticsearch.action.delete.DeleteResponse;
-import org.elasticsearch.action.search.ClearScrollRequest;
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.search.SearchScrollRequest;
-import org.elasticsearch.common.unit.TimeValue;
-import org.elasticsearch.search.Scroll;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.jdbi.v3.core.Jdbi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.ws.rs.NotFoundException;
-import javax.ws.rs.WebApplicationException;
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
-import static org.elasticsearch.client.RequestOptions.DEFAULT;
-import static org.elasticsearch.index.query.QueryBuilders.matchAllQuery;
+import static java.util.stream.Collectors.toMap;
 
 /**
- * Handle index mutations of all configured indices
+ * Handle mutations of configured indexers and their indices
  */
 public class JdbiIndexService implements IndexService {
 
   private final List<Indexer> indexers;
   private final List<TextRepoElasticClient> indexClients;
   private final Jdbi jdbi;
-  private static final Logger log = LoggerFactory.getLogger(IndexerWithMapping.class);
+  private static final Logger log = LoggerFactory.getLogger(JdbiIndexService.class);
+  private final Map<Short, List<Indexer>> indexersByType;
 
   public JdbiIndexService(
       List<Indexer> indexers,
@@ -49,6 +41,7 @@ public class JdbiIndexService implements IndexService {
     this.indexers = indexers;
     this.indexClients = indexClients;
     this.jdbi = jdbi;
+    indexersByType = mapIndexersToTypes(indexers, jdbi);
   }
 
   @Override
@@ -72,7 +65,9 @@ public class JdbiIndexService implements IndexService {
 
   @Override
   public void index(@Nonnull TextRepoFile file, String contents) {
-    indexers.forEach(i -> i.index(file, contents));
+    indexersByType.get(file.getTypeId()).forEach(indexer -> {
+      indexer.index(file, contents);
+    });
   }
 
   @Override
@@ -85,6 +80,13 @@ public class JdbiIndexService implements IndexService {
     var result = new HashSet<UUID>();
     indexClients.forEach(indexClient -> result.addAll(indexClient.getAllIds()));
     return result.stream().toList();
+  }
+
+  @Override
+  public Optional<Indexer> getIndexer(String name) {
+    return indexers.stream()
+        .filter(i -> i.getConfig().name.equals(name))
+        .findFirst();
   }
 
 
@@ -103,6 +105,18 @@ public class JdbiIndexService implements IndexService {
           .asUtf8String();
     }
     return latestContents;
+  }
+
+  private Map<Short, List<Indexer>> mapIndexersToTypes(List<Indexer> indexers, Jdbi jdbi) {
+    var types = jdbi
+        .onDemand(TypesDao.class)
+        .list();
+    return types.stream().collect(toMap(Type::getId, (t) -> indexers
+        .stream()
+        .filter(
+            indexer -> indexer.getMimetypes().isEmpty() || indexer.getMimetypes().get().contains(t.getMimetype()))
+        .collect(toList())
+    ));
   }
 
 
