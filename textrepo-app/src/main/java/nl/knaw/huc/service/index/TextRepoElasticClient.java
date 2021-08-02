@@ -7,6 +7,9 @@ import org.elasticsearch.client.RestHighLevelClient;
 import static java.util.stream.Collectors.toList;
 import static org.elasticsearch.client.RestClient.builder;
 
+/**
+ * Configured RestHighLevelClient
+ */
 public class TextRepoElasticClient {
 
   private final RestHighLevelClient client;

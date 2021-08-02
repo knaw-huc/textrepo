@@ -9,12 +9,16 @@ import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
+import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 @Api(tags = {"task", "index"})
 @Path("task/index")
@@ -88,6 +92,23 @@ public class IndexResource {
         .build();
     task.run();
     log.debug("Indexed all files of index");
+    return Response.ok().build();
+  }
+
+  @DELETE
+  @Path("/deleted-files")
+  @ApiOperation(value = "Delete all ES docs from all indices " +
+      "with IDs not present in the files table.")
+  @Produces(APPLICATION_JSON)
+  public Response removeDeletedFilesFromIndices() {
+    log.debug("Remove all deleted files");
+
+    final var deletedFiles = factory
+        .getRemoveDeletedFilesFromIndicesBuilder()
+        .build()
+        .run();
+
+    log.debug(format("Removed %s deleted files from all indices: %s", deletedFiles.size(), deletedFiles));
     return Response.ok().build();
   }
 

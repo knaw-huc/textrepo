@@ -10,7 +10,6 @@ import org.elasticsearch.action.search.ClearScrollRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchScrollRequest;
-import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.search.Scroll;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
@@ -22,8 +21,8 @@ import javax.annotation.Nonnull;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,7 +32,7 @@ import static org.elasticsearch.client.RequestOptions.DEFAULT;
 import static org.elasticsearch.index.query.QueryBuilders.matchAllQuery;
 
 /**
- * Handle index mutations
+ * Handle index mutations of all configured indices
  */
 public class JdbiIndexService implements IndexService {
 
@@ -52,7 +51,6 @@ public class JdbiIndexService implements IndexService {
     this.jdbi = jdbi;
   }
 
-
   @Override
   public void index(@Nonnull UUID fileId) {
     var found = jdbi.onDemand(FilesDao.class).find(fileId);
@@ -69,7 +67,7 @@ public class JdbiIndexService implements IndexService {
   @Override
   public void index(@Nonnull TextRepoFile file) {
     var latestContents = getLatestVersionContents(file);
-    indexers.forEach(i -> i.index(file, latestContents));
+    indexers.forEach(indexer -> indexer.index(file, latestContents));
   }
 
   @Override
@@ -79,18 +77,18 @@ public class JdbiIndexService implements IndexService {
 
   @Override
   public void delete(UUID fileId) {
-    indexClients.forEach(indexClient -> deleteInIndex(fileId, indexClient));
+    indexClients.forEach(indexClient -> deleteFromIndex(fileId, indexClient));
   }
 
   @Override
   public List<UUID> getAllIds() {
-    var result = new ArrayList<UUID>();
+    var result = new HashSet<UUID>();
     indexClients.forEach(indexClient -> result.addAll(getAllIdsFromIndex(indexClient)));
-    return result;
+    return result.stream().toList();
   }
 
   /**
-   * Use scroll api to retrieve all doc IDs from index
+   * Retrieve all doc IDs from index using ES scroll api
    */
   private List<UUID> getAllIdsFromIndex(TextRepoElasticClient indexClient) {
     var indexName = indexClient.getConfig().index;
@@ -103,22 +101,26 @@ public class JdbiIndexService implements IndexService {
       searchRequest.source(searchSourceBuilder);
 
       var client = indexClient.getClient();
-      var searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+      var searchResponse = client.search(searchRequest, DEFAULT);
       var scrollId = searchResponse.getScrollId();
-      var searchHits = getIds(searchResponse);
+      var result = getIds(searchResponse);
+      var hasHits = result.size() > 0;
 
-      while (searchHits != null && searchHits.size() > 0) {
+      while (hasHits) {
         var scrollRequest = new SearchScrollRequest(scrollId);
         scrollRequest.scroll(scroll);
-        searchResponse = client.scroll(scrollRequest, RequestOptions.DEFAULT);
+        searchResponse = client.scroll(scrollRequest, DEFAULT);
         scrollId = searchResponse.getScrollId();
-        searchHits.addAll(getIds(searchResponse));
+        var newHits = getIds(searchResponse);
+        hasHits = newHits.size() > 0;
+        result.addAll(newHits);
       }
 
+      log.debug("Found {} files in index {}", result.size(), indexName);
       var clearScrollRequest = new ClearScrollRequest();
       clearScrollRequest.addScrollId(scrollId);
-      client.clearScroll(clearScrollRequest, RequestOptions.DEFAULT);
-      return searchHits;
+      client.clearScroll(clearScrollRequest, DEFAULT);
+      return result;
     } catch (IOException ex) {
       throw new WebApplicationException(format("Could not retrieve IDs from index %s", indexName), ex);
     }
@@ -148,7 +150,7 @@ public class JdbiIndexService implements IndexService {
     return latestContents;
   }
 
-  private void deleteInIndex(@Nonnull UUID fileId, TextRepoElasticClient indexClient) {
+  private void deleteFromIndex(@Nonnull UUID fileId, TextRepoElasticClient indexClient) {
     var indexName = indexClient.getConfig().index;
     log.info(format("Deleting file %s from index %s", fileId, indexName));
     DeleteResponse response;

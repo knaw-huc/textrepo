@@ -7,9 +7,13 @@ import org.jdbi.v3.core.Jdbi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
+import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
+
 /**
  * Remove all ES docs with file IDs not present in database by:
  * - retrieving all ES doc IDs
@@ -29,23 +33,25 @@ public class JdbiRemoveDeletedFilesFromIndicesBuilder implements RemoveDeletedFi
   }
 
   @Override
-  public Task<String> build() {
+  public Task<List<UUID>> build() {
     return new JdbiRemoveDeletedFilesFromIndicesTask();
   }
 
-  private class JdbiRemoveDeletedFilesFromIndicesTask implements Task<String> {
+  private class JdbiRemoveDeletedFilesFromIndicesTask implements Task<List<UUID>> {
 
-    private JdbiRemoveDeletedFilesFromIndicesTask() { }
+    private JdbiRemoveDeletedFilesFromIndicesTask() {
+    }
 
     @Override
-    public String run() {
+    public List<UUID> run() {
       var esDocIds = indexService.getAllIds();
-      return jdbi.inTransaction(txn -> {
-        var fileIds = txn.attach(FilesDao.class).getAll();
-        esDocIds.removeAll(fileIds);
-        esDocIds.forEach(esDocId -> indexService.delete(UUID.randomUUID()));
-        return esDocIds.toString();
-      });
+      var fileIds = jdbi.onDemand(FilesDao.class).getAll();
+
+      var toDelete = new ArrayList<>(esDocIds);
+      toDelete.removeAll(fileIds);
+
+      toDelete.forEach(indexService::delete);
+      return toDelete;
     }
   }
 

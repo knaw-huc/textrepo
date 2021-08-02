@@ -22,7 +22,6 @@ import nl.knaw.huc.resources.task.FindResource;
 import nl.knaw.huc.resources.task.ImportResource;
 import nl.knaw.huc.resources.task.IndexResource;
 import nl.knaw.huc.resources.task.RegisterIdentifiersResource;
-import nl.knaw.huc.resources.task.RemoveDeletedFilesFromIndicesResource;
 import nl.knaw.huc.resources.view.ViewBuilderFactory;
 import nl.knaw.huc.resources.view.ViewVersionResource;
 import nl.knaw.huc.service.contents.ContentsService;
@@ -165,8 +164,7 @@ public class ResourcesBuilder {
         new VersionContentsResource(versionContentsService, contentsHelper),
         new VersionMetadataResource(versionMetadataService),
         new VersionsResource(versionService),
-        new ViewVersionResource(versionContentsService, contentsHelper, viewBuilderFactory),
-        new RemoveDeletedFilesFromIndicesResource(taskBuilderFactory)
+        new ViewVersionResource(versionContentsService, contentsHelper, viewBuilderFactory)
     );
 
   }
