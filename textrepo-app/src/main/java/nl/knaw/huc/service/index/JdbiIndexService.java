@@ -14,59 +14,64 @@ import javax.annotation.Nonnull;
 import javax.ws.rs.NotFoundException;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 import static java.lang.String.format;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 /**
- * Handle mutations of configured indexers and their indices
+ * Handle mutations of indices using configured indexers
  */
 public class JdbiIndexService implements IndexService {
 
-  private final List<Indexer> indexers;
+  private final List<IndexerClient> indexers;
   private final List<TextRepoElasticClient> indexClients;
   private final Jdbi jdbi;
-  private static final Logger log = LoggerFactory.getLogger(JdbiIndexService.class);
-  private final Map<Short, List<Indexer>> indexersByType;
 
   public JdbiIndexService(
-      List<Indexer> indexers,
+      List<IndexerClient> indexers,
       List<TextRepoElasticClient> indexClients,
       Jdbi jdbi
   ) {
     this.indexers = indexers;
     this.indexClients = indexClients;
     this.jdbi = jdbi;
-    indexersByType = mapIndexersToTypes(indexers, jdbi);
   }
 
   @Override
   public void index(@Nonnull UUID fileId) {
-    var found = jdbi.onDemand(FilesDao.class).find(fileId);
-    found.ifPresentOrElse(
-        (file) -> {
-          var latestContents = getLatestVersionContents(file);
-          indexers.forEach(indexer -> indexer.index(file, latestContents));
-        },
-        () -> {
-          throw new NotFoundException(format("Could not find file by id %s", fileId));
-        });
+    var found = jdbi
+        .onDemand(FilesDao.class)
+        .find(fileId)
+        .orElseThrow(noSuchFile(fileId));
+    index(found);
   }
 
   @Override
   public void index(@Nonnull TextRepoFile file) {
     var latestContents = getLatestVersionContents(file);
-    indexers.forEach(indexer -> indexer.index(file, latestContents));
+    index(file, latestContents);
+  }
+
+  @Override
+  public void index(@Nonnull String indexer, @Nonnull TextRepoFile file) {
+    var contents = getLatestVersionContents(file);
+    var type = getType(file);
+    getIndexer(indexer).index(file.getId(), type.getMimetype(), contents);
   }
 
   @Override
   public void index(@Nonnull TextRepoFile file, String contents) {
-    indexersByType.get(file.getTypeId()).forEach(indexer -> {
-      indexer.index(file, contents);
+    var type = getType(file);
+    index(file.getId(), type.getMimetype(), contents);
+  }
+
+  @Override
+  public void index(@Nonnull UUID file, String mimetype, String contents) {
+    indexers.forEach(indexer -> {
+      indexer.index(file, mimetype, contents);
     });
   }
 
@@ -82,13 +87,25 @@ public class JdbiIndexService implements IndexService {
     return result.stream().toList();
   }
 
-  @Override
-  public Optional<Indexer> getIndexer(String name) {
-    return indexers.stream()
-        .filter(i -> i.getConfig().name.equals(name))
-        .findFirst();
+  private Type getType(@Nonnull TextRepoFile file) {
+    return jdbi
+        .onDemand(TypesDao.class)
+        .getById(file.getTypeId())
+        .orElseThrow(noSuchType(file.getTypeId()));
   }
 
+  @Override
+  public Optional<List<String>> getMimetypes(String indexer) {
+    return getIndexer(indexer).getMimetypes();
+  }
+
+  private IndexerClient getIndexer(String name) {
+    return indexers
+        .stream()
+        .filter(i -> i.getConfig().name.equals(name))
+        .findFirst()
+        .orElseThrow(noSuchIndexer(name));
+  }
 
   private String getLatestVersionContents(TextRepoFile file) {
     var latestVersion = jdbi
@@ -107,17 +124,16 @@ public class JdbiIndexService implements IndexService {
     return latestContents;
   }
 
-  private Map<Short, List<Indexer>> mapIndexersToTypes(List<Indexer> indexers, Jdbi jdbi) {
-    var types = jdbi
-        .onDemand(TypesDao.class)
-        .list();
-    return types.stream().collect(toMap(Type::getId, (t) -> indexers
-        .stream()
-        .filter(
-            indexer -> indexer.getMimetypes().isEmpty() || indexer.getMimetypes().get().contains(t.getMimetype()))
-        .collect(toList())
-    ));
+  private Supplier<NotFoundException> noSuchIndexer(String name) {
+    return () -> new NotFoundException(format("No such indexer: %s", name));
   }
 
+  private Supplier<NotFoundException> noSuchType(Short id) {
+    return () -> new NotFoundException(format("No such type: %s", id));
+  }
+
+  private Supplier<NotFoundException> noSuchFile(UUID id) {
+    return () -> new NotFoundException(format("No such file: %s", id));
+  }
 
 }

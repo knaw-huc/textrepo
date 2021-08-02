@@ -30,10 +30,10 @@ import nl.knaw.huc.service.file.JdbiFileService;
 import nl.knaw.huc.service.file.metadata.JdbiFileMetadataService;
 import nl.knaw.huc.service.health.ElasticsearchHealthCheck;
 import nl.knaw.huc.service.health.IndexerHealthCheck;
-import nl.knaw.huc.service.index.Indexer;
+import nl.knaw.huc.service.index.IndexerClient;
 import nl.knaw.huc.service.index.IndexerException;
 import nl.knaw.huc.service.index.JdbiIndexService;
-import nl.knaw.huc.service.index.IndexerWithMapping;
+import nl.knaw.huc.service.index.IndexerWithMappingClient;
 import nl.knaw.huc.service.index.TextRepoElasticClient;
 import nl.knaw.huc.service.logging.LoggingApplicationEventListener;
 import nl.knaw.huc.service.store.JdbiContentsStorage;
@@ -215,17 +215,17 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
     return jdbi;
   }
 
-  private List<Indexer> createIndexers(
+  private List<IndexerClient> createIndexers(
       TextRepoConfiguration config,
       TypeService typeService
   ) {
-    var customIndexers = new ArrayList<Indexer>();
+    var customIndexers = new ArrayList<IndexerClient>();
 
     for (var customIndexerConfig : config.getIndexers()) {
       try {
         log.info("Create index: {}", customIndexerConfig.elasticsearch.index);
         var textRepoElasticClient = new TextRepoElasticClient(customIndexerConfig.elasticsearch);
-        var customFacetIndexer = new IndexerWithMapping(
+        var customFacetIndexer = new IndexerWithMappingClient(
             customIndexerConfig,
             typeService,
             textRepoElasticClient

@@ -17,7 +17,7 @@ import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-public class IndexerHealthCheckTest {
+public class IndexerClientHealthCheckTest {
 
   private static ClientAndServer mockServer;
   private static final int mockPort = 1080;

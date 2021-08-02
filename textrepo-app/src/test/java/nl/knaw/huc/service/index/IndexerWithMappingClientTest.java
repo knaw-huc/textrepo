@@ -34,7 +34,7 @@ import static org.mockserver.model.JsonSchemaBody.jsonSchema;
 import static org.mockserver.model.RegexBody.regex;
 import static org.mockserver.verify.VerificationTimes.once;
 
-public class IndexerWithMappingTest {
+public class IndexerWithMappingClientTest {
 
   private static ClientAndServer mockServer;
   private static final int mockPort = 1080;
@@ -87,7 +87,7 @@ public class IndexerWithMappingTest {
         .withBody(jsonSchema(getResourceAsString("indexer/test.schema.json")));
     mockCreatingIndexResponse(config.elasticsearch.index, putIndexRequest);
 
-    new IndexerWithMapping(config, typeServiceMock, new TextRepoElasticClient(config.elasticsearch));
+    new IndexerWithMappingClient(config, typeServiceMock, new TextRepoElasticClient(config.elasticsearch));
 
     mockServer.verify(getTypesRequest, once());
     mockServer.verify(getMappingRequest, once());
@@ -100,7 +100,7 @@ public class IndexerWithMappingTest {
     mockTypesEndpoint();
     mockMappingEndpoint();
     mockCreatingIndexResponse(config);
-    var indexer = new IndexerWithMapping(config, typeServiceMock, new TextRepoElasticClient(config.elasticsearch));
+    var indexer = new IndexerWithMappingClient(config, typeServiceMock, new TextRepoElasticClient(config.elasticsearch));
     var file = new TextRepoFile(UUID.randomUUID(), (short) 43);
     var postDoc2FieldsRequest = request()
         .withMethod("POST")
@@ -113,7 +113,7 @@ public class IndexerWithMappingTest {
         .withBody(jsonSchema(getResourceAsString("fields/fields.schema.json")));
     mockIndexFieldsResponse(putFileRequest);
 
-    indexer.index(file, getResourceAsString("fields/file.xml"));
+    indexer.index(file.getId(), testType.getMimetype(), getResourceAsString("fields/file.xml"));
 
     mockServer.verify(postDoc2FieldsRequest, once());
     mockIndexServer.verify(putFileRequest, once());
@@ -136,7 +136,7 @@ public class IndexerWithMappingTest {
 
     mockMappingEndpoint();
     mockCreatingIndexResponse(config);
-    var indexer = new IndexerWithMapping(config, typeServiceMock, new TextRepoElasticClient(config.elasticsearch));
+    var indexer = new IndexerWithMappingClient(config, typeServiceMock, new TextRepoElasticClient(config.elasticsearch));
     var file = new TextRepoFile(UUID.randomUUID(), (short) 43);
     var postDoc2FieldsRequest = request()
         .withMethod("POST")
@@ -149,7 +149,7 @@ public class IndexerWithMappingTest {
         .withPath(format("/%s/_doc/%s", config.elasticsearch.index, file.getId()));
     mockIndexFieldsResponse(putFileRequest);
 
-    indexer.index(file, getResourceAsString("fields/file.xml"));
+    indexer.index(file.getId(), testType.getMimetype(), getResourceAsString("fields/file.xml"));
 
     mockServer.verify(postDoc2FieldsRequest, once());
     mockIndexServer.verify(putFileRequest, once());
@@ -165,14 +165,14 @@ public class IndexerWithMappingTest {
     mockCreatingIndexResponse(config);
     mockTypesEndpoint();
     mockMappingEndpoint();
-    var indexer = new IndexerWithMapping(config, typeServiceMock, new TextRepoElasticClient(config.elasticsearch));
+    var indexer = new IndexerWithMappingClient(config, typeServiceMock, new TextRepoElasticClient(config.elasticsearch));
     var postDocToFieldsRequest = request()
         .withMethod("POST")
         .withPath(mockFieldsEndpoint)
         .withHeader("Content-Type", expectedContentTypeHeader);
     mockDoc2FieldsResponse(postDocToFieldsRequest);
 
-    indexer.index(new TextRepoFile(fileId, (short) 43), getResourceAsString("fields/file.xml"));
+    indexer.index(fileId, testType.getMimetype(), getResourceAsString("fields/file.xml"));
 
     mockServer.verify(postDocToFieldsRequest, once());
   }
@@ -187,7 +187,7 @@ public class IndexerWithMappingTest {
     when(typeService.getType(anyShort())).thenReturn(new Type("txt", testType.getMimetype()));
     mockTypesEndpoint();
     mockMappingEndpoint();
-    var indexer = new IndexerWithMapping(config, typeServiceMock, new TextRepoElasticClient(config.elasticsearch));
+    var indexer = new IndexerWithMappingClient(config, typeServiceMock, new TextRepoElasticClient(config.elasticsearch));
 
     mockServer.when(
         request()
@@ -201,7 +201,7 @@ public class IndexerWithMappingTest {
     );
 
 
-    indexer.index(testFile, latestVersionContents);
+    indexer.index(testFileId, testType.getMimetype(), latestVersionContents);
 
     var postFieldsRequest = request()
         .withMethod("POST")
@@ -223,9 +223,9 @@ public class IndexerWithMappingTest {
     when(typeService.getType(anyShort())).thenReturn(new Type("txt", testType.getMimetype()));
     mockTypesEndpoint();
     mockMappingEndpoint();
-    var indexer = new IndexerWithMapping(config, typeServiceMock, new TextRepoElasticClient(config.elasticsearch));
+    var indexer = new IndexerWithMappingClient(config, typeServiceMock, new TextRepoElasticClient(config.elasticsearch));
 
-    indexer.index(testFile, latestVersionContents);
+    indexer.index(testFileId, testType.getMimetype(), latestVersionContents);
 
     var postFieldsRequest = request()
         .withMethod("POST")

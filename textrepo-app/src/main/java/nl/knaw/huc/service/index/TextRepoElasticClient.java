@@ -41,7 +41,7 @@ import static org.elasticsearch.index.query.QueryBuilders.matchAllQuery;
  */
 public class TextRepoElasticClient {
 
-  private static final Logger log = LoggerFactory.getLogger(IndexerWithMapping.class);
+  private static final Logger log = LoggerFactory.getLogger(IndexerWithMappingClient.class);
   final RestHighLevelClient client;
   private final ElasticsearchConfiguration config;
 

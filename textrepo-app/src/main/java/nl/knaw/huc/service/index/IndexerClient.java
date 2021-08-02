@@ -6,16 +6,15 @@ import nl.knaw.huc.service.index.config.IndexerConfiguration;
 import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
-public interface Indexer {
+public interface IndexerClient {
 
   /**
-   * @return String result message
+   * Convert file to ES doc with indexer's index endpoint
+   * @return String ES doc
    */
-  Optional<String> index(
-      @Nonnull TextRepoFile file,
-      @Nonnull String latestVersionContents
-  );
+  Optional<String> index(@Nonnull UUID file, @Nonnull String mimetype, @Nonnull String contents);
 
   IndexerConfiguration getConfig();
 

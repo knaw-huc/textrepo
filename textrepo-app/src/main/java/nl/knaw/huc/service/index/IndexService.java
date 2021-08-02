@@ -26,9 +26,20 @@ public interface IndexService {
   void index(@Nonnull TextRepoFile file);
 
   /**
+   * Index a single index with a file and latest version contents
+   * Use blank string as version contents when no file versions available
+   */
+  void index(@NotNull String indexer, @Nonnull TextRepoFile file);
+
+  /**
    * Index file with provided contents
    */
   void index(@Nonnull TextRepoFile file, @NotNull String contents);
+
+  /**
+   * Index file with mimetype and provided contents
+   */
+  void index(@Nonnull UUID file, String mimetype, String contents);
 
   /**
    * Delete file from indices
@@ -41,9 +52,8 @@ public interface IndexService {
   List<UUID> getAllIds();
 
   /**
-   * Get indexer by name
-   * @param name
-   * @return
+   * Get mimetypes by indexer name
    */
-  Optional<Indexer> getIndexer(String name);
+  Optional<List<String>> getMimetypes(String indexer);
+
 }

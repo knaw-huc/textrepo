@@ -9,10 +9,6 @@ import nl.knaw.huc.service.index.config.IndexerConfiguration;
 import nl.knaw.huc.service.index.config.IndexerWithMappingConfiguration;
 import nl.knaw.huc.service.index.request.IndexerFieldsRequestFactory;
 import nl.knaw.huc.service.type.TypeService;
-import org.elasticsearch.ElasticsearchStatusException;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.slf4j.Logger;
@@ -23,7 +19,6 @@ import javax.ws.rs.ProcessingException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Response;
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -33,8 +28,6 @@ import static java.lang.String.join;
 import static java.util.stream.Collectors.toList;
 import static javax.ws.rs.core.Response.Status.NO_CONTENT;
 import static nl.knaw.huc.service.index.FieldsType.MULTIPART;
-import static org.elasticsearch.client.RequestOptions.DEFAULT;
-import static org.elasticsearch.common.xcontent.XContentType.JSON;
 
 /**
  * MappedFileIndexer creates its index in elasticsearch as defined by its es-mapping
@@ -50,25 +43,24 @@ import static org.elasticsearch.common.xcontent.XContentType.JSON;
  * - POST `fields`
  *
  * <p>MappedFileIndexer is configured in config.yml
- * <p>Types and mapping are requesting during initialization fase
+ *
+ * <p>Types and mapping are requesting during initialization phase
  */
-public class IndexerWithMapping implements Indexer {
+public class IndexerWithMappingClient implements IndexerClient {
 
-  private static final Logger log = LoggerFactory.getLogger(IndexerWithMapping.class);
+  private static final Logger log = LoggerFactory.getLogger(IndexerWithMappingClient.class);
   private final IndexerWithMappingConfiguration config;
   private final Client requestClient = JerseyClientBuilder.newClient();
-  private final TypeService typeService;
   private final TextRepoElasticClient client;
   private final IndexerFieldsRequestFactory fieldsRequestFactory;
   private final Optional<List<String>> mimetypes;
 
-  public IndexerWithMapping(
+  public IndexerWithMappingClient(
       IndexerWithMappingConfiguration config,
       TypeService typeService,
       TextRepoElasticClient textRepoElasticClient
   ) throws IndexerException {
     this.config = config;
-    this.typeService = typeService;
     this.mimetypes = getIndexerTypes();
     this.client = textRepoElasticClient;
     this.fieldsRequestFactory = new IndexerFieldsRequestFactory(config.fields.url, this.requestClient);
@@ -80,15 +72,18 @@ public class IndexerWithMapping implements Indexer {
   }
 
   @Override
-  public Optional<String> index(@Nonnull TextRepoFile file, @Nonnull String latestVersionContents) {
-    var mimetype = typeService.getType(file.getTypeId()).getMimetype();
+  public Optional<String> index(@Nonnull UUID file, @Nonnull String mimetype, @Nonnull String contents) {
     if (!mimetypeSupported(mimetype)) {
+      log.info(format(
+          "Skipping file %s for index %s: mimetype not supported",
+          file, config.elasticsearch.index
+      ));
       return Optional.empty();
     }
 
-    log.info(format("Adding file %s to index %s", file.getId(), config.elasticsearch.index));
+    log.info(format("Adding file %s to index %s", file, config.elasticsearch.index));
 
-    var response = getFields(latestVersionContents, mimetype, file.getId());
+    var response = getFields(contents, mimetype, file);
     var esFacets = response.readEntity(String.class);
 
     var error = checkIndexerResponseStatus(response, esFacets);
@@ -96,7 +91,7 @@ public class IndexerWithMapping implements Indexer {
       return error;
     }
 
-    return client.upsert(file.getId(), esFacets);
+    return client.upsert(file, esFacets);
   }
 
   @Override
