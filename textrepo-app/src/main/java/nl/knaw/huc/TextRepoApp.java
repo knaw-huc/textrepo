@@ -188,8 +188,8 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
         .getIndexers()
         .stream()
         .collect(toMap(
-            ix -> ix.elasticsearch.index + "-es-index",
-            ix -> new ElasticsearchHealthCheck(ix.elasticsearch.index, new TextRepoElasticClient(ix.elasticsearch)))
+            esConfig -> esConfig.elasticsearch.index + "-es-index",
+            esConfig -> new ElasticsearchHealthCheck(new TextRepoElasticClient(esConfig.elasticsearch)))
         );
   }
 

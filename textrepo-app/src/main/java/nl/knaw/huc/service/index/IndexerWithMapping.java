@@ -95,7 +95,7 @@ public class IndexerWithMapping implements Indexer {
       return error;
     }
 
-    return sendRequest(file.getId(), esFacets);
+    return client.upsert(file.getId(), esFacets);
   }
 
   @Override
@@ -119,20 +119,7 @@ public class IndexerWithMapping implements Indexer {
       );
       return;
     }
-
-    var request = new CreateIndexRequest(config.elasticsearch.index)
-        .source(mappingResult, JSON);
-
-    try {
-      client
-          .getClient()
-          .indices()
-          .create(request, DEFAULT);
-    } catch (ElasticsearchStatusException ex) {
-      log.info("Could not create index [{}], already exists", config.elasticsearch.index);
-    } catch (IOException ex) {
-      log.error("Could not create index [{}]", config.elasticsearch.index, ex);
-    }
+    client.createIndex(mappingResult);
   }
 
   private Response getMapping(IndexerWithMappingConfiguration config) throws IndexerException {
@@ -144,7 +131,7 @@ public class IndexerWithMapping implements Indexer {
           .get();
       return response;
     } catch (ProcessingException ex) {
-      throw new IndexerException(format("Could not fetch mapping from %s", config.mapping), ex);
+      throw new WebApplicationException(format("Could not fetch mapping from %s", config.mapping), ex);
     }
   }
 
@@ -175,22 +162,6 @@ public class IndexerWithMapping implements Indexer {
         .requestFields(latestVersionContents, mimetype, fileId);
   }
 
-  private Optional<String> sendRequest(@Nonnull UUID fileId, String esFacets) {
-    var indexRequest = new IndexRequest(config.elasticsearch.index)
-        .id(fileId.toString())
-        .source(esFacets, JSON);
-    var response = indexRequest(indexRequest);
-    return checkEsResponseStatus(response, fileId);
-  }
-
-  private IndexResponse indexRequest(IndexRequest indexRequest) {
-    try {
-      return client.getClient().index(indexRequest, DEFAULT);
-    } catch (Exception ex) {
-      throw new WebApplicationException("Could not index in Elasticsearch", ex);
-    }
-  }
-
   private boolean mimetypeSupported(String mimetype) {
     if (mimetypes.isEmpty()) {
       return true;
@@ -202,29 +173,6 @@ public class IndexerWithMapping implements Indexer {
       return false;
     }
     return true;
-  }
-
-  /**
-   * When not 200 or 201, return error msg
-   */
-  private Optional<String> checkEsResponseStatus(IndexResponse response, UUID fileId) {
-    var status = response.status().getStatus();
-    var index = config.elasticsearch.index;
-
-    if (status == 201) {
-      log.debug("Successfully added file [{}] to index [{}]", fileId, index);
-      return Optional.empty();
-    } else if (status == 200) {
-      log.debug("Successfully updated file [{}] to index [{}]", fileId, index);
-      return Optional.empty();
-    } else {
-      var msg = format(
-          "Response of adding file %s to index %s was: %d - %s",
-          fileId, index, status, response.toString()
-      );
-      log.error(msg);
-      return Optional.of(msg);
-    }
   }
 
   /**

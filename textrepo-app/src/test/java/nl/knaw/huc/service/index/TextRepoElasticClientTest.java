@@ -61,7 +61,7 @@ public class TextRepoElasticClientTest {
     var config = new ElasticsearchConfiguration();
     config.hosts = List.of(in);
     var client = new TextRepoElasticClient(config);
-    var toTest = client.getClient().getLowLevelClient().getNodes().get(0).getHost().toString();
+    var toTest = client.client.getLowLevelClient().getNodes().get(0).getHost().toString();
     assertThat(toTest).isEqualTo(expected);
   }
 
@@ -83,7 +83,7 @@ public class TextRepoElasticClientTest {
     var getRequest = new GetRequest("foo");
     getRequest.id("bar");
 
-    client.getClient().get(getRequest, RequestOptions.DEFAULT);
+    client.client.get(getRequest, RequestOptions.DEFAULT);
 
     mockServer.verify(request, once());
   }

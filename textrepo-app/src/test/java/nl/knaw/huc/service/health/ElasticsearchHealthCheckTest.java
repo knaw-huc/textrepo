@@ -99,7 +99,7 @@ public class ElasticsearchHealthCheckTest {
     config.hosts = new ArrayList<>();
     config.hosts.add(host);
     var trEsClient = new TextRepoElasticClient(config);
-    return new ElasticsearchHealthCheck(indexName, trEsClient);
+    return new ElasticsearchHealthCheck(trEsClient);
   }
 
 }
