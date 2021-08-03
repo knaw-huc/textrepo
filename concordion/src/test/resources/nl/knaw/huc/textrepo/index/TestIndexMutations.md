@@ -26,9 +26,6 @@ Find all ES docs using query:
 - The response should contain [correct file](- "?=#result.found");
 - The response should contain [0](- "?=#result.versionCount") versions;
 
-Full response:
-[ ](- "ext:embed=#result.body")
-
 ## Index when creating file versions
 
 Files are re-indexed when versions are added.
@@ -52,9 +49,6 @@ Find all ES docs using query:
 - The response status should be: [200](- "?=#result.status");
 - The response should contain [correct file](- "?=#result.found");
 - The response should contain [2](- "?=#result.versionCount") versions;
-
-Full response:
-[ ](- "ext:embed=#result.body")
 
 ## Index when updating file type
 
@@ -86,9 +80,6 @@ Find all ES docs using query:
 - The response should contain [correct file](- "?=#result.found");
 - The response should contain [correct type](- "?=#result.type");
 
-Full response:
-[ ](- "ext:embed=#result.body")
-
 ## Index when deleting latest version
 
 Files are re-indexed when latest version is deleted.
@@ -113,9 +104,6 @@ Find all ES docs using query:
 - The response should contain [correct file](- "?=#result.found");
 - The response should contain [1](- "?=#result.versionCount") version;
 
-Full response:
-[ ](- "ext:embed=#result.body")
-
 ## Index when deleting file
 
 Deleted files are removed from indices.
@@ -138,7 +126,4 @@ Find all ES docs using query:
 
 - The response status should be: [200](- "?=#result.status");
 - The response should contain [no files](- "?=#result.found");
-
-Full response:
-[ ](- "ext:embed=#result.body")
 
