@@ -62,10 +62,7 @@ public class JdbiIndexService implements IndexService {
 
   @Override
   public void index(@Nonnull UUID fileId) {
-    var found = jdbi
-        .onDemand(FilesDao.class)
-        .find(fileId)
-        .orElseThrow(noSuchFile(fileId));
+    var found = jdbi.onDemand(FilesDao.class).find(fileId).orElseThrow(noSuchFile(fileId));
     index(found);
   }
 
@@ -97,7 +94,7 @@ public class JdbiIndexService implements IndexService {
 
   private void createAndUpsertEsDoc(String indexerName, UUID file, String contents, String mimetype) {
     var indexer = getIndexer(indexerName);
-    var esDoc = indexer.index(file, mimetype, contents);
+    var esDoc = indexer.fields(file, mimetype, contents);
     if (esDoc.isPresent()) {
       var indexName = indexer.getConfig().elasticsearch.index;
       getIndex(indexName).upsert(file, esDoc.get());

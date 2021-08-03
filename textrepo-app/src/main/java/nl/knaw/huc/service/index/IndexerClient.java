@@ -11,10 +11,10 @@ import java.util.UUID;
 public interface IndexerClient {
 
   /**
-   * Convert contents of file to ES doc with indexer's index endpoint
+   * Convert file contents to ES doc with indexer's fields endpoint
    * @return String ES doc, or empty optional when failed to convert
    */
-  Optional<String> index(@Nonnull UUID file, @Nonnull String mimetype, @Nonnull String contents);
+  Optional<String> fields(@Nonnull UUID file, @Nonnull String mimetype, @Nonnull String contents);
 
   IndexerConfiguration getConfig();
 

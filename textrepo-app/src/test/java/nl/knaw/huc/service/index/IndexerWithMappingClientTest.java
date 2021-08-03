@@ -182,7 +182,7 @@ public class IndexerWithMappingClientTest {
         .withHeader("Content-Type", expectedContentTypeHeader);
     mockDoc2FieldsResponse(postDocToFieldsRequest);
 
-    indexer.index(fileId, testType.getMimetype(), getResourceAsString("fields/file.xml"));
+    indexer.fields(fileId, testType.getMimetype(), getResourceAsString("fields/file.xml"));
 
     mockServer.verify(postDocToFieldsRequest, once());
   }
@@ -211,7 +211,7 @@ public class IndexerWithMappingClientTest {
     );
 
 
-    indexer.index(testFileId, testType.getMimetype(), latestVersionContents);
+    indexer.fields(testFileId, testType.getMimetype(), latestVersionContents);
 
     var postFieldsRequest = request()
         .withMethod("POST")
@@ -235,7 +235,7 @@ public class IndexerWithMappingClientTest {
     mockMappingEndpoint();
     var indexer = new IndexerWithMappingClient(config);
 
-    indexer.index(testFileId, testType.getMimetype(), latestVersionContents);
+    indexer.fields(testFileId, testType.getMimetype(), latestVersionContents);
 
     var postFieldsRequest = request()
         .withMethod("POST")

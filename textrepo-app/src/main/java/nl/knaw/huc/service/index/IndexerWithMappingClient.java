@@ -65,7 +65,7 @@ public class IndexerWithMappingClient implements IndexerClient {
   }
 
   @Override
-  public Optional<String> index(@Nonnull UUID file, @Nonnull String mimetype, @Nonnull String contents) {
+  public Optional<String> fields(@Nonnull UUID file, @Nonnull String mimetype, @Nonnull String contents) {
     var indexName = config.elasticsearch.index;
     if (!mimetypeSupported(mimetype)) {
       log.info(format(
