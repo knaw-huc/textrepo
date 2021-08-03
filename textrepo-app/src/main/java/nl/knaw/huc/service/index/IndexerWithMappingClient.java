@@ -4,11 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.knaw.huc.api.FormIndexerType;
-import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.service.index.config.IndexerConfiguration;
 import nl.knaw.huc.service.index.config.IndexerWithMappingConfiguration;
 import nl.knaw.huc.service.index.request.IndexerFieldsRequestFactory;
-import nl.knaw.huc.service.type.TypeService;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.slf4j.Logger;
@@ -51,21 +49,16 @@ public class IndexerWithMappingClient implements IndexerClient {
   private static final Logger log = LoggerFactory.getLogger(IndexerWithMappingClient.class);
   private final IndexerWithMappingConfiguration config;
   private final Client requestClient = JerseyClientBuilder.newClient();
-  private final TextRepoElasticClient client;
   private final IndexerFieldsRequestFactory fieldsRequestFactory;
   private final Optional<List<String>> mimetypes;
 
   public IndexerWithMappingClient(
-      IndexerWithMappingConfiguration config,
-      TypeService typeService,
-      TextRepoElasticClient textRepoElasticClient
+      IndexerWithMappingConfiguration config
   ) throws IndexerException {
     this.config = config;
     this.mimetypes = getIndexerTypes();
-    this.client = textRepoElasticClient;
     this.fieldsRequestFactory = new IndexerFieldsRequestFactory(config.fields.url, this.requestClient);
 
-    createIndex(config);
     if (MULTIPART.equals(config.fields.type)) {
       requestClient.register(MultiPartFeature.class);
     }
@@ -73,25 +66,27 @@ public class IndexerWithMappingClient implements IndexerClient {
 
   @Override
   public Optional<String> index(@Nonnull UUID file, @Nonnull String mimetype, @Nonnull String contents) {
+    var indexName = config.elasticsearch.index;
     if (!mimetypeSupported(mimetype)) {
       log.info(format(
           "Skipping file %s for index %s: mimetype not supported",
-          file, config.elasticsearch.index
+          file, indexName
       ));
       return Optional.empty();
     }
 
-    log.info(format("Adding file %s to index %s", file, config.elasticsearch.index));
+    log.info(format("Converting file %s to ES doc for index %s", file, indexName));
 
     var response = getFields(contents, mimetype, file);
-    var esFacets = response.readEntity(String.class);
+    var responseBody = response.readEntity(String.class);
 
-    var error = checkIndexerResponseStatus(response, esFacets);
+    var error = checkIndexerResponseStatus(response, responseBody);
     if (error.isPresent()) {
-      return error;
+      log.error(error.get());
+      return Optional.empty();
+    } else {
+      return Optional.of(responseBody);
     }
-
-    return client.upsert(file, esFacets);
   }
 
   @Override
@@ -103,32 +98,25 @@ public class IndexerWithMappingClient implements IndexerClient {
     return this.mimetypes;
   }
 
-  private void createIndex(IndexerWithMappingConfiguration config) throws IndexerException {
-    log.info("Creating es index [{}]", config.elasticsearch.index);
-    var response = getMapping(config);
-    var mappingResult = response.readEntity(String.class);
-
-    if (response.getStatus() != 200) {
-      log.error(
-          "Could not get mapping from [{}]: {} - {}",
-          config.mapping, response.getStatus(), mappingResult
-      );
-      return;
-    }
-    client.createIndex(mappingResult);
-  }
-
-  private Response getMapping(IndexerWithMappingConfiguration config) throws IndexerException {
+  public Optional<String> getMapping() {
+    log.info("Get mapping of {} at {}", config.elasticsearch.index, config.mapping);
     Response response;
     try {
       response = requestClient
           .target(config.mapping)
           .request()
           .get();
-      return response;
     } catch (ProcessingException ex) {
-      throw new WebApplicationException(format("Could not fetch mapping from %s", config.mapping), ex);
+      throw noMappingFound(config.mapping, ex.getMessage());
     }
+    if (response.getStatus() != 200) {
+      throw noMappingFound(config.mapping, "Status was %s instead of 200");
+    }
+    return Optional.of(response.readEntity(String.class));
+  }
+
+  private WebApplicationException noMappingFound(String mappingUrl, String msg) {
+    return new WebApplicationException(format("Could not fetch mapping from %s: %s", mappingUrl, msg));
   }
 
   private Optional<List<String>> getIndexerTypes() {
@@ -148,7 +136,7 @@ public class IndexerWithMappingClient implements IndexerClient {
           .map(t -> t.mimetype)
           .collect(toList()));
     } catch (JsonProcessingException e) {
-      throw new RuntimeException(format("Could not parse types response of indexer %s: %s", config.name, json));
+      throw new WebApplicationException(format("Could not parse types response of indexer %s: %s", config.name, json));
     }
   }
 

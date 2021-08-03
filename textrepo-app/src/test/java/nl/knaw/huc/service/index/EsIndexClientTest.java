@@ -23,7 +23,7 @@ import static org.mockserver.model.HttpResponse.response;
 import static org.mockserver.verify.VerificationTimes.once;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-public class TextRepoElasticClientTest {
+public class EsIndexClientTest {
 
   private static ClientAndServer mockServer;
   private static final int mockPort = 80;
@@ -60,7 +60,7 @@ public class TextRepoElasticClientTest {
   public void newClient_shouldParseAddressesCorrectly(String in, String expected) {
     var config = new ElasticsearchConfiguration();
     config.hosts = List.of(in);
-    var client = new TextRepoElasticClient(config);
+    var client = new EsIndexClient(config);
     var toTest = client.client.getLowLevelClient().getNodes().get(0).getHost().toString();
     assertThat(toTest).isEqualTo(expected);
   }
@@ -79,7 +79,7 @@ public class TextRepoElasticClientTest {
 
     var config = new ElasticsearchConfiguration();
     config.hosts = List.of("localhost");
-    var client = new TextRepoElasticClient(config);
+    var client = new EsIndexClient(config);
     var getRequest = new GetRequest("foo");
     getRequest.id("bar");
 

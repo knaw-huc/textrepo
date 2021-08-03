@@ -1,7 +1,7 @@
 package nl.knaw.huc.service.health;
 
 import com.codahale.metrics.health.HealthCheck;
-import nl.knaw.huc.service.index.TextRepoElasticClient;
+import nl.knaw.huc.service.index.EsIndexClient;
 import org.elasticsearch.cluster.health.ClusterHealthStatus;
 
 import java.io.IOException;
@@ -15,9 +15,9 @@ import static org.elasticsearch.cluster.health.ClusterHealthStatus.YELLOW;
 
 public class ElasticsearchHealthCheck extends HealthCheck {
 
-  private final TextRepoElasticClient client;
+  private final EsIndexClient client;
 
-  public ElasticsearchHealthCheck(TextRepoElasticClient client) {
+  public ElasticsearchHealthCheck(EsIndexClient client) {
     this.client = client;
   }
 

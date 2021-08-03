@@ -3,7 +3,7 @@ package nl.knaw.huc.service.health;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import nl.knaw.huc.resources.TestUtils;
 import nl.knaw.huc.service.index.config.ElasticsearchConfiguration;
-import nl.knaw.huc.service.index.TextRepoElasticClient;
+import nl.knaw.huc.service.index.EsIndexClient;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -98,7 +98,7 @@ public class ElasticsearchHealthCheckTest {
     config.index = indexName;
     config.hosts = new ArrayList<>();
     config.hosts.add(host);
-    var trEsClient = new TextRepoElasticClient(config);
+    var trEsClient = new EsIndexClient(config);
     return new ElasticsearchHealthCheck(trEsClient);
   }
 

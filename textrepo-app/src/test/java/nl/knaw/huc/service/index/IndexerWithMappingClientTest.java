@@ -5,6 +5,7 @@ import nl.knaw.huc.core.Type;
 import nl.knaw.huc.service.type.TypeService;
 import nl.knaw.huc.service.index.config.IndexerWithMappingConfiguration;
 import nl.knaw.huc.service.index.config.ElasticsearchConfiguration;
+import org.jdbi.v3.core.Jdbi;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -19,6 +20,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 import static java.lang.String.format;
+import static java.util.Collections.singletonList;
 import static nl.knaw.huc.resources.TestUtils.getResourceAsString;
 import static nl.knaw.huc.service.index.FieldsType.MULTIPART;
 import static nl.knaw.huc.service.index.FieldsType.ORIGINAL;
@@ -49,6 +51,7 @@ public class IndexerWithMappingClientTest {
   private final Type testType = new Type("test-type", "test/mimetype");
 
   private final TypeService typeServiceMock = mock(TypeService.class);
+  private final Jdbi jdbiMock = mock(Jdbi.class);
 
   @BeforeAll
   public static void setUpClass() {
@@ -66,7 +69,7 @@ public class IndexerWithMappingClientTest {
 
   @AfterEach
   public void resetMocks() {
-    reset(typeServiceMock);
+    reset(typeServiceMock, jdbiMock);
   }
 
   @AfterAll
@@ -87,7 +90,8 @@ public class IndexerWithMappingClientTest {
         .withBody(jsonSchema(getResourceAsString("indexer/test.schema.json")));
     mockCreatingIndexResponse(config.elasticsearch.index, putIndexRequest);
 
-    new IndexerWithMappingClient(config, typeServiceMock, new TextRepoElasticClient(config.elasticsearch));
+    // Test instantiation of IndexService:
+    createIndexService(config);
 
     mockServer.verify(getTypesRequest, once());
     mockServer.verify(getMappingRequest, once());
@@ -95,12 +99,12 @@ public class IndexerWithMappingClientTest {
   }
 
   @Test
-  public void index_requestsFields() throws IOException, IndexerException {
+  public void index_requestsIndexEndpoint() throws IOException, IndexerException {
     var config = createConfig(ORIGINAL.getName());
     mockTypesEndpoint();
     mockMappingEndpoint();
     mockCreatingIndexResponse(config);
-    var indexer = new IndexerWithMappingClient(config, typeServiceMock, new TextRepoElasticClient(config.elasticsearch));
+    var indexer = createIndexService(config);
     var file = new TextRepoFile(UUID.randomUUID(), (short) 43);
     var postDoc2FieldsRequest = request()
         .withMethod("POST")
@@ -120,7 +124,7 @@ public class IndexerWithMappingClientTest {
   }
 
   @Test
-  public void index_requestsFields_whenIndexerDefinedNoTypes() throws IOException, IndexerException {
+  public void index_requestsIndexEndpoint_whenIndexerDefinesNoTypes() throws IOException, IndexerException {
     var config = createConfig(ORIGINAL.getName());
 
     // Types endpoint without types:
@@ -136,7 +140,7 @@ public class IndexerWithMappingClientTest {
 
     mockMappingEndpoint();
     mockCreatingIndexResponse(config);
-    var indexer = new IndexerWithMappingClient(config, typeServiceMock, new TextRepoElasticClient(config.elasticsearch));
+    var indexService = createIndexService(config);
     var file = new TextRepoFile(UUID.randomUUID(), (short) 43);
     var postDoc2FieldsRequest = request()
         .withMethod("POST")
@@ -149,10 +153,16 @@ public class IndexerWithMappingClientTest {
         .withPath(format("/%s/_doc/%s", config.elasticsearch.index, file.getId()));
     mockIndexFieldsResponse(putFileRequest);
 
-    indexer.index(file.getId(), testType.getMimetype(), getResourceAsString("fields/file.xml"));
+    indexService.index(file.getId(), testType.getMimetype(), getResourceAsString("fields/file.xml"));
 
     mockServer.verify(postDoc2FieldsRequest, once());
     mockIndexServer.verify(putFileRequest, once());
+  }
+
+  private JdbiIndexService createIndexService(IndexerWithMappingConfiguration config) throws IndexerException {
+    var indexer = new IndexerWithMappingClient(config);
+    var index = new EsIndexClient(config.elasticsearch);
+    return new JdbiIndexService(singletonList(indexer), singletonList(index), jdbiMock);
   }
 
   @Test
@@ -165,7 +175,7 @@ public class IndexerWithMappingClientTest {
     mockCreatingIndexResponse(config);
     mockTypesEndpoint();
     mockMappingEndpoint();
-    var indexer = new IndexerWithMappingClient(config, typeServiceMock, new TextRepoElasticClient(config.elasticsearch));
+    var indexer = new IndexerWithMappingClient(config);
     var postDocToFieldsRequest = request()
         .withMethod("POST")
         .withPath(mockFieldsEndpoint)
@@ -187,7 +197,7 @@ public class IndexerWithMappingClientTest {
     when(typeService.getType(anyShort())).thenReturn(new Type("txt", testType.getMimetype()));
     mockTypesEndpoint();
     mockMappingEndpoint();
-    var indexer = new IndexerWithMappingClient(config, typeServiceMock, new TextRepoElasticClient(config.elasticsearch));
+    var indexer = new IndexerWithMappingClient(config);
 
     mockServer.when(
         request()
@@ -223,7 +233,7 @@ public class IndexerWithMappingClientTest {
     when(typeService.getType(anyShort())).thenReturn(new Type("txt", testType.getMimetype()));
     mockTypesEndpoint();
     mockMappingEndpoint();
-    var indexer = new IndexerWithMappingClient(config, typeServiceMock, new TextRepoElasticClient(config.elasticsearch));
+    var indexer = new IndexerWithMappingClient(config);
 
     indexer.index(testFileId, testType.getMimetype(), latestVersionContents);
 

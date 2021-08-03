@@ -37,15 +37,15 @@ import static org.elasticsearch.common.xcontent.XContentType.JSON;
 import static org.elasticsearch.index.query.QueryBuilders.matchAllQuery;
 
 /**
- * Wrapper around ES RestHighLevelClient
+ * Index client using Elasticsearch RestHighLevelClient
  */
-public class TextRepoElasticClient {
+public class EsIndexClient {
 
   private static final Logger log = LoggerFactory.getLogger(IndexerWithMappingClient.class);
   final RestHighLevelClient client;
   private final ElasticsearchConfiguration config;
 
-  public TextRepoElasticClient(ElasticsearchConfiguration config) {
+  public EsIndexClient(ElasticsearchConfiguration config) {
     this.config = config;
     var restClientBuilder = builder(config.hosts
         .stream()
@@ -174,9 +174,10 @@ public class TextRepoElasticClient {
   }
 
   public void createIndex(String mapping) {
-    var request = new CreateIndexRequest(config.index)
-        .source(mapping, JSON);
+    createIndex(new CreateIndexRequest(config.index).source(mapping, JSON));
+  }
 
+  private void createIndex(CreateIndexRequest request) {
     try {
       client
           .indices()

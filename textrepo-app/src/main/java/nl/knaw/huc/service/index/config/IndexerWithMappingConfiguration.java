@@ -24,9 +24,4 @@ public class IndexerWithMappingConfiguration extends IndexerConfiguration {
   @JsonProperty
   public FieldsConfiguration fields;
 
-  /**
-   * Location of elasticsearch nodes
-   */
-  @JsonProperty
-  public ElasticsearchConfiguration elasticsearch;
 }

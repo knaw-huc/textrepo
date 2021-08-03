@@ -12,4 +12,10 @@ public class IndexerConfiguration {
   @JsonProperty
   public String name;
 
+  /**
+   * Location of elasticsearch nodes
+   */
+  @JsonProperty
+  public ElasticsearchConfiguration elasticsearch;
+
 }

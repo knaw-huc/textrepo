@@ -34,7 +34,7 @@ import nl.knaw.huc.service.index.IndexerClient;
 import nl.knaw.huc.service.index.IndexerException;
 import nl.knaw.huc.service.index.JdbiIndexService;
 import nl.knaw.huc.service.index.IndexerWithMappingClient;
-import nl.knaw.huc.service.index.TextRepoElasticClient;
+import nl.knaw.huc.service.index.EsIndexClient;
 import nl.knaw.huc.service.logging.LoggingApplicationEventListener;
 import nl.knaw.huc.service.store.JdbiContentsStorage;
 import nl.knaw.huc.service.task.JdbiTaskFactory;
@@ -114,12 +114,9 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
     var contentsService = new ContentsService(contentsStoreService);
     var typeService = new JdbiTypeService(jdbi);
 
-    var indexers = createIndexers(config, typeService);
-    var indexService = new JdbiIndexService(
-        indexers,
-        createIndexClients(config),
-        jdbi
-    );
+    var indexers = createIndexers(config);
+    var indices = createIndexClients(config);
+    var indexService = new JdbiIndexService(indexers, indices, jdbi);
 
     var healthChecks = new HashMap<String, HealthCheck>();
     healthChecks.putAll(createElasticsearchHealthChecks(config));
@@ -141,7 +138,7 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
         .fileService(new JdbiFileService(jdbi, uuidGenerator, indexService))
         .fileMetadataService(new JdbiFileMetadataService(jdbi))
         .paginator(new Paginator(config.getPagination()))
-        .taskBuilderFactory(new JdbiTaskFactory(jdbi, indexers, indexService)
+        .taskBuilderFactory(new JdbiTaskFactory(jdbi, indexService)
             .withIdGenerator(uuidGenerator))
         .typeService(typeService)
         .versionContentsService(new JdbiVersionContentsService(jdbi))
@@ -189,7 +186,7 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
         .stream()
         .collect(toMap(
             esConfig -> esConfig.elasticsearch.index + "-es-index",
-            esConfig -> new ElasticsearchHealthCheck(new TextRepoElasticClient(esConfig.elasticsearch)))
+            esConfig -> new ElasticsearchHealthCheck(new EsIndexClient(esConfig.elasticsearch)))
         );
   }
 
@@ -216,33 +213,27 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
   }
 
   private List<IndexerClient> createIndexers(
-      TextRepoConfiguration config,
-      TypeService typeService
+      TextRepoConfiguration config
   ) {
-    var customIndexers = new ArrayList<IndexerClient>();
+    var indexers = new ArrayList<IndexerClient>();
 
     for (var customIndexerConfig : config.getIndexers()) {
       try {
         log.info("Create index: {}", customIndexerConfig.elasticsearch.index);
-        var textRepoElasticClient = new TextRepoElasticClient(customIndexerConfig.elasticsearch);
-        var customFacetIndexer = new IndexerWithMappingClient(
-            customIndexerConfig,
-            typeService,
-            textRepoElasticClient
-        );
-        customIndexers.add(customFacetIndexer);
+        var indexer = new IndexerWithMappingClient(customIndexerConfig);
+        indexers.add(indexer);
       } catch (IndexerException ex) {
         log.error("Could not create indexer: {}", customIndexerConfig.elasticsearch.index, ex);
       }
     }
-    return customIndexers;
+    return indexers;
   }
 
-  private List<TextRepoElasticClient> createIndexClients(TextRepoConfiguration config) {
+  private List<EsIndexClient> createIndexClients(TextRepoConfiguration config) {
     return config
         .getIndexers()
         .stream()
-        .map(indexer -> new TextRepoElasticClient(indexer.elasticsearch))
+        .map(indexer -> new EsIndexClient(indexer.elasticsearch))
         .collect(Collectors.toList());
   }
 
