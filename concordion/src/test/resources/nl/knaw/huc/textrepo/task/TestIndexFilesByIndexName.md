@@ -29,7 +29,7 @@ Then:
 
 [ ](- "ext:embed=#retrieveResult.body")
 
-### The named index should be updated
+### The index should be updated
 When searching the autocomplete index:
 
 [ ](- "#searchResult=searchAutocompleteIndex()")

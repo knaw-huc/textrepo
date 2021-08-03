@@ -53,6 +53,14 @@ public class TestIndexMutations extends AbstractConcordionTest {
   public TestIndexMutations() throws IOException {
   }
 
+  public static class FileIndexResult {
+    public int status;
+    public String body;
+    public String found;
+    public int versionCount;
+    public String type;
+  }
+
   public String getEsQuery() {
     return asPrettyJson(this.searchAll);
   }
@@ -90,11 +98,11 @@ public class TestIndexMutations extends AbstractConcordionTest {
         .size();
     return result;
   }
+
   public static class UploadResult {
     public String versionUuid1;
     public String versionUuid2;
     public String validVersions;
-
   }
 
   public UploadResult upload(
@@ -108,14 +116,6 @@ public class TestIndexMutations extends AbstractConcordionTest {
         ? "valid versions"
         : "one or more invalid version UUIDs";
     return result;
-  }
-  public static class FileIndexResult {
-    public int status;
-    public String body;
-    public String found;
-    public int versionCount;
-    public String type;
-
   }
 
   public FileIndexResult searchFileIndexWithVersions() {
@@ -226,6 +226,7 @@ public class TestIndexMutations extends AbstractConcordionTest {
         .request()
         .post(entity(query, APPLICATION_JSON_TYPE));
   }
+
   public static class DeleteFileResult {
     public int status;
 
