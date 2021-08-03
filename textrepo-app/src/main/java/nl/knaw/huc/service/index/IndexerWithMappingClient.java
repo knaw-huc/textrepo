@@ -28,19 +28,14 @@ import static javax.ws.rs.core.Response.Status.NO_CONTENT;
 import static nl.knaw.huc.service.index.FieldsType.MULTIPART;
 
 /**
- * MappedFileIndexer creates its index in elasticsearch as defined by its es-mapping
- * which can be retrieved at its `mapping` endpoint
+ * Indexer creates ES Docs as defined by its es-mapping endpoint
  *
- * <p>MappedFileIndexer adds new files to its index in two steps:
- * 1. convert file contents to an es-doc at its `fields` endpoint
- * 2. sends index-request with es-doc to its index
- *
- * <p>MappedFileIndexer depends on a REST-service with the following endpoints:
+ * <p>Indexer depends on a REST-service with the following endpoints:
  * - GET `mapping`
  * - GET `types`
  * - POST `fields`
  *
- * <p>MappedFileIndexer is configured in config.yml
+ * <p>Indexer is configured in config.yml
  *
  * <p>Types and mapping are requesting during initialization phase
  */
@@ -110,7 +105,7 @@ public class IndexerWithMappingClient implements IndexerClient {
       throw noMappingFound(config.mapping, ex.getMessage());
     }
     if (response.getStatus() != 200) {
-      throw noMappingFound(config.mapping, "Status was %s instead of 200");
+      throw noMappingFound(config.mapping, format("Status was %s instead of 200", response.getStatus()));
     }
     return Optional.of(response.readEntity(String.class));
   }

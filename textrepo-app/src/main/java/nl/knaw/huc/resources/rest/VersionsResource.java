@@ -50,7 +50,7 @@ public class VersionsResource {
   @Timed
   @Consumes(MULTIPART_FORM_DATA)
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Create version and update indexes")
+  @ApiOperation(value = "Create version and update indices")
   @ApiResponses(value = {@ApiResponse(code = 201, response = ResultVersion.class, message = "Created")})
   public Response createVersion(
       @FormDataParam("fileId")

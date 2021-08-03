@@ -26,7 +26,7 @@ public class ContentsServiceTest {
   }
 
   @Test
-  public void testAddFile_StoresAndIndexes_whenGivenValidFile() {
+  public void testAddFile_StoresAndIndices_whenGivenValidFile() {
     SERVICE_UNDER_TEST.addContents(FILE);
     verify(STORE).storeContents(FILE);
   }

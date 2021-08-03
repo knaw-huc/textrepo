@@ -24,6 +24,15 @@ import static java.util.stream.Collectors.toMap;
 
 /**
  * Handle index mutations using configured indexers and indices
+ *
+ * <p>During initialization:
+ * - relevant mimetypes are requested from the indexers
+ * - indices are created using mappings retrieved from the indexers
+ *
+ * <p>Files are inserted/updated in two steps:
+ * 1. convert file contents into an ES doc using the relevant indexers
+ * 2. sends index-request with ES doc to relevant indices
+ *
  */
 public class JdbiIndexService implements IndexService {
 
@@ -62,7 +71,10 @@ public class JdbiIndexService implements IndexService {
 
   @Override
   public void index(@Nonnull UUID fileId) {
-    var found = jdbi.onDemand(FilesDao.class).find(fileId).orElseThrow(noSuchFile(fileId));
+    var found = jdbi
+        .onDemand(FilesDao.class)
+        .find(fileId)
+        .orElseThrow(noSuchFile(fileId));
     index(found);
   }
 
@@ -105,13 +117,13 @@ public class JdbiIndexService implements IndexService {
 
   @Override
   public void delete(UUID fileId) {
-    indices.forEach(indexClient -> indexClient.delete(fileId));
+    indices.forEach(index -> index.delete(fileId));
   }
 
   @Override
   public List<UUID> getAllIds() {
     var result = new HashSet<UUID>();
-    indices.forEach(indexClient -> result.addAll(indexClient.getAllIds()));
+    indices.forEach(index -> result.addAll(index.getAllIds()));
     return result.stream().toList();
   }
 
