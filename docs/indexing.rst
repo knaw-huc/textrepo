@@ -40,11 +40,9 @@ Which tasks change indices?
 - ``POST /task/index``      -> Multiple endpoints for reindexing a subset of files
 - ``POST /task/import/documents/{externalId}/{typeName}`` -> index the imported file (optional, default)
 - ``DELETE /task/delete/documents/{externalId}`` -> delete files of document (optional, default)
+- ``DELETE /task/index/deleted-files`` -> new, delete all ES-docs of deletes files, meaning: delete all ES doc IDs not present in |tr| database
 
 Note: when calling any other endpoints (e.g. mutating metadata or external IDs), reindexing should done by calling one of the indexing tasks.
-
-TODO, deletes:
-- ``DELETE /task/index/deleted-files`` -> new, delete all ES-docs of deletes files, meaning: delete all ES doc IDs not present in |tr| database
 
 Indexing workflow
 -----------------
