@@ -31,7 +31,6 @@ import nl.knaw.huc.service.file.metadata.JdbiFileMetadataService;
 import nl.knaw.huc.service.health.ElasticsearchHealthCheck;
 import nl.knaw.huc.service.health.IndexerHealthCheck;
 import nl.knaw.huc.service.index.IndexerClient;
-import nl.knaw.huc.service.index.IndexerException;
 import nl.knaw.huc.service.index.JdbiIndexService;
 import nl.knaw.huc.service.index.IndexerWithMappingClient;
 import nl.knaw.huc.service.index.EsIndexClient;
@@ -218,13 +217,9 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
     var indexers = new ArrayList<IndexerClient>();
 
     for (var customIndexerConfig : config.getIndexers()) {
-      try {
-        log.info("Create index: {}", customIndexerConfig.elasticsearch.index);
-        var indexer = new IndexerWithMappingClient(customIndexerConfig);
-        indexers.add(indexer);
-      } catch (IndexerException ex) {
-        log.error("Could not create indexer: {}", customIndexerConfig.elasticsearch.index, ex);
-      }
+      log.info("Create index: {}", customIndexerConfig.elasticsearch.index);
+      var indexer = new IndexerWithMappingClient(customIndexerConfig);
+      indexers.add(indexer);
     }
     return indexers;
   }

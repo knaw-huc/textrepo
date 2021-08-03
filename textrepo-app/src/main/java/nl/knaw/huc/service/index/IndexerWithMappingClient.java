@@ -49,7 +49,7 @@ public class IndexerWithMappingClient implements IndexerClient {
 
   public IndexerWithMappingClient(
       IndexerWithMappingConfiguration config
-  ) throws IndexerException {
+  ) {
     this.config = config;
     this.mimetypes = getIndexerTypes();
     this.fieldsRequestFactory = new IndexerFieldsRequestFactory(config.fields.url, this.requestClient);

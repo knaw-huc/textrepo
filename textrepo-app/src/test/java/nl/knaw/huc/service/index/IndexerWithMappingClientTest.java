@@ -79,7 +79,7 @@ public class IndexerWithMappingClientTest {
   }
 
   @Test
-  public void instantiatingIndexer_requestsMappingAndTypes() throws IOException, IndexerException {
+  public void instantiatingIndexer_requestsMappingAndTypes() throws IOException {
     var config = createConfig(ORIGINAL.getName());
     var getTypesRequest = mockTypesEndpoint();
     var getMappingRequest = mockMappingEndpoint();
@@ -99,7 +99,7 @@ public class IndexerWithMappingClientTest {
   }
 
   @Test
-  public void index_requestsIndexEndpoint() throws IOException, IndexerException {
+  public void index_requestsIndexEndpoint() throws IOException {
     var config = createConfig(ORIGINAL.getName());
     mockTypesEndpoint();
     mockMappingEndpoint();
@@ -124,7 +124,7 @@ public class IndexerWithMappingClientTest {
   }
 
   @Test
-  public void index_requestsIndexEndpoint_whenIndexerDefinesNoTypes() throws IOException, IndexerException {
+  public void index_requestsIndexEndpoint_whenIndexerDefinesNoTypes() throws IOException {
     var config = createConfig(ORIGINAL.getName());
 
     // Types endpoint without types:
@@ -159,7 +159,7 @@ public class IndexerWithMappingClientTest {
     mockIndexServer.verify(putFileRequest, once());
   }
 
-  private JdbiIndexService createIndexService(IndexerWithMappingConfiguration config) throws IndexerException {
+  private JdbiIndexService createIndexService(IndexerWithMappingConfiguration config) {
     var indexer = new IndexerWithMappingClient(config);
     var index = new EsIndexClient(config.elasticsearch);
     return new JdbiIndexService(singletonList(indexer), singletonList(index), jdbiMock);
@@ -167,7 +167,7 @@ public class IndexerWithMappingClientTest {
 
   @Test
   public void instantiatingElasticCustomFacetIndexer_requestsFieldUsingMultipart_whenTypeIsMultipart()
-      throws IOException, IndexerException {
+      throws IOException {
     var expectedContentTypeHeader = "multipart/form-data;boundary=.*";
     var config = createConfig(MULTIPART.getName());
     var fileId = UUID.randomUUID();
@@ -188,7 +188,7 @@ public class IndexerWithMappingClientTest {
   }
 
   @Test
-  public void index_usesOriginal_whenFieldsRequestTypeIsOriginal() throws IndexerException, IOException {
+  public void index_usesOriginal_whenFieldsRequestTypeIsOriginal() throws IOException {
     var config = createConfig(ORIGINAL.getName());
     var testFileId = UUID.randomUUID();
     var testFile = new TextRepoFile(testFileId, (short) 1);
@@ -223,7 +223,7 @@ public class IndexerWithMappingClientTest {
   }
 
   @Test
-  public void index_usesMultipartFormData_whenFieldsTypeIsMultipart() throws IndexerException, IOException {
+  public void index_usesMultipartFormData_whenFieldsTypeIsMultipart() throws IOException {
     var fieldsType = MULTIPART.getName();
     var config = createConfig(fieldsType);
     var testFileId = UUID.randomUUID();
