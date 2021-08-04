@@ -105,7 +105,7 @@ public class VersionsResource {
   @DELETE
   @Path("/{id}")
   @ApiOperation(value = "Delete version")
-  @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
+  @ApiResponses(value = {@ApiResponse(code = 204, message = "No Content")})
   public Response deleteVersion(
       @PathParam("id")
       @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
@@ -115,7 +115,7 @@ public class VersionsResource {
     log.debug("Delete version: id={}", id);
     versionService.delete(id);
     log.debug("Deleted version");
-    return Response.ok().build();
+    return Response.noContent().build();
   }
 
 }

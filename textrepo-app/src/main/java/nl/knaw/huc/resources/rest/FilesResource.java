@@ -102,7 +102,7 @@ public class FilesResource {
   @DELETE
   @Path("/{id}")
   @ApiOperation(value = "Delete file")
-  @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
+  @ApiResponses(value = {@ApiResponse(code = 200, message = "No Content")})
   public Response deleteFile(
       @PathParam("id")
       @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
@@ -112,7 +112,7 @@ public class FilesResource {
     log.debug("Delete file: id={}", id);
     fileService.delete(id);
     log.debug("Deleted file");
-    return Response.ok().build();
+    return Response.noContent().build();
   }
 
 }

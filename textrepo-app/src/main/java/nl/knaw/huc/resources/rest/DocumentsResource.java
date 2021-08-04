@@ -139,7 +139,7 @@ public class DocumentsResource {
   @DELETE
   @Path("/{id}")
   @ApiOperation(value = "Delete document")
-  @ApiResponses(value = {@ApiResponse(code = 200, message = "OK")})
+  @ApiResponses(value = {@ApiResponse(code = 200, message = "No Content")})
   public Response deleteDocument(
       @PathParam("id")
       @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
@@ -149,7 +149,7 @@ public class DocumentsResource {
     log.debug("Delete document: id={}", id);
     documentService.delete(id);
     log.debug("Deleted document");
-    return Response.ok().build();
+    return Response.noContent().build();
   }
 
 }

@@ -34,7 +34,7 @@ When deleting version [ ](- "c:echo=#versionId") with a `DELETE` to [/rest/versi
 
 Then:
 
- - The response status should be: [200](- "?=#deleteResult.status").
+ - The response status should be: [204](- "?=#deleteResult.status").
 
 ## Retrieve contents after version is deleted
 When retrieving the contents of a file with a `GET` to [/rest/versions/{id}/contents](- "#getEndpoint") 

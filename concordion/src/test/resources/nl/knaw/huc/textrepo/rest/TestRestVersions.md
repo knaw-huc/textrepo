@@ -61,7 +61,7 @@ When deleting version [ ](- "c:echo=#createResult.id") with a `DELETE` to [/rest
 
 Then:
 
- - The response status should be: [200](- "?=#deleteResult.status").
+ - The response status should be: [204](- "?=#deleteResult.status").
 
 ## Retrieve version after deleting
 When retrieving version [ ](- "c:echo=#createResult.id") with a `GET` to [/rest/versions/{id}](- "#getEndpoint"):

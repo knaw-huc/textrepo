@@ -90,7 +90,7 @@ When deleting latest version [ ](- "c:echo=#versions.versionUuid2") with a `DELE
 
 Then:
 
-- The response status should be: [200](- "?=#deleteResult.status").
+- The response status should be: [204](- "?=#deleteResult.status").
 
 Find all ES docs using query:
 
@@ -114,7 +114,7 @@ When deleting file [ ](- "c:echo=#fileId1") with a `DELETE` to [/rest/files/{id}
 
 Then:
 
-- The response status should be: [200](- "?=#deleteResult.status").
+- The response status should be: [204](- "?=#deleteResult.status").
 
 Find all ES docs using query:
 
