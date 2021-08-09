@@ -69,17 +69,17 @@ Then:
 - The response status should be: [200](- "?=#searchResult.status");
 - The document count should be: [1](- "?=#searchResult.count");
 
-## Remove deleted files from indices
+## Remove orphaned docs from indices
 
 You can remove all ES docs with IDs that do not exist in the files table. 
 
-When removing all deleted files still present in indices with a `DELETE` to [/task/index/deleted-files](- "#deleteDeletedTaskEndpoint")
+When removing all deleted files still present in indices with a `DELETE` to [/task/index/orphaned-files](- "#deleteOrphanedTaskEndpoint")
 
-[ ](- "#deleteDeletedResult=deleteDeleted(#deleteDeletedTaskEndpoint)")
+[ ](- "#deleteOrphanedResult=deleteOrphaned(#deleteOrphanedTaskEndpoint)")
 
 Then:
 
-- The response status should be: [200](- "?=#deleteDeletedResult.status");
+- The response status should be: [200](- "?=#deleteOrphanedResult.status");
 
 When searching the file index:
 
