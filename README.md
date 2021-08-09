@@ -5,13 +5,13 @@
 [![Docker version](https://img.shields.io/docker/v/knawhuc/textrepo-app?sort=semver)](https://hub.docker.com/repository/docker/knawhuc/textrepo-app/tags?page=1&ordering=last_updated)
 
 
-Repository to store texts, including their metadata and versions.
+Backend repository to store and index corpora with metadata and versions.
 
 Documentation can be found at [readthedocs](http://textrepo.readthedocs.io/en/latest/).
 
 ## License
 
-Copyright 2020 Koninklijke Nederlandse Akademie van Wetenschappen
+Copyright 2019-2021 Koninklijke Nederlandse Akademie van Wetenschappen
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

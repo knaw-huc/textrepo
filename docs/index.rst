@@ -3,7 +3,7 @@
 |tr|
 ===============
 
-|tr| offers an API to store, version and index the texts and metadata of a corpus.
+Backend repository to store and index corpora with metadata and versions.
 
 Features
 --------
@@ -12,7 +12,7 @@ Features
    - Keep track of file versions
    - Link all file types to the same source document
    - Store metadata about documents, files and versions
-- Use Rest API to create, read, update and delete your texts
+- Use Rest API to create, read, update and delete texts
 - Search files using stock and custom `elasticsearch <https://www.elastic.co/elasticsearch/>`_ indices
 - Explore API with `concordion <https://concordion.org/>`_ and `swagger <https://swagger.io/>`_
 
@@ -68,7 +68,7 @@ https://github.com/knaw-huc/textrepo
 License
 -------
 
-Copyright 2020 Koninklijke Nederlandse Akademie van Wetenschappen
+Copyright 2019-2021 Koninklijke Nederlandse Akademie van Wetenschappen
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
