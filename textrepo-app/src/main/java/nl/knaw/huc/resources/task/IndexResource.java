@@ -96,19 +96,19 @@ public class IndexResource {
   }
 
   @DELETE
-  @Path("/deleted-files")
+  @Path("/orphaned-files")
   @ApiOperation(value = "Delete all ES docs from all indices " +
       "with IDs not present in the files table.")
   @Produces(APPLICATION_JSON)
   public Response removeDeletedFilesFromIndices() {
-    log.debug("Remove all deleted files");
+    log.debug("Remove all orphaned files");
 
     final var deletedFiles = factory
         .getRemoveDeletedFilesFromIndicesBuilder()
         .build()
         .run();
 
-    log.debug(format("Removed %s deleted files from all indices: %s", deletedFiles.size(), deletedFiles));
+    log.debug(format("Removed %s orphaned files from all indices: %s", deletedFiles.size(), deletedFiles));
     return Response.ok().build();
   }
 

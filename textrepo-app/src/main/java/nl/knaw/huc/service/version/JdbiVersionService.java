@@ -1,5 +1,7 @@
 package nl.knaw.huc.service.version;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.core.Page;
 import nl.knaw.huc.core.PageParams;
@@ -19,12 +21,9 @@ import javax.annotation.Nonnull;
 import javax.ws.rs.NotFoundException;
 import java.time.LocalDateTime;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 import static java.lang.String.format;
-import static nl.knaw.huc.helpers.PsqlExceptionHelper.violatesConstraint;
 
 public class JdbiVersionService implements VersionService {
 
@@ -90,25 +89,34 @@ public class JdbiVersionService implements VersionService {
         .orElseThrow(() -> new NotFoundException(format("Version %s could not be found", id)));
   }
 
+
+  private static class DeleteVersionResult {
+    public boolean deletedIsLatestVersion;
+    public Version version;
+
+    public DeleteVersionResult(Version version, boolean deletedIsLatestVersion) {
+      this.version = version;
+      this.deletedIsLatestVersion = deletedIsLatestVersion;
+    }
+  }
+
   @Override
   public void delete(UUID id) {
-    var deletedIsLatestVersion = new AtomicBoolean();
-    var version = new AtomicReference<Version>();
-    jdbi.useTransaction(handle -> {
+    var result = jdbi.inTransaction(handle -> {
       var versionsDao = handle.attach(VersionsDao.class);
       var found = versionsDao.find(id);
 
       if (found.isEmpty()) {
         throw new NotFoundException(format("Could not find version with id %s", id));
       }
-
-      version.set(found.get());
-      deletedIsLatestVersion.set(isLatestVersion(version.get(), versionsDao));
+      var latestVersion = isLatestVersion(found.get(), versionsDao);
       new DeleteVersion(found.get()).executeIn(handle);
+      return new DeleteVersionResult(found.get(), latestVersion);
     });
 
-    if (deletedIsLatestVersion.get()) {
-      indexService.index(version.get().getFileId());
+    if (result.deletedIsLatestVersion) {
+      log.debug("Deleted version was latest version: reindex file");
+      indexService.index(result.version.getFileId());
     }
   }
 

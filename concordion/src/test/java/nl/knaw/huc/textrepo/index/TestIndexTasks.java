@@ -176,8 +176,8 @@ public class TestIndexTasks extends AbstractConcordionTest {
     return result;
   }
 
-  public static StatusAndBodyResult deleteDeleted(String deleteDeletedTaskEndpoint) {
-    var indexTaskUrl = HOST + deleteDeletedTaskEndpoint;
+  public static StatusAndBodyResult deleteOrphaned(String deleteOrphanedTaskEndpoint) {
+    var indexTaskUrl = HOST + deleteOrphanedTaskEndpoint;
 
     var request = client
         .target(indexTaskUrl)
