@@ -1,9 +1,9 @@
 package nl.knaw.huc.service.task.deleter;
 
 import nl.knaw.huc.core.Document;
-import nl.knaw.huc.db.DocumentFilesDao;
 import nl.knaw.huc.service.index.IndexService;
 import nl.knaw.huc.service.task.DeleteDocument;
+import nl.knaw.huc.service.task.DeleteFromIndices;
 import nl.knaw.huc.service.task.FindDocumentByExternalId;
 import nl.knaw.huc.service.task.Task;
 import org.jdbi.v3.core.Jdbi;
@@ -57,10 +57,7 @@ public class JdbiDeleteDocumentTaskBuilder implements DeleteDocumentTaskBuilder 
         final var doc = new FindDocumentByExternalId(externalId).executeIn(transaction);
 
         if (indexing) {
-          transaction
-              .attach(DocumentFilesDao.class)
-              .findFilesByDocumentId(doc.getId())
-              .forEach(file -> indexService.delete(file.getId()));
+          new DeleteFromIndices(indexService, doc.getId()).executeIn(transaction);
         }
 
         new DeleteDocument(doc).executeIn(transaction);
