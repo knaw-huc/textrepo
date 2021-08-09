@@ -64,6 +64,7 @@ public class ImportResource {
           "Use <code>asLatestVersion=true</code> to force the creation of a new version, " +
           "when its contents are different from the current latest version, " +
           "even when the new contents match those of older versions.<br />" +
+          "Use <code>index=false</code> to skip indexing of file.<br />" +
           "See also the Concordion Integration Tests &gt; \"Task API\".",
       tags = {"task", "import", "documents", "files", "versions", "contents"})
   @ApiResponses(value = {
@@ -91,6 +92,9 @@ public class ImportResource {
       @QueryParam("asLatestVersion")
       @DefaultValue("false")
           boolean asLatestVersion,
+      @QueryParam("index")
+      @DefaultValue("true")
+          boolean index,
       @NotNull
       @FormDataParam("contents")
           InputStream uploadedInputStream,
@@ -115,6 +119,7 @@ public class ImportResource {
                .withTypeName(typeName)
                .forFilename(fileDetail.getFileName())
                .withContents(uploadedInputStream)
+               .withIndexing(index)
                .build();
 
     final var result = importTask.run();

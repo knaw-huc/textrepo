@@ -2,7 +2,7 @@
 
 All files relevant to a specific indexer can be indexed and reindexed. Other indices will not be touched.
 
-To index, we first create three documents, each with one file and version, using the import task, which does not index: 
+To index, we first create three documents, each with one file and version, using the import task with query param `index=false`: 
 
  - using type: [text](- "#type");
 
@@ -29,7 +29,7 @@ Then:
 
 [ ](- "ext:embed=#retrieveResult.body")
 
-### The named index should be updated
+### The index should be updated
 When searching the autocomplete index:
 
 [ ](- "#searchResult=searchAutocompleteIndex()")

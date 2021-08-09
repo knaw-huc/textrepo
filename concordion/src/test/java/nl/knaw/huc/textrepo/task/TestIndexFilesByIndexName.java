@@ -83,7 +83,9 @@ public class TestIndexFilesByIndexName extends AbstractConcordionTest {
             APPLICATION_OCTET_STREAM_TYPE)
         );
 
-    var importUrl = HOST + "/task/import/documents/" + externalId + "/" + type + "?allowNewDocument=true";
+    var importUrl = HOST + "/task/import/documents/" + externalId + "/" + type
+        + "?allowNewDocument=true"
+        + "&index=false";
     var request = client
         .register(MultiPartFeature.class)
         .target(importUrl)

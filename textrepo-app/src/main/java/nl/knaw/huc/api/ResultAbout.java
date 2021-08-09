@@ -17,7 +17,7 @@ public class ResultAbout {
     this.contentDecompressionLimit = config.getResourceLimits().contentDecompressionLimit + "kB";
 
     this.indexers = config
-        .getCustomFacetIndexers()
+        .getIndexers()
         .stream()
         .map(ResultIndexer::new)
         .collect(toList());

@@ -1,4 +1,4 @@
-package nl.knaw.huc.service.index;
+package nl.knaw.huc.service.index.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -6,9 +6,7 @@ import java.util.List;
 
 public class ElasticsearchConfiguration {
   /**
-   * Hosts of the Elasticsearch cluster with which to connect.
-   * All hosts must be in the format $hostname[:$port].
-   * The port defaults to 9200.
+   * Hosts of the Elasticsearch cluster to connect to
    */
   @JsonProperty
   public List<String> hosts;

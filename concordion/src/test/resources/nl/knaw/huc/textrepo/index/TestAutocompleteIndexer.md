@@ -3,7 +3,7 @@
 The autocomplete indexer indexes every file using elasticsearchs Completion Suggester. 
 New file versions will overwrite older versions in the es index. 
 
-To retrieve suggestions, we first create three document with three text files: 
+To retrieve suggestions, we first create three documents with three text files: 
   
 [ ](- "#docId1=createDocument()")
 [ ](- "#fileId1=createFile(#docId1)")

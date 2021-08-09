@@ -13,15 +13,14 @@ Features
    - Link all file types to the same source document
    - Store metadata about documents, files and versions
 - Use Rest API to create, read, update and delete your texts
-- Search files using stock and custom `elasticsearch <https://www.elastic.co/elasticsearch/>`_ indexes
+- Search files using stock and custom `elasticsearch <https://www.elastic.co/elasticsearch/>`_ indices
 - Explore API with `concordion <https://concordion.org/>`_ and `swagger <https://swagger.io/>`_
-
 
 ----
 
 .. figure:: textrepo-overview.png
 
-   Schematic overview of the |TR|: **a)** search in corpus; **b+c)** manage file types, versions and metadata of corpus; **d+e)** build custom indexes that are automatically kept in sync with corpus; **f+g)** store all data in a unified database model.
+   Schematic overview of the |TR|: **a)** search in corpus; **b+c)** manage file types, versions and metadata of corpus; **d+e)** build custom indices that are automatically kept in sync with corpus; **f+g)** store all data in a unified database model.
 
 
 Installation

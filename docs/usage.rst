@@ -28,7 +28,7 @@ After running the docker-compose setup, you can:
 - Find basic use cases in the integration test `results <http://localhost:8080/concordion/nl/knaw/huc/textrepo/Textrepo.html>`_
 - Add some test data: ``./scripts/populate.sh``
 - Explore REST-API of |tr| using `swaggger <http://localhost:8080/textrepo/swagger>`_
-- Search in `full-text <http://localhost:8080/index/full-text>`_ and `autocomplete <http://localhost:8080/index/autocomplete>`_ indexes
+- Search in `full-text <http://localhost:8080/index/full-text>`_ and `autocomplete <http://localhost:8080/index/autocomplete>`_ indices
 
 FAQ
 ---

@@ -4,6 +4,8 @@ import net.minidev.json.JSONArray;
 import nl.knaw.huc.textrepo.AbstractConcordionTest;
 import nl.knaw.huc.textrepo.util.RestUtils;
 
+import java.util.List;
+
 import static java.lang.String.format;
 import static java.util.Map.of;
 import static nl.knaw.huc.textrepo.util.TestUtils.asPrettyJson;
@@ -69,11 +71,12 @@ public class TestRestDocumentFiles extends AbstractConcordionTest {
     public int status;
     public String body;
     public String hasOld;
+    public int count;
     public String externalDocumentId;
     public int total;
   }
 
-  public PaginateResult paginate(Object endpoint, String docId, String offset, String limit, String textFileId) {
+  public PaginateResult paginate(Object endpoint, String docId, String offset, String limit) {
     var url = replaceInUrlAndQueryParams(endpoint, of(
         "{id}", docId,
         "{offset}", offset,
@@ -88,11 +91,10 @@ public class TestRestDocumentFiles extends AbstractConcordionTest {
     var result = new PaginateResult();
     result.status = response.getStatus();
     var body = response.readEntity(String.class);
-    System.out.println("document files body: " + body);
     result.body = asPrettyJson(body);
     var json = jsonPath.parse(body);
-    var versionId = json.read("$.items[0].id", String.class);
-    result.hasOld = versionId.equals(textFileId) ? "text" : format("[%s] isn't [%s]", versionId, textFileId);
+    var found = jsonPath.parse(body).read("$.items", List.class);
+    result.count = found.size();
     result.externalDocumentId = json.read("$.items[0].externalId");
     result.total = json.read("$.total", Integer.class);
     return result;

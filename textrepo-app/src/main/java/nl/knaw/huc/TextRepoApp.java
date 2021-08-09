@@ -30,11 +30,10 @@ import nl.knaw.huc.service.file.JdbiFileService;
 import nl.knaw.huc.service.file.metadata.JdbiFileMetadataService;
 import nl.knaw.huc.service.health.ElasticsearchHealthCheck;
 import nl.knaw.huc.service.health.IndexerHealthCheck;
-import nl.knaw.huc.service.index.Indexer;
-import nl.knaw.huc.service.index.IndexerException;
-import nl.knaw.huc.service.index.MappedIndexer;
-import nl.knaw.huc.service.index.TextRepoElasticClient;
-import nl.knaw.huc.service.index.request.IndexerFieldsRequestFactory;
+import nl.knaw.huc.service.index.IndexerClient;
+import nl.knaw.huc.service.index.JdbiIndexService;
+import nl.knaw.huc.service.index.IndexerWithMappingClient;
+import nl.knaw.huc.service.index.EsIndexClient;
 import nl.knaw.huc.service.logging.LoggingApplicationEventListener;
 import nl.knaw.huc.service.store.JdbiContentsStorage;
 import nl.knaw.huc.service.task.JdbiTaskFactory;
@@ -59,6 +58,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
 
@@ -113,14 +113,17 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
     var contentsService = new ContentsService(contentsStoreService);
     var typeService = new JdbiTypeService(jdbi);
 
-    var indexers = createElasticCustomFacetIndexers(config, typeService);
+    var indexers = createIndexers(config);
+    var indices = createIndexClients(config);
+    var indexService = new JdbiIndexService(indexers, indices, jdbi);
+
     var healthChecks = new HashMap<String, HealthCheck>();
     healthChecks.putAll(createElasticsearchHealthChecks(config));
     healthChecks.putAll(createIndexerHealthChecks(config));
 
     var limits = config.getResourceLimits();
     var contentDecompressionLimit = limits.contentDecompressionLimit * Limits.BYTES_PER_KB;
-    var versionService = new JdbiVersionService(jdbi, contentsService, indexers, uuidGenerator);
+    var versionService = new JdbiVersionService(jdbi, contentsService, uuidGenerator, indexService);
 
     var viewBuilderFactory = createViewBuilderFactory();
 
@@ -131,10 +134,10 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
         .dashboardService(new JdbiDashboardService(jdbi))
         .documentService(new JdbiDocumentService(jdbi, uuidGenerator))
         .documentMetadataService(new JdbiDocumentMetadataService(jdbi))
-        .fileService(new JdbiFileService(jdbi, versionService, uuidGenerator))
+        .fileService(new JdbiFileService(jdbi, uuidGenerator, indexService))
         .fileMetadataService(new JdbiFileMetadataService(jdbi))
         .paginator(new Paginator(config.getPagination()))
-        .taskBuilderFactory(new JdbiTaskFactory(jdbi, indexers)
+        .taskBuilderFactory(new JdbiTaskFactory(jdbi, indexService)
             .withIdGenerator(uuidGenerator))
         .typeService(typeService)
         .versionContentsService(new JdbiVersionContentsService(jdbi))
@@ -178,17 +181,17 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
 
   private Map<String, HealthCheck> createElasticsearchHealthChecks(TextRepoConfiguration config) {
     return config
-        .getCustomFacetIndexers()
+        .getIndexers()
         .stream()
         .collect(toMap(
-            ix -> ix.elasticsearch.index + "-es-index",
-            ix -> new ElasticsearchHealthCheck(ix.elasticsearch.index, new TextRepoElasticClient(ix.elasticsearch)))
+            esConfig -> esConfig.elasticsearch.index + "-es-index",
+            esConfig -> new ElasticsearchHealthCheck(new EsIndexClient(esConfig.elasticsearch)))
         );
   }
 
   private Map<String, HealthCheck> createIndexerHealthChecks(TextRepoConfiguration config) {
     return config
-        .getCustomFacetIndexers()
+        .getIndexers()
         .stream()
         .collect(toMap(
             ix -> ix.elasticsearch.index + "-indexer-service",
@@ -208,27 +211,25 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
     return jdbi;
   }
 
-  private List<Indexer> createElasticCustomFacetIndexers(
-      TextRepoConfiguration config,
-      TypeService typeService
+  private List<IndexerClient> createIndexers(
+      TextRepoConfiguration config
   ) {
-    var customIndexers = new ArrayList<Indexer>();
+    var indexers = new ArrayList<IndexerClient>();
 
-    for (var customIndexerConfig : config.getCustomFacetIndexers()) {
-      try {
-        log.info("Create index: {}", customIndexerConfig.elasticsearch.index);
-        var textRepoElasticClient = new TextRepoElasticClient(customIndexerConfig.elasticsearch);
-        var customFacetIndexer = new MappedIndexer(
-            customIndexerConfig,
-            typeService,
-            textRepoElasticClient
-        );
-        customIndexers.add(customFacetIndexer);
-      } catch (IndexerException ex) {
-        log.error("Could not create indexer: {}", customIndexerConfig.elasticsearch.index, ex);
-      }
+    for (var customIndexerConfig : config.getIndexers()) {
+      log.info("Create index: {}", customIndexerConfig.elasticsearch.index);
+      var indexer = new IndexerWithMappingClient(customIndexerConfig);
+      indexers.add(indexer);
     }
-    return customIndexers;
+    return indexers;
+  }
+
+  private List<EsIndexClient> createIndexClients(TextRepoConfiguration config) {
+    return config
+        .getIndexers()
+        .stream()
+        .map(indexer -> new EsIndexClient(indexer.elasticsearch))
+        .collect(Collectors.toList());
   }
 
 }

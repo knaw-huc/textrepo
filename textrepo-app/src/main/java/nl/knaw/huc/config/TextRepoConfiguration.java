@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
-import nl.knaw.huc.service.index.MappedIndexerConfiguration;
+import nl.knaw.huc.service.index.config.IndexerWithMappingConfiguration;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -23,7 +23,7 @@ public class TextRepoConfiguration extends Configuration {
 
   @Valid
   @NotNull
-  private List<MappedIndexerConfiguration> indexers = new ArrayList<>();
+  private List<IndexerWithMappingConfiguration> indexers = new ArrayList<>();
 
   @Valid
   @NotNull
@@ -75,12 +75,12 @@ public class TextRepoConfiguration extends Configuration {
   }
 
   @JsonProperty("indexers")
-  public List<MappedIndexerConfiguration> getCustomFacetIndexers() {
+  public List<IndexerWithMappingConfiguration> getIndexers() {
     return indexers;
   }
 
   @JsonProperty("indexers")
-  public void setCustomFacetIndexers(List<MappedIndexerConfiguration> indexers) {
+  public void setCustomFacetIndexers(List<IndexerWithMappingConfiguration> indexers) {
     this.indexers = indexers;
   }
 

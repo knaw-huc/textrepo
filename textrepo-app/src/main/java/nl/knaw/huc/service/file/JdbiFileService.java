@@ -1,14 +1,11 @@
 package nl.knaw.huc.service.file;
 
-import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.core.TextRepoFile;
-import nl.knaw.huc.core.Version;
 import nl.knaw.huc.db.DocumentFilesDao;
 import nl.knaw.huc.db.FilesDao;
-import nl.knaw.huc.service.version.VersionService;
+import nl.knaw.huc.service.index.IndexService;
 import org.jdbi.v3.core.Jdbi;
 
-import javax.annotation.Nonnull;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import java.util.UUID;
@@ -19,33 +16,31 @@ import static java.lang.String.format;
 public class JdbiFileService implements FileService {
 
   private final Jdbi jdbi;
-  private final VersionService versionService;
   private final Supplier<UUID> fileIdGenerator;
+  private final IndexService indexService;
 
   public JdbiFileService(
       Jdbi jdbi,
-      VersionService versionService,
-      Supplier<UUID> fileIdGenerator) {
+      Supplier<UUID> fileIdGenerator,
+      IndexService indexService
+  ) {
     this.jdbi = jdbi;
-    this.versionService = versionService;
     this.fileIdGenerator = fileIdGenerator;
-  }
-
-  public Version addFile(@Nonnull Contents contents, TextRepoFile file) {
-    return versionService.createNewVersion(file.getId(), contents);
+    this.indexService = indexService;
   }
 
   @Override
-  public TextRepoFile insert(UUID docId, TextRepoFile textRepoFile) {
-    textRepoFile.setId(fileIdGenerator.get());
+  public TextRepoFile insert(UUID docId, TextRepoFile file) {
+    file.setId(fileIdGenerator.get());
     jdbi.useTransaction(transaction -> {
       var documentFilesDao = transaction.attach(DocumentFilesDao.class);
       var filesDao = transaction.attach(FilesDao.class);
-      checkFileByDocAndType(docId, textRepoFile, documentFilesDao);
-      filesDao.insert(textRepoFile.getId(), textRepoFile.getTypeId());
-      documentFilesDao.insert(docId, textRepoFile.getId());
+      throwBadRequestWhenDocHasFileWithType(docId, file, documentFilesDao);
+      filesDao.insert(file.getId(), file.getTypeId());
+      documentFilesDao.insert(docId, file.getId());
     });
-    return textRepoFile;
+    indexService.index(file);
+    return file;
   }
 
   @Override
@@ -63,21 +58,22 @@ public class JdbiFileService implements FileService {
   }
 
   @Override
-  public TextRepoFile upsert(UUID docId, TextRepoFile textRepoFile) {
+  public TextRepoFile upsert(UUID docId, TextRepoFile file) {
     jdbi.useTransaction(transaction -> {
       var documentFilesDao = transaction.attach(DocumentFilesDao.class);
       var filesDao = transaction.attach(FilesDao.class);
-      checkFileByDocAndType(docId, textRepoFile, documentFilesDao);
-      filesDao.upsert(textRepoFile);
-      documentFilesDao.upsert(docId, textRepoFile.getId());
+      throwBadRequestWhenDocHasFileWithType(docId, file, documentFilesDao);
+      filesDao.upsert(file);
+      documentFilesDao.upsert(docId, file.getId());
     });
-    return textRepoFile;
+    indexService.index(file);
+    return file;
   }
 
   /**
-   * @throws BadRequestException when another file exists with same type and docId:
+   * @throws BadRequestException when document already has file with type
    */
-  private void checkFileByDocAndType(UUID docId, TextRepoFile file, DocumentFilesDao documentFilesDao) {
+  private void throwBadRequestWhenDocHasFileWithType(UUID docId, TextRepoFile file, DocumentFilesDao documentFilesDao) {
     var found = documentFilesDao.findFile(docId, file.getTypeId());
 
     if (found.isPresent() && !found.get().getId().equals(file.getId())) {
@@ -91,6 +87,7 @@ public class JdbiFileService implements FileService {
   @Override
   public void delete(UUID fileId) {
     files().delete(fileId);
+    indexService.delete(fileId);
   }
 
   private FilesDao files() {

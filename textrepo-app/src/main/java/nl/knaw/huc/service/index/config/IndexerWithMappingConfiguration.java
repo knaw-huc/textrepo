@@ -1,8 +1,9 @@
-package nl.knaw.huc.service.index;
+package nl.knaw.huc.service.index.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import nl.knaw.huc.service.index.FieldsConfiguration;
 
-public class MappedIndexerConfiguration extends IndexerConfiguration {
+public class IndexerWithMappingConfiguration extends IndexerConfiguration {
 
   /**
    * GET Endpoint to request es index mapping that is used to create custom index
@@ -23,9 +24,4 @@ public class MappedIndexerConfiguration extends IndexerConfiguration {
   @JsonProperty
   public FieldsConfiguration fields;
 
-  /**
-   * Location of elasticsearch nodes
-   */
-  @JsonProperty
-  public ElasticsearchConfiguration elasticsearch;
 }
