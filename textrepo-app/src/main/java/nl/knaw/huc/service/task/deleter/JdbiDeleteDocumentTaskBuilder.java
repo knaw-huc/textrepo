@@ -11,11 +11,12 @@ import org.jdbi.v3.core.Jdbi;
 import static java.util.Objects.requireNonNull;
 
 public class JdbiDeleteDocumentTaskBuilder implements DeleteDocumentTaskBuilder {
+
   private final Jdbi jdbi;
+  private final IndexService indexService;
 
   private String externalId;
   private boolean indexing;
-  private final IndexService indexService;
 
   public JdbiDeleteDocumentTaskBuilder(Jdbi jdbi, IndexService indexService) {
     this.jdbi = jdbi;
