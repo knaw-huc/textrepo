@@ -108,7 +108,7 @@ public class IndexResource {
         .build()
         .run();
 
-    log.debug(format("Removed %s deleted files from all indices: %s", deletedFiles.size(), deletedFiles));
+    log.debug(format("Removed %s orphaned files from all indices: %s", deletedFiles.size(), deletedFiles));
     return Response.ok().build();
   }
 
