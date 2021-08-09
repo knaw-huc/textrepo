@@ -42,8 +42,10 @@ import static org.elasticsearch.index.query.QueryBuilders.matchAllQuery;
 public class EsIndexClient {
 
   private static final Logger log = LoggerFactory.getLogger(IndexerWithMappingClient.class);
-  final RestHighLevelClient client;
   private final ElasticsearchConfiguration config;
+
+  // Package private to make it testable:
+  final RestHighLevelClient client;
 
   public EsIndexClient(ElasticsearchConfiguration config) {
     this.config = config;
