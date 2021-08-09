@@ -64,7 +64,16 @@ When deleting file [ ](- "c:echo=#createResult.id") with a `DELETE` to [/rest/fi
 
 Then:
 
- - The response status should be: [200](- "?=#deleteResult.status").
+ - The response status should be: [204](- "?=#deleteResult.status").
+
+### Delete an unknown resource
+When deleting file [ ](- "c:echo=#createResult.id") for a second time with a `DELETE` to [/rest/files/{id}](- "#deleteEndpoint"):
+
+[ ](- "#deleteResult=delete(#deleteEndpoint, #createResult.id)")
+
+Then:
+
+ - The response status should also be: [204](- "?=#deleteResult.status").
 
 ### Retrieve file after deleting
 When retrieving file [ ](- "c:echo=#createResult.id") with a `GET` to [/rest/files/{id}](- "#getEndpoint"):

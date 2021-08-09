@@ -13,6 +13,15 @@ Do not forget to include:
 ### Changed
 - Environment variable NGINX_LOCATION no longer has ends in a trailing '/'
 
+## [1.18.0]
+
+### Changed
+- Indexers should have a types endpoint.
+- RESTful deletes result in a `204 no content`
+
+### Added
+Indices are now created, updated and deleted when versions and files are created, updated and deleted. 
+
 ## [1.17.0]
 
 ### Changed

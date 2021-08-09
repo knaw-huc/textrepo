@@ -73,7 +73,7 @@ When deleting document [ ](- "c:echo=#createResult.id") with a `DELETE` to [/res
 
 Then:
 
- - The response status should be: [200](- "?=#deleteResult.status").
+ - The response status should be: [204](- "?=#deleteResult.status").
 
 ### Retrieve document after deleting
 When retrieving document [ ](- "c:echo=#createResult.id") with a `GET` to [/rest/documents/{id}](- "#getEndpoint"):
