@@ -44,13 +44,16 @@ public class JdbiRemoveDeletedFilesFromIndicesBuilder implements RemoveDeletedFi
 
     @Override
     public List<UUID> run() {
+      log.debug("Removing all orphaned docs from indices");
       var esDocIds = indexService.getAllIds();
+      log.debug("Got {} ES doc IDs from all indices", esDocIds.size());
       var fileIds = jdbi.onDemand(FilesDao.class).getAll();
-
+      log.debug("Got {} database file IDs", fileIds.size());
       var toDelete = new ArrayList<>(esDocIds);
       toDelete.removeAll(fileIds);
-
+      log.debug("Found {} IDs not present in database", toDelete.size());
       toDelete.forEach(indexService::delete);
+      log.debug("Removed orphaned docs");
       return toDelete;
     }
   }
