@@ -16,7 +16,8 @@ Do not forget to include:
 ## [1.18.0]
 
 ### Changed
-Indexers should have a types endpoint.
+- Indexers should have a types endpoint.
+- RESTful deletes result in a `204 no content`
 
 ### Added
 Indices are now created, updated and deleted when versions and files are created, updated and deleted. 
