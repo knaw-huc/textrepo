@@ -7,6 +7,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+
+/**
+ * IndexerClient communicates with an indexer:
+ * - request relevant file types
+ * - post files to mapping endpoint
+ */
 public interface IndexerClient {
 
   /**
