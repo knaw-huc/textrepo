@@ -14,11 +14,11 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.OptionalInt;
 import java.util.function.Function;
-import java.util.stream.IntStream;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
@@ -49,7 +49,7 @@ public class SegmentViewerResource {
       // Warning: O(n) ahead. Because the anchors are just listed in a json array, we're forced
       // to iterate the entire thing; converting it to a hash for this one-time lookup does not
       // help, obviously.
-      // Let's at least attempt to find both start and end in the same run.
+      // Let us at least attempt to find both start and end in the same run.
       for (var i = 0; i < anchors.length; i++) {
         final var id = anchors[i].id;
         if (startAnchor.equals(id)) {
@@ -72,14 +72,19 @@ public class SegmentViewerResource {
         throw new NotFoundException(String.format("end anchor [%s] not found", endAnchor));
       }
 
-      // As anchors are just Strings, let's be lenient if caller switches up start and end.
-      final var start = Math.min(startIndex.getAsInt(), endIndex.getAsInt());
-      final var end = Math.max(startIndex.getAsInt(), endIndex.getAsInt());
+      // As anchors are just Strings, let's be lenient if caller switches up 'start' and 'end'.
+      final int from = Math.min(startIndex.getAsInt(), endIndex.getAsInt());
+      final int upto = Math.max(startIndex.getAsInt(), endIndex.getAsInt()) + 1;
 
-      final List<String> selectedSegments = new ArrayList<>(end - start + 1);
-      IntStream.rangeClosed(start, end).forEach(i -> selectedSegments.add(textSegments.segments[i]));
+      log.debug("Sublist indexes: from=[{}], upto=[{}]", from, upto);
 
-      return selectedSegments;
+      // Do not copy elements, but create a 'view' on the selected array elements
+      final List<String> selectedSegments = Arrays.asList(textSegments.segments).subList(from, upto);
+
+      log.debug("Selected element count: {}", selectedSegments.size());
+
+      // Return a read-only view on the selection
+      return Collections.unmodifiableList(selectedSegments);
     });
   }
 
