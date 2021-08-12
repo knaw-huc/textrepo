@@ -16,3 +16,6 @@ See also: `./docs/example-production.rst`
 
 ## Upgrading existing databases
 If the current database should not be erased, make sure to use `./mark-db-baseline.sh` when upgrading to this version.
+
+## Multiple deployments
+When deploying multiple |tr|'s on the same server, you want to change the names of services and volumes as defined in docker-compose. This is to prevent possible clashes and mixups of docker volumes and containers. 
