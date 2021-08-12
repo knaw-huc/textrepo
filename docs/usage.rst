@@ -46,3 +46,20 @@ you may have to: ::
 
 (Source: https://github.com/docker-library/elasticsearch/issues/111)
 
+----
+
+If you run into this Elasticsearch error: ::
+
+  max file descriptors [4096] for elasticsearch process is too low, increase to at least [65535]
+
+you may have to increase the ulimits.nofile of elasticsearch in your docker-compose.yml: ::
+
+  services:
+    elasticsearch:
+      ulimits:
+        nofile:
+          soft: 65535
+          hard: 262144
+
+(Source: https://stackoverflow.com/a/58024178)
+
