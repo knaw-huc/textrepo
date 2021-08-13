@@ -50,6 +50,7 @@ Documentation
     Production Setup <example-production>
     Backup Elasticsearch <example-backup-es>
     Content Coordinate System [Experimental] <experimental>
+    FAQ <faq>
 
 Support
 -------
