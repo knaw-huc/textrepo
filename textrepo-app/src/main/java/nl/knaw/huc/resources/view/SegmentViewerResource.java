@@ -3,11 +3,13 @@ package nl.knaw.huc.resources.view;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.annotations.ApiParam;
 import nl.knaw.huc.core.Contents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
@@ -20,6 +22,7 @@ import java.util.List;
 import java.util.OptionalInt;
 import java.util.function.Function;
 
+import static java.lang.String.format;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 @Path("") // Without @Path("") this subresource is not resolved during tests
@@ -34,8 +37,54 @@ public class SegmentViewerResource {
   }
 
   @GET
+  @Path("index/{startIndex}/{endIndex}")
+  public List<String> getTextBetweenIndexAnchors(
+      @PathParam("startIndex")
+      @ApiParam(required = true, example = "0")
+      @NotNull
+          RangeParam startParam,
+      @PathParam("endIndex")
+      @ApiParam(required = true, example = "0")
+      @NotNull
+          RangeParam endParam
+  ) {
+    log.debug("getTextBetweenIndexAnchors: startIndex=[{}], endParam=[{}]", startParam, endParam);
+
+    return visitSegments(contents, textSegments -> {
+      final int limit = textSegments.segments.length;
+
+      final var from = startParam.get().orElse(0);
+      if (from > limit) {
+        throw new NotFoundException(
+            format("startIndex is limited by source text; must be <= %d, but is: %d", limit, from));
+      }
+
+      final var upto = endParam.get().orElse(limit);
+      if (upto > limit) {
+        throw new NotFoundException(
+            format("endIndex is limited by source text; must be <= %d, but is: %d", limit, upto));
+      }
+
+      if (upto < from) {
+        throw new BadRequestException(
+            format("endIndex must be >= startIndex (%d), but is: %d", from, upto));
+      }
+
+      log.debug("Sublist indexes: from=[{}], upto=[{}]", from, upto);
+
+      // Do not copy elements, but create a 'view' on the selected array elements
+      final List<String> selectedSegments = Arrays.asList(textSegments.segments).subList(from, upto);
+
+      log.debug("Selected element count: {}", selectedSegments.size());
+
+      // Return a read-only view on the selection
+      return Collections.unmodifiableList(selectedSegments);
+    });
+  }
+
+  @GET
   @Path("anchor/{startAnchor}/{endAnchor}")
-  public List<String> getTextBetweenAnchors(
+  public List<String> getTextBetweenNamedAnchors(
       @PathParam("startAnchor") @NotBlank String startAnchor,
       @PathParam("endAnchor") @NotBlank String endAnchor
   ) {
