@@ -59,7 +59,7 @@ public class SegmentViewerResource {
             format("startIndex is limited by source text; must be <= %d, but is: %d", limit, from));
       }
 
-      final var upto = endParam.get().orElse(limit);
+      final var upto = endParam.get().orElse(limit - 1);
       if (upto > limit) {
         throw new NotFoundException(
             format("endIndex is limited by source text; must be <= %d, but is: %d", limit, upto));
@@ -73,7 +73,7 @@ public class SegmentViewerResource {
       log.debug("Sublist indexes: from=[{}], upto=[{}]", from, upto);
 
       // Do not copy elements, but create a 'view' on the selected array elements
-      final List<String> selectedSegments = Arrays.asList(textSegments.segments).subList(from, upto);
+      final List<String> selectedSegments = Arrays.asList(textSegments.segments).subList(from, upto + 1);
 
       log.debug("Selected element count: {}", selectedSegments.size());
 
