@@ -51,35 +51,83 @@ public class SegmentViewerResource {
     log.debug("getTextBetweenIndexAnchors: startIndex=[{}], endParam=[{}]", startParam, endParam);
 
     return visitSegments(contents, textSegments -> {
-      final int limit = textSegments.segments.length;
-
-      final var from = startParam.get().orElse(0);
-      if (from > limit) {
-        throw new NotFoundException(
-            format("startIndex is limited by source text; must be <= %d, but is: %d", limit, from));
-      }
-
-      final var upto = endParam.get().orElse(limit - 1);
-      if (upto > limit) {
-        throw new NotFoundException(
-            format("endIndex is limited by source text; must be <= %d, but is: %d", limit, upto));
-      }
-
-      if (upto < from) {
-        throw new BadRequestException(
-            format("endIndex must be >= startIndex (%d), but is: %d", from, upto));
-      }
-
-      log.debug("Sublist indexes: from=[{}], upto=[{}]", from, upto);
-
-      // Do not copy elements, but create a 'view' on the selected array elements
-      final List<String> selectedSegments = Arrays.asList(textSegments.segments).subList(from, upto + 1);
-
-      log.debug("Selected element count: {}", selectedSegments.size());
+      final var selectedSegments = getFragment(startParam, endParam, textSegments);
 
       // Return a read-only view on the selection
       return Collections.unmodifiableList(selectedSegments);
     });
+  }
+
+  @GET
+  @Path("index/{startIndex}/{startCharOffset}/{endIndex}/{endCharOffset}")
+  public List<String> getSubstringBetweenIndexAnchors(
+      @PathParam("startIndex")
+      @ApiParam(required = true, example = "0")
+      @NotNull
+          RangeParam startIndex,
+      @PathParam("startCharOffset")
+      @ApiParam(required = true, example = "0")
+      @NotNull
+          RangeParam startCharOffset,
+      @PathParam("endIndex")
+      @ApiParam(required = true, example = "0")
+      @NotNull
+          RangeParam endIndex,
+      @PathParam("endCharOffset")
+      @ApiParam(required = true, example = "0")
+      @NotNull
+          RangeParam endCharOffset
+  ) {
+    log.debug(
+        "getSubstringBetweenIndexAnchors: startIndex=[{}], startCharOffset=[{}], endIndex=[{}], endCharOffset=[{}]",
+        startIndex, startCharOffset, endIndex, endCharOffset);
+
+    return visitSegments(contents, textSegments -> {
+      final var fragment = getFragment(startIndex, endIndex, textSegments);
+
+      final var first = fragment.get(0);
+      final var firstIndex = startCharOffset.get().orElse(0);
+      final var replaceFirst = first.substring(firstIndex);
+      log.debug("first=[{}], firstIndex=[{}], replaceFirst=[{}]", first, firstIndex, replaceFirst);
+      fragment.set(0, replaceFirst);
+
+      final var last = fragment.get(fragment.size() - 1);
+      final int lastIndex = endCharOffset.get().orElse(last.length());
+      final var replaceLast = last.substring(0, lastIndex);
+      log.debug("last=[{}], lastIndex=[{}], replaceLast=[{}]", last, lastIndex, replaceLast);
+      fragment.set(fragment.size() - 1, replaceLast);
+
+      return Collections.unmodifiableList(fragment);
+    });
+  }
+
+  private List<String> getFragment(RangeParam startIndex, RangeParam endIndex, TextSegments textSegments) {
+    final int limit = textSegments.segments.length;
+
+    final var from = startIndex.get().orElse(0);
+    if (from > limit) {
+      throw new NotFoundException(
+          format("startIndex is limited by source text; must be <= %d, but is: %d", limit, from));
+    }
+
+    final var upto = endIndex.get().orElse(limit - 1);
+    if (upto > limit) {
+      throw new NotFoundException(
+          format("endIndex is limited by source text; must be <= %d, but is: %d", limit, upto));
+    }
+
+    if (upto < from) {
+      throw new BadRequestException(
+          format("endIndex must be >= startIndex (%d), but is: %d", from, upto));
+    }
+
+    log.debug("Sublist indexes: from=[{}], upto=[{}]", from, upto);
+
+    // Do not copy elements, but create a 'view' on the selected array elements
+    final List<String> selectedSegments = Arrays.asList(textSegments.segments).subList(from, upto + 1);
+
+    log.debug("Selected element count: {}", selectedSegments.size());
+    return selectedSegments;
   }
 
   @GET
