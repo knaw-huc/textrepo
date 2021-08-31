@@ -1,10 +1,10 @@
 package nl.knaw.huc.resources.view;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiParam;
 import nl.knaw.huc.core.Contents;
+import nl.knaw.huc.resources.view.segmented.TextSegments;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.OptionalInt;
 import java.util.function.Function;
 
-import static java.lang.String.format;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 @Path("") // Without @Path("") this subresource is not resolved during tests
@@ -50,12 +49,8 @@ public class SegmentViewerResource {
   ) {
     log.debug("getTextBetweenIndexAnchors: startIndex=[{}], endParam=[{}]", startParam, endParam);
 
-    return visitSegments(contents, textSegments -> {
-      final var selectedSegments = getFragment(startParam, endParam, textSegments);
-
-      // Return a read-only view on the selection
-      return Collections.unmodifiableList(selectedSegments);
-    });
+    final var resolver = new SegmentResolver(startParam, endParam);
+    return visitSegments(contents, resolver::resolve);
   }
 
   @GET
@@ -83,7 +78,10 @@ public class SegmentViewerResource {
         startIndex, startCharOffset, endIndex, endCharOffset);
 
     return visitSegments(contents, textSegments -> {
-      final var fragment = getFragment(startIndex, endIndex, textSegments);
+      final var resolver = new SegmentResolver(startIndex, endIndex);
+
+      final var fragment = resolver.resolve(textSegments);
+      log.debug("Fragment element count: {}", fragment.size());
 
       final var first = fragment.get(0);
       final var firstIndex = startCharOffset.get().orElse(0);
@@ -99,35 +97,6 @@ public class SegmentViewerResource {
 
       return Collections.unmodifiableList(fragment);
     });
-  }
-
-  private List<String> getFragment(RangeParam startIndex, RangeParam endIndex, TextSegments textSegments) {
-    final int limit = textSegments.segments.length;
-
-    final var from = startIndex.get().orElse(0);
-    if (from > limit) {
-      throw new NotFoundException(
-          format("startIndex is limited by source text; must be <= %d, but is: %d", limit, from));
-    }
-
-    final var upto = endIndex.get().orElse(limit - 1);
-    if (upto > limit) {
-      throw new NotFoundException(
-          format("endIndex is limited by source text; must be <= %d, but is: %d", limit, upto));
-    }
-
-    if (upto < from) {
-      throw new BadRequestException(
-          format("endIndex must be >= startIndex (%d), but is: %d", from, upto));
-    }
-
-    log.debug("Sublist indexes: from=[{}], upto=[{}]", from, upto);
-
-    // Do not copy elements, but create a 'view' on the selected array elements
-    final List<String> selectedSegments = Arrays.asList(textSegments.segments).subList(from, upto + 1);
-
-    log.debug("Selected element count: {}", selectedSegments.size());
-    return selectedSegments;
   }
 
   @GET
@@ -194,24 +163,5 @@ public class SegmentViewerResource {
       log.debug("failed to parse contents as json: {}", e.toString());
       throw new BadRequestException("contents are not valid json");
     }
-  }
-
-  static class TextSegments {
-    @JsonProperty("resource_id")
-    public String resourceId;
-
-    @JsonProperty("_ordered_segments")
-    public String[] segments;
-
-    @JsonProperty("_anchors")
-    public TextAnchor[] anchors;
-  }
-
-  static class TextAnchor {
-    @JsonProperty("identifier")
-    public String id;
-
-    @JsonProperty("sequence_number")
-    public long index;
   }
 }

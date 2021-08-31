@@ -16,10 +16,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
+import java.util.StringJoiner;
 
+import static java.lang.System.lineSeparator;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT_ENCODING;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
 import static javax.ws.rs.core.MediaType.TEXT_PLAIN_TYPE;
 
@@ -34,7 +35,7 @@ import static javax.ws.rs.core.MediaType.TEXT_PLAIN_TYPE;
  * Then, TextViewerResource will take care of the rest of the URI, addressing the following:
  * - …/chars/{startOffset}/{endOffset}
  * - …/lines/{startLine}/{endLine}
- * - …range/{startLine}/startCharOffset}/{endLine}/{endCharOffset}
+ * - …range/{startLine}/{startCharOffset}/{endLine}/{endCharOffset}
  *
  * @see nl.knaw.huc.resources.view.ViewBuilderFactory
  * @see nl.knaw.huc.resources.view.ViewVersionResource
@@ -94,9 +95,13 @@ public class TextViewerResource {
     log.debug("getLines: startParam=[{}], endParam=[{}]", startParam, endParam);
 
     final var resolver = new TextLinesResolver(startParam, endParam);
-    final var result = resolver.resolve(contents);
+    final var fragment = resolver.resolve(contents);
 
-    return asPlainTextAttachment(result, acceptEncoding);
+    // convert fragment to lineSeparated string without leading but with trailing lineSeparator
+    final var result = new StringJoiner(lineSeparator(), "", lineSeparator());
+    fragment.forEach(result::add);
+
+    return asPlainTextAttachment(result.toString(), acceptEncoding);
   }
 
   @GET
