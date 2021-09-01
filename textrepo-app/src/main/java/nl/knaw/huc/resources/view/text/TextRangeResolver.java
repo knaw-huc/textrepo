@@ -59,7 +59,7 @@ public class TextRangeResolver extends TextResolver<String> {
           throw new BadRequestException(format("endCharOffset (%d) > max endLine offset (%d)", endCharOffset,
               indexOfLastChar));
         }
-      } else { // on all lines other than startLine
+      } else { // on all lines other than endLine
         endCharOffset = indexOfLastChar;
       }
 
