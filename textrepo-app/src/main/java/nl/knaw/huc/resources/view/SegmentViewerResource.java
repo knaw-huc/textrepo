@@ -90,8 +90,8 @@ public class SegmentViewerResource {
       fragment.set(0, replaceFirst);
 
       final var last = fragment.get(fragment.size() - 1);
-      final int lastIndex = endCharOffset.get().orElse(last.length());
-      final var replaceLast = last.substring(0, lastIndex);
+      final int lastIndex = endCharOffset.get().orElse(last.length() - 1);
+      final var replaceLast = last.substring(0, lastIndex + 1);
       log.debug("last=[{}], lastIndex=[{}], replaceLast=[{}]", last, lastIndex, replaceLast);
       fragment.set(fragment.size() - 1, replaceLast);
 
