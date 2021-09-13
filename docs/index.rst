@@ -32,6 +32,8 @@ To run the |tr| locally, run in a new directory: ::
 
     git clone https://github.com/knaw-huc/textrepo .
     cd examples/production
+    curl -o scripts/wait-for-it.sh https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh
+    chmod +x scripts/wait-for-it.sh
     ./start-prod.sh
 
 Read more on `basic usage <usage.html>`_
