@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiParam;
 import nl.knaw.huc.core.Contents;
+import nl.knaw.huc.resources.view.segmented.TextAnchor;
 import nl.knaw.huc.resources.view.segmented.TextSegments;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,17 +84,7 @@ public class SegmentViewerResource {
       final var fragment = resolver.resolve(textSegments);
       log.debug("Fragment element count: {}", fragment.size());
 
-      final var first = fragment.get(0);
-      final var firstIndex = startCharOffset.get().orElse(0);
-      final var replaceFirst = first.substring(firstIndex);
-      log.debug("first=[{}], firstIndex=[{}], replaceFirst=[{}]", first, firstIndex, replaceFirst);
-      fragment.set(0, replaceFirst);
-
-      final var last = fragment.get(fragment.size() - 1);
-      final int lastIndex = endCharOffset.get().orElse(last.length() - 1);
-      final var replaceLast = last.substring(0, lastIndex + 1);
-      log.debug("last=[{}], lastIndex=[{}], replaceLast=[{}]", last, lastIndex, replaceLast);
-      fragment.set(fragment.size() - 1, replaceLast);
+      reduceToSubstrings(fragment, startCharOffset, endCharOffset);
 
       return Collections.unmodifiableList(fragment);
     });
@@ -105,53 +96,104 @@ public class SegmentViewerResource {
       @PathParam("startAnchor") @NotBlank String startAnchor,
       @PathParam("endAnchor") @NotBlank String endAnchor
   ) {
-    log.debug("Get text between start [{}] and end [{}] anchors", startAnchor, endAnchor);
+    log.debug("getTextBetweenNamedAnchors: startAnchor=[{}], endAnchor=[{}]", startAnchor, endAnchor);
 
     return visitSegments(contents, textSegments -> {
-      OptionalInt startIndex = OptionalInt.empty();
-      OptionalInt endIndex = OptionalInt.empty();
       final var anchors = textSegments.anchors;
 
-      // Warning: O(n) ahead. Because the anchors are just listed in a json array, we're forced
-      // to iterate the entire thing; converting it to a hash for this one-time lookup does not
-      // help, obviously.
-      // Let us at least attempt to find both start and end in the same run.
-      for (var i = 0; i < anchors.length; i++) {
-        final var id = anchors[i].id;
-        if (startAnchor.equals(id)) {
-          startIndex = OptionalInt.of(i);
-        }
-        if (endAnchor.equals(id)) {
-          endIndex = OptionalInt.of(i);
-        }
-
-        if (startIndex.isPresent() && endIndex.isPresent()) {
-          break; // early exit once both have been found
-        }
-      }
-
-      if (startIndex.isEmpty()) {
-        throw new NotFoundException(String.format("start anchor [%s] not found", startAnchor));
-      }
-
-      if (endIndex.isEmpty()) {
-        throw new NotFoundException(String.format("end anchor [%s] not found", endAnchor));
-      }
-
-      // As anchors are just Strings, let's be lenient if caller switches up 'start' and 'end'.
-      final int from = Math.min(startIndex.getAsInt(), endIndex.getAsInt());
-      final int upto = Math.max(startIndex.getAsInt(), endIndex.getAsInt()) + 1;
-
-      log.debug("Sublist indexes: from=[{}], upto=[{}]", from, upto);
-
-      // Do not copy elements, but create a 'view' on the selected array elements
-      final List<String> selectedSegments = Arrays.asList(textSegments.segments).subList(from, upto);
-
-      log.debug("Selected element count: {}", selectedSegments.size());
+      final List<String> fragment = getSelectedSegments(startAnchor, endAnchor, textSegments, anchors);
+      log.debug("Fragment element count: {}", fragment.size());
 
       // Return a read-only view on the selection
-      return Collections.unmodifiableList(selectedSegments);
+      return Collections.unmodifiableList(fragment);
     });
+  }
+
+  @GET
+  @Path("anchor/{startAnchor}/{startCharOffset}/{endAnchor}/{endCharOffset}")
+  public List<String> getSubstringBetweenNamedAnchors(
+      @PathParam("startAnchor")
+      @ApiParam(required = true, example = "anchor-c961d9f2-2289-11ec-a58b-9b7020422d23")
+      @NotNull
+          String startAnchor,
+      @PathParam("startCharOffset")
+      @ApiParam(required = true, example = "0")
+      @NotNull
+          RangeParam startCharOffset,
+      @PathParam("endAnchor")
+      @ApiParam(required = true, example = "anchor-ca359c9c-2289-11ec-bef5-2ba86650726e")
+      @NotNull
+          String endAnchor,
+      @PathParam("endCharOffset")
+      @ApiParam(required = true, example = "0")
+      @NotNull
+          RangeParam endCharOffset
+  ) {
+    log.debug("getTextBetweenNamedAnchors: startAnchor=[{}], startCharOffset=[{}], endAnchor=[{}], endCharOffset=[{}]",
+        startAnchor, startCharOffset, endAnchor, endCharOffset);
+
+    return visitSegments(contents, textSegments -> {
+      final var anchors = textSegments.anchors;
+      final var fragment = getSelectedSegments(startAnchor, endAnchor, textSegments, anchors);
+
+      reduceToSubstrings(fragment, startCharOffset, endCharOffset);
+
+      return Collections.unmodifiableList(fragment);
+    });
+  }
+
+  private void reduceToSubstrings(List<String> fragment, RangeParam startCharOffset, RangeParam endCharOffset) {
+    final var first = fragment.get(0);
+    final var firstIndex = startCharOffset.get().orElse(0);
+    final var replaceFirst = first.substring(firstIndex);
+    log.debug("first=[{}], firstIndex=[{}], replaceFirst=[{}]", first, firstIndex, replaceFirst);
+    fragment.set(0, replaceFirst);
+
+    final var last = fragment.get(fragment.size() - 1);
+    final int lastIndex = endCharOffset.get().orElse(last.length() - 1);
+    final var replaceLast = last.substring(0, lastIndex + 1);
+    log.debug("last=[{}], lastIndex=[{}], replaceLast=[{}]", last, lastIndex, replaceLast);
+    fragment.set(fragment.size() - 1, replaceLast);
+  }
+
+  private List<String> getSelectedSegments(String startAnchor, String endAnchor,
+                                           TextSegments textSegments, TextAnchor[] anchors) {
+    // Warning: O(n) ahead. Because the anchors are just listed in a json array, we're forced
+    // to iterate the entire thing; converting it to a hash for this one-time lookup does not
+    // help, obviously.
+    // Let us at least attempt to find both start and end in the same run.
+    OptionalInt startIndex = OptionalInt.empty();
+    OptionalInt endIndex = OptionalInt.empty();
+    for (var i = 0; i < anchors.length; i++) {
+      final var id = anchors[i].id;
+      if (startAnchor.equals(id)) {
+        startIndex = OptionalInt.of(i);
+      }
+      if (endAnchor.equals(id)) {
+        endIndex = OptionalInt.of(i);
+      }
+
+      if (startIndex.isPresent() && endIndex.isPresent()) {
+        break; // early exit once both have been found
+      }
+    }
+
+    if (startIndex.isEmpty()) {
+      throw new NotFoundException(String.format("start anchor [%s] not found", startAnchor));
+    }
+
+    if (endIndex.isEmpty()) {
+      throw new NotFoundException(String.format("end anchor [%s] not found", endAnchor));
+    }
+
+    // As anchors are just Strings, let's be lenient if caller switches up 'start' and 'end'.
+    final int from = Math.min(startIndex.getAsInt(), endIndex.getAsInt());
+    final int upto = Math.max(startIndex.getAsInt(), endIndex.getAsInt()) + 1;
+
+    log.debug("Sublist indexes: from=[{}], upto=[{}]", from, upto);
+
+    // Do not copy elements, but create a 'view' on the selected array elements
+    return Arrays.asList(textSegments.segments).subList(from, upto);
   }
 
   private <T> T visitSegments(Contents contents, Function<TextSegments, T> visitor) {
