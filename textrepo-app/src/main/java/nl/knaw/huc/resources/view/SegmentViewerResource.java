@@ -107,7 +107,7 @@ public class SegmentViewerResource {
   ) {
     log.debug("getTextBetweenNamedAnchors: startAnchor=[{}], endAnchor=[{}]", startAnchor, endAnchor);
 
-    return visitSegments(contents, textSegments -> getSelectedSegments(startAnchor, endAnchor, textSegments));
+    return visitSegments(contents, textSegments -> getFragment(textSegments, startAnchor, endAnchor));
   }
 
   @GET
@@ -134,24 +134,28 @@ public class SegmentViewerResource {
         startAnchor, startCharOffset, endAnchor, endCharOffset);
 
     return visitSegments(contents, textSegments -> {
-      final var fragment = getSelectedSegments(startAnchor, endAnchor, textSegments);
-
-      final var first = fragment.segments[0];
-      final var firstIndex = startCharOffset.get().orElse(0);
-      final var replaceFirst = first.substring(firstIndex);
-      log.debug("first=[{}], firstIndex=[{}], replaceFirst=[{}]", first, firstIndex, replaceFirst);
-      fragment.segments[0] = replaceFirst;
-
-      final var last = fragment.segments[fragment.segments.length - 1];
-      final var lastIndex = endCharOffset.get().orElse(last.length() - 1);
-      final var replaceLast = last.substring(0, lastIndex + 1);
-      log.debug("last=[{}], lastIndex=[{}], replaceLast=[{}]", last, lastIndex, replaceLast);
-      fragment.segments[fragment.segments.length - 1] = replaceLast;
+      final var fragment = getFragment(textSegments, startAnchor, endAnchor);
+      narrowStart(fragment.segments, startCharOffset);
+      narrowEnd(fragment.segments, endCharOffset);
       return fragment;
     });
   }
 
-  private TextSegments getSelectedSegments(String startAnchor, String endAnchor, TextSegments segments) {
+  private void narrowStart(String[] segments, RangeParam startCharOffset) {
+    final var firstIndex = 0;
+    final var firstSegment = segments[firstIndex];
+    final var firstCharIndex = startCharOffset.get().orElse(0);
+    segments[firstIndex] = firstSegment.substring(firstCharIndex);
+  }
+
+  private void narrowEnd(String[] segments, RangeParam endCharOffset) {
+    final var lastIndex = segments.length - 1;
+    final var lastSegment = segments[lastIndex];
+    final var lastCharIndex = endCharOffset.get().orElse(lastSegment.length() - 1);
+    segments[lastIndex] = lastSegment.substring(0, lastCharIndex + 1);
+  }
+
+  private TextSegments getFragment(TextSegments segments, String startAnchor, String endAnchor) {
     // Warning: O(n) ahead. Because the anchors are just listed in a json array, we're forced
     // to iterate the entire thing; converting it to a hash for this one-time lookup does not
     // help, obviously.
