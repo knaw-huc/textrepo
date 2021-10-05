@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiParam;
 import nl.knaw.huc.core.Contents;
-import nl.knaw.huc.resources.view.segmented.TextAnchor;
 import nl.knaw.huc.resources.view.segmented.TextSegments;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,7 +83,17 @@ public class SegmentViewerResource {
       final var fragment = resolver.resolve(textSegments);
       log.debug("Fragment element count: {}", fragment.size());
 
-      reduceToSubstrings(fragment, startCharOffset, endCharOffset);
+      final var first = fragment.get(0);
+      final var firstIndex = startCharOffset.get().orElse(0);
+      final var replaceFirst = first.substring(firstIndex);
+      log.debug("first=[{}], firstIndex=[{}], replaceFirst=[{}]", first, firstIndex, replaceFirst);
+      fragment.set(0, replaceFirst);
+
+      final var last = fragment.get(fragment.size() - 1);
+      final int lastIndex = endCharOffset.get().orElse(last.length() - 1);
+      final var replaceLast = last.substring(0, lastIndex + 1);
+      log.debug("last=[{}], lastIndex=[{}], replaceLast=[{}]", last, lastIndex, replaceLast);
+      fragment.set(fragment.size() - 1, replaceLast);
 
       return Collections.unmodifiableList(fragment);
     });
@@ -92,26 +101,18 @@ public class SegmentViewerResource {
 
   @GET
   @Path("anchor/{startAnchor}/{endAnchor}")
-  public List<String> getTextBetweenNamedAnchors(
+  public TextSegments getTextBetweenNamedAnchors(
       @PathParam("startAnchor") @NotBlank String startAnchor,
       @PathParam("endAnchor") @NotBlank String endAnchor
   ) {
     log.debug("getTextBetweenNamedAnchors: startAnchor=[{}], endAnchor=[{}]", startAnchor, endAnchor);
 
-    return visitSegments(contents, textSegments -> {
-      final var anchors = textSegments.anchors;
-
-      final List<String> fragment = getSelectedSegments(startAnchor, endAnchor, textSegments, anchors);
-      log.debug("Fragment element count: {}", fragment.size());
-
-      // Return a read-only view on the selection
-      return Collections.unmodifiableList(fragment);
-    });
+    return visitSegments(contents, textSegments -> getSelectedSegments(startAnchor, endAnchor, textSegments));
   }
 
   @GET
   @Path("anchor/{startAnchor}/{startCharOffset}/{endAnchor}/{endCharOffset}")
-  public List<String> getSubstringBetweenNamedAnchors(
+  public TextSegments getSubstringBetweenNamedAnchors(
       @PathParam("startAnchor")
       @ApiParam(required = true, example = "anchor-c961d9f2-2289-11ec-a58b-9b7020422d23")
       @NotNull
@@ -133,43 +134,36 @@ public class SegmentViewerResource {
         startAnchor, startCharOffset, endAnchor, endCharOffset);
 
     return visitSegments(contents, textSegments -> {
-      final var anchors = textSegments.anchors;
-      final var fragment = getSelectedSegments(startAnchor, endAnchor, textSegments, anchors);
+      final var fragment = getSelectedSegments(startAnchor, endAnchor, textSegments);
 
-      reduceToSubstrings(fragment, startCharOffset, endCharOffset);
+      final var first = fragment.segments[0];
+      final var firstIndex = startCharOffset.get().orElse(0);
+      final var replaceFirst = first.substring(firstIndex);
+      log.debug("first=[{}], firstIndex=[{}], replaceFirst=[{}]", first, firstIndex, replaceFirst);
+      fragment.segments[0] = replaceFirst;
 
-      return Collections.unmodifiableList(fragment);
+      final var last = fragment.segments[fragment.segments.length - 1];
+      final var lastIndex = endCharOffset.get().orElse(last.length() - 1);
+      final var replaceLast = last.substring(0, lastIndex + 1);
+      log.debug("last=[{}], lastIndex=[{}], replaceLast=[{}]", last, lastIndex, replaceLast);
+      fragment.segments[fragment.segments.length - 1] = replaceLast;
+      return fragment;
     });
   }
 
-  private void reduceToSubstrings(List<String> fragment, RangeParam startCharOffset, RangeParam endCharOffset) {
-    final var first = fragment.get(0);
-    final var firstIndex = startCharOffset.get().orElse(0);
-    final var replaceFirst = first.substring(firstIndex);
-    log.debug("first=[{}], firstIndex=[{}], replaceFirst=[{}]", first, firstIndex, replaceFirst);
-    fragment.set(0, replaceFirst);
-
-    final var last = fragment.get(fragment.size() - 1);
-    final int lastIndex = endCharOffset.get().orElse(last.length() - 1);
-    final var replaceLast = last.substring(0, lastIndex + 1);
-    log.debug("last=[{}], lastIndex=[{}], replaceLast=[{}]", last, lastIndex, replaceLast);
-    fragment.set(fragment.size() - 1, replaceLast);
-  }
-
-  private List<String> getSelectedSegments(String startAnchor, String endAnchor,
-                                           TextSegments textSegments, TextAnchor[] anchors) {
+  private TextSegments getSelectedSegments(String startAnchor, String endAnchor, TextSegments segments) {
     // Warning: O(n) ahead. Because the anchors are just listed in a json array, we're forced
     // to iterate the entire thing; converting it to a hash for this one-time lookup does not
     // help, obviously.
     // Let us at least attempt to find both start and end in the same run.
     OptionalInt startIndex = OptionalInt.empty();
     OptionalInt endIndex = OptionalInt.empty();
-    for (var i = 0; i < anchors.length; i++) {
-      final var id = anchors[i].id;
-      if (startAnchor.equals(id)) {
+    for (var i = 0; i < segments.anchors.length; i++) {
+      final var curAnchor = segments.anchors[i];
+      if (startAnchor.equals(curAnchor.id)) {
         startIndex = OptionalInt.of(i);
       }
-      if (endAnchor.equals(id)) {
+      if (endAnchor.equals(curAnchor.id)) {
         endIndex = OptionalInt.of(i);
       }
 
@@ -192,8 +186,13 @@ public class SegmentViewerResource {
 
     log.debug("Sublist indexes: from=[{}], upto=[{}]", from, upto);
 
-    // Do not copy elements, but create a 'view' on the selected array elements
-    return Arrays.asList(textSegments.segments).subList(from, upto);
+    final var fragment = new TextSegments();
+    fragment.resourceId = segments.resourceId;
+    fragment.anchors = Arrays.copyOfRange(segments.anchors, from, upto);
+    fragment.segments = Arrays.copyOfRange(segments.segments, from, upto);
+    log.debug("fragment: {}", fragment);
+
+    return fragment;
   }
 
   private <T> T visitSegments(Contents contents, Function<TextSegments, T> visitor) {
