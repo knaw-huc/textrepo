@@ -123,9 +123,9 @@ public class SegmentViewerResource {
     log.debug("getSegmentByRegion: region=[{}]", regionParam);
     return visitSegments(contents, textSegments -> {
       final var region = regionParam.get();
-      final var fragment = getFragment(textSegments, region.getStartAnchor(), region.getEndAnchor());
-      narrowStart(fragment.segments, region.getStartOffset());
-      narrowEnd(fragment.segments, region.getEndOffset());
+      final var fragment = getFragment(textSegments, region.startAnchor(), region.endAnchor());
+      narrowStart(fragment.segments, region.startOffset());
+      narrowEnd(fragment.segments, region.endOffset());
       return fragment;
     });
   }

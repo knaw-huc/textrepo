@@ -31,21 +31,21 @@ class SegmentedTextRegionTest {
   @ValueSource(strings = {"sa,ea", "sa,full,ea,full"})
   public void testAnchorOnly_orFullOffset_isParsed(String input) {
     var it = new SegmentedTextRegionParam(input).get();
-    assertThat(it.getStartAnchor()).isEqualTo("sa");
-    assertThat(it.getEndAnchor()).isEqualTo("ea");
+    assertThat(it.startAnchor()).isEqualTo("sa");
+    assertThat(it.endAnchor()).isEqualTo("ea");
 
-    assertThat(it.getStartOffset()).isEqualTo(OptionalInt.empty());
-    assertThat(it.getEndOffset()).isEqualTo(OptionalInt.empty());
+    assertThat(it.startOffset()).isEqualTo(OptionalInt.empty());
+    assertThat(it.endOffset()).isEqualTo(OptionalInt.empty());
   }
 
   @Test
   public void testAnchorAndOffset_isParsed() {
     var it = new SegmentedTextRegionParam("sa,3,ea,7").get();
-    assertThat(it.getStartAnchor()).isEqualTo("sa");
-    assertThat(it.getEndAnchor()).isEqualTo("ea");
+    assertThat(it.startAnchor()).isEqualTo("sa");
+    assertThat(it.endAnchor()).isEqualTo("ea");
 
-    assertThat(it.getStartOffset()).isEqualTo(OptionalInt.of(3));
-    assertThat(it.getEndOffset()).isEqualTo(OptionalInt.of(7));
+    assertThat(it.startOffset()).isEqualTo(OptionalInt.of(3));
+    assertThat(it.endOffset()).isEqualTo(OptionalInt.of(7));
   }
 
 }
