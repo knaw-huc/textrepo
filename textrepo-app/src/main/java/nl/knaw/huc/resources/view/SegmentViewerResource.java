@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiParam;
 import nl.knaw.huc.core.Contents;
+import nl.knaw.huc.resources.view.segmented.SegmentedTextRegionParam;
 import nl.knaw.huc.resources.view.segmented.TextSegments;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,6 +112,25 @@ public class SegmentViewerResource {
   }
 
   @GET
+  @Path("region/{region}")
+  public TextSegments getSegmentByRegion(
+      @PathParam("region")
+      @ApiParam(required = true,
+          example = "anchor-c961d9f2-2289-11ec-a58b-9b7020422d2b,3,anchor-ca359c9c-2289-11ec-bef5-2ba86650726e,42")
+      @NotNull
+          SegmentedTextRegionParam regionParam
+  ) {
+    log.debug("getSegmentByRegion: region=[{}]", regionParam);
+    return visitSegments(contents, textSegments -> {
+      final var region = regionParam.get();
+      final var fragment = getFragment(textSegments, region.getStartAnchor(), region.getEndAnchor());
+      narrowStart(fragment.segments, region.getStartOffset());
+      narrowEnd(fragment.segments, region.getEndOffset());
+      return fragment;
+    });
+  }
+
+  @GET
   @Path("anchor/{startAnchor}/{startCharOffset}/{endAnchor}/{endCharOffset}")
   public TextSegments getSubstringBetweenNamedAnchors(
       @PathParam("startAnchor")
@@ -135,23 +155,25 @@ public class SegmentViewerResource {
 
     return visitSegments(contents, textSegments -> {
       final var fragment = getFragment(textSegments, startAnchor, endAnchor);
-      narrowStart(fragment.segments, startCharOffset);
-      narrowEnd(fragment.segments, endCharOffset);
+      narrowStart(fragment.segments, startCharOffset.get());
+      narrowEnd(fragment.segments, endCharOffset.get());
       return fragment;
     });
   }
 
-  private void narrowStart(String[] segments, RangeParam startCharOffset) {
+  @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+  private void narrowStart(String[] segments, OptionalInt startCharOffset) {
     final var firstIndex = 0;
     final var firstSegment = segments[firstIndex];
-    final var firstCharIndex = startCharOffset.get().orElse(0);
+    final var firstCharIndex = startCharOffset.orElse(0);
     segments[firstIndex] = firstSegment.substring(firstCharIndex);
   }
 
-  private void narrowEnd(String[] segments, RangeParam endCharOffset) {
+  @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+  private void narrowEnd(String[] segments, OptionalInt endCharOffset) {
     final var lastIndex = segments.length - 1;
     final var lastSegment = segments[lastIndex];
-    final var lastCharIndex = endCharOffset.get().orElse(lastSegment.length() - 1);
+    final var lastCharIndex = endCharOffset.orElse(lastSegment.length() - 1);
     segments[lastIndex] = lastSegment.substring(0, lastCharIndex + 1);
   }
 

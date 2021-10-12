@@ -52,7 +52,7 @@ public class SegmentedTextRegionParam extends AbstractParam<SegmentedTextRegionP
         "%s has too few parts. Must be 'start,end' or 'startAnchor,startOffset,endAnchor,endOffset'");
   }
 
-  static class SegmentedTextRegion {
+  public static class SegmentedTextRegion {
     private final String startAnchor;
     private final String endAnchor;
 
