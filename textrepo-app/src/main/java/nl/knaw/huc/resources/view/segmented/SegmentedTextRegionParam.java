@@ -23,7 +23,7 @@ public class SegmentedTextRegionParam extends AbstractParam<SegmentedTextRegionP
     var parts = input.split(",", 5);
     if (parts.length == 5) {
       throw new IllegalArgumentException(
-          "%s has too many parts. Must be 'start,end' or 'startAnchor,startOffset,endAnchor,endOffset'");
+          "Too many parts in region. Must be 'start,end' or 'startAnchor,startOffset,endAnchor,endOffset'");
     }
 
     if (parts.length == 2) {
