@@ -6,11 +6,11 @@ import javax.annotation.Nullable;
 import java.util.OptionalInt;
 
 public class SegmentedTextRegionParam extends AbstractParam<SegmentedTextRegionParam.SegmentedTextRegion> {
-  protected SegmentedTextRegionParam(@Nullable String input) {
+  public SegmentedTextRegionParam(@Nullable String input) {
     super(input);
   }
 
-  protected SegmentedTextRegionParam(@Nullable String input, String parameterName) {
+  public SegmentedTextRegionParam(@Nullable String input, String parameterName) {
     super(input, parameterName);
   }
 
