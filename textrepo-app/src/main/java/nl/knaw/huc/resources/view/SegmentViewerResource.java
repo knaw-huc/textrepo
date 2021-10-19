@@ -9,7 +9,6 @@ import nl.knaw.huc.resources.view.segmented.TextSegments;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.GET;
@@ -101,18 +100,7 @@ public class SegmentViewerResource {
   }
 
   @GET
-  @Path("anchor/{startAnchor}/{endAnchor}")
-  public TextSegments getTextBetweenNamedAnchors(
-      @PathParam("startAnchor") @NotBlank String startAnchor,
-      @PathParam("endAnchor") @NotBlank String endAnchor
-  ) {
-    log.debug("getTextBetweenNamedAnchors: startAnchor=[{}], endAnchor=[{}]", startAnchor, endAnchor);
-
-    return visitSegments(contents, textSegments -> getFragment(textSegments, startAnchor, endAnchor));
-  }
-
-  @GET
-  @Path("region/{region}")
+  @Path("anchor/{region}")
   public TextSegments getSegmentByRegion(
       @PathParam("region")
       @ApiParam(required = true,
@@ -126,37 +114,6 @@ public class SegmentViewerResource {
       final var fragment = getFragment(textSegments, region.startAnchor(), region.endAnchor());
       narrowStart(fragment.segments, region.startOffset());
       narrowEnd(fragment.segments, region.endOffset());
-      return fragment;
-    });
-  }
-
-  @GET
-  @Path("anchor/{startAnchor}/{startCharOffset}/{endAnchor}/{endCharOffset}")
-  public TextSegments getSubstringBetweenNamedAnchors(
-      @PathParam("startAnchor")
-      @ApiParam(required = true, example = "anchor-c961d9f2-2289-11ec-a58b-9b7020422d23")
-      @NotNull
-          String startAnchor,
-      @PathParam("startCharOffset")
-      @ApiParam(required = true, example = "0")
-      @NotNull
-          RangeParam startCharOffset,
-      @PathParam("endAnchor")
-      @ApiParam(required = true, example = "anchor-ca359c9c-2289-11ec-bef5-2ba86650726e")
-      @NotNull
-          String endAnchor,
-      @PathParam("endCharOffset")
-      @ApiParam(required = true, example = "0")
-      @NotNull
-          RangeParam endCharOffset
-  ) {
-    log.debug("getTextBetweenNamedAnchors: startAnchor=[{}], startCharOffset=[{}], endAnchor=[{}], endCharOffset=[{}]",
-        startAnchor, startCharOffset, endAnchor, endCharOffset);
-
-    return visitSegments(contents, textSegments -> {
-      final var fragment = getFragment(textSegments, startAnchor, endAnchor);
-      narrowStart(fragment.segments, startCharOffset.get());
-      narrowEnd(fragment.segments, endCharOffset.get());
       return fragment;
     });
   }

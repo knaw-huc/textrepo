@@ -23,12 +23,10 @@ public class SegmentedTextRegionParam extends AbstractParam<SegmentedTextRegionP
       }
 
       if (parts.length == 4) {
-        final OptionalInt optStartOffset = "full".equals(parts[1])
-            ? OptionalInt.empty()
+        final OptionalInt optStartOffset = "full".equals(parts[1]) ? OptionalInt.empty()
             : OptionalInt.of(Integer.parseUnsignedInt(parts[1]));
 
-        final OptionalInt optEndOffset = "full".equals(parts[3])
-            ? OptionalInt.empty()
+        final OptionalInt optEndOffset = "full".equals(parts[3]) ? OptionalInt.empty()
             : OptionalInt.of(Integer.parseUnsignedInt(parts[3]));
 
         return new TextRegion(parts[0], optStartOffset, parts[2], optEndOffset);
