@@ -6,12 +6,20 @@ import javax.annotation.Nullable;
 import java.util.OptionalInt;
 
 public class SegmentedTextRegionParam extends AbstractParam<SegmentedTextRegionParam.TextRegion> {
+  private final String input;
+
   public SegmentedTextRegionParam(@Nullable String input) {
     super(input);
+    this.input = input;
   }
 
   public SegmentedTextRegionParam(@Nullable String input, String parameterName) {
     super(input, parameterName);
+    this.input = input;
+  }
+
+  public String getInput() {
+    return input;
   }
 
   @Override
@@ -37,7 +45,8 @@ public class SegmentedTextRegionParam extends AbstractParam<SegmentedTextRegionP
         "Region must be 'startAnchor,endAnchor' or 'startAnchor,startOffset,endAnchor,endOffset'");
   }
 
-  public record TextRegion(String startAnchor, OptionalInt startOffset, String endAnchor, OptionalInt endOffset) {
+  public record TextRegion(String startAnchor, OptionalInt startOffset,
+                           String endAnchor, OptionalInt endOffset) {
   }
 
 }

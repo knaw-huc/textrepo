@@ -3,6 +3,7 @@ package nl.knaw.huc.resources.view;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiParam;
+import nl.knaw.huc.api.ResultTextSegment;
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.resources.view.segmented.SegmentedTextRegionParam;
 import nl.knaw.huc.resources.view.segmented.TextSegments;
@@ -74,7 +75,8 @@ public class SegmentViewerResource {
           RangeParam endCharOffset
   ) {
     log.debug(
-        "getSubstringBetweenIndexAnchors: startIndex=[{}], startCharOffset=[{}], endIndex=[{}], endCharOffset=[{}]",
+        "getSubstringBetweenIndexAnchors: startIndex=[{}], startCharOffset=[{}], "
+            + "endIndex=[{}], endCharOffset=[{}]",
         startIndex, startCharOffset, endIndex, endCharOffset);
 
     return visitSegments(contents, textSegments -> {
@@ -101,10 +103,11 @@ public class SegmentViewerResource {
 
   @GET
   @Path("anchor/{region}")
-  public TextSegments getSegmentByRegion(
+  public ResultTextSegment getSegmentByRegion(
       @PathParam("region")
       @ApiParam(required = true,
-          example = "anchor-c961d9f2-2289-11ec-a58b-9b7020422d2b,3,anchor-ca359c9c-2289-11ec-bef5-2ba86650726e,42")
+          example = "anchor-c961d9f2-2289-11ec-a58b-9b7020422d2b,3,"
+              + "anchor-ca359c9c-2289-11ec-bef5-2ba86650726e,42")
       @NotNull
           SegmentedTextRegionParam regionParam
   ) {
@@ -114,7 +117,7 @@ public class SegmentViewerResource {
       final var fragment = getFragment(textSegments, region.startAnchor(), region.endAnchor());
       narrowStart(fragment.segments, region.startOffset());
       narrowEnd(fragment.segments, region.endOffset());
-      return fragment;
+      return new ResultTextSegment(fragment, regionParam.getInput());
     });
   }
 
