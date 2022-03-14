@@ -4,9 +4,11 @@ import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.resources.view.RangeParam;
 
 import javax.annotation.Nonnull;
-import java.util.StringJoiner;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
-public class TextLinesResolver extends TextResolver {
+public class TextLinesResolver extends TextResolver<List<String>> {
   private final RangeParam startParam;
   private final RangeParam endParam;
 
@@ -17,9 +19,9 @@ public class TextLinesResolver extends TextResolver {
 
   @Override
   @Nonnull
-  public String resolve(@Nonnull Contents contents) {
+  public List<String> resolve(@Nonnull Contents contents) {
     final String text = contents.asUtf8String();
-   
+
     final var indexOfFirstLine = 0;
     final var startOffset = startParam.get().orElse(indexOfFirstLine);
 
@@ -29,11 +31,9 @@ public class TextLinesResolver extends TextResolver {
 
     checkOffsets(startOffset, endOffset, indexOfLastLine);
 
-    final var joiner = new StringJoiner("\n", "", "\n");
-    for (int lineNo = startOffset; lineNo <= endOffset; lineNo++) {
-      joiner.add(lines[lineNo]);
-    }
+    final List<String> fragment = Arrays.asList(lines)
+                                        .subList(startOffset, endOffset + 1);
 
-    return joiner.toString();
+    return Collections.unmodifiableList(fragment);
   }
 }

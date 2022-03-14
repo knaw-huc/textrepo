@@ -16,6 +16,7 @@ import nl.knaw.huc.helpers.ContentsHelper;
 import nl.knaw.huc.helpers.Limits;
 import nl.knaw.huc.helpers.Paginator;
 import nl.knaw.huc.resources.ResourcesBuilder;
+import nl.knaw.huc.resources.view.SegmentViewerResource;
 import nl.knaw.huc.resources.view.TextViewerResource;
 import nl.knaw.huc.resources.view.ViewBuilderFactory;
 import nl.knaw.huc.resources.view.XmlViewerResource;
@@ -175,7 +176,8 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
     // Let's add first build up some more experience by implementing more viewers, then tackle this.
     viewBuilderFactory.register("xml", (contents, contentsHelper) -> new XmlViewerResource(contents));
 
-    // TODO: register more ViewResource subclasses
+    viewBuilderFactory.register("segments", (contents, contentsHelper) -> new SegmentViewerResource(contents));
+
     return viewBuilderFactory;
   }
 

@@ -9,7 +9,7 @@ import java.util.StringJoiner;
 
 import static java.lang.String.format;
 
-public class TextRangeResolver extends TextResolver {
+public class TextRangeResolver extends TextResolver<String> {
   private final RangeParam startLineParam;
   private final RangeParam startCharParam;
   private final RangeParam endLineParam;
@@ -59,7 +59,7 @@ public class TextRangeResolver extends TextResolver {
           throw new BadRequestException(format("endCharOffset (%d) > max endLine offset (%d)", endCharOffset,
               indexOfLastChar));
         }
-      } else { // on all lines other than startLine
+      } else { // on all lines other than endLine
         endCharOffset = indexOfLastChar;
       }
 

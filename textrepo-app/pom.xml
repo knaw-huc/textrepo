@@ -22,10 +22,13 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <mainClass>nl.knaw.huc.TextRepoApp</mainClass>
     <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
-    <maven-checkstyle-plugin.version>3.0.0</maven-checkstyle-plugin.version>
+    <maven-checkstyle-plugin.version>3.1.2</maven-checkstyle-plugin.version>
     <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
 
-    <checkstyle.config.location>https://raw.githubusercontent.com/knaw-huc/checkstyle/master/checkstyle_config.xml
+    <checkstyle.config.location>
+      google_checks.xml
+      <!--      https://raw.githubusercontent.com/knaw-huc/checkstyle/master/checkstyle_config.xml-->
+      <!--      https://raw.githubusercontent.com/checkstyle/checkstyle/master/src/main/resources/google_checks.xml-->
     </checkstyle.config.location>
 
     <commons-lang.version>3.12.0</commons-lang.version>
@@ -337,7 +340,7 @@
         <version>${maven-compiler-plugin.version}</version>
         <configuration>
           <source>${maven.compiler.source}</source>
-          <target>${maven.compiler.source}</target>
+          <target>${maven.compiler.target}</target>
         </configuration>
       </plugin>
       <plugin>
