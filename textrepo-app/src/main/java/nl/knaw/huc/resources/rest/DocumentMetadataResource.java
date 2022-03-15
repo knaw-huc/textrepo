@@ -1,18 +1,17 @@
 package nl.knaw.huc.resources.rest;
 
+import static java.util.Objects.requireNonNull;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
+
 import com.codahale.metrics.annotation.Timed;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import nl.knaw.huc.api.MetadataEntry;
-import nl.knaw.huc.api.ResultDocumentMetadataEntry;
-import nl.knaw.huc.exceptions.MethodNotAllowedException;
-import nl.knaw.huc.service.document.metadata.DocumentMetadataService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.util.Map;
+import java.util.UUID;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -25,12 +24,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
-import java.util.Map;
-import java.util.UUID;
-
-import static java.util.Objects.requireNonNull;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
+import nl.knaw.huc.api.MetadataEntry;
+import nl.knaw.huc.api.ResultDocumentMetadataEntry;
+import nl.knaw.huc.exceptions.MethodNotAllowedException;
+import nl.knaw.huc.service.document.metadata.DocumentMetadataService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Api(tags = {"documents", "metadata"})
 @Path("/rest/documents/{docId}/metadata")
@@ -63,7 +62,7 @@ public class DocumentMetadataResource {
       @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @NotNull
       @Valid
-          UUID docId
+      UUID docId
   ) {
     log.debug("Get document metadata: docId={}", docId);
     var metadata = documentMetadataService.getByDocId(docId);
@@ -83,14 +82,14 @@ public class DocumentMetadataResource {
       @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @NotNull
       @Valid
-          UUID docId,
+      UUID docId,
       @PathParam("key")
       @NotBlank
       @ApiParam(required = true, example = "archive")
-          String key,
+      String key,
       @ApiParam(required = true, example = "a.1.2.3")
       @NotNull
-          String value
+      String value
   ) {
     log.debug("Update metadata: docId={}, key={}, value={}", docId, key, value);
     var entry = new MetadataEntry(key, value);
@@ -111,11 +110,11 @@ public class DocumentMetadataResource {
       @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @NotNull
       @Valid
-          UUID docId,
+      UUID docId,
       @PathParam("key")
       @ApiParam(required = true, example = "archive")
       @NotBlank
-          String key
+      String key
   ) {
     log.debug("Delete metadata: docId={}, key={}", docId, key);
     documentMetadataService.delete(docId, key);

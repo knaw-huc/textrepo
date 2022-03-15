@@ -1,12 +1,12 @@
 package nl.knaw.huc.service.datetime;
 
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.ext.ParamConverter;
+import static org.eclipse.jetty.util.StringUtil.isBlank;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-
-import static org.eclipse.jetty.util.StringUtil.isBlank;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.ext.ParamConverter;
 
 /**
  * Convert Jersey datetime @QueryParams to LocalDateTime

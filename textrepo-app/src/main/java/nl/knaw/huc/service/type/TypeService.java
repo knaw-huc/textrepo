@@ -1,9 +1,8 @@
 package nl.knaw.huc.service.type;
 
-import nl.knaw.huc.core.Type;
-
-import javax.annotation.Nonnull;
 import java.util.List;
+import javax.annotation.Nonnull;
+import nl.knaw.huc.core.Type;
 
 public interface TypeService {
   List<Type> list();

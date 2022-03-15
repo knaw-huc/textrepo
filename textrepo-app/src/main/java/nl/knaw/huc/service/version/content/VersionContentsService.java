@@ -1,9 +1,8 @@
 package nl.knaw.huc.service.version.content;
 
-import nl.knaw.huc.core.Contents;
-
 import java.util.Optional;
 import java.util.UUID;
+import nl.knaw.huc.core.Contents;
 
 public interface VersionContentsService {
 

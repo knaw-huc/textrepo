@@ -1,5 +1,15 @@
 package nl.knaw.huc.service.document;
 
+import static java.lang.String.format;
+import static nl.knaw.huc.helpers.PsqlExceptionHelper.Constraint.DOCUMENTS_EXTERNAL_ID_KEY;
+import static nl.knaw.huc.helpers.PsqlExceptionHelper.violatesConstraint;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.function.Supplier;
+import javax.ws.rs.BadRequestException;
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.core.Page;
 import nl.knaw.huc.core.PageParams;
@@ -8,17 +18,6 @@ import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.JdbiException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.ws.rs.BadRequestException;
-import java.time.LocalDateTime;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.function.Supplier;
-
-import static java.lang.String.format;
-import static nl.knaw.huc.helpers.PsqlExceptionHelper.Constraint.DOCUMENTS_EXTERNAL_ID_KEY;
-import static nl.knaw.huc.helpers.PsqlExceptionHelper.violatesConstraint;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class JdbiDocumentService implements DocumentService {
   private static final Logger log = LoggerFactory.getLogger(JdbiDocumentService.class);
@@ -43,7 +42,8 @@ public class JdbiDocumentService implements DocumentService {
       return documents().insert(document);
     } catch (JdbiException ex) {
       if (violatesConstraint(ex, DOCUMENTS_EXTERNAL_ID_KEY)) {
-        var msg = format("Document not created: external ID [%s] already exists", document.getExternalId());
+        var msg = format("Document not created: external ID [%s] already exists",
+            document.getExternalId());
         log.warn(msg);
         throw new BadRequestException(msg);
       } else {
@@ -69,10 +69,11 @@ public class JdbiDocumentService implements DocumentService {
   }
 
   /**
-   * get all documents filtered by externalId
+   * Get all documents filtered by externalId.
    */
   @Override
-  public Page<Document> getAll(String externalId, LocalDateTime createdAfter, PageParams pageParams) {
+  public Page<Document> getAll(String externalId, LocalDateTime createdAfter,
+                               PageParams pageParams) {
     externalId = isBlank(externalId) ? null : externalId;
     var docs = documents().findBy(externalId, createdAfter, pageParams);
     var total = documents().countBy(externalId, createdAfter);

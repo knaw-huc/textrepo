@@ -1,5 +1,10 @@
 package nl.knaw.huc.resources;
 
+import static javax.ws.rs.core.UriBuilder.fromResource;
+
+import java.net.URI;
+import javax.ws.rs.core.Link;
+import javax.ws.rs.core.UriBuilder;
 import nl.knaw.huc.resources.rest.ContentsResource;
 import nl.knaw.huc.resources.rest.DocumentMetadataResource;
 import nl.knaw.huc.resources.rest.DocumentsResource;
@@ -8,12 +13,6 @@ import nl.knaw.huc.resources.rest.FileVersionsResource;
 import nl.knaw.huc.resources.rest.FilesResource;
 import nl.knaw.huc.resources.rest.TypesResource;
 import nl.knaw.huc.resources.rest.VersionsResource;
-
-import javax.ws.rs.core.Link;
-import javax.ws.rs.core.UriBuilder;
-import java.net.URI;
-
-import static javax.ws.rs.core.UriBuilder.fromResource;
 
 public class HeaderLink {
   public static class Rel {
@@ -45,6 +44,8 @@ public class HeaderLink {
   }
 
   /**
+   * Construct a header Link.
+   *
    * @return header Link value
    */
   public static Link create(String rel, Uri uri, Object... uriValues) {

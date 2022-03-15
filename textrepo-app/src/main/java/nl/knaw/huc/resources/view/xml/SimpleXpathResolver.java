@@ -1,16 +1,15 @@
 package nl.knaw.huc.resources.view.xml;
 
+import static java.util.Objects.requireNonNull;
+
+import javax.annotation.Nonnull;
 import nu.xom.Document;
 import nu.xom.Nodes;
 
-import javax.annotation.Nonnull;
-
-import static java.util.Objects.requireNonNull;
-
-public class SimpleXPathResolver extends XmlResolver {
+public class SimpleXpathResolver extends XmlResolver {
   private final String xpath;
 
-  public SimpleXPathResolver(String xpath) {
+  public SimpleXpathResolver(String xpath) {
     this.xpath = requireNonNull(xpath);
   }
 

@@ -1,7 +1,6 @@
 package nl.knaw.huc.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.UUID;
 
 public class ResultDocumentMetadataEntry {

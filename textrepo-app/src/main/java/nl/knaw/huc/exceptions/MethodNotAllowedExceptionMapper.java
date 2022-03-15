@@ -1,13 +1,12 @@
 package nl.knaw.huc.exceptions;
 
-import nl.knaw.huc.api.ResultException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static javax.ws.rs.core.Response.Status.METHOD_NOT_ALLOWED;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
-
-import static javax.ws.rs.core.Response.Status.METHOD_NOT_ALLOWED;
+import nl.knaw.huc.api.ResultException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MethodNotAllowedExceptionMapper implements ExceptionMapper<MethodNotAllowedException> {
 

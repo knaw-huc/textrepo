@@ -2,9 +2,8 @@ package nl.knaw.huc.api;
 
 import com.google.common.base.MoreObjects;
 import io.swagger.annotations.ApiParam;
-import nl.knaw.huc.core.Paginated;
-
 import javax.ws.rs.QueryParam;
+import nl.knaw.huc.core.Paginated;
 
 public class FormPageParams implements Paginated {
 

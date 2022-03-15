@@ -1,13 +1,12 @@
 package nl.knaw.huc.service.version;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+import javax.annotation.Nonnull;
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.core.Page;
 import nl.knaw.huc.core.PageParams;
 import nl.knaw.huc.core.Version;
-
-import javax.annotation.Nonnull;
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 public interface VersionService {
 

@@ -1,10 +1,10 @@
 package nl.knaw.huc.helpers.gzip;
 
-import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.zip.GZIPOutputStream;
+import javax.annotation.Nonnull;
 
 
 /**
@@ -15,14 +15,15 @@ import java.util.zip.GZIPOutputStream;
  *
  * <p>This class gzip-compresses an InputStream yielding an InputStream again.
  *
- * <p>See also https://stackoverflow.com/questions/11036280/compress-an-inputstream-with-gzip
+ * @see
+ * <a href=https://stackoverflow.com/questions/11036280/compress-an-inputstream-with-gzip">Relevant
+ * SO post</a>
  */
 public class GzipCompressingInputStream extends InputStream {
   private final InputStream in;
   private final GZIPOutputStream gz;
-
-  private byte[] buf = new byte[8192];
   private final byte[] readBuf = new byte[8192];
+  private byte[] buf = new byte[8192];
   private int read = 0;
   private int write = 0;
 
@@ -73,7 +74,8 @@ public class GzipCompressingInputStream extends InputStream {
   public int read() throws IOException {
     compressStream();
     if (write == 0) {
-      // write should not be 0 if we were able to get data from compress stream, must mean we're at the end
+      // write should not be 0 if we were able to get data from compress stream, must mean we're
+      // at the end
       return -1;
     } else {
       // reading a single byte

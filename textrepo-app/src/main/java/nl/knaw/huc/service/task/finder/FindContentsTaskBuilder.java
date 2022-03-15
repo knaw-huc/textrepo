@@ -1,10 +1,9 @@
 package nl.knaw.huc.service.task.finder;
 
+import java.util.UUID;
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.core.Type;
 import nl.knaw.huc.service.task.Task;
-
-import java.util.UUID;
 
 public interface FindContentsTaskBuilder {
   FindContentsTaskBuilder forExternalId(String externalId);

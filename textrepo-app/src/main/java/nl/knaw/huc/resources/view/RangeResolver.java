@@ -1,9 +1,9 @@
 package nl.knaw.huc.resources.view;
 
+import static java.lang.String.format;
+
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
-
-import static java.lang.String.format;
 
 public abstract class RangeResolver<S, R> {
   public abstract R resolve(S source);

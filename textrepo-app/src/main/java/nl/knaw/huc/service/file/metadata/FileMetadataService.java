@@ -1,10 +1,9 @@
 package nl.knaw.huc.service.file.metadata;
 
-import nl.knaw.huc.api.MetadataEntry;
-
-import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.UUID;
+import javax.annotation.Nonnull;
+import nl.knaw.huc.api.MetadataEntry;
 
 public interface FileMetadataService {
   Map<String, String> getMetadata(UUID fileId);

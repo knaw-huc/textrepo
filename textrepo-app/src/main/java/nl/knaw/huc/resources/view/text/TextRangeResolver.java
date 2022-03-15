@@ -1,13 +1,12 @@
 package nl.knaw.huc.resources.view.text;
 
-import nl.knaw.huc.core.Contents;
-import nl.knaw.huc.resources.view.RangeParam;
+import static java.lang.String.format;
 
+import java.util.StringJoiner;
 import javax.annotation.Nonnull;
 import javax.ws.rs.BadRequestException;
-import java.util.StringJoiner;
-
-import static java.lang.String.format;
+import nl.knaw.huc.core.Contents;
+import nl.knaw.huc.resources.view.RangeParam;
 
 public class TextRangeResolver extends TextResolver<String> {
   private final RangeParam startLineParam;
@@ -56,8 +55,9 @@ public class TextRangeResolver extends TextResolver<String> {
       if (curLineIndex == endLineOffset) {
         endCharOffset = endCharParam.get().orElse(indexOfLastChar);
         if (endCharOffset > indexOfLastChar) {
-          throw new BadRequestException(format("endCharOffset (%d) > max endLine offset (%d)", endCharOffset,
-              indexOfLastChar));
+          throw new BadRequestException(
+              format("endCharOffset (%d) > max endLine offset (%d)", endCharOffset,
+                  indexOfLastChar));
         }
       } else { // on all lines other than endLine
         endCharOffset = indexOfLastChar;

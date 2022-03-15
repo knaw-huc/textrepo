@@ -1,7 +1,6 @@
 package nl.knaw.huc.core;
 
 import com.google.common.base.MoreObjects;
-
 import java.beans.ConstructorProperties;
 import java.time.LocalDateTime;
 import java.util.UUID;

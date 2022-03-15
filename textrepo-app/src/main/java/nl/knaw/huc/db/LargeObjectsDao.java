@@ -1,11 +1,9 @@
 package nl.knaw.huc.db;
 
+import java.io.InputStream;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
-
-import java.io.InputStream;
-
 
 public interface LargeObjectsDao {
   @SqlQuery("insert into large_objects (lob) values (:data) returning id")

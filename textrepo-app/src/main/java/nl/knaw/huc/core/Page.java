@@ -1,7 +1,6 @@
 package nl.knaw.huc.core;
 
 import com.google.common.base.MoreObjects;
-
 import java.util.List;
 
 public class Page<T> {

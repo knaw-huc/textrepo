@@ -1,18 +1,17 @@
 package nl.knaw.huc.service.version.metadata;
 
+import static java.lang.String.format;
+import static nl.knaw.huc.helpers.PsqlExceptionHelper.Constraint.FILES_METADATA_FILE_ID_FKEY;
+import static nl.knaw.huc.helpers.PsqlExceptionHelper.violatesConstraint;
+
+import java.util.Map;
+import java.util.UUID;
+import javax.annotation.Nonnull;
+import javax.ws.rs.NotFoundException;
 import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.db.VersionMetadataDao;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.JdbiException;
-
-import javax.annotation.Nonnull;
-import javax.ws.rs.NotFoundException;
-import java.util.Map;
-import java.util.UUID;
-
-import static java.lang.String.format;
-import static nl.knaw.huc.helpers.PsqlExceptionHelper.Constraint.FILES_METADATA_FILE_ID_FKEY;
-import static nl.knaw.huc.helpers.PsqlExceptionHelper.violatesConstraint;
 
 public class JdbiVersionMetadataService implements VersionMetadataService {
   private final Jdbi jdbi;

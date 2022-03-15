@@ -1,10 +1,8 @@
 package nl.knaw.huc.service.task.importer;
 
-import nl.knaw.huc.api.ResultImportDocument;
-import nl.knaw.huc.resources.HeaderLink;
-import nl.knaw.huc.service.task.Task;
-
 import java.io.InputStream;
+import nl.knaw.huc.api.ResultImportDocument;
+import nl.knaw.huc.service.task.Task;
 
 public interface ImportFileTaskBuilder {
   ImportFileTaskBuilder allowNewDocument(boolean allowNewDocument);

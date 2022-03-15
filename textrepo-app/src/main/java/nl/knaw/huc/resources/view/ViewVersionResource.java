@@ -1,16 +1,15 @@
 package nl.knaw.huc.resources.view;
 
 import io.swagger.annotations.ApiParam;
-import nl.knaw.huc.helpers.ContentsHelper;
-import nl.knaw.huc.service.version.content.VersionContentsService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.util.UUID;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import java.util.UUID;
+import nl.knaw.huc.helpers.ContentsHelper;
+import nl.knaw.huc.service.version.content.VersionContentsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /*
  * This class parses the first part of a 'view' URI resolving the requested viewname
@@ -43,11 +42,11 @@ public class ViewVersionResource {
       @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @NotNull
       @Valid
-          UUID versionId,
+      UUID versionId,
       @PathParam("view")
       @ApiParam(required = true, example = "text")
       @NotNull
-          String view
+      String view
   ) {
     log.debug("Get version contents: versionId={}", versionId);
     final var contents = versionContentsService.getByVersionId(versionId);

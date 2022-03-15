@@ -1,9 +1,8 @@
 package nl.knaw.huc.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import nl.knaw.huc.core.TextRepoFile;
-
 import java.util.UUID;
+import nl.knaw.huc.core.TextRepoFile;
 
 public class ResultTextRepoFile {
 

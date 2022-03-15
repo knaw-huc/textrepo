@@ -2,9 +2,8 @@ package nl.knaw.huc.api;
 
 import com.google.common.base.MoreObjects;
 import io.swagger.annotations.ApiModelProperty;
-
-import javax.validation.constraints.NotNull;
 import java.util.UUID;
+import javax.validation.constraints.NotNull;
 
 public class FormTextRepoFile {
 

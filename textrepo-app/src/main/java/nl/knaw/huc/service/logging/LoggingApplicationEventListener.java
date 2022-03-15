@@ -1,12 +1,11 @@
 package nl.knaw.huc.service.logging;
 
+import java.util.UUID;
+import java.util.function.Supplier;
 import org.glassfish.jersey.server.monitoring.ApplicationEvent;
 import org.glassfish.jersey.server.monitoring.ApplicationEventListener;
 import org.glassfish.jersey.server.monitoring.RequestEvent;
 import org.glassfish.jersey.server.monitoring.RequestEventListener;
-
-import java.util.UUID;
-import java.util.function.Supplier;
 
 public class LoggingApplicationEventListener implements ApplicationEventListener {
 

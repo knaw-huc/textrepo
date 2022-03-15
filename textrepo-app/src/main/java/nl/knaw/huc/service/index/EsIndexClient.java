@@ -1,5 +1,19 @@
 package nl.knaw.huc.service.index;
 
+import static java.lang.String.format;
+import static java.util.stream.Collectors.toList;
+import static org.elasticsearch.client.RequestOptions.DEFAULT;
+import static org.elasticsearch.client.RestClient.builder;
+import static org.elasticsearch.common.xcontent.XContentType.JSON;
+import static org.elasticsearch.index.query.QueryBuilders.matchAllQuery;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import javax.annotation.Nonnull;
+import javax.ws.rs.WebApplicationException;
 import nl.knaw.huc.service.index.config.ElasticsearchConfiguration;
 import org.apache.http.HttpHost;
 import org.elasticsearch.ElasticsearchStatusException;
@@ -21,23 +35,8 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
-import javax.ws.rs.WebApplicationException;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import static java.lang.String.format;
-import static java.util.stream.Collectors.toList;
-import static org.elasticsearch.client.RequestOptions.DEFAULT;
-import static org.elasticsearch.client.RestClient.builder;
-import static org.elasticsearch.common.xcontent.XContentType.JSON;
-import static org.elasticsearch.index.query.QueryBuilders.matchAllQuery;
-
 /**
- * Index client using Elasticsearch RestHighLevelClient
+ * Index client using Elasticsearch RestHighLevelClient.
  */
 public class EsIndexClient {
 
@@ -62,7 +61,7 @@ public class EsIndexClient {
   }
 
   /**
-   * Insert or update ES doc by file ID
+   * Insert or update ES doc by file ID.
    */
   public Optional<String> upsert(@Nonnull UUID fileId, String esDoc) {
     var indexRequest = new IndexRequest(config.index)
@@ -81,7 +80,7 @@ public class EsIndexClient {
   }
 
   /**
-   * When not 200 or 201, return error msg
+   * When not 200 or 201, return error msg.
    */
   private Optional<String> checkIndexStatus(IndexResponse response, UUID fileId) {
     var status = response.status().getStatus();
@@ -104,7 +103,7 @@ public class EsIndexClient {
   }
 
   /**
-   * Delete ES doc by file ID
+   * Delete ES doc by file ID.
    */
   public void delete(@Nonnull UUID fileId) {
     var index = config.index;
@@ -116,7 +115,8 @@ public class EsIndexClient {
     try {
       response = client.delete(deleteRequest, DEFAULT);
     } catch (Exception ex) {
-      throw new WebApplicationException(format("Could not delete file %s in index %s", fileId, index), ex);
+      throw new WebApplicationException(
+          format("Could not delete file %s in index %s", fileId, index), ex);
     }
     var status = response.status().getStatus();
     final String msg;
@@ -125,13 +125,14 @@ public class EsIndexClient {
     } else if (status == 404) {
       msg = format("File %s not found in index %s", fileId, index);
     } else {
-      throw new WebApplicationException(format("Could not delete file %s from index %s", fileId, index));
+      throw new WebApplicationException(
+          format("Could not delete file %s from index %s", fileId, index));
     }
     log.info(msg);
   }
 
   /**
-   * Retrieve all doc IDs from index using ES scroll api
+   * Retrieve all doc IDs from index using ES scroll api.
    */
   public List<UUID> getAllIds() {
     var indexName = config.index;
@@ -164,7 +165,8 @@ public class EsIndexClient {
       client.clearScroll(clearScrollRequest, DEFAULT);
       return result;
     } catch (IOException ex) {
-      throw new WebApplicationException(format("Could not retrieve IDs from index %s", indexName), ex);
+      throw new WebApplicationException(format("Could not retrieve IDs from index %s", indexName),
+          ex);
     }
   }
 

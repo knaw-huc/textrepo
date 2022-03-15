@@ -1,15 +1,14 @@
 package nl.knaw.huc.service.task;
 
+import static java.util.Objects.requireNonNull;
+
+import java.util.function.Supplier;
+import javax.ws.rs.NotFoundException;
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.core.Type;
 import nl.knaw.huc.db.DocumentFilesDao;
 import org.jdbi.v3.core.Handle;
-
-import javax.ws.rs.NotFoundException;
-import java.util.function.Supplier;
-
-import static java.util.Objects.requireNonNull;
 
 public class FindDocumentFileByType implements InTransactionProvider<TextRepoFile> {
   private final Document document;
@@ -32,7 +31,8 @@ public class FindDocumentFileByType implements InTransactionProvider<TextRepoFil
 
   private Supplier<NotFoundException> fileNotFound(Document document) {
     return () -> new NotFoundException(
-        String.format("No %s file found for document with externalId: %s", type.getName(), document.getExternalId()));
+        String.format("No %s file found for document with externalId: %s", type.getName(),
+            document.getExternalId()));
   }
 
   private DocumentFilesDao documentFiles() {

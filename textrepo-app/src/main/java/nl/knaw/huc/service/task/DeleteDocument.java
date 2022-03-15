@@ -1,12 +1,12 @@
 package nl.knaw.huc.service.task;
 
+import static java.util.Objects.requireNonNull;
+
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.db.DocumentsDao;
 import org.jdbi.v3.core.Handle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static java.util.Objects.requireNonNull;
 
 public class DeleteDocument implements InTransactionRunner {
 

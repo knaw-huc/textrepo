@@ -1,15 +1,15 @@
 package nl.knaw.huc.resources.view;
 
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiParam;
-import nl.knaw.huc.api.ResultTextSegment;
-import nl.knaw.huc.core.Contents;
-import nl.knaw.huc.resources.view.segmented.SegmentedTextRegionParam;
-import nl.knaw.huc.resources.view.segmented.TextSegments;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.OptionalInt;
+import java.util.function.Function;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.GET;
@@ -17,13 +17,12 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.OptionalInt;
-import java.util.function.Function;
-
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import nl.knaw.huc.api.ResultTextSegment;
+import nl.knaw.huc.core.Contents;
+import nl.knaw.huc.resources.view.segmented.SegmentedTextRegionParam;
+import nl.knaw.huc.resources.view.segmented.TextSegments;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Path("") // Without @Path("") this subresource is not resolved during tests
 @Produces(APPLICATION_JSON)
@@ -42,11 +41,11 @@ public class SegmentViewerResource {
       @PathParam("startIndex")
       @ApiParam(required = true, example = "0")
       @NotNull
-          RangeParam startParam,
+      RangeParam startParam,
       @PathParam("endIndex")
       @ApiParam(required = true, example = "0")
       @NotNull
-          RangeParam endParam
+      RangeParam endParam
   ) {
     log.debug("getTextBetweenIndexAnchors: startIndex=[{}], endParam=[{}]", startParam, endParam);
 
@@ -60,19 +59,19 @@ public class SegmentViewerResource {
       @PathParam("startIndex")
       @ApiParam(required = true, example = "0")
       @NotNull
-          RangeParam startIndex,
+      RangeParam startIndex,
       @PathParam("startCharOffset")
       @ApiParam(required = true, example = "0")
       @NotNull
-          RangeParam startCharOffset,
+      RangeParam startCharOffset,
       @PathParam("endIndex")
       @ApiParam(required = true, example = "0")
       @NotNull
-          RangeParam endIndex,
+      RangeParam endIndex,
       @PathParam("endCharOffset")
       @ApiParam(required = true, example = "0")
       @NotNull
-          RangeParam endCharOffset
+      RangeParam endCharOffset
   ) {
     log.debug(
         "getSubstringBetweenIndexAnchors: startIndex=[{}], startCharOffset=[{}], "
@@ -109,7 +108,7 @@ public class SegmentViewerResource {
           example = "anchor-c961d9f2-2289-11ec-a58b-9b7020422d2b,3,"
               + "anchor-ca359c9c-2289-11ec-bef5-2ba86650726e,42")
       @NotNull
-          SegmentedTextRegionParam regionParam
+      SegmentedTextRegionParam regionParam
   ) {
     log.debug("getSegmentByRegion: region=[{}]", regionParam);
     return visitSegments(contents, textSegments -> {

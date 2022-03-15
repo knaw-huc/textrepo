@@ -1,17 +1,17 @@
 package nl.knaw.huc.resources.view;
 
-import nl.knaw.huc.core.Contents;
-import nl.knaw.huc.helpers.ContentsHelper;
+import static java.lang.String.format;
 
-import javax.ws.rs.NotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
-
-import static java.lang.String.format;
+import javax.ws.rs.NotFoundException;
+import nl.knaw.huc.core.Contents;
+import nl.knaw.huc.helpers.ContentsHelper;
 
 public class ViewBuilderFactory {
-  private static final Map<String, BiFunction<Contents, ContentsHelper, Object>> registry = new HashMap<>();
+  private static final Map<String, BiFunction<Contents, ContentsHelper, Object>> registry =
+      new HashMap<>();
 
   public void register(String viewName, BiFunction<Contents, ContentsHelper, Object> viewBuilder) {
     registry.put(viewName, viewBuilder);

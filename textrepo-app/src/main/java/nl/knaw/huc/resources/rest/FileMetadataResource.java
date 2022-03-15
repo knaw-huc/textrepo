@@ -1,18 +1,16 @@
 package nl.knaw.huc.resources.rest;
 
+import static java.util.Objects.requireNonNull;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
+
 import com.codahale.metrics.annotation.Timed;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import nl.knaw.huc.api.MetadataEntry;
-import nl.knaw.huc.api.ResultFileMetadataEntry;
-import nl.knaw.huc.exceptions.MethodNotAllowedException;
-import nl.knaw.huc.service.file.metadata.FileMetadataService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.util.UUID;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -25,11 +23,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
-import java.util.UUID;
-
-import static java.util.Objects.requireNonNull;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
+import nl.knaw.huc.api.MetadataEntry;
+import nl.knaw.huc.api.ResultFileMetadataEntry;
+import nl.knaw.huc.exceptions.MethodNotAllowedException;
+import nl.knaw.huc.service.file.metadata.FileMetadataService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Api(tags = {"files", "metadata"})
 @Path("/rest/files/{fileId}/metadata")
@@ -56,13 +55,14 @@ public class FileMetadataResource {
   @Timed
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Retrieve file metadata")
-  @ApiResponses(value = {@ApiResponse(code = 200, responseContainer = "Map", response = String.class, message = "OK")})
+  @ApiResponses(value = {
+      @ApiResponse(code = 200, responseContainer = "Map", response = String.class, message = "OK")})
   public Response getFileMetadata(
       @PathParam("fileId")
       @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @NotNull
       @Valid
-          UUID fileId
+      UUID fileId
   ) {
     log.debug("Get file metadata: fileId={}", fileId);
     var metadata = fileMetadataService.getMetadata(fileId);
@@ -81,13 +81,13 @@ public class FileMetadataResource {
       @PathParam("fileId")
       @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @Valid
-          UUID fileId,
+      UUID fileId,
       @PathParam("key")
       @ApiParam(required = true, example = "tool")
       @NotNull
-          String key,
+      String key,
       @NotNull
-          String value
+      String value
   ) {
     log.debug("Update or create file metadata: fileId={}, key={}, value={}", fileId, key, value);
     var entry = new MetadataEntry(key, value);
@@ -108,11 +108,11 @@ public class FileMetadataResource {
       @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @NotNull
       @Valid
-          UUID fileId,
+      UUID fileId,
       @PathParam("key")
       @ApiParam(example = "tool")
       @NotBlank
-          String key
+      String key
   ) {
     log.debug("Delete file metadata: fileId={}, key={}", fileId, key);
     fileMetadataService.delete(fileId, key);

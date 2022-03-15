@@ -9,7 +9,7 @@ import org.jdbi.v3.core.Jdbi;
 
 public class JdbiGetFileMetadataTaskBuilder implements GetFileMetadataTaskBuilder {
   private final Jdbi jdbi;
- 
+
   private String externalId;
   private String typeName;
 
@@ -42,7 +42,8 @@ public class JdbiGetFileMetadataTaskBuilder implements GetFileMetadataTaskBuilde
         var result = new FileMetadata();
 
         var doc = new FindDocumentByExternalId(externalId).executeIn(transaction);
-        var file = new FindFileByDocumentIdAndFileType(doc.getId(), typeName).executeIn(transaction);
+        var file =
+            new FindFileByDocumentIdAndFileType(doc.getId(), typeName).executeIn(transaction);
         var metadata = new GetFileMetadata(file.getId()).executeIn(transaction);
 
         result.setFile(file);

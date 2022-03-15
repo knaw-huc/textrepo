@@ -1,18 +1,16 @@
 package nl.knaw.huc.resources.rest;
 
+import static java.util.Objects.requireNonNull;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static nl.knaw.huc.resources.HeaderLink.Uri.FILE;
+
 import com.codahale.metrics.annotation.Timed;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import nl.knaw.huc.api.FormTextRepoFile;
-import nl.knaw.huc.api.ResultTextRepoFile;
-import nl.knaw.huc.core.TextRepoFile;
-import nl.knaw.huc.service.file.FileService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.util.UUID;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -24,11 +22,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
-import java.util.UUID;
-
-import static java.util.Objects.requireNonNull;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static nl.knaw.huc.resources.HeaderLink.Uri.FILE;
+import nl.knaw.huc.api.FormTextRepoFile;
+import nl.knaw.huc.api.ResultTextRepoFile;
+import nl.knaw.huc.core.TextRepoFile;
+import nl.knaw.huc.service.file.FileService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Api(tags = {"files"})
 @Path("/rest/files")
@@ -46,7 +45,8 @@ public class FilesResource {
   @Consumes(APPLICATION_JSON)
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Create file, adds file to indices")
-  @ApiResponses(value = {@ApiResponse(code = 201, response = ResultTextRepoFile.class, message = "Created")})
+  @ApiResponses(value = {
+      @ApiResponse(code = 201, response = ResultTextRepoFile.class, message = "Created")})
   public Response createFile(
       @Valid FormTextRepoFile form
   ) {
@@ -64,13 +64,14 @@ public class FilesResource {
   @Timed
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Retrieve file")
-  @ApiResponses(value = {@ApiResponse(code = 200, response = ResultTextRepoFile.class, message = "OK")})
+  @ApiResponses(value = {
+      @ApiResponse(code = 200, response = ResultTextRepoFile.class, message = "OK")})
   public Response getFile(
       @PathParam("id")
       @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @NotNull
       @Valid
-          UUID id
+      UUID id
   ) {
     log.debug("Get file: id={}", id);
     var file = fileService.get(id);
@@ -84,14 +85,15 @@ public class FilesResource {
   @Consumes(APPLICATION_JSON)
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Create or update file, add or update file in indices")
-  @ApiResponses(value = {@ApiResponse(code = 200, response = ResultTextRepoFile.class, message = "OK")})
+  @ApiResponses(value = {
+      @ApiResponse(code = 200, response = ResultTextRepoFile.class, message = "OK")})
   public Response putFile(
       @PathParam("id")
       @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @Valid
-          UUID id,
+      UUID id,
       @Valid
-          FormTextRepoFile form
+      FormTextRepoFile form
   ) {
     log.debug("Create or update file: id={}; form={}", id, form);
     var file = fileService.upsert(form.docId, new TextRepoFile(id, form.typeId));
@@ -107,7 +109,7 @@ public class FilesResource {
       @PathParam("id")
       @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @Valid
-          UUID id
+      UUID id
   ) {
     log.debug("Delete file: id={}", id);
     fileService.delete(id);

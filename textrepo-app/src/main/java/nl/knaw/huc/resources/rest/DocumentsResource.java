@@ -1,20 +1,17 @@
 package nl.knaw.huc.resources.rest;
 
+import static java.util.Objects.requireNonNull;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static nl.knaw.huc.helpers.Paginator.toResult;
+import static nl.knaw.huc.resources.HeaderLink.Uri.DOCUMENT;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import nl.knaw.huc.api.FormDocument;
-import nl.knaw.huc.api.FormPageParams;
-import nl.knaw.huc.api.ResultDocument;
-import nl.knaw.huc.api.ResultPage;
-import nl.knaw.huc.core.Document;
-import nl.knaw.huc.helpers.Paginator;
-import nl.knaw.huc.service.document.DocumentService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.time.LocalDateTime;
+import java.util.UUID;
 import javax.validation.Valid;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
@@ -28,13 +25,15 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
-import java.time.LocalDateTime;
-import java.util.UUID;
-
-import static java.util.Objects.requireNonNull;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static nl.knaw.huc.helpers.Paginator.toResult;
-import static nl.knaw.huc.resources.HeaderLink.Uri.DOCUMENT;
+import nl.knaw.huc.api.FormDocument;
+import nl.knaw.huc.api.FormPageParams;
+import nl.knaw.huc.api.ResultDocument;
+import nl.knaw.huc.api.ResultPage;
+import nl.knaw.huc.core.Document;
+import nl.knaw.huc.helpers.Paginator;
+import nl.knaw.huc.service.document.DocumentService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Api(tags = {"documents"})
 @Path("/rest/documents")
@@ -44,7 +43,8 @@ public class DocumentsResource {
   private final DocumentService documentService;
   private final Paginator paginator;
 
-  private static class ResultDocumentPage extends ResultPage<ResultDocument> {}
+  private static class ResultDocumentPage extends ResultPage<ResultDocument> {
+  }
 
   public DocumentsResource(
       DocumentService documentService,
@@ -60,7 +60,8 @@ public class DocumentsResource {
   @ApiOperation(
       value = "Create document",
       consumes = "application/json")
-  @ApiResponses(value = {@ApiResponse(code = 201, response = ResultDocument.class, message = "Created")})
+  @ApiResponses(value = {
+      @ApiResponse(code = 201, response = ResultDocument.class, message = "Created")})
   public Response createDocument(
       @Valid FormDocument form
   ) {
@@ -76,18 +77,20 @@ public class DocumentsResource {
   @GET
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Retrieve documents, newest first")
-  @ApiResponses(value = {@ApiResponse(code = 200, response = ResultDocumentPage.class, message = "OK")})
+  @ApiResponses(value = {
+      @ApiResponse(code = 200, response = ResultDocumentPage.class, message = "OK")})
   public Response getDocuments(
       @QueryParam("externalId")
       @ApiParam(example = "document_1234")
-          String externalId,
+      String externalId,
       @QueryParam("createdAfter")
       @ApiParam(example = "2021-04-16T09:03:03")
-          LocalDateTime createdAfter,
+      LocalDateTime createdAfter,
       @BeanParam FormPageParams
           pageParams
   ) {
-    log.debug("Get documents: externalId={}; createdAfter={}; pageParams={}", externalId, createdAfter, pageParams);
+    log.debug("Get documents: externalId={}; createdAfter={}; pageParams={}", externalId,
+        createdAfter, pageParams);
     var docs = documentService.getAll(externalId, createdAfter, paginator.fromForm(pageParams));
     log.debug("Got documents: {}", docs);
     return Response
@@ -104,7 +107,7 @@ public class DocumentsResource {
       @PathParam("id")
       @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @Valid
-          UUID id
+      UUID id
   ) {
     log.debug("Get document: id={}", id);
     final var doc = documentService
@@ -126,9 +129,9 @@ public class DocumentsResource {
       @PathParam("id")
       @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @Valid
-          UUID id,
+      UUID id,
       @Valid
-          FormDocument form
+      FormDocument form
   ) {
     log.debug("Update document: id={}; form={}", id, form);
     var doc = documentService.update(new Document(id, form.getExternalId()));
@@ -144,7 +147,7 @@ public class DocumentsResource {
       @PathParam("id")
       @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @Valid
-          UUID id
+      UUID id
   ) {
     log.debug("Delete document: id={}", id);
     documentService.delete(id);

@@ -1,13 +1,12 @@
 package nl.knaw.huc.service.task;
 
+import static java.util.Objects.requireNonNull;
+
+import java.util.function.Supplier;
+import javax.ws.rs.NotFoundException;
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.db.DocumentsDao;
 import org.jdbi.v3.core.Handle;
-
-import javax.ws.rs.NotFoundException;
-import java.util.function.Supplier;
-
-import static java.util.Objects.requireNonNull;
 
 public class FindDocumentByExternalId implements InTransactionProvider<Document> {
   private final String externalId;

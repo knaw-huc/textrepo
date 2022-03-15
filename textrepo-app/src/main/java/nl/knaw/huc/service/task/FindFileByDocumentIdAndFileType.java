@@ -1,16 +1,15 @@
 package nl.knaw.huc.service.task;
 
+import static java.lang.String.format;
+import static java.util.Objects.requireNonNull;
+
+import java.util.UUID;
+import java.util.function.Supplier;
+import javax.ws.rs.NotFoundException;
 import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.db.DocumentFilesDao;
 import nl.knaw.huc.db.TypesDao;
 import org.jdbi.v3.core.Handle;
-
-import javax.ws.rs.NotFoundException;
-import java.util.UUID;
-import java.util.function.Supplier;
-
-import static java.lang.String.format;
-import static java.util.Objects.requireNonNull;
 
 public class FindFileByDocumentIdAndFileType implements InTransactionProvider<TextRepoFile> {
   private final UUID docId;
@@ -34,7 +33,8 @@ public class FindFileByDocumentIdAndFileType implements InTransactionProvider<Te
   }
 
   private NotFoundException noFileForDocAndType() {
-    return new NotFoundException(format("No file for document %s and type %s", this.docId, this.typeName));
+    return new NotFoundException(
+        format("No file for document %s and type %s", this.docId, this.typeName));
   }
 
   private TypesDao types() {

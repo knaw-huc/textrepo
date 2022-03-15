@@ -7,10 +7,10 @@ import static java.util.stream.Collectors.joining;
 /**
  * Supported methods to POST to the ./fields-endpoint of an indexer:
  * - ORIGINAL: POST a file to ./fields with the request body containing the file contents
- *   and the Content-Type header containing the original mimetype
+ * and the Content-Type header containing the original mimetype
  * - MULTIPART: POST a file to ./fields with a `multipart/form-data` Content-Type header
- *   and a multipart body part named "file" which contains the file contents
- *   and a Content-Type header with the file mimetype
+ * and a multipart body part named "file" which contains the file contents
+ * and a Content-Type header with the file mimetype
  */
 public enum FieldsType {
 

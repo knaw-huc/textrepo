@@ -1,17 +1,16 @@
 package nl.knaw.huc.service.health;
 
-import com.codahale.metrics.health.HealthCheck;
-import nl.knaw.huc.service.index.EsIndexClient;
-import org.elasticsearch.cluster.health.ClusterHealthStatus;
-
-import java.io.IOException;
-
 import static com.codahale.metrics.health.HealthCheck.Result.healthy;
 import static com.codahale.metrics.health.HealthCheck.Result.unhealthy;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static org.elasticsearch.cluster.health.ClusterHealthStatus.GREEN;
 import static org.elasticsearch.cluster.health.ClusterHealthStatus.YELLOW;
+
+import com.codahale.metrics.health.HealthCheck;
+import java.io.IOException;
+import nl.knaw.huc.service.index.EsIndexClient;
+import org.elasticsearch.cluster.health.ClusterHealthStatus;
 
 public class ElasticsearchHealthCheck extends HealthCheck {
 

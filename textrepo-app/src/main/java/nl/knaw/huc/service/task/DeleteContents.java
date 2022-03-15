@@ -1,13 +1,13 @@
 package nl.knaw.huc.service.task;
 
+import static nl.knaw.huc.helpers.PsqlExceptionHelper.Constraint.VERSIONS_CONTENTS_SHA;
+import static nl.knaw.huc.helpers.PsqlExceptionHelper.violatesConstraint;
+
 import nl.knaw.huc.db.ContentsDao;
 import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.JdbiException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static nl.knaw.huc.helpers.PsqlExceptionHelper.Constraint.VERSIONS_CONTENTS_SHA;
-import static nl.knaw.huc.helpers.PsqlExceptionHelper.violatesConstraint;
 
 public class DeleteContents implements InTransactionRunner {
 

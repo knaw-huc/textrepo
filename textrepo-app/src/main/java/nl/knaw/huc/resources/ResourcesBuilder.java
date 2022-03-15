@@ -1,5 +1,8 @@
 package nl.knaw.huc.resources;
 
+import java.util.Arrays;
+import java.util.List;
+import javax.annotation.Nonnull;
 import nl.knaw.huc.config.TextRepoConfiguration;
 import nl.knaw.huc.helpers.ContentsHelper;
 import nl.knaw.huc.helpers.Paginator;
@@ -36,10 +39,6 @@ import nl.knaw.huc.service.type.TypeService;
 import nl.knaw.huc.service.version.VersionService;
 import nl.knaw.huc.service.version.content.VersionContentsService;
 import nl.knaw.huc.service.version.metadata.VersionMetadataService;
-
-import javax.annotation.Nonnull;
-import java.util.Arrays;
-import java.util.List;
 
 public class ResourcesBuilder {
   private final TextRepoConfiguration config;
@@ -98,7 +97,8 @@ public class ResourcesBuilder {
     return this;
   }
 
-  public ResourcesBuilder documentMetadataService(@Nonnull DocumentMetadataService documentMetadataService) {
+  public ResourcesBuilder documentMetadataService(
+      @Nonnull DocumentMetadataService documentMetadataService) {
     this.documentMetadataService = documentMetadataService;
     return this;
   }
@@ -123,12 +123,14 @@ public class ResourcesBuilder {
     return this;
   }
 
-  public ResourcesBuilder versionContentsService(@Nonnull VersionContentsService versionContentsService) {
+  public ResourcesBuilder versionContentsService(
+      @Nonnull VersionContentsService versionContentsService) {
     this.versionContentsService = versionContentsService;
     return this;
   }
 
-  public ResourcesBuilder versionMetadataService(@Nonnull VersionMetadataService versionMetadataService) {
+  public ResourcesBuilder versionMetadataService(
+      @Nonnull VersionMetadataService versionMetadataService) {
     this.versionMetadataService = versionMetadataService;
     return this;
   }
@@ -139,7 +141,7 @@ public class ResourcesBuilder {
   }
 
   /**
-   * Build TextRepo Jersey resources
+   * Build TextRepo Jersey resources.
    *
    * @return List resources
    */

@@ -1,5 +1,6 @@
 package nl.knaw.huc.service.task.finder;
 
+import java.util.Objects;
 import nl.knaw.huc.service.task.FindDocumentByExternalId;
 import nl.knaw.huc.service.task.FindDocumentFileByType;
 import nl.knaw.huc.service.task.FindType;
@@ -7,8 +8,6 @@ import nl.knaw.huc.service.task.GetLatestFileVersion;
 import nl.knaw.huc.service.task.GetVersionContent;
 import nl.knaw.huc.service.task.Task;
 import org.jdbi.v3.core.Jdbi;
-
-import java.util.Objects;
 
 public class JdbiFindContentsTaskBuilder implements FindContentsTaskBuilder {
   private final Jdbi jdbi;

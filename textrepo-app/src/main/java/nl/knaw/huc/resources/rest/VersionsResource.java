@@ -1,18 +1,19 @@
 package nl.knaw.huc.resources.rest;
 
+import static java.util.Objects.requireNonNull;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
+import static nl.knaw.huc.resources.HeaderLink.Uri.FILE_VERSIONS;
+import static nl.knaw.huc.resources.ResourceUtils.readContents;
+
 import com.codahale.metrics.annotation.Timed;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import nl.knaw.huc.api.ResultVersion;
-import nl.knaw.huc.exceptions.MethodNotAllowedException;
-import nl.knaw.huc.service.version.VersionService;
-import org.glassfish.jersey.media.multipart.FormDataParam;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.io.InputStream;
+import java.util.UUID;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -24,21 +25,20 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
-import java.io.InputStream;
-import java.util.UUID;
-
-import static java.util.Objects.requireNonNull;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
-import static nl.knaw.huc.resources.HeaderLink.Uri.FILE_VERSIONS;
-import static nl.knaw.huc.resources.ResourceUtils.readContents;
+import nl.knaw.huc.api.ResultVersion;
+import nl.knaw.huc.exceptions.MethodNotAllowedException;
+import nl.knaw.huc.service.version.VersionService;
+import org.glassfish.jersey.media.multipart.FormDataParam;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Api(tags = {"versions"})
 @Path("/rest/versions")
 public class VersionsResource {
 
   private static final Logger log = LoggerFactory.getLogger(VersionsResource.class);
-  private static final String PUT_ERROR_MSG = "Not allowed to update a version: create a new version using POST";
+  private static final String PUT_ERROR_MSG =
+      "Not allowed to update a version: create a new version using POST";
 
   private final VersionService versionService;
 
@@ -51,12 +51,13 @@ public class VersionsResource {
   @Consumes(MULTIPART_FORM_DATA)
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Create version and update indices")
-  @ApiResponses(value = {@ApiResponse(code = 201, response = ResultVersion.class, message = "Created")})
+  @ApiResponses(value = {
+      @ApiResponse(code = 201, response = ResultVersion.class, message = "Created")})
   public Response createVersion(
       @FormDataParam("fileId")
-          UUID fileId,
+      UUID fileId,
       @FormDataParam("contents")
-          InputStream inputStream
+      InputStream inputStream
   ) {
     log.debug("Create version: fileId={}", fileId);
     var contents = readContents(inputStream);
@@ -79,7 +80,7 @@ public class VersionsResource {
       @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @NotNull
       @Valid
-          UUID id
+      UUID id
   ) {
     log.debug("Get version: id={}", id);
     var version = versionService.get(id);
@@ -95,9 +96,9 @@ public class VersionsResource {
   @ApiResponses(value = {@ApiResponse(code = 405, message = PUT_ERROR_MSG)})
   public Response putVersionIsNotAllowed(
       @FormDataParam("fileId")
-          UUID fileId,
+      UUID fileId,
       @FormDataParam("contents")
-          InputStream inputStream
+      InputStream inputStream
   ) {
     throw new MethodNotAllowedException(PUT_ERROR_MSG);
   }
@@ -110,7 +111,7 @@ public class VersionsResource {
       @PathParam("id")
       @ApiParam(required = true, example = "34739357-eb75-449b-b2df-d3f6289470d6")
       @Valid
-          UUID id
+      UUID id
   ) {
     log.debug("Delete version: id={}", id);
     versionService.delete(id);

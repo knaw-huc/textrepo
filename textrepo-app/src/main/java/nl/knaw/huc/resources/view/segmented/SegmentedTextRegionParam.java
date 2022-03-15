@@ -1,9 +1,8 @@
 package nl.knaw.huc.resources.view.segmented;
 
 import io.dropwizard.jersey.params.AbstractParam;
-
-import javax.annotation.Nullable;
 import java.util.OptionalInt;
+import javax.annotation.Nullable;
 
 public class SegmentedTextRegionParam extends AbstractParam<SegmentedTextRegionParam.TextRegion> {
   private final String input;

@@ -1,10 +1,7 @@
 package nl.knaw.huc.service.file;
 
-import nl.knaw.huc.core.Contents;
-import nl.knaw.huc.core.TextRepoFile;
-import nl.knaw.huc.core.Version;
-
 import java.util.UUID;
+import nl.knaw.huc.core.TextRepoFile;
 
 public interface FileService {
   TextRepoFile insert(UUID docId, TextRepoFile textRepoFile);

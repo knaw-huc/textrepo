@@ -3,11 +3,10 @@ package nl.knaw.huc.api;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 import io.swagger.annotations.ApiModelProperty;
+import java.util.UUID;
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.core.Version;
-
-import java.util.UUID;
 
 public class ResultImportDocument {
   private final Document document;

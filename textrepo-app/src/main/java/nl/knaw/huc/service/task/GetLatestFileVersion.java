@@ -1,16 +1,15 @@
 package nl.knaw.huc.service.task;
 
+import static java.util.Objects.requireNonNull;
+
+import java.util.function.Supplier;
+import javax.ws.rs.NotFoundException;
 import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.core.Version;
 import nl.knaw.huc.db.VersionsDao;
 import org.jdbi.v3.core.Handle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.ws.rs.NotFoundException;
-import java.util.function.Supplier;
-
-import static java.util.Objects.requireNonNull;
 
 public class GetLatestFileVersion implements InTransactionProvider<Version> {
   private static final Logger log = LoggerFactory.getLogger(GetLatestFileVersion.class);

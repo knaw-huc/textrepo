@@ -1,8 +1,7 @@
 package nl.knaw.huc.api;
 
-import nl.knaw.huc.service.index.config.IndexerWithMappingConfiguration;
-
 import java.util.List;
+import nl.knaw.huc.service.index.config.IndexerWithMappingConfiguration;
 
 public class ResultIndexer {
   private final String name;

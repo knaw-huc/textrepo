@@ -1,10 +1,9 @@
 package nl.knaw.huc.service.document.metadata;
 
-import nl.knaw.huc.api.MetadataEntry;
-
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import nl.knaw.huc.api.MetadataEntry;
 
 public interface DocumentMetadataService {
   void create(UUID docId, MetadataEntry metadataEntry);

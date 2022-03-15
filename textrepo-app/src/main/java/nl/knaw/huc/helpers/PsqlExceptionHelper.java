@@ -21,7 +21,7 @@ public class PsqlExceptionHelper {
   }
 
   /**
-   * Check if exception contains a psql exception about the violated constraint
+   * Check if exception contains a psql exception about the violated constraint.
    */
   public static boolean violatesConstraint(
       Exception ex,

@@ -1,5 +1,11 @@
 package nl.knaw.huc.service.task.importer;
 
+import static java.time.LocalDateTime.now;
+import static java.util.Objects.requireNonNull;
+
+import java.io.InputStream;
+import java.util.UUID;
+import java.util.function.Supplier;
 import nl.knaw.huc.api.ResultImportDocument;
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.core.Document;
@@ -17,13 +23,6 @@ import org.jdbi.v3.core.Jdbi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.InputStream;
-import java.util.UUID;
-import java.util.function.Supplier;
-
-import static java.time.LocalDateTime.now;
-import static java.util.Objects.requireNonNull;
-
 public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
   private static final Logger log = LoggerFactory.getLogger(JdbiImportFileTaskBuilder.class);
 
@@ -39,7 +38,8 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
   private boolean indexing;
   private InputStream inputStream;
 
-  public JdbiImportFileTaskBuilder(Jdbi jdbi, Supplier<UUID> idGenerator, IndexService indexService) {
+  public JdbiImportFileTaskBuilder(Jdbi jdbi, Supplier<UUID> idGenerator,
+                                   IndexService indexService) {
     this.jdbi = requireNonNull(jdbi);
     this.idGenerator = requireNonNull(idGenerator);
     this.indexService = requireNonNull(indexService);
@@ -142,10 +142,12 @@ public class JdbiImportFileTaskBuilder implements ImportFileTaskBuilder {
 
     @Override
     public ResultImportDocument run() {
-      // To keep transaction time to a minimum, construct new Content object first, outside the transaction
+      // To keep transaction time to a minimum, construct new Content object first, outside the
+      // transaction
       final Contents contents = ResourceUtils.readContents(inputStream);
 
-      // Now that 'contents' is ready, enter transaction to update document, file, version and contents
+      // Now that 'contents' is ready, enter transaction to update document, file, version and
+      // contents
       var result = jdbi.inTransaction(transaction -> {
         final var doc = documentFinder.executeIn(transaction);
         var file = new HaveFileForDocumentByType(idGenerator, doc, typeName).executeIn(transaction);

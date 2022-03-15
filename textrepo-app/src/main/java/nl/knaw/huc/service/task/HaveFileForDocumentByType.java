@@ -1,18 +1,17 @@
 package nl.knaw.huc.service.task;
 
+import static java.util.Objects.requireNonNull;
+
+import java.util.Optional;
+import java.util.UUID;
+import java.util.function.Supplier;
+import javax.ws.rs.NotFoundException;
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.db.DocumentFilesDao;
 import nl.knaw.huc.db.FilesDao;
 import nl.knaw.huc.db.TypesDao;
 import org.jdbi.v3.core.Handle;
-
-import javax.ws.rs.NotFoundException;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.function.Supplier;
-
-import static java.util.Objects.requireNonNull;
 
 public class HaveFileForDocumentByType implements InTransactionProvider<TextRepoFile> {
   private final Supplier<UUID> idGenerator;
@@ -49,7 +48,8 @@ public class HaveFileForDocumentByType implements InTransactionProvider<TextRepo
   private Supplier<TextRepoFile> createNewFileForDocument(Document doc, short typeId) {
     return () -> {
       final var file = new TextRepoFile(idGenerator.get(), typeId);
-      files().insert(file.getId(), file.getTypeId()); // TODO: implement and use FileDao.save(TextrepoFile file)
+      files().insert(file.getId(),
+          file.getTypeId()); // TODO: implement and use FileDao.save(TextrepoFile file)
       documentFiles().insert(doc.getId(), file.getId());
       return file;
     };

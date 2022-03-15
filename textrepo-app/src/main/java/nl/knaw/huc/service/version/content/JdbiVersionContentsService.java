@@ -1,15 +1,14 @@
 package nl.knaw.huc.service.version.content;
 
+import static java.lang.String.format;
+
+import java.util.Optional;
+import java.util.UUID;
+import javax.ws.rs.NotFoundException;
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.db.ContentsDao;
 import nl.knaw.huc.db.VersionsDao;
 import org.jdbi.v3.core.Jdbi;
-
-import javax.ws.rs.NotFoundException;
-import java.util.Optional;
-import java.util.UUID;
-
-import static java.lang.String.format;
 
 public class JdbiVersionContentsService implements VersionContentsService {
 
@@ -23,7 +22,8 @@ public class JdbiVersionContentsService implements VersionContentsService {
   public Contents getByVersionId(UUID versionId) {
     return contents()
         .findByVersionId(versionId)
-        .orElseThrow(() -> new NotFoundException(format("No contents found for version %s", versionId)));
+        .orElseThrow(
+            () -> new NotFoundException(format("No contents found for version %s", versionId)));
   }
 
   @Override

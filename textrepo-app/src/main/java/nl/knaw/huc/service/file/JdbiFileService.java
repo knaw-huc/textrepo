@@ -1,17 +1,16 @@
 package nl.knaw.huc.service.file;
 
+import static java.lang.String.format;
+
+import java.util.UUID;
+import java.util.function.Supplier;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotFoundException;
 import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.db.DocumentFilesDao;
 import nl.knaw.huc.db.FilesDao;
 import nl.knaw.huc.service.index.IndexService;
 import org.jdbi.v3.core.Jdbi;
-
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.NotFoundException;
-import java.util.UUID;
-import java.util.function.Supplier;
-
-import static java.lang.String.format;
 
 public class JdbiFileService implements FileService {
 
@@ -73,7 +72,8 @@ public class JdbiFileService implements FileService {
   /**
    * @throws BadRequestException when document already has file with type
    */
-  private void throwBadRequestWhenDocHasFileWithType(UUID docId, TextRepoFile file, DocumentFilesDao documentFilesDao) {
+  private void throwBadRequestWhenDocHasFileWithType(UUID docId, TextRepoFile file,
+                                                     DocumentFilesDao documentFilesDao) {
     var found = documentFilesDao.findFile(docId, file.getTypeId());
 
     if (found.isPresent() && !found.get().getId().equals(file.getId())) {

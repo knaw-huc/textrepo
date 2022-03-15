@@ -1,10 +1,9 @@
 package nl.knaw.huc.service.index.request;
 
-import nl.knaw.huc.service.index.FieldsType;
+import static java.lang.String.format;
 
 import javax.ws.rs.client.Client;
-
-import static java.lang.String.format;
+import nl.knaw.huc.service.index.FieldsType;
 
 public class IndexerFieldsRequestFactory {
   private final String url;

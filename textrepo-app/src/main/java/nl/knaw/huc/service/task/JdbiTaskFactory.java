@@ -1,5 +1,9 @@
 package nl.knaw.huc.service.task;
 
+import static java.util.Objects.requireNonNull;
+
+import java.util.UUID;
+import java.util.function.Supplier;
 import nl.knaw.huc.service.index.IndexService;
 import nl.knaw.huc.service.task.deleter.DeleteDocumentTaskBuilder;
 import nl.knaw.huc.service.task.deleter.JdbiDeleteDocumentTaskBuilder;
@@ -16,11 +20,6 @@ import nl.knaw.huc.service.task.indexer.JdbiIndexFileTaskBuilder;
 import nl.knaw.huc.service.task.indexer.JdbiRemoveDeletedFilesFromIndicesBuilder;
 import nl.knaw.huc.service.task.indexer.RemoveDeletedFilesFromIndicesTaskBuilder;
 import org.jdbi.v3.core.Jdbi;
-
-import java.util.UUID;
-import java.util.function.Supplier;
-
-import static java.util.Objects.requireNonNull;
 
 public class JdbiTaskFactory implements TaskBuilderFactory {
   private final Jdbi jdbi;

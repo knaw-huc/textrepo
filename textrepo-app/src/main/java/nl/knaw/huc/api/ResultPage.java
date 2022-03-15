@@ -1,7 +1,6 @@
 package nl.knaw.huc.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.List;
 
 public class ResultPage<T> {
@@ -11,8 +10,8 @@ public class ResultPage<T> {
   private final ResultPageParams page;
 
   public ResultPage() {
-    throw new IllegalStateException("Do not use no arg constructor. " +
-        "It is only needed for generating swagger docs");
+    throw new IllegalStateException("Do not use no arg constructor. "
+        + "It is only needed for generating swagger docs");
   }
 
   public ResultPage(List<T> items, long total, ResultPageParams page) {

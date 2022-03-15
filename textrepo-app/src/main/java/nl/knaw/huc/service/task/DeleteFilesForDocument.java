@@ -1,12 +1,11 @@
 package nl.knaw.huc.service.task;
 
+import java.util.Objects;
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.db.DocumentFilesDao;
 import org.jdbi.v3.core.Handle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Objects;
 
 public class DeleteFilesForDocument implements InTransactionRunner {
 
@@ -20,7 +19,8 @@ public class DeleteFilesForDocument implements InTransactionRunner {
 
   @Override
   public void executeIn(Handle transaction) {
-    log.debug("Removing all files for document: {}, externalId: [{}]", doc.getId(), doc.getExternalId());
+    log.debug("Removing all files for document: {}, externalId: [{}]", doc.getId(),
+        doc.getExternalId());
     transaction.attach(DocumentFilesDao.class)
                .findFilesByDocumentId(doc.getId())
                .forEach(f -> new DeleteFile(f).executeIn(transaction));

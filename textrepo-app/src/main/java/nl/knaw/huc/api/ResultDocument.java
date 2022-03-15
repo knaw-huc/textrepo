@@ -2,10 +2,9 @@ package nl.knaw.huc.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
-import nl.knaw.huc.core.Document;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
+import nl.knaw.huc.core.Document;
 
 public class ResultDocument {
   private final UUID id;

@@ -1,14 +1,13 @@
 package nl.knaw.huc.resources.view;
 
-import io.swagger.annotations.ApiParam;
-import nl.knaw.huc.core.Contents;
-import nl.knaw.huc.helpers.ContentsHelper;
-import nl.knaw.huc.resources.view.text.TextCharsResolver;
-import nl.knaw.huc.resources.view.text.TextLinesResolver;
-import nl.knaw.huc.resources.view.text.TextRangeResolver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static java.lang.System.lineSeparator;
+import static javax.ws.rs.core.HttpHeaders.ACCEPT_ENCODING;
+import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
+import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
+import static javax.ws.rs.core.MediaType.TEXT_PLAIN_TYPE;
 
+import io.swagger.annotations.ApiParam;
+import java.util.StringJoiner;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -16,13 +15,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
-import java.util.StringJoiner;
-
-import static java.lang.System.lineSeparator;
-import static javax.ws.rs.core.HttpHeaders.ACCEPT_ENCODING;
-import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
-import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
-import static javax.ws.rs.core.MediaType.TEXT_PLAIN_TYPE;
+import nl.knaw.huc.core.Contents;
+import nl.knaw.huc.helpers.ContentsHelper;
+import nl.knaw.huc.resources.view.text.TextCharsResolver;
+import nl.knaw.huc.resources.view.text.TextLinesResolver;
+import nl.knaw.huc.resources.view.text.TextRangeResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /*
  * This class is a Jersey sub-resource. It can be instantiated in other Jersey resources which
@@ -58,15 +57,15 @@ public class TextViewerResource {
   public Response getChars(
       @HeaderParam(ACCEPT_ENCODING)
       @ApiParam(allowableValues = "gzip")
-          String acceptEncoding,
+      String acceptEncoding,
       @PathParam("startOffset")
       @ApiParam(required = true, example = "0")
       @NotNull
-          RangeParam startParam,
+      RangeParam startParam,
       @PathParam("endOffset")
       @ApiParam(required = true, example = "0")
       @NotNull
-          RangeParam endParam
+      RangeParam endParam
   ) {
     log.debug("getChars: startParam=[{}], endParam=[{}]", startParam, endParam);
 
@@ -82,15 +81,15 @@ public class TextViewerResource {
   public Response getLines(
       @HeaderParam(ACCEPT_ENCODING)
       @ApiParam(allowableValues = "gzip")
-          String acceptEncoding,
+      String acceptEncoding,
       @PathParam("startOffset")
       @ApiParam(required = true, example = "0")
       @NotNull
-          RangeParam startParam,
+      RangeParam startParam,
       @PathParam("endOffset")
       @ApiParam(required = true, example = "10")
       @NotNull
-          RangeParam endParam
+      RangeParam endParam
   ) {
     log.debug("getLines: startParam=[{}], endParam=[{}]", startParam, endParam);
 
@@ -111,28 +110,30 @@ public class TextViewerResource {
   public Response getRange(
       @HeaderParam(ACCEPT_ENCODING)
       @ApiParam(allowableValues = "gzip")
-          String acceptEncoding,
+      String acceptEncoding,
       @PathParam("startLineOffset")
       @ApiParam(required = true, example = "0")
       @NotNull
-          RangeParam startLineParam,
+      RangeParam startLineParam,
       @PathParam("startCharOffset")
       @ApiParam(required = true, example = "0")
       @NotNull
-          RangeParam startCharParam,
+      RangeParam startCharParam,
       @PathParam("endLineOffset")
       @ApiParam(required = true, example = "10")
       @NotNull
-          RangeParam endLineParam,
+      RangeParam endLineParam,
       @PathParam("endCharOffset")
       @ApiParam(required = true, example = "10")
       @NotNull
-          RangeParam endCharParam
+      RangeParam endCharParam
   ) {
-    log.debug("getLines: startLineParam=[{}], startCharParam=[{}], endLineParam=[{}], endCharParam=[{}]",
+    log.debug(
+        "getLines: startLineParam=[{}], startCharParam=[{}], endLineParam=[{}], endCharParam=[{}]",
         startLineParam, startCharParam, endLineParam, endCharParam);
 
-    final var resolver = new TextRangeResolver(startLineParam, startCharParam, endLineParam, endCharParam);
+    final var resolver =
+        new TextRangeResolver(startLineParam, startCharParam, endLineParam, endCharParam);
     final var result = resolver.resolve(contents);
 
     return asPlainTextAttachment(result, acceptEncoding);

@@ -1,10 +1,9 @@
 package nl.knaw.huc.service.task;
 
+import java.util.UUID;
 import nl.knaw.huc.db.DocumentFilesDao;
 import nl.knaw.huc.service.index.IndexService;
 import org.jdbi.v3.core.Handle;
-
-import java.util.UUID;
 
 public class DeleteFromIndices implements InTransactionRunner {
 

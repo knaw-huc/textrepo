@@ -1,11 +1,10 @@
 package nl.knaw.huc.service.contents;
 
-import nl.knaw.huc.core.Contents;
-import nl.knaw.huc.service.store.ContentsStorage;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import javax.annotation.Nonnull;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
+import nl.knaw.huc.core.Contents;
+import nl.knaw.huc.service.store.ContentsStorage;
 
 public class ContentsService {
   private final ContentsStorage contentsStorage;

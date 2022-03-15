@@ -1,22 +1,23 @@
 package nl.knaw.huc.service.index;
 
-import nl.knaw.huc.service.index.config.IndexerConfiguration;
-
-import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import javax.annotation.Nonnull;
+import nl.knaw.huc.service.index.config.IndexerConfiguration;
 
 
 /**
- * IndexerClient communicates with an indexer:
+ * IndexerClient communicates with an indexer.
+ * It:
  * - request relevant file types
  * - post files to mapping endpoint
  */
 public interface IndexerClient {
 
   /**
-   * Convert file contents to ES doc with indexer's fields endpoint
+   * Convert file contents to ES doc with indexer's fields endpoint.
+   *
    * @return String ES doc, or empty optional when failed to convert
    */
   Optional<String> fields(@Nonnull UUID file, @Nonnull String mimetype, @Nonnull String contents);
@@ -24,7 +25,7 @@ public interface IndexerClient {
   IndexerConfiguration getConfig();
 
   /**
-   * List of mimetypes supported by indexer
+   * List of mimetypes supported by indexer.
    * When not present, indexer is assumed to support al mimetypes
    */
   Optional<List<String>> getMimetypes();

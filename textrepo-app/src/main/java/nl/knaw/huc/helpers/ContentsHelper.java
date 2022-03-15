@@ -1,21 +1,20 @@
 package nl.knaw.huc.helpers;
 
-import nl.knaw.huc.core.Contents;
-import nl.knaw.huc.helpers.gzip.GzipCompressingInputStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static javax.ws.rs.core.HttpHeaders.CONTENT_DISPOSITION;
+import static javax.ws.rs.core.HttpHeaders.CONTENT_ENCODING;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static javax.ws.rs.core.HttpHeaders.CONTENT_DISPOSITION;
-import static javax.ws.rs.core.HttpHeaders.CONTENT_ENCODING;
+import nl.knaw.huc.core.Contents;
+import nl.knaw.huc.helpers.gzip.GzipCompressingInputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ContentsHelper {
   private static final Logger log = LoggerFactory.getLogger(ContentsHelper.class);

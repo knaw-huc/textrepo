@@ -1,14 +1,13 @@
 package nl.knaw.huc.service.store;
 
+import javax.annotation.Nonnull;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.WebApplicationException;
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.db.ContentsDao;
 import org.jdbi.v3.core.Jdbi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nonnull;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.WebApplicationException;
 
 public class JdbiContentsStorage implements ContentsStorage {
 

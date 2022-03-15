@@ -1,10 +1,9 @@
 package nl.knaw.huc.service.version.metadata;
 
-import nl.knaw.huc.api.MetadataEntry;
-
-import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.UUID;
+import javax.annotation.Nonnull;
+import nl.knaw.huc.api.MetadataEntry;
 
 public interface VersionMetadataService {
   Map<String, String> getMetadata(UUID versionId);

@@ -1,15 +1,14 @@
 package nl.knaw.huc.service.index.request;
 
-import nl.knaw.huc.resources.HeaderLink;
-
-import javax.annotation.Nonnull;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.core.Response;
-import java.util.UUID;
-
 import static javax.ws.rs.client.Entity.entity;
 import static nl.knaw.huc.resources.HeaderLink.Rel.ORIGINAL;
 import static nl.knaw.huc.resources.HeaderLink.Uri.FILE;
+
+import java.util.UUID;
+import javax.annotation.Nonnull;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.core.Response;
+import nl.knaw.huc.resources.HeaderLink;
 
 /**
  * Post a file to ./fields with the request body containing the file contents

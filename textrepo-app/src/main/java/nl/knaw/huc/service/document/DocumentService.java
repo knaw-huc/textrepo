@@ -1,12 +1,11 @@
 package nl.knaw.huc.service.document;
 
-import nl.knaw.huc.core.Document;
-import nl.knaw.huc.core.Page;
-import nl.knaw.huc.core.PageParams;
-
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
+import nl.knaw.huc.core.Document;
+import nl.knaw.huc.core.Page;
+import nl.knaw.huc.core.PageParams;
 
 public interface DocumentService {
   Optional<Document> get(UUID docId);

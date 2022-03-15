@@ -2,7 +2,6 @@ package nl.knaw.huc.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
-
 import java.beans.ConstructorProperties;
 
 public class MetadataEntry {

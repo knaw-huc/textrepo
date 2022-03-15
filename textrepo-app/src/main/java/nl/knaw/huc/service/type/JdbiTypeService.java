@@ -1,22 +1,21 @@
 package nl.knaw.huc.service.type;
 
+import static java.lang.String.format;
+import static javax.ws.rs.core.Response.Status.CONFLICT;
+import static nl.knaw.huc.helpers.PsqlExceptionHelper.Constraint.FILES_TYPE_ID;
+import static nl.knaw.huc.helpers.PsqlExceptionHelper.violatesConstraint;
+
+import java.util.List;
+import javax.annotation.Nonnull;
+import javax.ws.rs.ForbiddenException;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.WebApplicationException;
 import nl.knaw.huc.core.Type;
 import nl.knaw.huc.db.TypesDao;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.JdbiException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nonnull;
-import javax.ws.rs.ForbiddenException;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.WebApplicationException;
-import java.util.List;
-
-import static java.lang.String.format;
-import static javax.ws.rs.core.Response.Status.CONFLICT;
-import static nl.knaw.huc.helpers.PsqlExceptionHelper.Constraint.FILES_TYPE_ID;
-import static nl.knaw.huc.helpers.PsqlExceptionHelper.violatesConstraint;
 
 public class JdbiTypeService implements TypeService {
   private static final Logger log = LoggerFactory.getLogger(JdbiTypeService.class);
@@ -42,7 +41,8 @@ public class JdbiTypeService implements TypeService {
 
   @Override
   public short getId(@Nonnull String name) {
-    return types().findByName(name).orElseThrow(() -> new NotFoundException("No such type: " + name));
+    return types().findByName(name)
+                  .orElseThrow(() -> new NotFoundException("No such type: " + name));
   }
 
   @Override
@@ -69,7 +69,8 @@ public class JdbiTypeService implements TypeService {
       types().delete(typeId);
     } catch (JdbiException ex) {
       if (violatesConstraint(ex, FILES_TYPE_ID)) {
-        throw new ForbiddenException(format("Cannot delete type: files of type %s still exist", typeId));
+        throw new ForbiddenException(
+            format("Cannot delete type: files of type %s still exist", typeId));
       }
       throw ex;
     }

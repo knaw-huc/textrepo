@@ -1,13 +1,12 @@
 package nl.knaw.huc.service.task;
 
-import nl.knaw.huc.core.Document;
-import nl.knaw.huc.db.DocumentsDao;
-import org.jdbi.v3.core.Handle;
+import static java.util.Objects.requireNonNull;
 
 import java.util.UUID;
 import java.util.function.Supplier;
-
-import static java.util.Objects.requireNonNull;
+import nl.knaw.huc.core.Document;
+import nl.knaw.huc.db.DocumentsDao;
+import org.jdbi.v3.core.Handle;
 
 public class RegisterIdentifier implements InTransactionProvider<Document> {
   private final String externalId;

@@ -1,5 +1,13 @@
 package nl.knaw.huc.resources.view.xml;
 
+import static java.lang.String.format;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
+import javax.annotation.Nonnull;
+import javax.ws.rs.BadRequestException;
 import nl.knaw.huc.core.Contents;
 import nu.xom.Builder;
 import nu.xom.Document;
@@ -8,15 +16,6 @@ import nu.xom.ParsingException;
 import nu.xom.ValidityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nonnull;
-import javax.ws.rs.BadRequestException;
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
-
-import static java.lang.String.format;
 
 public abstract class XmlResolver {
   private static final Logger log = LoggerFactory.getLogger(XmlResolver.class);
@@ -48,7 +47,8 @@ public abstract class XmlResolver {
   }
 
   private List<String> asListOfXmlExcerpts(@Nonnull Nodes nodes) {
-    final var list = new ArrayList<String>(); // if there are no nodes, result should be an empty list
+    final var list =
+        new ArrayList<String>(); // if there are no nodes, result should be an empty list
 
     for (var node : nodes) {
       list.add(node.toXML());

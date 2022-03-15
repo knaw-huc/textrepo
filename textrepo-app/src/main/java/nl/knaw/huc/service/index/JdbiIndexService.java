@@ -1,5 +1,15 @@
 package nl.knaw.huc.service.index;
 
+import static java.lang.String.format;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.function.Supplier;
+import javax.annotation.Nonnull;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.NotSupportedException;
 import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.core.Type;
 import nl.knaw.huc.db.ContentsDao;
@@ -9,18 +19,6 @@ import nl.knaw.huc.db.VersionsDao;
 import org.jdbi.v3.core.Jdbi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nonnull;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.NotSupportedException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.function.Supplier;
-
-import static java.lang.String.format;
-import static java.util.stream.Collectors.toMap;
 
 /**
  * Handle index mutations using configured indexers and indices
@@ -32,7 +30,6 @@ import static java.util.stream.Collectors.toMap;
  * <p>Files are inserted/updated in two steps:
  * 1. convert file contents into an ES doc using the relevant indexers
  * 2. sends index-request with ES doc to relevant indices
- *
  */
 public class JdbiIndexService implements IndexService {
 
@@ -104,7 +101,8 @@ public class JdbiIndexService implements IndexService {
     });
   }
 
-  private void createAndUpsertEsDoc(String indexerName, UUID file, String contents, String mimetype) {
+  private void createAndUpsertEsDoc(String indexerName, UUID file, String contents,
+                                    String mimetype) {
     var indexer = getIndexer(indexerName);
     var esDoc = indexer.fields(file, mimetype, contents);
     if (esDoc.isPresent()) {
@@ -189,7 +187,8 @@ public class JdbiIndexService implements IndexService {
   }
 
   private Supplier<NotFoundException> noSuchMapping(String index) {
-    return () -> new NotFoundException(format("Cannot create index, no mapping found for: %s", index));
+    return () -> new NotFoundException(
+        format("Cannot create index, no mapping found for: %s", index));
   }
 
 }

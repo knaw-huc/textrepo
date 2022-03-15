@@ -1,5 +1,7 @@
 package nl.knaw.huc;
 
+import static java.util.stream.Collectors.toMap;
+
 import com.codahale.metrics.health.HealthCheck;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import io.dropwizard.Application;
@@ -10,6 +12,16 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.federecio.dropwizard.swagger.SwaggerBundle;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
 import nl.knaw.huc.config.TextRepoConfiguration;
 import nl.knaw.huc.exceptions.MethodNotAllowedExceptionMapper;
 import nl.knaw.huc.helpers.ContentsHelper;
@@ -31,15 +43,14 @@ import nl.knaw.huc.service.file.JdbiFileService;
 import nl.knaw.huc.service.file.metadata.JdbiFileMetadataService;
 import nl.knaw.huc.service.health.ElasticsearchHealthCheck;
 import nl.knaw.huc.service.health.IndexerHealthCheck;
-import nl.knaw.huc.service.index.IndexerClient;
-import nl.knaw.huc.service.index.JdbiIndexService;
-import nl.knaw.huc.service.index.IndexerWithMappingClient;
 import nl.knaw.huc.service.index.EsIndexClient;
+import nl.knaw.huc.service.index.IndexerClient;
+import nl.knaw.huc.service.index.IndexerWithMappingClient;
+import nl.knaw.huc.service.index.JdbiIndexService;
 import nl.knaw.huc.service.logging.LoggingApplicationEventListener;
 import nl.knaw.huc.service.store.JdbiContentsStorage;
 import nl.knaw.huc.service.task.JdbiTaskFactory;
 import nl.knaw.huc.service.type.JdbiTypeService;
-import nl.knaw.huc.service.type.TypeService;
 import nl.knaw.huc.service.version.JdbiVersionService;
 import nl.knaw.huc.service.version.content.JdbiVersionContentsService;
 import nl.knaw.huc.service.version.metadata.JdbiVersionMetadataService;
@@ -49,19 +60,6 @@ import org.jdbi.v3.postgres.PostgresPlugin;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nonnull;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toMap;
 
 public class TextRepoApp extends Application<TextRepoConfiguration> {
 
@@ -87,7 +85,8 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
   private SwaggerBundle<TextRepoConfiguration> getSwaggerBundle() {
     return new SwaggerBundle<>() {
       @Override
-      protected SwaggerBundleConfiguration getSwaggerBundleConfiguration(TextRepoConfiguration configuration) {
+      protected SwaggerBundleConfiguration getSwaggerBundleConfiguration(
+          TextRepoConfiguration configuration) {
         return configuration.getSwaggerBundleConfiguration();
       }
     };
@@ -161,7 +160,7 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
   }
 
   /**
-   * Creates a factory containing a mapping: viewname -> constructor method of Jersey Subresource
+   * Creates a factory containing a mapping: view name -> constructor method of Jersey Subresource.
    *
    * @return factory of registered ViewBuilders, aka Jersey sub-resources
    */
@@ -170,13 +169,17 @@ public class TextRepoApp extends Application<TextRepoConfiguration> {
 
     viewBuilderFactory.register("text", TextViewerResource::new);
 
-    // XmlViewer returns a JSON list of XML snippets. No contents helper is used to compress, e.g. a whole file.
-    // If more views get added here that also don't need contents helper, or perhaps need different parameters,
+    // XmlViewer returns a JSON list of XML snippets. No contents helper is used to compress, e.g
+    // . a whole file.
+    // If more views get added here that also don't need contents helper, or perhaps need
+    // different parameters,
     // we should refactor this to get rid of the "throw contentsHelper away" kludge used here.
     // Let's add first build up some more experience by implementing more viewers, then tackle this.
-    viewBuilderFactory.register("xml", (contents, contentsHelper) -> new XmlViewerResource(contents));
+    viewBuilderFactory.register("xml",
+        (contents, contentsHelper) -> new XmlViewerResource(contents));
 
-    viewBuilderFactory.register("segments", (contents, contentsHelper) -> new SegmentViewerResource(contents));
+    viewBuilderFactory.register("segments",
+        (contents, contentsHelper) -> new SegmentViewerResource(contents));
 
     return viewBuilderFactory;
   }

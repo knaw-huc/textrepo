@@ -1,7 +1,12 @@
 package nl.knaw.huc.service.version;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static java.lang.String.format;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
+import java.util.function.Supplier;
+import javax.annotation.Nonnull;
+import javax.ws.rs.NotFoundException;
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.core.Page;
 import nl.knaw.huc.core.PageParams;
@@ -16,14 +21,6 @@ import nl.knaw.huc.service.task.DeleteVersion;
 import org.jdbi.v3.core.Jdbi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nonnull;
-import javax.ws.rs.NotFoundException;
-import java.time.LocalDateTime;
-import java.util.UUID;
-import java.util.function.Supplier;
-
-import static java.lang.String.format;
 
 public class JdbiVersionService implements VersionService {
 
@@ -53,7 +50,8 @@ public class JdbiVersionService implements VersionService {
   ) {
     var file = files()
         .find(fileId)
-        .orElseThrow(() -> new NotFoundException(format("Could not create new version: file %s not found", fileId)));
+        .orElseThrow(() -> new NotFoundException(
+            format("Could not create new version: file %s not found", fileId)));
     return createNewVersion(file, contents);
   }
 
@@ -122,8 +120,8 @@ public class JdbiVersionService implements VersionService {
 
   private boolean isLatestVersion(Version version, VersionsDao versionsDao) {
     var latestVersion = versionsDao.findLatestByFileId(version.getFileId());
-    return latestVersion.isPresent() &&
-        latestVersion.get().getId().equals(version.getId());
+    return latestVersion.isPresent()
+        && latestVersion.get().getId().equals(version.getId());
   }
 
   private FilesDao files() {

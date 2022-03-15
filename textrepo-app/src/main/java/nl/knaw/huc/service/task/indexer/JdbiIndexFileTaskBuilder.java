@@ -1,11 +1,18 @@
 package nl.knaw.huc.service.task.indexer;
 
+import static java.lang.String.format;
+import static java.util.List.of;
+import static java.util.Objects.requireNonNull;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Supplier;
+import javax.ws.rs.NotFoundException;
 import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.core.Type;
 import nl.knaw.huc.db.FilesDao;
 import nl.knaw.huc.db.TypesDao;
 import nl.knaw.huc.service.index.IndexService;
-import nl.knaw.huc.service.index.IndexerClient;
 import nl.knaw.huc.service.task.FindDocumentByExternalId;
 import nl.knaw.huc.service.task.FindDocumentFileByType;
 import nl.knaw.huc.service.task.FindType;
@@ -13,15 +20,6 @@ import nl.knaw.huc.service.task.Task;
 import org.jdbi.v3.core.Jdbi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.ws.rs.NotFoundException;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Supplier;
-
-import static java.lang.String.format;
-import static java.util.List.of;
-import static java.util.Objects.requireNonNull;
 
 public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
   private static final Logger log = LoggerFactory.getLogger(JdbiIndexFileTaskBuilder.class);
@@ -33,7 +31,7 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
   private String typeName;
   private String indexName;
 
-  private long filesAffected = 0;
+  private final long filesAffected = 0;
   private long filesTotal = -1;
 
   public JdbiIndexFileTaskBuilder(Jdbi jdbi, IndexService indexService) {
@@ -71,7 +69,7 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
   }
 
   /**
-   * Index file by externalId and file type name
+   * Index file by externalId and file type name.
    */
   private class JdbiIndexFileTask implements Task<String> {
     private final String externalId;
@@ -95,7 +93,7 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
   }
 
   /**
-   * Index all files with type
+   * Index all files with type.
    */
   private class JdbiIndexAllFilesTask implements Task<String> {
     private final Logger log = LoggerFactory.getLogger(JdbiIndexAllFilesTask.class);
@@ -144,7 +142,7 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
   }
 
   /**
-   * Index all files relevant to indexer
+   * Index all files relevant to indexer.
    */
   public class JdbiIndexAllFilesByIndexTask implements Task<String> {
 
@@ -190,7 +188,8 @@ public class JdbiIndexFileTaskBuilder implements IndexFileTaskBuilder {
 
     private void indexFilesByType(Short typeId) {
       log.info("Indexing files by type: {}", typeId);
-      jdbi.onDemand(FilesDao.class).foreachByType(typeId, file -> indexService.index(indexer, file));
+      jdbi.onDemand(FilesDao.class)
+          .foreachByType(typeId, file -> indexService.index(indexer, file));
     }
 
   }

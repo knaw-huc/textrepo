@@ -1,16 +1,15 @@
 package nl.knaw.huc.helpers.digest;
 
-import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.codec.digest.DigestUtils;
+import static org.apache.commons.codec.digest.MessageDigestAlgorithms.SHA_224;
 
-import javax.annotation.Nonnull;
-import javax.ws.rs.BadRequestException;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
-
-import static org.apache.commons.codec.digest.MessageDigestAlgorithms.SHA_224;
+import javax.annotation.Nonnull;
+import javax.ws.rs.BadRequestException;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.codec.digest.DigestUtils;
 
 /**
  * Compute (sha224) digest over the contents of an InputStream.

@@ -1,9 +1,8 @@
 package nl.knaw.huc.resources.view.text;
 
+import javax.annotation.Nonnull;
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.resources.view.RangeParam;
-
-import javax.annotation.Nonnull;
 
 public class TextCharsResolver extends TextResolver<String> {
   private final RangeParam startParam;

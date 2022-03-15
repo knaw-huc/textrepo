@@ -1,12 +1,11 @@
 package nl.knaw.huc.resources.view.text;
 
-import nl.knaw.huc.core.Contents;
-import nl.knaw.huc.resources.view.RangeParam;
-
-import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import javax.annotation.Nonnull;
+import nl.knaw.huc.core.Contents;
+import nl.knaw.huc.resources.view.RangeParam;
 
 public class TextLinesResolver extends TextResolver<List<String>> {
   private final RangeParam startParam;

@@ -1,5 +1,7 @@
 package nl.knaw.huc.service.task.deleter;
 
+import static java.util.Objects.requireNonNull;
+
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.service.index.IndexService;
 import nl.knaw.huc.service.task.DeleteDocument;
@@ -7,8 +9,6 @@ import nl.knaw.huc.service.task.DeleteFromIndices;
 import nl.knaw.huc.service.task.FindDocumentByExternalId;
 import nl.knaw.huc.service.task.Task;
 import org.jdbi.v3.core.Jdbi;
-
-import static java.util.Objects.requireNonNull;
 
 public class JdbiDeleteDocumentTaskBuilder implements DeleteDocumentTaskBuilder {
 

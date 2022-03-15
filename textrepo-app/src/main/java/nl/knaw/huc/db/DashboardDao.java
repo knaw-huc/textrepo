@@ -1,5 +1,7 @@
 package nl.knaw.huc.db;
 
+import java.util.LinkedHashMap;
+import java.util.List;
 import nl.knaw.huc.core.Document;
 import nl.knaw.huc.core.DocumentsOverview;
 import nl.knaw.huc.core.PageParams;
@@ -10,9 +12,6 @@ import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.customizer.BindBean;
 import org.jdbi.v3.sqlobject.locator.UseClasspathSqlLocator;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
-
-import java.util.LinkedHashMap;
-import java.util.List;
 
 @UseClasspathSqlLocator
 public interface DashboardDao {

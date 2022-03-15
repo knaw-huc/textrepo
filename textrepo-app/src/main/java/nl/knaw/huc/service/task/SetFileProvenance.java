@@ -1,11 +1,11 @@
 package nl.knaw.huc.service.task;
 
+import static java.util.Objects.requireNonNull;
+
 import nl.knaw.huc.api.MetadataEntry;
 import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.db.FileMetadataDao;
 import org.jdbi.v3.core.Handle;
-
-import static java.util.Objects.requireNonNull;
 
 public class SetFileProvenance implements InTransactionProvider<MetadataEntry> {
   private final TextRepoFile file;

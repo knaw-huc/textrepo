@@ -1,5 +1,8 @@
 package nl.knaw.huc.resources;
 
+import java.io.IOException;
+import java.io.InputStream;
+import javax.ws.rs.BadRequestException;
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.exceptions.PayloadTooLargeException;
 import nl.knaw.huc.helpers.digest.DigestComputingInputStream;
@@ -7,10 +10,6 @@ import nl.knaw.huc.helpers.gzip.GzipCompressingInputStream;
 import nl.knaw.huc.helpers.gzip.GzipHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.ws.rs.BadRequestException;
-import java.io.IOException;
-import java.io.InputStream;
 
 public class ResourceUtils {
   private static final Logger log = LoggerFactory.getLogger(ResourceUtils.class);
@@ -21,7 +20,8 @@ public class ResourceUtils {
     }
 
     try {
-      // decompress if necessary, compute digest on (decompressed) content, then compress for storage
+      // decompress if necessary, compute digest on (decompressed) content, then compress for
+      // storage
       final var originalContentStream = GzipHelper.decompressIfNeeded(inputStream);
       final var digestComputingStream = new DigestComputingInputStream(originalContentStream);
       final var compressedInputStream = new GzipCompressingInputStream(digestComputingStream);

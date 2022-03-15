@@ -1,14 +1,13 @@
 package nl.knaw.huc.service.task;
 
+import static java.lang.String.format;
+import static java.util.Objects.requireNonNull;
+
+import java.util.function.Supplier;
+import javax.ws.rs.NotFoundException;
 import nl.knaw.huc.core.Type;
 import nl.knaw.huc.db.TypesDao;
 import org.jdbi.v3.core.Handle;
-
-import javax.ws.rs.NotFoundException;
-import java.util.function.Supplier;
-
-import static java.lang.String.format;
-import static java.util.Objects.requireNonNull;
 
 public class FindType implements InTransactionProvider<Type> {
   private final String typeName;

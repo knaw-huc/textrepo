@@ -1,17 +1,15 @@
 package nl.knaw.huc.resources.rest;
 
+import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toList;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static nl.knaw.huc.resources.HeaderLink.Uri.TYPE;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import nl.knaw.huc.api.FormType;
-import nl.knaw.huc.api.ResultType;
-import nl.knaw.huc.core.Type;
-import nl.knaw.huc.service.type.TypeService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -23,11 +21,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
-
-import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.toList;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static nl.knaw.huc.resources.HeaderLink.Uri.TYPE;
+import nl.knaw.huc.api.FormType;
+import nl.knaw.huc.api.ResultType;
+import nl.knaw.huc.core.Type;
+import nl.knaw.huc.service.type.TypeService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Api(tags = {"types"})
 @Path("/rest/types")
@@ -45,11 +44,12 @@ public class TypesResource {
   @Consumes(APPLICATION_JSON)
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Create type")
-  @ApiResponses(value = {@ApiResponse(code = 201, response = ResultType.class, message = "Created")})
+  @ApiResponses(value = {
+      @ApiResponse(code = 201, response = ResultType.class, message = "Created")})
   public Response createType(
       @Valid
       @NotNull
-          FormType form
+      FormType form
   ) {
     var type = new Type(form.getName(), form.getMimetype());
     log.debug("Create type: type={}", type);
@@ -64,8 +64,9 @@ public class TypesResource {
   @GET
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Retrieve types")
-  @ApiResponses(value = {@ApiResponse(code = 200, response = ResultType.class, responseContainer = "List",
-      message = "OK")})
+  @ApiResponses(value = {
+      @ApiResponse(code = 200, response = ResultType.class, responseContainer = "List",
+          message = "OK")})
   public Response getTypes() {
     log.debug("Retrieve all types");
     var all = typeService
@@ -86,7 +87,7 @@ public class TypesResource {
       @PathParam("id")
       @ApiParam(required = true, example = "1")
       @NotNull
-          Short id
+      Short id
   ) {
     log.debug("Retrieve type: id={}", id);
     var type = typeService.getType(id);
@@ -103,10 +104,10 @@ public class TypesResource {
   public Response putType(
       @PathParam("id")
       @NotNull
-          Short id,
+      Short id,
       @Valid
       @NotNull
-          FormType form
+      FormType form
   ) {
     log.debug("Create or update type: id={}; type={}", id, form);
     var type = new Type(form.getName(), form.getMimetype());
@@ -123,7 +124,7 @@ public class TypesResource {
   public Response deleteType(
       @PathParam("id")
       @NotNull
-          Short id
+      Short id
   ) {
     log.debug("Delete type: id={}", id);
     typeService.delete(id);

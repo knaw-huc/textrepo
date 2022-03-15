@@ -1,27 +1,5 @@
 package nl.knaw.huc.resources.task;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import nl.knaw.huc.helpers.ContentsHelper;
-import nl.knaw.huc.resources.HeaderLink.Rel;
-import nl.knaw.huc.resources.HeaderLink.Uri;
-import nl.knaw.huc.service.task.TaskBuilderFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Response;
-import java.util.Map;
-
 import static java.util.Objects.requireNonNull;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT_ENCODING;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
@@ -35,6 +13,27 @@ import static nl.knaw.huc.resources.HeaderLink.Uri.DOCUMENT_METADATA;
 import static nl.knaw.huc.resources.HeaderLink.Uri.FILE;
 import static nl.knaw.huc.resources.HeaderLink.Uri.FILE_METADATA;
 import static nl.knaw.huc.resources.HeaderLink.Uri.FILE_VERSIONS;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import java.util.Map;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Response;
+import nl.knaw.huc.helpers.ContentsHelper;
+import nl.knaw.huc.resources.HeaderLink.Rel;
+import nl.knaw.huc.resources.HeaderLink.Uri;
+import nl.knaw.huc.service.task.TaskBuilderFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The /find-task finds resources by external id and possible other parameters
@@ -59,8 +58,8 @@ public class FindResource {
   @Path("/document/metadata")
   @Produces(APPLICATION_JSON)
   @ApiOperation(
-      value = "Find metadata of document by external ID, " +
-      "with header links to original and parent resource",
+      value = "Find metadata of document by external ID, "
+          + "with header links to original and parent resource",
       response = Map.class,
       tags = {"task", "find", "documents", "metadata"})
   @ApiResponses(value = {
@@ -70,7 +69,7 @@ public class FindResource {
       @PathParam("externalId")
       @ApiParam(required = true, example = "document_1234")
       @NotNull
-          String externalId
+      String externalId
   ) {
     log.debug("Find metadata of document: externalId={}", externalId);
     final var task = factory
@@ -91,8 +90,9 @@ public class FindResource {
   @GET
   @Path("/file/metadata")
   @Produces(APPLICATION_JSON)
-  @ApiOperation(value = "Find metadata of file by external ID and file type, " +
-      "with header links to original, parent and type resource", response = Map.class,
+  @ApiOperation(value = "Find metadata of file by external ID and file type, "
+      + "with header links to original, parent and type resource",
+      response = Map.class,
       tags = {"task", "find", "files", "metadata"})
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "OK"),
@@ -124,12 +124,14 @@ public class FindResource {
   @GET
   @Path("/file/contents")
   @Produces({APPLICATION_JSON, APPLICATION_OCTET_STREAM})
-  @ApiOperation(value = "Find contents of latest file version by external ID and file type, " +
-      "with header links to version history, parent and type resource", response = Map.class,
+  @ApiOperation(value = "Find contents of latest file version by external ID and file type, "
+      + "with header links to version history, parent and type resource",
+      response = Map.class,
       tags = {"task", "find", "files", "contents"})
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "OK"),
-      @ApiResponse(code = 404, message = "Given type, document or supposed contents could not be found")})
+      @ApiResponse(code = 404, message = "Given type, document or supposed contents could not be "
+          + "found")})
   public Response getLatestFileVersionContent(
       @HeaderParam(ACCEPT_ENCODING) String acceptEncoding,
       @NotNull @PathParam("externalId") String documentId,
@@ -155,5 +157,4 @@ public class FindResource {
         .link(Uri.TYPE.build(type.getId()), Rel.TYPE)
         .build();
   }
-
 }

@@ -1,18 +1,17 @@
 package nl.knaw.huc.service.task;
 
+import static java.time.LocalDateTime.now;
+import static java.util.Objects.requireNonNull;
+
+import java.util.Optional;
+import java.util.UUID;
+import java.util.function.Supplier;
 import nl.knaw.huc.core.Contents;
 import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.core.Version;
 import nl.knaw.huc.db.ContentsDao;
 import nl.knaw.huc.db.VersionsDao;
 import org.jdbi.v3.core.Handle;
-
-import java.util.Optional;
-import java.util.UUID;
-import java.util.function.Supplier;
-
-import static java.time.LocalDateTime.now;
-import static java.util.Objects.requireNonNull;
 
 public class SetFileContents implements InTransactionProvider<Version> {
 
@@ -24,7 +23,8 @@ public class SetFileContents implements InTransactionProvider<Version> {
 
   private Handle transaction;
 
-  public SetFileContents(Supplier<UUID> idGenerator, TextRepoFile file, Contents contents, boolean asLatestVersion) {
+  public SetFileContents(Supplier<UUID> idGenerator, TextRepoFile file, Contents contents,
+                         boolean asLatestVersion) {
     this.idGenerator = requireNonNull(idGenerator);
     this.file = requireNonNull(file);
     this.contents = requireNonNull(contents);

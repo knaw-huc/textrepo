@@ -4,12 +4,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
-import nl.knaw.huc.service.index.config.IndexerWithMappingConfiguration;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import nl.knaw.huc.service.index.config.IndexerWithMappingConfiguration;
 
 public class TextRepoConfiguration extends Configuration {
 

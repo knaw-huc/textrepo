@@ -1,11 +1,10 @@
 package nl.knaw.huc.resources.view;
 
+import java.util.Arrays;
+import java.util.List;
 import nl.knaw.huc.resources.view.segmented.TextSegments;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class SegmentResolver extends RangeResolver<TextSegments, List<String>> {
   private static final Logger log = LoggerFactory.getLogger(SegmentResolver.class);

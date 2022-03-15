@@ -1,9 +1,8 @@
 package nl.knaw.huc.resources.view;
 
 import io.dropwizard.jersey.params.AbstractParam;
-
-import javax.annotation.Nullable;
 import java.util.OptionalInt;
+import javax.annotation.Nullable;
 
 public class RangeParam extends AbstractParam<OptionalInt> {
   public RangeParam(@Nullable String input) {

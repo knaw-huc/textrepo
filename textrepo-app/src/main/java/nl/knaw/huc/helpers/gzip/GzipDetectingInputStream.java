@@ -1,11 +1,11 @@
 package nl.knaw.huc.helpers.gzip;
 
-import javax.ws.rs.BadRequestException;
+import static nl.knaw.huc.helpers.gzip.GzipHelper.isGzipped;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
-
-import static nl.knaw.huc.helpers.gzip.GzipHelper.isGzipped;
+import javax.ws.rs.BadRequestException;
 
 public class GzipDetectingInputStream extends PushbackInputStream {
   private boolean isGzipCompressed = false;

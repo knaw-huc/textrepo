@@ -1,12 +1,11 @@
 package nl.knaw.huc.service.health;
 
+import static java.lang.String.format;
+
 import com.codahale.metrics.health.HealthCheck;
+import javax.ws.rs.core.Response;
 import org.glassfish.jersey.client.JerseyClient;
 import org.glassfish.jersey.client.JerseyClientBuilder;
-
-import javax.ws.rs.core.Response;
-
-import static java.lang.String.format;
 
 public class IndexerHealthCheck extends HealthCheck {
 

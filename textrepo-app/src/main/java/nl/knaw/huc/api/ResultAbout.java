@@ -1,10 +1,9 @@
 package nl.knaw.huc.api;
 
-import nl.knaw.huc.config.TextRepoConfiguration;
+import static java.util.stream.Collectors.toList;
 
 import java.util.List;
-
-import static java.util.stream.Collectors.toList;
+import nl.knaw.huc.config.TextRepoConfiguration;
 
 public class ResultAbout {
   private final ResultAboutVersion version;

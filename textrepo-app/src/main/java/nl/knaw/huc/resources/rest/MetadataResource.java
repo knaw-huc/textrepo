@@ -1,22 +1,21 @@
 package nl.knaw.huc.resources.rest;
 
+import static java.util.Objects.requireNonNull;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import nl.knaw.huc.service.document.metadata.DocumentMetadataService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.util.List;
+import java.util.UUID;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import java.util.List;
-import java.util.UUID;
-
-import static java.util.Objects.requireNonNull;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import nl.knaw.huc.service.document.metadata.DocumentMetadataService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Api(tags = {"metadata"})
 @Path("/rest/metadata")
@@ -39,7 +38,7 @@ public class MetadataResource {
       @PathParam("key")
       @ApiParam(required = true, example = "archive")
       @NotNull
-          String key
+      String key
   ) {
     log.debug("Get documents with metadata key: [{}]", key);
     return documentMetadataService.findByMetadataKey(key);

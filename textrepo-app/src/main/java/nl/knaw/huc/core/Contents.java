@@ -1,19 +1,18 @@
 package nl.knaw.huc.core;
 
-import com.google.common.base.MoreObjects;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.codec.digest.MessageDigestAlgorithms;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static nl.knaw.huc.helpers.gzip.GzipHelper.isGzipped;
+import static nl.knaw.huc.service.contents.ContentsService.abbreviateMiddle;
 
-import javax.annotation.Nonnull;
-import javax.ws.rs.BadRequestException;
+import com.google.common.base.MoreObjects;
 import java.beans.ConstructorProperties;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.zip.GZIPInputStream;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static nl.knaw.huc.helpers.gzip.GzipHelper.isGzipped;
-import static nl.knaw.huc.service.contents.ContentsService.abbreviateMiddle;
+import javax.annotation.Nonnull;
+import javax.ws.rs.BadRequestException;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 
 /**
  * Contents of a file, identified by its sha224-hash

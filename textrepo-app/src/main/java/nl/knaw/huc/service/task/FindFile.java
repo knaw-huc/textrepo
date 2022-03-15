@@ -1,14 +1,13 @@
 package nl.knaw.huc.service.task;
 
+import static java.util.Objects.requireNonNull;
+
+import java.util.UUID;
+import java.util.function.Supplier;
+import javax.ws.rs.NotFoundException;
 import nl.knaw.huc.core.TextRepoFile;
 import nl.knaw.huc.db.FilesDao;
 import org.jdbi.v3.core.Handle;
-
-import javax.ws.rs.NotFoundException;
-import java.util.UUID;
-import java.util.function.Supplier;
-
-import static java.util.Objects.requireNonNull;
 
 public class FindFile implements InTransactionProvider<TextRepoFile> {
   private final UUID fileId;

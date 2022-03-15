@@ -1,25 +1,24 @@
 package nl.knaw.huc.service.index.request;
 
+import static javax.ws.rs.client.Entity.entity;
+import static nl.knaw.huc.resources.HeaderLink.Rel.ORIGINAL;
+import static nl.knaw.huc.resources.HeaderLink.Uri.FILE;
+
+import java.util.UUID;
+import javax.annotation.Nonnull;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import nl.knaw.huc.resources.HeaderLink;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 
-import javax.annotation.Nonnull;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.UUID;
-
-import static javax.ws.rs.client.Entity.entity;
-import static nl.knaw.huc.resources.HeaderLink.Rel.ORIGINAL;
-import static nl.knaw.huc.resources.HeaderLink.Uri.FILE;
-
 /**
  * Post a file to ./fields with a `multipart/form-data` Content-Type header
  * and a multipart body part named "file" which contains:
- *   - file contents
- *   - Content-Type header with file mimetype
+ * - file contents
+ * - Content-Type header with file mimetype
  */
 public class MultipartIndexerFieldsRequest implements IndexerFieldsRequest {
 

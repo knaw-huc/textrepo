@@ -1,10 +1,9 @@
 package nl.knaw.huc.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import nl.knaw.huc.core.Version;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
+import nl.knaw.huc.core.Version;
 
 public class ResultVersion {
 
