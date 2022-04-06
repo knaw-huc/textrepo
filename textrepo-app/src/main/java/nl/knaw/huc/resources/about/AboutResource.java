@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import nl.knaw.huc.api.ResultAbout;
@@ -31,8 +32,8 @@ public class AboutResource {
   @Produces(APPLICATION_JSON)
   @ApiOperation("Get info about application version and configuration")
   @ApiResponses(value = {@ApiResponse(code = 200, response = ResultAbout.class, message = "OK")})
-  public ResultAbout getAbout() {
-    log.debug("Get documents overview");
+  public ResultAbout getAbout(@HeaderParam("Authorization") String auth) {
+    log.debug("Get documents overview, auth=[{}]", auth);
     return new ResultAbout(config);
   }
 
