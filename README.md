@@ -11,7 +11,7 @@ Documentation can be found at [readthedocs](http://textrepo.readthedocs.io/en/la
 
 ## License
 
-Copyright 2019-2021 Koninklijke Nederlandse Akademie van Wetenschappen
+Copyright 2019-2022 Koninklijke Nederlandse Akademie van Wetenschappen
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
