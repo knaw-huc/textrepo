@@ -1,0 +1,28 @@
+{
+    "@context": [
+        "https://raw.githubusercontent.com/codemeta/codemeta/2.0/codemeta.jsonld",
+        "https://raw.githubusercontent.com/schemaorg/schemaorg/main/data/releases/13.0/schemaorgcontext.jsonld",
+        "https://w3id.org/software-types"
+    ],
+    "@id": "https://github.com/knaw-huc/textrepo.git",
+    "@type": "SoftwareSourceCode",
+    "codeRepository": "https://github.com/knaw-huc/textrepo.git",
+    "dateCreated": "2019-08-07T17:26:01Z+0200",
+    "dateModified": "2022-04-06T15:39:34Z+0200",
+    "description": "Text Repository",
+    "identifier": "data",
+    "issueTracker": "https://github.com/knaw-huc/textrepo/issues",
+    "license": "http://spdx.org/licenses/Apache-2.0",
+    "name": "textrepo",
+    "producer": {
+        "@id": "/org/knaw-humanities-cluster",
+        "name": "KNAW Humanities Cluster",
+        "url": "https://huc.knaw.nl/"
+    },
+    "softwareHelp": {
+        "@id": "http://textrepo.readthedocs.io/en/latest/",
+        "@type": "WebSite",
+        "name": "Text Repository — Text Repository  documentation",
+        "url": "http://textrepo.readthedocs.io/en/latest/"
+    }
+}
