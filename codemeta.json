@@ -10,6 +10,7 @@
     "dateCreated": "2019-08-07T17:26:01Z+0200",
     "dateModified": "2022-03-15T14:51:17Z+0100",
     "description": "Text Repository",
+    "developmentStatus": "https://www.repostatus.org/#active",
     "downloadUrl": "https://github.com/knaw-huc/textrepo/archive/refs/tags/v1.19.0.zip",
     "identifier": "textrepo",
     "issueTracker": "https://github.com/knaw-huc/textrepo/issues",
