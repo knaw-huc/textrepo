@@ -80,7 +80,7 @@ curl -s -XPOST $tr/task/import/documents/doc_1/txt?allowNewDocument=true \
 * however, as `contentsSha` is a hash based on the contents of `hw.txt`, it *should* be the same.
 * `typeId` *may* be different, but *should* still match the `id` from when type `txt` was registered above.
 
-### Check that `doc_1` has expected contents for type `txt`
+## Check that `doc_1` has expected contents for type `txt`
 
 ```bash
 curl -s $tr/task/find/doc_1/file/contents?type=txt
