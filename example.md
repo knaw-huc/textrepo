@@ -14,26 +14,30 @@ export tr=http://localhost:8080/textrepo
 ## Verify no types are registered yet
 
 ```bash
-	$ curl -s $tr/rest/types | jq .
-	[]
+$ curl -s $tr/rest/types | jq .
+```
+
+```json
+[]
 ```
 
 ## Register `text/plain` type named `txt`
 
 ```bash
-$ curl -s -XPOST $tr/rest/types \
+curl -s -XPOST $tr/rest/types \
 	-H 'Content-Type: application/json' \
 	-d '{"name": "txt", "mimetype": "text/plain"}' \
 | jq .
 ```
-=>
+
 ```json
 {
-	"id": 254,   <-- this is an assigned id, expect something else
+	"id": 254,
 	"name": "txt",
 	"mimetype": "text/plain"
 }
 ```
+Note that as `.id` is internally assigned, it may be different in your case.
 
 ## Import a document
 
@@ -55,7 +59,7 @@ $ curl -s -XPOST $tr/task/import/documents/doc_1/txt?allowNewDocument=true \
 	-F "contents=@hw.txt" \
 | jq .
 ```
-=>
+
 ```json
 {
 	"indexed": true,
@@ -67,6 +71,11 @@ $ curl -s -XPOST $tr/task/import/documents/doc_1/txt?allowNewDocument=true \
 	"documentId": "e3f41426-2cd2-4e19-af1d-da027eb4ea9c"
 }
 ```
+* `indexed` tells us that the file was sent to Elasticsearch for indexing
+* `newVersion` tells us that this is a new version of the `txt` file for document `doc_1`
+* note that `versionId`, `fileId` and `documentId` are internally generated UUIDs which will be different in your case.
+* however, as `contentsSha` is a hash based on the contents of `hw.txt`, it *should* be the same.
+* `typeId` *may* be different, but *should* still match the `id` from when type `txt` was registered above.
 
 ### Check that `doc_1` has expected contents for type `txt`
 
@@ -86,7 +95,7 @@ $ docker-compose -f docker-compose-dev.yml exec elasticsearch \
 		-d '{"query": {"match_all": {}}}' \
 | jq .hits.hits
 ```
-=>
+
 ```json
 [
   {
