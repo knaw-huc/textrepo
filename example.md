@@ -14,7 +14,7 @@ export tr=http://localhost:8080/textrepo
 ## Verify no types are registered yet
 
 ```bash
-$ curl -s $tr/rest/types | jq .
+curl -s $tr/rest/types | jq .
 ```
 
 ```json
