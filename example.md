@@ -115,3 +115,19 @@ docker-compose -f docker-compose-dev.yml exec elasticsearch \
 ]
 ```
 Note that `_id` is equal to the `fileId` we saw [earlier](#import-a-document)
+
+If, instead, you get a host of errors like:
+```sh
+WARN[0000] The "POSTGRES_PASSWORD" variable is not set. Defaulting to a blank string.
+WARN[0000] The "POSTGRES_DB" variable is not set. Defaulting to a blank string.
+WARN[0000] The "POSTGRES_USER" variable is not set. Defaulting to a blank string.
+WARN[0000] The "POSTGRES_PORT" variable is not set. Defaulting to a blank string.
+WARN[0000] The "DOCKER_TAG" variable is not set. Defaulting to a blank string.
+WARN[0000] The "FULL_TEXT_XML_SUBTYPES" variable is not set. Defaulting to a blank string.
+WARN[0000] The "FULL_TEXT_TXT_SUBTYPES" variable is not set. Defaulting to a blank string.
+[...]
+```
+
+you will probably need to do one of the following, depending on how recent your `docker-compose` is:
+1. either `source docker-compose.env`  so that your current shell has values for all the missing ENV vars
+1. or use a `docker-compose` (or `docker compose`) version which supports `--env-file` and then pass `--env-file docker-compose.env`
