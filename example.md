@@ -43,18 +43,21 @@ Note that as `.id` is internally assigned, it may be different in your case.
 
 ### Prepare file `hw.txt`
 ```bash
-$ echo "Hello, world!" > hw.txt
-$ cat hw.txt
+echo "Hello, world!" > hw.txt
+```
+```bash
+cat hw.txt
+```
+```txt
 Hello, world!
 ```
-
 ### Send it
 * Use endpoint `task/import/documents/...`
 * We import the file to `{externalId}/{fileType}`, in this case `doc_1/txt`
 * Because document `doc_1` does not yet exist, we tell TextRepo it is OK to create a new document during this import, using the query parameter `allowNewDocument=true`.
 
 ```bash
-$ curl -s -XPOST $tr/task/import/documents/doc_1/txt?allowNewDocument=true \
+curl -s -XPOST $tr/task/import/documents/doc_1/txt?allowNewDocument=true \
 	-H "accept: application/json" \
 	-F "contents=@hw.txt" \
 | jq .
@@ -80,7 +83,9 @@ $ curl -s -XPOST $tr/task/import/documents/doc_1/txt?allowNewDocument=true \
 ### Check that `doc_1` has expected contents for type `txt`
 
 ```bash
-$ curl -s $tr/task/find/doc_1/file/contents?type=txt
+curl -s $tr/task/find/doc_1/file/contents?type=txt
+```
+```txt
 Hello, world
 ```
 
@@ -89,7 +94,7 @@ Hello, world
 Assuming `elasticsearch:9200` is not exposed via `docker-compose.yml`, we run a query inside the `elasticsearch` container and pull out everything from the `full-text` index:
 
 ```bash
-$ docker-compose -f docker-compose-dev.yml exec elasticsearch \
+docker-compose -f docker-compose-dev.yml exec elasticsearch \
 	curl -s localhost:9200/full-text/_search \
 		-H 'Content-type: application/json' \
 		-d '{"query": {"match_all": {}}}' \
