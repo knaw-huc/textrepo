@@ -90,6 +90,8 @@ Hello, world
 ```
 
 ## Check that `doc_1` is indexed in `full-text` indexer
+
+### 1. Via `http://localhost:8080/index`
 The TextRepo stack has a perimeter `nginx` proxy which passes `/index` to the ElasticSearch indexes. So to pull everything from the `full-text` index, we can:
 
 ```bash
@@ -101,6 +103,22 @@ curl -s http://localhost:8080/index/full-text/_search \
 
 Notice how we directly visit `http://localhost:8080` and don't use our shortcut ENV var `$tr` here, as `$tr` points to `http://localhost:8080/textrepo` and is thus proxied to `textrepo` instead of `elasticsearch` which we need here.
 
+```json
+[
+  {
+	"_index": "full-text",
+	"_type": "_doc",
+	"_id": "a46dd361-bdf3-4cf6-a050-7434524a75b2",
+	"_score": 1,
+		"_source": {
+			"contents": "Hello, world"
+		}
+	}
+]
+```
+Note that `_id` is equal to the `fileId` we saw [earlier](#import-a-document)
+
+### 2. From inside the `elasticsearch` container
 Alternatively, and assuming `elasticsearch:9200` is not exposed via `docker-compose.yml`, we may want to run a query inside the `elasticsearch` container and pull out everything from the `full-text` index:
 
 ```bash
@@ -124,7 +142,6 @@ docker-compose -f docker-compose-dev.yml exec elasticsearch \
 	}
 ]
 ```
-Note that `_id` is equal to the `fileId` we saw [earlier](#import-a-document)
 
 If, instead, you get a host of errors like:
 ```sh
