@@ -90,8 +90,18 @@ Hello, world
 ```
 
 ## Check that `doc_1` is indexed in `full-text` indexer
+The TextRepo stack has a perimeter `nginx` proxy which passes `/index` to the ElasticSearch indexes. So to pull everything from the `full-text` index, we can:
 
-Assuming `elasticsearch:9200` is not exposed via `docker-compose.yml`, we run a query inside the `elasticsearch` container and pull out everything from the `full-text` index:
+```bash
+curl -s http://localhost:8080/index/full-text/_search \
+	-H 'Content-type: application/json' \
+	-d '{"query": {"match_all": {}}}' \
+| jq .hits.hits
+```
+
+Notice how we directly visit `http://localhost:8080` and don't use our shortcut ENV var `$tr` here, as `$tr` points to `http://localhost:8080/textrepo` and is thus proxied to `textrepo` instead of `elasticsearch` which we need here.
+
+Alternatively, and assuming `elasticsearch:9200` is not exposed via `docker-compose.yml`, we may want to run a query inside the `elasticsearch` container and pull out everything from the `full-text` index:
 
 ```bash
 docker-compose -f docker-compose-dev.yml exec elasticsearch \
