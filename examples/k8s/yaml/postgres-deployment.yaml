@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: postgres
+  name: postgres
+  namespace: textrepo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - env:
+        - name: PGDATA
+          value: /var/lib/textrepo/data
+        - name: POSTGRES_DB
+          value: textrepo
+        - name: POSTGRES_HOST
+          value: postgres.textrepo
+        - name: POSTGRES_PASSWORD
+          value: textrepo
+        - name: POSTGRES_PORT
+          value: "5432"
+        - name: POSTGRES_USER
+          value: textrepo
+        image: postgres:11-alpine
+        name: gltr-postgres
+        ports:
+        - containerPort: 5432
+        resources: {}
+        volumeMounts:
+        - mountPath: /var/lib/textrepo
+          name: postgresdata-prod
+      restartPolicy: Always
+      volumes:
+      - name: postgresdata-prod
+        persistentVolumeClaim:
+          claimName: postgresdata-prod

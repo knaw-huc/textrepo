@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: full-text-indexer
+  name: full-text-indexer
+  namespace: textrepo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: full-text-indexer
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: full-text-indexer
+    spec:
+      containers:
+      - args:
+        - /data/wait-for-it.sh
+        - elasticsearch:9200
+        - --timeout=0
+        - --
+        - /indexer/start.sh
+        env:
+        - name: FULL_TEXT_TXT_SUBTYPES
+          value: '[]'
+        - name: FULL_TEXT_XML_SUBTYPES
+          value: '[application/vnd.prima.page+xml, text/vnd.hocr+html]'
+        image: knawhuc/textrepo-full-text-indexer:1.19.0
+        name: gltr-full-text
+        ports:
+        - containerPort: 8080
+        resources: {}
+        volumeMounts:
+        - mountPath: /data
+          name: wait-for-it
+      restartPolicy: Always
+      volumes:
+      - name: wait-for-it
+        configMap:
+          name: wait-for-it
+          defaultMode: 0755

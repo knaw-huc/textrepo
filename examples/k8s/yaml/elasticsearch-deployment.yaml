@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: elasticsearch
+  name: elasticsearch
+  namespace: textrepo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: elasticsearch
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: elasticsearch
+    spec:
+      containers:
+      - env:
+        - name: ES_JAVA_OPTS
+          value: -Xms512m -Xmx512m
+        - name: bootstrap.memory_lock
+          value: "false"
+        - name: cluster.initial_master_nodes
+          value: es01
+        - name: cluster.name
+          value: textrepo-cluster
+        - name: node.name
+          value: es01
+        - name: path.repo
+          value: /snapshot-repo
+        image: knawhuc/textrepo-elasticsearch:1.19.0
+        name: gltr-elasticsearch
+        ports:
+        - containerPort: 9200
+        resources: {}
+        volumeMounts:
+        - mountPath: /usr/share/elasticsearch/data
+          name: esdata-prod
+        - mountPath: /snapshot-repo
+          name: essnapshotdata-prod
+      initContainers:
+        - name: elasticsearch-init
+          image: busybox:1.28
+          command: ['sh', '-c', "chown -R 1000:0 /usr/share/elasticsearch/data /snapshot-repo"]
+          volumeMounts:
+            - name: esdata-prod
+              mountPath: "/usr/share/elasticsearch/data"
+              readOnly: false
+            - name: essnapshotdata-prod
+              mountPath: "/snapshot-repo"
+              readOnly: false
+        - name: sysctl
+          image: busybox:1.28
+          securityContext:
+            privileged: true
+            runAsUser: 0
+          command: ['sh', '-c', 'sysctl -w vm.max_map_count=262144']
+      restartPolicy: Always
+      volumes:
+      - name: esdata-prod
+        persistentVolumeClaim:
+          claimName: esdata-prod
+      - name: essnapshotdata-prod
+        persistentVolumeClaim:
+          claimName: essnapshotdata-prod

@@ -1,0 +1,15 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: texrepo-ingress
+  namespace: textrepo
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 10m
+spec:
+  rules:
+    - host: textrepo-k8s.diginfra.net
+      http:
+        paths:
+          - backend:
+              serviceName: nginx
+              servicePort: 80

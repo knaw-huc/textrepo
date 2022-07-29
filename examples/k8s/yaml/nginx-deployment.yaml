@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nginx
+  name: nginx
+  namespace: textrepo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - env:
+        - name: CONCORDION_ROOT_REDIRECT
+          value: /concordion/nl/knaw/huc/textrepo/TextRepo.html
+        - name: NGINX_ES_HOST
+          value: elasticsearch:9200
+        - name: NGINX_LISTEN
+          value: "80"
+        - name: NGINX_LOCATION
+          value: /textrepo
+        image: knawhuc/textrepo-nginx:1.19.0
+        name: gltr-nginx
+        ports:
+          - containerPort: 80
+        resources: {}
+        volumeMounts:
+        - mountPath: /concordion
+          name: concordiondata
+        - mountPath: /about
+          name: aboutdata
+      restartPolicy: Always
+      volumes:
+      - name: concordiondata
+        persistentVolumeClaim:
+          claimName: concordiondata
+      - name: aboutdata
+        persistentVolumeClaim:
+          claimName: aboutdata

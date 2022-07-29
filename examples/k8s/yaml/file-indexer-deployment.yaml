@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: file-indexer
+  name: file-indexer
+  namespace: textrepo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: file-indexer
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: file-indexer
+    spec:
+      containers:
+      - args:
+        - /data/wait-for-it.sh
+        - elasticsearch:9200
+        - --timeout=0
+        - --
+        - /indexer/start.sh
+        env:
+        - name: INTERNAL_TR_HOST
+          value: http://textrepo-app:8080
+        - name: TR_DATE_FORMAT
+          value: yyyy-MM-dd'T'HH:mm:ss
+        image: knawhuc/textrepo-file-indexer:1.19.0
+        name: gltr-file-indexer
+        ports:
+        - containerPort: 8080
+        resources: {}
+        volumeMounts:
+          - mountPath: /data
+            name: wait-for-it
+      restartPolicy: Always
+      volumes:
+        - name: wait-for-it
+          configMap:
+            name: wait-for-it
+            defaultMode: 0755
