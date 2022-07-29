@@ -14,7 +14,7 @@ Put `wait-for-it.sh` in a ConfigMap, so that it can be mounted read-only by diff
 
 Kubernetes cannot mount files in a directory without masking the other content of the directory, so had to mount `wait-for-it.sh` in a subdirectory.
 
-Created `textrepo-add-ingress.yaml` manually so that the application is reachable from the outside world under a domain name.
+Created `textrepo-app-ingress.yaml` manually so that the application is reachable from the outside world under a domain name.
 
 Deployment:
 
