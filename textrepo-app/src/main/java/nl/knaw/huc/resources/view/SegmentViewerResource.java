@@ -98,18 +98,20 @@ public class SegmentViewerResource {
       // Multi segment fragment
       startCharOffset.get().ifPresent(offset -> {
         // replace text in first segment with substring starting at requested offset
-        final var from = fragment.get(0);
+        final var segmentIndex = 0;
+        final var from = fragment.get(segmentIndex);
         final var into = from.substring(offset);
         log.debug("first: from=[{}], offset=[{}], into=[{}]", from, offset, into);
-        fragment.set(0, into);
+        fragment.set(segmentIndex, into);
       });
 
       endCharOffset.get().ifPresent(offset -> {
         // replace text in last segment with substring ending at requested offset
-        final var from = fragment.get(fragment.size() - 1);
+        final var segmentIndex = fragment.size() - 1;
+        final var from = fragment.get(segmentIndex);
         final var into = from.substring(0, offset + 1);
         log.debug("last: from=[{}], offset=[{}], into=[{}]", from, offset, into);
-        fragment.set(fragment.size() - 1, into);
+        fragment.set(segmentIndex, into);
       });
 
       return Collections.unmodifiableList(fragment);
