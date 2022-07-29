@@ -84,17 +84,33 @@ public class SegmentViewerResource {
       final var fragment = resolver.resolve(textSegments);
       log.debug("Fragment element count: {}", fragment.size());
 
-      final var first = fragment.get(0);
-      final var firstIndex = startCharOffset.get().orElse(0);
-      final var replaceFirst = first.substring(firstIndex);
-      log.debug("first=[{}], firstIndex=[{}], replaceFirst=[{}]", first, firstIndex, replaceFirst);
-      fragment.set(0, replaceFirst);
+      // Single segment fragment
+      if (fragment.size() == 1) {
+        final var text = fragment.get(0);
+        final var firstIndex = startCharOffset.get().orElse(0);
+        final var lastIndex = endCharOffset.get().orElse(text.length() - 1);
+        final var substring = text.substring(firstIndex, lastIndex + 1);
+        log.debug("single: text=[{}], firstIndex=[{}], lastIndex=[{}], substr=[{}]",
+            text, firstIndex, lastIndex, substring);
+        return Collections.singletonList(substring);
+      }
 
-      final var last = fragment.get(fragment.size() - 1);
-      final int lastIndex = endCharOffset.get().orElse(last.length() - 1);
-      final var replaceLast = last.substring(0, lastIndex + 1);
-      log.debug("last=[{}], lastIndex=[{}], replaceLast=[{}]", last, lastIndex, replaceLast);
-      fragment.set(fragment.size() - 1, replaceLast);
+      // Multi segment fragment
+      startCharOffset.get().ifPresent(offset -> {
+        // replace text in first segment with substring starting at requested offset
+        final var from = fragment.get(0);
+        final var into = from.substring(offset);
+        log.debug("first: from=[{}], offset=[{}], into=[{}]", from, offset, into);
+        fragment.set(0, into);
+      });
+
+      endCharOffset.get().ifPresent(offset -> {
+        // replace text in last segment with substring ending at requested offset
+        final var from = fragment.get(fragment.size() - 1);
+        final var into = from.substring(0, offset + 1);
+        log.debug("last: from=[{}], offset=[{}], into=[{}]", from, offset, into);
+        fragment.set(fragment.size() - 1, into);
+      });
 
       return Collections.unmodifiableList(fragment);
     });
