@@ -15,3 +15,8 @@ dependency-reduced-pom.xml
 /start*.sh
 /stop*.sh
 override/
+
+# no idea where these Eclipse settings come from, but please ignore
+.settings
+.classpath
+.project
