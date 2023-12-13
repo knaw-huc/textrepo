@@ -27,7 +27,7 @@
     <checkstyle.config.location>https://raw.githubusercontent.com/knaw-huc/checkstyle/master/checkstyle_config.xml
     </checkstyle.config.location>
 
-    <dropwizard.version>2.1.5</dropwizard.version>
+    <dropwizard.version>2.1.10</dropwizard.version>
     <json-path.version>2.5.0</json-path.version>
     <mockito-core.version>3.0.0</mockito-core.version>
     <mockserver.version>5.4.1</mockserver.version>
