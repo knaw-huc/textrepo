@@ -38,7 +38,7 @@
     <dropwizard-swagger.version>2.0.0-1</dropwizard-swagger.version>
     <flyway.version>7.15.0</flyway.version>
     <jdbi3-sqlobject.version>3.9.1</jdbi3-sqlobject.version>
-    <json-path.version>2.5.0</json-path.version>
+    <json-path.version>2.9.0</json-path.version>
     <junit5.version>5.6.0</junit5.version>
     <mockito-core.version>3.0.0</mockito-core.version>
     <mockserver.version>5.4.1</mockserver.version>
