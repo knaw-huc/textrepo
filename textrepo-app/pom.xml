@@ -34,7 +34,7 @@
     </checkstyle.config.location>
 
     <commons-lang.version>3.12.0</commons-lang.version>
-    <dropwizard.version>2.0.21</dropwizard.version>
+    <dropwizard.version>3.0.0</dropwizard.version>
     <dropwizard-swagger.version>2.0.0-1</dropwizard-swagger.version>
     <flyway.version>7.15.0</flyway.version>
     <jdbi3-sqlobject.version>3.9.1</jdbi3-sqlobject.version>
@@ -97,7 +97,7 @@
           <artifactId>commons-logging</artifactId>
         </exclusion>
       </exclusions>
-      <version>7.12.0</version>
+      <version>7.17.8</version>
     </dependency>
 
     <!-- Client: -->
