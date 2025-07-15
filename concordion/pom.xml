@@ -34,7 +34,7 @@
     <json-path.version>2.5.0</json-path.version>
     <mockito-core.version>3.0.0</mockito-core.version>
     <postgresql.version>42.4.3</postgresql.version>
-    <commons-lang.version>3.12.0</commons-lang.version>
+    <commons-lang.version>3.18.0</commons-lang.version>
     <commons-text.version>1.10.0</commons-text.version>
   </properties>
 
